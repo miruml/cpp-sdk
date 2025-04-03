@@ -1,0 +1,66 @@
+# Company configuration
+company:
+  name: Acme Corporation
+  founded: 1985
+  active: true
+  employees:
+    name: John Doe
+      position: CEO
+      email: john@acme.com
+      skills:
+        - leadership
+        - strategy
+        - public speaking
+    
+    - name: Jane Smith
+      position: CTO
+      email: jane@acme.com
+      skills:
+        - programming
+        - architecture
+        - team management
+
+# Product information
+products:
+  - id: P001
+    name: Widget Pro
+    price: 99.99
+    in_stock: true
+    colors:
+      - red
+      - blue
+      - green
+    specifications:
+      weight: 0.5
+      dimensions:
+        length: 10
+        width: 5
+        height: 2
+      
+  - id: P002
+    name: Super Gadget
+    price: 149.99
+    in_stock: false
+    colors:
+      - black
+      - silver
+    specifications:
+      weight: 0.75
+      dimensions:
+        length: 15
+        width: 8
+        height: 3
+
+# Settings
+settings:
+  debug_mode: false
+  api_key: "abc123xyz789"
+  rate_limits:
+    requests_per_minute: 100
+    burst: 150
+  database:
+    host: localhost
+    port: 5432
+    credentials:
+      username: admin
+      password: ${DB_PASSWORD}  # Environment variable

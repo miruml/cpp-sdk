@@ -1,0 +1,4 @@
+Repository Name: git@github.com:miruml/openapi.git
+Branch Name: configs
+Commit Hash: 126877afba9189b27f38152bfc13df923b8d2793
+Commit Message: feat(git_commit): add urls to git commits

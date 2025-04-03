@@ -1,0 +1,27 @@
+name: Example Test Data
+version: 1.0
+active: true
+description: This is a sample YML file for testing purposes
+tags:
+  - test
+  - example
+  - demo
+settings:
+  timeout: 30
+  retries: 3
+  debug: false
+users:
+  - id: 1
+    username: john_doe
+    email: john@example.com
+    roles:
+      - admin
+      - user
+  - id: 2
+    username: jane_smith
+    email: jane@example.com
+    roles:
+      - user
+metadata:
+  created_at: '2024-03-20T10:00:00Z'
+  updated_at: null
