@@ -1,0 +1,4 @@
+Repository Name: git@github.com:miruml/openapi.git
+Branch Name: configs
+Commit Hash: 02b9a8188eb47f57d4eda8641266f8ad0594e78b
+Commit Message: fix(agent.concrete-config): remove client_id from GET

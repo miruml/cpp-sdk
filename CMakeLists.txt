@@ -29,6 +29,18 @@ add_library(miru
     miru/client/http_client.cpp
     miru/client/unix_socket.hpp
     miru/client/unix_socket.cpp
+    miru/client/models/BaseConcreteConfig.h
+    miru/client/models/BaseConcreteConfig.cpp
+    miru/client/models/Error.h
+    miru/client/models/Error.cpp
+    miru/client/models/ErrorResponse.h
+    miru/client/models/ErrorResponse.cpp
+    miru/client/models/HashSchemaRequest.h
+    miru/client/models/HashSchemaRequest.cpp
+    miru/client/models/Helpers.h
+    miru/client/models/Helpers.cpp
+    miru/client/models/SchemaDigestResponse.h
+    miru/client/models/SchemaDigestResponse.cpp
 )
 
 # Add include directories

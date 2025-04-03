@@ -12,7 +12,8 @@
 #include <boost/asio.hpp>
 #include <boost/asio/local/stream_protocol.hpp>
 #include <boost/beast.hpp>
-
+#include <nlohmann/json.hpp>
+#include <miru/client/models/BaseConcreteConfig.h>
 namespace miru::client {
 
 namespace http = boost::beast::http;
@@ -27,14 +28,33 @@ void UnixSocketClient::send_sync_request(
     client_.send_sync_request(socket, req, res);
 }
 
-void UnixSocketClient::get_status() {
-    http::request<http::string_body> req = client_.build_request(
-        http::verb::get,
-        base_path() + "/status"
+void UnixSocketClient::test_route() {
+    http::request<http::string_body> req = client_.build_get_request(
+        base_path() + "/test"
     );
     http::response<http::string_body> res;
     send_sync_request(req, res);
-    std::cout << res << std::endl;
+}
+
+std::string UnixSocketClient::hash_schema(const nlohmann::json& config_schema) {
+    http::request<http::string_body> req = client_.build_post_request(
+        base_path() + "/config_schemas/hash",
+        config_schema.dump()
+    );
+    http::response<http::string_body> res;
+    send_sync_request(req, res);
+    return client_.parse_json_response(res)["digest"].get<std::string>();
+}
+
+openapi::BaseConcreteConfig UnixSocketClient::get_concrete_config(
+    const std::string& config_schema_digest
+) {
+    http::request<http::string_body> req = client_.build_get_request(
+        base_path() + "/concrete_configs/latest?config_schema_digest=" + config_schema_digest
+    );
+    http::response<http::string_body> res;
+    send_sync_request(req, res);
+    return openapi::BaseConcreteConfig::from_json(client_.parse_json_response(res));
 }
 
 } // namespace miru::client

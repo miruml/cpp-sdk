@@ -2,12 +2,15 @@
 
 // internal
 #include <miru/client/http_client.hpp>
+#include <miru/client/models/BaseConcreteConfig.h>
 
 // external
 #include <boost/beast.hpp>
+#include <nlohmann/json.hpp>
 
 namespace miru::client {
 
+namespace openapi = org::openapitools::server::model;
 namespace http = boost::beast::http;
 
 class UnixSocketClient {
@@ -24,9 +27,11 @@ public:
     std::string base_path() const { return "/v1"; }
 
     // route specific functions
-    void get_status();
-    // void get_schema_digest();
-    // void get_concrete_config();
+    void test_route(); 
+    std::string hash_schema(const nlohmann::json& config_schema);
+    openapi::BaseConcreteConfig get_concrete_config(
+        const std::string& config_schema_digest
+    );
 
 private:
     HTTPClient client_;
