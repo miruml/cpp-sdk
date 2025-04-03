@@ -1,2 +1,0 @@
-/usr/bin/ar qc libmiru.a CMakeFiles/miru.dir/miru/config.cpp.o CMakeFiles/miru.dir/miru/filesys/file.cpp.o CMakeFiles/miru.dir/miru/filesys/path.cpp.o CMakeFiles/miru.dir/miru/filesys/dir.cpp.o CMakeFiles/miru.dir/miru/unix_socket_client.cpp.o
-/usr/bin/ranlib libmiru.a

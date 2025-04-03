@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/example.out.dir/examples/main.cpp.o -o example.out  libmiru.a /home/ben/miru/sdk/cpp/vcpkg/installed/x64-linux/debug/lib/libfmtd.a -lyaml-cpp 

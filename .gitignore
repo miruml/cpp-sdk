@@ -33,3 +33,13 @@
 
 # vcpkg
 vcpkg/
+
+# cmake
+/build/
+/build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CMakeUserPresets.json
+Makefile
+cmake_install.cmake

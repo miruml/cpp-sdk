@@ -1,25 +1,18 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.12)
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
 project(miru_sdk VERSION 0.1.0 LANGUAGES CXX)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-# At the top of your CMakeLists.txt
 
 # Find required packages
 find_package(fmt REQUIRED)
+find_package(magic_enum CONFIG REQUIRED)
+find_package(Boost REQUIRED COMPONENTS asio beast)
 find_package(nlohmann_json 3.11 REQUIRED)
 find_package(yaml-cpp 0.8 REQUIRED)
 find_package(GTest REQUIRED)
-
-include(FetchContent)
-FetchContent_Declare(
-    magic_enum
-    GIT_REPOSITORY https://github.com/Neargye/magic_enum.git
-    GIT_TAG v0.9.3
-)
-FetchContent_MakeAvailable(magic_enum)
 
 add_library(miru
     miru/config.hpp
@@ -32,8 +25,10 @@ add_library(miru
     miru/filesys/dir.cpp
     miru/filesys/json.hpp
     miru/filesys/yaml.hpp
-    miru/unix_socket_client.hpp
-    miru/unix_socket_client.cpp
+    miru/client/http_client.hpp
+    miru/client/http_client.cpp
+    miru/client/unix_socket.hpp
+    miru/client/unix_socket.cpp
 )
 
 # Add include directories
@@ -47,7 +42,9 @@ target_link_libraries(miru PRIVATE
     fmt::fmt
     magic_enum::magic_enum
     nlohmann_json::nlohmann_json
-    yaml-cpp
+    yaml-cpp::yaml-cpp
+    Boost::asio
+    Boost::beast
 )
 
 # Make tests optional
@@ -68,7 +65,6 @@ if(BUILD_TESTING)
     target_link_libraries(miru_tests.out
         PRIVATE
         miru
-        fmt::fmt
         GTest::GTest
         GTest::Main
     )
@@ -77,7 +73,16 @@ if(BUILD_TESTING)
 endif()
 
 # Optional: Create example executable
-if (BUILD_EXAMPLES)
-    add_executable(example.out examples/main.cpp)
-    target_link_libraries(example.out PRIVATE miru)
+if (BUILD_EXAMPLES OR BUILD_FILESYS_EXAMPLE)
+    add_executable(filesys_example.out examples/filesys/main.cpp)
+    target_link_libraries(filesys_example.out PRIVATE miru)
+endif()
+
+if (BUILD_EXAMPLES OR BUILD_SOCKET_EXAMPLE)
+    add_executable(socket_example.out examples/socket/main.cpp)
+    target_link_libraries(
+        socket_example.out PRIVATE
+        miru
+        Boost::asio
+    )
 endif()

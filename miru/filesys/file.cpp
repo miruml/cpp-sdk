@@ -5,7 +5,7 @@
 #include <miru/filesys/file.hpp>
 
 // external
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <nlohmann/json.hpp>
 #include <yaml-cpp/yaml.h>
 #include <fmt/format.h>
