@@ -83,7 +83,8 @@ private:
     /// 
     /// </remarks>
     /// <param name="configSchemaDigest">The digest of the config schema</param>
-    virtual void get_latest_concrete_config(const std::optional<std::string> &configSchemaDigest, Pistache::Http::ResponseWriter &response) = 0;
+    /// <param name="configSchemaSlug">The slug of the config schema</param>
+    virtual void get_latest_concrete_config(const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configSchemaSlug, Pistache::Http::ResponseWriter &response) = 0;
 
 };
 

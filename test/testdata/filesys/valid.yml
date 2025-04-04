@@ -6,6 +6,7 @@ tags:
   - test
   - example
   - demo
+doesnt_exist: null
 settings:
   timeout: 30
   retries: 3

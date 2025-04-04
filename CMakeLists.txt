@@ -2,6 +2,26 @@ cmake_minimum_required(VERSION 3.12)
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
 project(miru_sdk VERSION 0.1.0 LANGUAGES CXX)
 
+# Set build type if not specified
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build" FORCE)
+endif()
+
+# Set optimization flags
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    if(MSVC)
+        set(CMAKE_CXX_FLAGS_RELEASE "/O2 /Ob2 /DNDEBUG")
+    else()
+        set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+    endif()
+endif()
+
+include(CheckIPOSupported)
+check_ipo_supported(RESULT supported OUTPUT error)
+if(supported)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
+
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -15,16 +35,6 @@ find_package(yaml-cpp 0.8 REQUIRED)
 find_package(GTest REQUIRED)
 
 add_library(miru
-    miru/config.hpp
-    miru/config.cpp
-    miru/filesys/file.hpp
-    miru/filesys/file.cpp
-    miru/filesys/path.hpp
-    miru/filesys/path.cpp
-    miru/filesys/dir.hpp
-    miru/filesys/dir.cpp
-    miru/filesys/json.hpp
-    miru/filesys/yaml.hpp
     miru/client/http_client.hpp
     miru/client/http_client.cpp
     miru/client/unix_socket.hpp
@@ -41,6 +51,15 @@ add_library(miru
     miru/client/models/Helpers.cpp
     miru/client/models/SchemaDigestResponse.h
     miru/client/models/SchemaDigestResponse.cpp
+    miru/config/config.hpp
+    miru/config/config.cpp
+    miru/config/utils.hpp
+    miru/filesys/file.hpp
+    miru/filesys/file.cpp
+    miru/filesys/path.hpp
+    miru/filesys/path.cpp
+    miru/filesys/dir.hpp
+    miru/filesys/dir.cpp
 )
 
 # Add include directories
@@ -64,7 +83,8 @@ if(BUILD_TESTING)
     enable_testing()
     
     add_executable(
-        miru_tests.out
+        test.out
+        test/config/utils_test.cpp
         test/filesys/file_test.cpp
         test/filesys/path_test.cpp
         test/filesys/dir_test.cpp
@@ -74,14 +94,15 @@ if(BUILD_TESTING)
         test/test_utils/testdata.cpp
     )
     
-    target_link_libraries(miru_tests.out
+    target_link_libraries(test.out
         PRIVATE
         miru
+        fmt::fmt
         GTest::GTest
         GTest::Main
     )
     
-    add_test(NAME miru_tests COMMAND miru_tests)
+    add_test(NAME test COMMAND test.out)
 endif()
 
 # Optional: Create example executable

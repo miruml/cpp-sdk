@@ -9,6 +9,7 @@
     "retries": 3,
     "debug": false
   },
+  "doesnt_exist": null,
   "users": [
     {
       "id": 1,

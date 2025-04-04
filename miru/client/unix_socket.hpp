@@ -30,7 +30,8 @@ public:
     void test_route(); 
     std::string hash_schema(const nlohmann::json& config_schema);
     openapi::BaseConcreteConfig get_concrete_config(
-        const std::string& config_schema_digest
+        const std::string& config_schema_digest,
+        const std::string& config_slug
     );
 
 private:

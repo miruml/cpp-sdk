@@ -10,7 +10,7 @@
 // external
 #include <gtest/gtest.h>
 
-enum class ExceptionType {
+enum class FileExceptionType {
     // std errors
     BadOptionalAccess,
 
@@ -26,7 +26,7 @@ struct FileTypeStringConversionTestCase {
     std::string test_name;
     std::optional<miru::filesys::FileType> file_type;
     std::string file_type_string;
-    ExceptionType expected_exception;
+    FileExceptionType expected_exception;
 };
 
 class FileTypeStringConversion : public testing::TestWithParam<FileTypeStringConversionTestCase> {};
@@ -35,12 +35,12 @@ TEST_P(FileTypeStringConversion, FileTypeStringConversion) {
     const auto& [_, opt_file_type, file_type_string, expected_exception] = GetParam();
     miru::filesys::FileType file_type;
     switch (expected_exception) {
-        case ExceptionType::None:
+        case FileExceptionType::None:
             file_type = opt_file_type.value();
             EXPECT_EQ(miru::filesys::file_type_to_string(file_type), file_type_string);
             EXPECT_EQ(miru::filesys::string_to_file_type(file_type_string), file_type);
             break;
-        case ExceptionType::BadOptionalAccess:
+        case FileExceptionType::BadOptionalAccess:
             EXPECT_THROW(
                 miru::filesys::string_to_file_type(file_type_string), 
                 std::bad_optional_access
@@ -63,19 +63,19 @@ INSTANTIATE_TEST_SUITE_P(File, FileTypeStringConversion,
             "JSON",
             miru::filesys::FileType::JSON,
             "JSON",
-            ExceptionType::None
+            FileExceptionType::None
         },
         FileTypeStringConversionTestCase{
             "YAML",
             miru::filesys::FileType::YAML,
             "YAML",
-            ExceptionType::None
+            FileExceptionType::None
         },
         FileTypeStringConversionTestCase{
             "invalid file type",
             std::nullopt,
             "invalid",
-            ExceptionType::BadOptionalAccess
+            FileExceptionType::BadOptionalAccess
         }
     ), FileTypeStringConversionTestNameGenerator
 );
@@ -137,7 +137,7 @@ struct FileTypeTestCase {
     std::string test_name;
     std::filesystem::path path;
     std::optional<miru::filesys::FileType> file_type;
-    ExceptionType expected_exception;
+    FileExceptionType expected_exception;
 };
 
 class FileTypes : public testing::TestWithParam<FileTypeTestCase> {};
@@ -146,10 +146,10 @@ TEST_P(FileTypes, FileType) {
     const auto& [test_name, path, file_type, expected_exception] = GetParam();
     miru::filesys::File file(path);
     switch (expected_exception) {
-        case ExceptionType::None:
+        case FileExceptionType::None:
             EXPECT_EQ(file.file_type(), file_type);
             break;
-        case ExceptionType::InvalidFileType:
+        case FileExceptionType::InvalidFileType:
             EXPECT_THROW(file.file_type(), miru::filesys::InvalidFileType);
             break;
         default:
@@ -168,31 +168,31 @@ INSTANTIATE_TEST_SUITE_P(File, FileTypes,
             "json file",
             std::filesystem::path("arglebargle.json"),
             std::optional<miru::filesys::FileType>(miru::filesys::FileType::JSON),
-            ExceptionType::None
+            FileExceptionType::None
         },
         FileTypeTestCase{
             "yaml file",
             std::filesystem::path("lebron.james.yaml"),
             std::optional<miru::filesys::FileType>(miru::filesys::FileType::YAML),
-            ExceptionType::None
+            FileExceptionType::None
         },
         FileTypeTestCase{
             "text file",
             std::filesystem::path("mj.txt"),
             std::nullopt,
-            ExceptionType::InvalidFileType
+            FileExceptionType::InvalidFileType
         },
         FileTypeTestCase{
             "xml file",
             std::filesystem::path("mj.xml"),
             std::nullopt,
-            ExceptionType::InvalidFileType
+            FileExceptionType::InvalidFileType
         },
         FileTypeTestCase{
             "go file",
             std::filesystem::path("golang.go"),
             std::nullopt,
-            ExceptionType::InvalidFileType
+            FileExceptionType::InvalidFileType
         }
     ),
     FileTypeTestNameGenerator
@@ -202,7 +202,7 @@ INSTANTIATE_TEST_SUITE_P(File, FileTypes,
 struct AssertExistsTestCase {
     std::string test_name;
     std::filesystem::path path;
-    ExceptionType expected_exception;
+    FileExceptionType expected_exception;
 };
 
 class AssertExistsTest : public testing::TestWithParam<AssertExistsTestCase> {};
@@ -211,13 +211,13 @@ TEST_P(AssertExistsTest, AssertExists) {
     const AssertExistsTestCase& test_case = GetParam();
     miru::filesys::File file(test_case.path);
     switch (test_case.expected_exception) {
-        case ExceptionType::None:
+        case FileExceptionType::None:
             EXPECT_NO_THROW(file.assert_exists());
             break;
-        case ExceptionType::FileNotFound:
+        case FileExceptionType::FileNotFound:
             EXPECT_THROW(file.assert_exists(), miru::filesys::FileNotFound);
             break;
-        case ExceptionType::NotAFile:
+        case FileExceptionType::NotAFile:
             EXPECT_THROW(file.assert_exists(), miru::filesys::NotAFile);
             break;
         default:
@@ -237,41 +237,41 @@ INSTANTIATE_TEST_SUITE_P(File, AssertExistsTest,
         AssertExistsTestCase{
             "golang file",
             miru::test_utils::filesys_testdata_dir().path() / "golang.go",
-            ExceptionType::None
+            FileExceptionType::None
         },
         AssertExistsTestCase{
             "json file",
             miru::test_utils::filesys_testdata_dir().path() / "invalid.json",
-            ExceptionType::None
+            FileExceptionType::None
         },
         AssertExistsTestCase{
             "yaml file",
             miru::test_utils::filesys_testdata_dir().path() / "invalid.yaml",
-            ExceptionType::None
+            FileExceptionType::None
         },
         AssertExistsTestCase{
             "text file",
             miru::test_utils::filesys_testdata_dir().path() / "text.txt",
-            ExceptionType::None
+            FileExceptionType::None
         },
 
         // file does not exists
         AssertExistsTestCase{
             "doesnt exist",
             miru::test_utils::filesys_testdata_dir().path() / "doesnt/exist.yaml",
-            ExceptionType::FileNotFound
+            FileExceptionType::FileNotFound
         },
         AssertExistsTestCase{
             "doesnt exist and is a directory",
             miru::test_utils::filesys_testdata_dir().path() / "doesnt/exist",
-            ExceptionType::FileNotFound
+            FileExceptionType::FileNotFound
         },
 
         // exists but is a directory
         AssertExistsTestCase{
             "is a directory",
             miru::test_utils::filesys_testdata_dir().path(),
-            ExceptionType::NotAFile
+            FileExceptionType::NotAFile
         }
     ),
     AssertExistsTestNameGenerator

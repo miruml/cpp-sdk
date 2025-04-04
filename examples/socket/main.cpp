@@ -4,9 +4,6 @@
 // internal
 #include <miru/client/unix_socket.hpp>
 
-// external
-#include <boost/asio.hpp>
-
 int main() {
     miru::client::UnixSocketClient client;
 
@@ -23,7 +20,7 @@ int main() {
     std::cout << "Success!\nHashed Schema: " << hash << "\n" << std::endl;
 
     std::cout << "Get Concrete Config ..." << std::endl;
-    auto config = client.get_concrete_config(hash);
+    auto config = client.get_concrete_config(hash, "motion-control");
     int indent = 2;
     std::cout << "Success!\nConcrete Config: \n" << config.to_json().dump(indent) << std::endl;
     return 0;

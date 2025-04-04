@@ -47,10 +47,11 @@ std::string UnixSocketClient::hash_schema(const nlohmann::json& config_schema) {
 }
 
 openapi::BaseConcreteConfig UnixSocketClient::get_concrete_config(
-    const std::string& config_schema_digest
+    const std::string& config_schema_digest,
+    const std::string& config_slug
 ) {
     http::request<http::string_body> req = client_.build_get_request(
-        base_path() + "/concrete_configs/latest?config_schema_digest=" + config_schema_digest
+        base_path() + "/concrete_configs/latest?config_schema_digest=" + config_schema_digest + "&config_slug=" + config_slug
     );
     http::response<http::string_body> res;
     send_sync_request(req, res);

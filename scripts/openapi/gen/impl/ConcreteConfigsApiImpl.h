@@ -42,7 +42,7 @@ public:
     explicit ConcreteConfigsApiImpl(const std::shared_ptr<Pistache::Rest::Router>& rtr);
     ~ConcreteConfigsApiImpl() override = default;
 
-    void get_latest_concrete_config(const std::optional<std::string> &configSchemaDigest, Pistache::Http::ResponseWriter &response);
+    void get_latest_concrete_config(const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configSchemaSlug, Pistache::Http::ResponseWriter &response);
 
 };
 

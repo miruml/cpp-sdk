@@ -82,9 +82,17 @@ void ConcreteConfigsApi::get_latest_concrete_config_handler(const Pistache::Rest
             configSchemaDigest = valueQuery_instance;
         }
     }
+    auto configSchemaSlugQuery = request.query().get("config_schema_slug");
+    std::optional<std::string> configSchemaSlug;
+    if(configSchemaSlugQuery.has_value()){
+        std::string valueQuery_instance;
+        if(fromStringValue(configSchemaSlugQuery.value(), valueQuery_instance)){
+            configSchemaSlug = valueQuery_instance;
+        }
+    }
     
     try {
-        this->get_latest_concrete_config(configSchemaDigest, response);
+        this->get_latest_concrete_config(configSchemaDigest, configSchemaSlug, response);
     } catch (Pistache::Http::HttpError &e) {
         response.send(static_cast<Pistache::Http::Code>(e.code()), e.what());
         return;

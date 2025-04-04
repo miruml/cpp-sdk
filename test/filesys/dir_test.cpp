@@ -10,7 +10,7 @@
 // external
 #include <gtest/gtest.h>
 
-enum class ExceptionType {
+enum class DirExceptionType {
     None,
     DirNotFound,
     NotADir,
@@ -21,7 +21,7 @@ enum class ExceptionType {
 struct ExistsTestCase {
     std::string test_name;
     std::string path;
-    ExceptionType expected_exception;
+    DirExceptionType expected_exception;
 };
 
 class Exists : public testing::TestWithParam<ExistsTestCase> {};
@@ -31,15 +31,15 @@ TEST_P(Exists, Exists) {
     miru::filesys::Dir dir(path);
 
     switch (expected_exception) {
-        case ExceptionType::None:
+        case DirExceptionType::None:
             EXPECT_TRUE(dir.exists());
             EXPECT_NO_THROW(dir.assert_exists());
             break;
-        case ExceptionType::DirNotFound:
+        case DirExceptionType::DirNotFound:
             EXPECT_FALSE(dir.exists());
             EXPECT_THROW(dir.assert_exists(), miru::filesys::DirNotFound);
             break;
-        case ExceptionType::NotADir:
+        case DirExceptionType::NotADir:
             EXPECT_FALSE(dir.exists());
             EXPECT_THROW(dir.assert_exists(), miru::filesys::NotADir);
             break;
@@ -59,17 +59,17 @@ INSTANTIATE_TEST_SUITE_P(Dir, Exists,
         ExistsTestCase{
             "directory exists",
             miru::test_utils::filesys_testdata_dir().path(),
-            ExceptionType::None
+            DirExceptionType::None
         },
         ExistsTestCase{
             "directory does not exist",
             "doesnt/exist",
-            ExceptionType::DirNotFound
+            DirExceptionType::DirNotFound
         },
         ExistsTestCase{
             "is a file",
             miru::test_utils::filesys_testdata_dir().path() / "text.txt",
-            ExceptionType::NotADir
+            DirExceptionType::NotADir
         }
     ),
     ExistsTestNameGenerator
@@ -214,7 +214,7 @@ struct GitRepoRootDirTestCase {
     std::string test_name;
     std::filesystem::path path;
     std::filesystem::path expected_git_repo_root_dir;
-    ExceptionType expected_exception;
+    DirExceptionType expected_exception;
 };
 
 class GitRepoRootDirs : public testing::TestWithParam<GitRepoRootDirTestCase> {};
@@ -223,13 +223,13 @@ TEST_P(GitRepoRootDirs, GitRepoRootDir) {
     const auto& [test_name, path, expected_git_repo_root_dir, expected_exception] = GetParam();
     miru::filesys::Dir dir(path);
     switch (expected_exception) {
-        case ExceptionType::None:
+        case DirExceptionType::None:
             EXPECT_EQ(dir.git_repo_root_dir().path(), expected_git_repo_root_dir);
             break;
-        case ExceptionType::DirNotFound:
+        case DirExceptionType::DirNotFound:
             EXPECT_THROW(dir.git_repo_root_dir(), miru::filesys::DirNotFound);
             break;
-        case ExceptionType::UnableToFindGitRepo:
+        case DirExceptionType::UnableToFindGitRepo:
             EXPECT_THROW(dir.git_repo_root_dir(), miru::filesys::UnableToFindGitRepo);
             break;
         default:
@@ -249,25 +249,25 @@ INSTANTIATE_TEST_SUITE_P(Dir, GitRepoRootDirs,
             "git repo from filesystem data directory",
             miru::test_utils::filesys_testdata_dir().path(),
             miru::filesys::Dir(miru::test_utils::filesys_testdata_dir().path() / ".." / ".." / "..").abs_path(),
-            ExceptionType::None
+            DirExceptionType::None
         },
         GitRepoRootDirTestCase{
             "git repo from current directory",
             miru::filesys::Dir::current_dir().path(),
             miru::filesys::Dir(miru::test_utils::filesys_testdata_dir().path() / ".." / ".." / "..").abs_path(),
-            ExceptionType::None
+            DirExceptionType::None
         },
         GitRepoRootDirTestCase{
             "directory does not exist",
             std::filesystem::path("doesnt") / "exist",
             std::filesystem::path(),
-            ExceptionType::DirNotFound
+            DirExceptionType::DirNotFound
         },
         GitRepoRootDirTestCase{
             "is not a git repo",
             miru::test_utils::filesys_testdata_dir().path() / ".." / ".." / ".." / "..",
             std::filesystem::path(),
-            ExceptionType::UnableToFindGitRepo
+            DirExceptionType::UnableToFindGitRepo
         }
     ),
     GitRepoRootDirTestNameGenerator
