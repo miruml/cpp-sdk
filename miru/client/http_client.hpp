@@ -10,7 +10,6 @@
 
 namespace miru::client {
 
-namespace asio = boost::asio;
 namespace http = boost::beast::http;
 
 class HTTPClient {

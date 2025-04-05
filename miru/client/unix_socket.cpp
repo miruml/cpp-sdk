@@ -1,8 +1,6 @@
 // std
-#include <iostream>
 #include <unistd.h>
 #include <cstring>
-#include <stdexcept>
 
 // internal
 #include <miru/client/http_client.hpp>
@@ -16,6 +14,7 @@
 #include <miru/client/models/BaseConcreteConfig.h>
 namespace miru::client {
 
+namespace asio = boost::asio;
 namespace http = boost::beast::http;
 
 void UnixSocketClient::send_sync_request(

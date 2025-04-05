@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <filesystem>
-#include <optional>
 
 // internal
 #include <miru/filesys/path.hpp>

@@ -25,6 +25,7 @@ endif()
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Find required packages
 find_package(fmt REQUIRED)
@@ -53,7 +54,14 @@ add_library(miru
     miru/client/models/SchemaDigestResponse.cpp
     miru/config/config.hpp
     miru/config/config.cpp
-    miru/config/utils.hpp
+    miru/config/errors.hpp
+    miru/config/json.hpp
+    miru/config/json.cpp
+    miru/parameter/parameter.hpp
+    miru/parameter/parameter_value.hpp
+    miru/parameter/composite_parameter.hpp
+    miru/config/yaml.hpp
+    miru/config/yaml.cpp
     miru/filesys/file.hpp
     miru/filesys/file.cpp
     miru/filesys/path.hpp
@@ -84,7 +92,8 @@ if(BUILD_TESTING)
     
     add_executable(
         test.out
-        test/config/utils_test.cpp
+        test/config/json_test.cpp
+        test/config/yaml_test.cpp
         test/filesys/file_test.cpp
         test/filesys/path_test.cpp
         test/filesys/dir_test.cpp

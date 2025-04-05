@@ -1,9 +1,6 @@
 // internal
 #include <miru/filesys/dir.hpp>
 
-// deleteme
-#include <iostream>
-
 namespace miru::filesys {
 
 Dir Dir::parent() const {

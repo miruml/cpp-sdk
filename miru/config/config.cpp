@@ -89,7 +89,7 @@ ConfigBuilder& ConfigBuilder::with_source(ConfigSource source) {
     return *this;
 }
 
-ConfigBuilder& ConfigBuilder::with_data(const std::variant<nlohmann::json, YAML::Node>& data) {
+ConfigBuilder& ConfigBuilder::with_data(const miru::params::Object& data) {
     if (data_.has_value()) {
         throw std::runtime_error("Data already set");
     }
