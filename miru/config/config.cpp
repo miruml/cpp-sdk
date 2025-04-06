@@ -4,6 +4,7 @@
 
 // external
 #include <nlohmann/json.hpp>
+#include <yaml-cpp/yaml.h>
 
 namespace miru::config {
 
@@ -89,7 +90,7 @@ ConfigBuilder& ConfigBuilder::with_source(ConfigSource source) {
     return *this;
 }
 
-ConfigBuilder& ConfigBuilder::with_data(const miru::params::Object& data) {
+ConfigBuilder& ConfigBuilder::with_data(const miru::params::Parameter& data) {
     if (data_.has_value()) {
         throw std::runtime_error("Data already set");
     }

@@ -2,7 +2,6 @@
 
 // internal
 #include <miru/params/parameter.hpp>
-#include <miru/params/composite.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>
@@ -10,7 +9,7 @@
 
 namespace miru::params {
 
-miru::params::Object load_yaml(const YAML::Node& node);
-miru::params::Object load_json(const nlohmann::json& node);
+miru::params::Parameter load_yaml(const YAML::Node& node);
+miru::params::Parameter load_json(const nlohmann::json& node);
 
 }  // namespace miru::params

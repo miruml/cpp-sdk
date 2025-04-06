@@ -1,13 +1,13 @@
 #pragma once
 
 // internal
-#include <miru/config/errors.hpp>
+#include <miru/params/exceptions.hpp>
 
 // external
 #include <nlohmann/json.hpp>
 #include <fmt/ranges.h>
 
-namespace miru::config {
+namespace miru::params {
 
 void dump_json(
     std::ostream& out,
@@ -63,4 +63,4 @@ T get_json_node_as(
     return node.get<T>();
 }
 
-} // namespace miru::config
+} // namespace miru::params

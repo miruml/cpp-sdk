@@ -1,11 +1,11 @@
 // internal
-#include <miru/config/errors.hpp>
+#include <miru/params/exceptions.hpp>
 
 // external
 #include <nlohmann/json.hpp>
 #include <fmt/ranges.h>
 
-namespace miru::config {
+namespace miru::params {
 
 void dump_json(
     std::ostream& out,
@@ -79,4 +79,4 @@ void list_json_nodes_helper(
     }
 }
 
-} // namespace miru::config
+} // namespace miru::params
