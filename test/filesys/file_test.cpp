@@ -1,6 +1,5 @@
 // std
 #include <filesystem>
-#include <fstream>
 
 // internal
 #include <miru/filesys/file.hpp>
@@ -342,4 +341,9 @@ TEST_F(ReadYaml, ValidYaml) {
 TEST_F(ReadYaml, ValidYml) {
     auto yml = yml_file.read_yaml();
     EXPECT_EQ(yml["name"].as<std::string>(), "Example Test Data");
+}
+
+// ============================ read_structured_data() ============================= //
+TEST(ReadStructuredData, FileNotFound) {
+    EXPECT_EQ(false, true);
 }

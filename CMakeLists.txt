@@ -7,12 +7,19 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build" FORCE)
 endif()
 
+# Debug flags
+if(MSVC)
+    set(CMAKE_CXX_FLAGS_DEBUG "/Zi /Od /DEBUG")
+else()
+    set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+endif()
+
 # Set optimization flags
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     if(MSVC)
-        set(CMAKE_CXX_FLAGS_RELEASE "/O2 /Ob2 /DNDEBUG")
+        set(CMAKE_CXX_FLAGS_RELEASE "/O2 /Ob2 /DNDEBUG /Zi")
     else()
-        set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+        set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -g")
     endif()
 endif()
 
@@ -33,7 +40,6 @@ find_package(magic_enum CONFIG REQUIRED)
 find_package(Boost REQUIRED COMPONENTS asio beast)
 find_package(nlohmann_json 3.11 REQUIRED)
 find_package(yaml-cpp 0.8 REQUIRED)
-find_package(GTest REQUIRED)
 
 add_library(miru
     miru/client/http_client.hpp
@@ -54,26 +60,23 @@ add_library(miru
     miru/client/models/SchemaDigestResponse.cpp
     miru/config/config.hpp
     miru/config/config.cpp
-    miru/config/errors.hpp
-    miru/config/json.hpp
-    miru/config/json.cpp
-    miru/parameter/parameter.hpp
-    miru/parameter/parameter_value.hpp
-    miru/parameter/composite_parameter.hpp
-    miru/config/yaml.hpp
-    miru/config/yaml.cpp
+    miru/filesys/dir.hpp
+    miru/filesys/dir.cpp
     miru/filesys/file.hpp
     miru/filesys/file.cpp
     miru/filesys/path.hpp
     miru/filesys/path.cpp
-    miru/filesys/dir.hpp
-    miru/filesys/dir.cpp
+    miru/params/exceptions.hpp
+    miru/params/loader.hpp
+    miru/params/loader.cpp
+    miru/params/parameter.hpp
+    miru/params/parameter.cpp
+    miru/params/value.cpp
 )
 
 # Add include directories
 target_include_directories(miru PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${GTEST_INCLUDE_DIRS}
 )
 
 # Link dependencies
@@ -89,18 +92,20 @@ target_link_libraries(miru PRIVATE
 # Make tests optional
 if(BUILD_TESTING)
     enable_testing()
+
+    find_package(GTest REQUIRED)
     
     add_executable(
         test.out
-        test/config/json_test.cpp
-        test/config/yaml_test.cpp
+        test/filesys/dir_test.cpp
         test/filesys/file_test.cpp
         test/filesys/path_test.cpp
-        test/filesys/dir_test.cpp
-        test/test_utils/utils.hpp
-        test/test_utils/utils.cpp
         test/test_utils/testdata.hpp
         test/test_utils/testdata.cpp
+        test/test_utils/utils.hpp
+        test/test_utils/utils.cpp
+        test/params/loader_test.cpp
+        test/params/params_test.cpp
     )
     
     target_link_libraries(test.out

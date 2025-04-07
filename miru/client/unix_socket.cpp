@@ -12,10 +12,13 @@
 #include <boost/beast.hpp>
 #include <nlohmann/json.hpp>
 #include <miru/client/models/BaseConcreteConfig.h>
+#include <miru/client/models/HashSchemaRequest.h>
+
 namespace miru::client {
 
 namespace asio = boost::asio;
 namespace http = boost::beast::http;
+namespace openapi = org::openapitools::server::model;
 
 void UnixSocketClient::send_sync_request(
     const http::request<http::string_body>& req,
@@ -35,10 +38,12 @@ void UnixSocketClient::test_route() {
     send_sync_request(req, res);
 }
 
-std::string UnixSocketClient::hash_schema(const nlohmann::json& config_schema) {
+std::string UnixSocketClient::hash_schema(
+    const openapi::HashSchemaRequest& config_schema
+) {
     http::request<http::string_body> req = client_.build_post_request(
         base_path() + "/config_schemas/hash",
-        config_schema.dump()
+        config_schema.to_json()
     );
     http::response<http::string_body> res;
     send_sync_request(req, res);

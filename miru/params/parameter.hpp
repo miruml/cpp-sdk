@@ -1,12 +1,12 @@
 #pragma once
 
 // std
+#include <cstddef>
 #include <string>
 #include <variant>
 #include <optional>
 
 // internal
-#include <miru/utils.hpp>
 #include <miru/params/exceptions.hpp>
 
 // external
@@ -14,6 +14,12 @@
 #include <yaml-cpp/yaml.h>
 
 namespace miru::params {
+
+// ================================================================================= //
+// ================================================================================= //
+// =============================== PARAMETER VALUES ================================ //
+// ================================================================================= //
+// ================================================================================= //
 
 enum ParameterType : uint8_t {
     // ============================== ROS2 INTERFACES ============================== // 
@@ -27,7 +33,12 @@ enum ParameterType : uint8_t {
     PARAMETER_INTEGER = 2,
     PARAMETER_DOUBLE = 3,
     PARAMETER_STRING = 4,
-    PARAMETER_BYTE_ARRAY = 5,
+    // json schema does not support binary types directly (just a string). It is possible
+    // to support it by leveraging the contentEncoding field for strings but the json
+    // schema libraries in c++ aren't great so we'd probably be forced to write our own
+    // parser or fork a new one from existing libraries. Needless to say, byte arrays
+    // simply won't be supported for now.
+    // PARAMETER_BYTE_ARRAY = 5,
     PARAMETER_BOOL_ARRAY = 6,
     PARAMETER_INTEGER_ARRAY = 7,
     PARAMETER_DOUBLE_ARRAY = 8,
@@ -41,8 +52,10 @@ enum ParameterType : uint8_t {
     PARAMETER_NULL = 128,
     // yaml scalar since yaml-cpp does not support strongly typed information ("4" vs 4)
     PARAMETER_SCALAR = 129, 
-    PARAMETER_OBJECT_ARRAY = 130,
-    PARAMETER_OBJECT = 131,
+    PARAMETER_SCALAR_ARRAY = 130,
+    PARAMETER_NESTED_ARRAY = 131,
+    PARAMETER_OBJECT = 132,
+    PARAMETER_OBJECT_ARRAY = 133,
 };
 
 // ================================ ROS2 INTERFACES ================================ //
@@ -54,8 +67,7 @@ to_string(ParameterType type);
 
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L48
 
-std::ostream &
-operator<<(std::ostream & os, ParameterType type);
+std::ostream &operator<<(std::ostream & os, const ParameterType & type);
 
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L57
 
@@ -77,40 +89,6 @@ public:
 
 class Parameter;
 
-class ScalarValue {
-
-public:
-    ScalarValue(
-        std::string scalar,
-        std::optional<bool> bool_value,
-        std::optional<int64_t> int_value,
-        std::optional<double> double_value
-    );
-
-    bool operator==(const ScalarValue & other) const;
-    bool operator!=(const ScalarValue & other) const;
-
-    bool has_bool_value() const { return flags_ & HAS_BOOL_VALUE; }
-    bool has_int_value() const { return flags_ & HAS_INT_VALUE; }
-    bool has_double_value() const { return flags_ & HAS_DOUBLE_VALUE; }
-
-    const std::string& get_scalar() const { return scalar; }
-    const bool& get_bool_value() const;
-    const int64_t& get_int_value() const;
-    const double& get_double_value() const;
-
-private:
-    std::string scalar;
-    bool bool_value_;
-    int64_t int_value_;
-    double double_value_;
-
-    uint8_t flags_ = 0;
-    static constexpr uint8_t HAS_BOOL_VALUE = 1 << 0;
-    static constexpr uint8_t HAS_INT_VALUE = 1 << 1;
-    static constexpr uint8_t HAS_DOUBLE_VALUE = 1 << 2;
-};
-
 /// Indicate the parameter type does not match the expected type.
 class ScalarConversionException: public std::runtime_error
 {
@@ -120,10 +98,113 @@ public:
    * \param[in] scalar the scalar value.
    * \param[in] target_type the target type attempted to convert to.
    */
-  ScalarConversionException(const ScalarValue& scalar, ParameterType target_type)
-  : std::runtime_error("scalar [" + scalar.get_scalar() + "] cannot be converted to [" + to_string(target_type) + "]")
+  ScalarConversionException(const std::string& scalar, ParameterType target_type)
+  : std::runtime_error("scalar [" + scalar + "] cannot be converted to [" + to_string(target_type) + "]")
   {}
 };
+
+template<typename T>
+struct is_scalar_type : std::false_type {};
+template<> struct is_scalar_type<bool> : std::true_type {};
+template<> struct is_scalar_type<int64_t> : std::true_type {};
+template<> struct is_scalar_type<double> : std::true_type {};
+template<> struct is_scalar_type<std::string> : std::true_type {};
+
+class Scalar {
+public:
+    Scalar(const std::string & value) : value_(value) {}
+
+    bool operator==(const Scalar & other) const { return value_ == other.value_; }
+    bool operator!=(const Scalar & other) const { return value_ != other.value_; }   
+
+    bool as_bool() const;
+    int64_t as_int() const;
+    double as_double() const;
+    const std::string & as_string() const { return value_; }
+    const std::vector<uint8_t> & as_byte_array() const;
+
+    template<ParameterType type>
+    typename std::enable_if<type == ParameterType::PARAMETER_BOOL, bool>::type
+    as() const {
+        return as_bool();
+    }
+
+    template<ParameterType type>
+    typename std::enable_if<type == ParameterType::PARAMETER_INTEGER, int64_t>::type
+    as() const {
+        return as_int();
+    }
+
+    template<ParameterType type>
+    typename std::enable_if<type == ParameterType::PARAMETER_DOUBLE, double>::type
+    as() const {
+        return as_double();
+    }
+
+    template<ParameterType type>
+    typename std::enable_if<type == ParameterType::PARAMETER_STRING, std::string>::type
+    as() const {
+        return as_string();
+    }
+
+    // byte arrays are not supported
+
+    // template<ParameterType type>
+    // typename std::enable_if<type == ParameterType::PARAMETER_BYTE_ARRAY, std::vector<uint8_t>>::type
+    // as() const {
+    //     return as_byte_array();
+    // }
+    
+    template<typename type> 
+    constexpr
+    typename std::enable_if<std::is_same<type, bool>::value, bool>::type
+    as() const {
+        return as_bool();
+    }
+
+    template<typename type> 
+    constexpr
+    typename std::enable_if<std::is_integral<type>::value && !std::is_same<type, bool>::value, int64_t>::type
+    as() const {
+        return as_int();
+    }
+
+    template<typename type> 
+    constexpr
+    typename std::enable_if<std::is_floating_point<type>::value, double>::type
+    as() const {
+        return as_double();
+    }
+
+    template<typename type> 
+    constexpr
+    typename std::enable_if<std::is_convertible<type, std::string>::value, std::string>::type
+    as() const {
+        return as_string();
+    }
+    
+
+private:
+    std::string value_;
+    mutable std::vector<uint8_t> byte_array_;
+    mutable bool byte_array_is_set_ = false;
+};
+
+std::string to_string(const Scalar & scalar);
+std::ostream & operator<<(std::ostream & os, const Scalar & scalar);
+
+template<typename T>
+typename std::enable_if<is_scalar_type<T>::value, std::vector<T>>::type
+transform_scalar_array(const std::vector<Scalar> & scalars) {
+    std::vector<T> dest;
+    dest.reserve(scalars.size());
+    std::transform(scalars.begin(), scalars.end(), std::back_inserter(dest), [](const Scalar & s) { return s.as<T>(); });
+    return dest;
+}
+
+struct Object : std::vector<Parameter> {};
+struct ObjectArray : std::vector<Parameter> {};
+struct NestedArray : std::vector<Parameter> {};
 
 /// Store the type and value of a parameter.
 class ParameterValue
@@ -157,8 +238,11 @@ public:
     explicit ParameterValue(const std::string & string_value);
     /// Construct a parameter value with type PARAMETER_STRING.
     explicit ParameterValue(const char * string_value);
-    /// Construct a parameter value with type PARAMETER_BYTE_ARRAY.
-    explicit ParameterValue(const std::vector<uint8_t> & byte_array_value);
+
+    // byte arrays are not supported
+    // /// Construct a parameter value with type PARAMETER_BYTE_ARRAY.
+    // explicit ParameterValue(const std::vector<uint8_t> & byte_array_value);
+
     /// Construct a parameter value with type PARAMETER_BOOL_ARRAY.
     explicit ParameterValue(const std::vector<bool> & bool_array_value);
     /// Construct a parameter value with type PARAMETER_INTEGER_ARRAY.
@@ -171,6 +255,7 @@ public:
     explicit ParameterValue(const std::vector<double> & double_array_value);
     /// Construct a parameter value with type PARAMETER_STRING_ARRAY.
     explicit ParameterValue(const std::vector<std::string> & string_array_value);
+
 
     // we are not going to support type information in the public interface right now
     // since yaml does not support strongly typed information ("4" vs 4) and we have no
@@ -204,20 +289,14 @@ public:
 
     template<ParameterType type>
     constexpr
-    typename std::enable_if<type == ParameterType::PARAMETER_BOOL, const bool &>::type
+    typename std::enable_if<type == ParameterType::PARAMETER_BOOL, const bool>::type
     get() const
     {
         switch (type_) {
             case ParameterType::PARAMETER_BOOL:
                 return std::get<bool>(value_);
             case ParameterType::PARAMETER_SCALAR:
-                if (!std::get<ScalarValue>(value_).has_bool_value()) {
-                    throw ScalarConversionException(
-                        std::get<ScalarValue>(value_),
-                        ParameterType::PARAMETER_BOOL
-                    );
-                }
-                return std::get<ScalarValue>(value_).get_bool_value();
+                return std::get<Scalar>(value_).as_bool();
             default:
                 throw ParameterTypeException(ParameterType::PARAMETER_BOOL, type_);
         }
@@ -225,20 +304,14 @@ public:
 
     template<ParameterType type>
     constexpr
-    typename std::enable_if<type == ParameterType::PARAMETER_INTEGER, const int64_t &>::type
+    typename std::enable_if<type == ParameterType::PARAMETER_INTEGER, const int64_t>::type
     get() const
     {
         switch (type_) {
             case ParameterType::PARAMETER_INTEGER:
                 return std::get<int64_t>(value_);
             case ParameterType::PARAMETER_SCALAR:
-                if (!std::get<ScalarValue>(value_).has_int_value()) {
-                    throw ScalarConversionException(
-                        std::get<ScalarValue>(value_),
-                        ParameterType::PARAMETER_INTEGER
-                    );
-                }
-                return std::get<ScalarValue>(value_).get_int_value();
+                return std::get<Scalar>(value_).as_int();
             default:
                 throw ParameterTypeException(ParameterType::PARAMETER_INTEGER, type_);
         }
@@ -246,20 +319,14 @@ public:
 
     template<ParameterType type>
     constexpr
-    typename std::enable_if<type == ParameterType::PARAMETER_DOUBLE, const double &>::type
+    typename std::enable_if<type == ParameterType::PARAMETER_DOUBLE, const double>::type
     get() const
     {
         switch (type_) {
             case ParameterType::PARAMETER_DOUBLE:
                 return std::get<double>(value_);
             case ParameterType::PARAMETER_SCALAR:
-                if (!std::get<ScalarValue>(value_).has_double_value()) {
-                    throw ScalarConversionException(
-                        std::get<ScalarValue>(value_),
-                        ParameterType::PARAMETER_DOUBLE
-                    );
-                }
-                return std::get<ScalarValue>(value_).get_double_value();
+                return std::get<Scalar>(value_).as_double();
             default:
                 throw ParameterTypeException(ParameterType::PARAMETER_DOUBLE, type_);
         }
@@ -274,23 +341,29 @@ public:
             case ParameterType::PARAMETER_STRING:
                 return std::get<std::string>(value_);
             case ParameterType::PARAMETER_SCALAR:
-                return std::get<ScalarValue>(value_).get_scalar();
+                return std::get<Scalar>(value_).as_string();
             default:
                 throw ParameterTypeException(ParameterType::PARAMETER_STRING, type_);
         }
     }
 
-    template<ParameterType type>
-    constexpr
-    typename std::enable_if<
-        type == ParameterType::PARAMETER_BYTE_ARRAY, const std::vector<uint8_t> &>::type
-    get() const
-    {
-        if (type_ != ParameterType::PARAMETER_BYTE_ARRAY) {
-        throw ParameterTypeException(ParameterType::PARAMETER_BYTE_ARRAY, type_);
-        }
-        return std::get<std::vector<uint8_t>>(value_);
-    }
+    // byte arrays are not supported
+
+    // template<ParameterType type>
+    // constexpr
+    // typename std::enable_if<
+    //     type == ParameterType::PARAMETER_BYTE_ARRAY, const std::vector<uint8_t> &>::type
+    // get() const
+    // {
+    //     switch (type_) {
+    //         case ParameterType::PARAMETER_BYTE_ARRAY:
+    //             return std::get<std::vector<uint8_t>>(value_);
+    //         case ParameterType::PARAMETER_SCALAR:
+    //             return std::get<Scalar>(value_).as_byte_array();
+    //         default:
+    //             throw ParameterTypeException(ParameterType::PARAMETER_BYTE_ARRAY, type_);
+    //     }
+    // }
 
     template<ParameterType type>
     constexpr
@@ -298,10 +371,20 @@ public:
         type == ParameterType::PARAMETER_BOOL_ARRAY, const std::vector<bool> &>::type
     get() const
     {
-        if (type_ != ParameterType::PARAMETER_BOOL_ARRAY) {
-        throw ParameterTypeException(ParameterType::PARAMETER_BOOL_ARRAY, type_);
+        switch (type_) {
+            case ParameterType::PARAMETER_BOOL_ARRAY:
+                return std::get<std::vector<bool>>(value_);
+            case ParameterType::PARAMETER_SCALAR_ARRAY:
+                if (!(cache_flags_ & BOOL_ARRAY_CACHED)) {
+                    scalar_bool_array_ = transform_scalar_array<bool>(
+                        std::get<std::vector<Scalar>>(value_)
+                    );
+                    cache_flags_ |= BOOL_ARRAY_CACHED;
+                }
+                return scalar_bool_array_;
+            default:
+                throw ParameterTypeException(ParameterType::PARAMETER_BOOL_ARRAY, type_);
         }
-        return std::get<std::vector<bool>>(value_);
     }
 
     template<ParameterType type>
@@ -310,10 +393,20 @@ public:
         type == ParameterType::PARAMETER_INTEGER_ARRAY, const std::vector<int64_t> &>::type
     get() const
     {
-        if (type_ != ParameterType::PARAMETER_INTEGER_ARRAY) {
-        throw ParameterTypeException(ParameterType::PARAMETER_INTEGER_ARRAY, type_);
+        switch (type_) {
+            case ParameterType::PARAMETER_INTEGER_ARRAY:
+                return std::get<std::vector<int64_t>>(value_);
+            case ParameterType::PARAMETER_SCALAR_ARRAY:
+                if (!(cache_flags_ & INT_ARRAY_CACHED)) {
+                    scalar_int_array_ = transform_scalar_array<int64_t>(
+                        std::get<std::vector<Scalar>>(value_)
+                    );
+                    cache_flags_ |= INT_ARRAY_CACHED;
+                }
+                return scalar_int_array_;
+            default:
+                throw ParameterTypeException(ParameterType::PARAMETER_INTEGER_ARRAY, type_);
         }
-        return std::get<std::vector<int64_t>>(value_);
     }
 
     template<ParameterType type>
@@ -322,10 +415,20 @@ public:
         type == ParameterType::PARAMETER_DOUBLE_ARRAY, const std::vector<double> &>::type
     get() const
     {
-        if (type_ != ParameterType::PARAMETER_DOUBLE_ARRAY) {
-        throw ParameterTypeException(ParameterType::PARAMETER_DOUBLE_ARRAY, type_);
+        switch (type_) {
+            case ParameterType::PARAMETER_DOUBLE_ARRAY:
+                return std::get<std::vector<double>>(value_);
+            case ParameterType::PARAMETER_SCALAR_ARRAY:
+                if (!(cache_flags_ & DOUBLE_ARRAY_CACHED)) {
+                    scalar_double_array_ = transform_scalar_array<double>(
+                        std::get<std::vector<Scalar>>(value_)
+                    );
+                    cache_flags_ |= DOUBLE_ARRAY_CACHED;
+                }
+                return scalar_double_array_;
+            default:
+                throw ParameterTypeException(ParameterType::PARAMETER_DOUBLE_ARRAY, type_);
         }
-        return std::get<std::vector<double>>(value_);
     }
 
     template<ParameterType type>
@@ -334,10 +437,20 @@ public:
         type == ParameterType::PARAMETER_STRING_ARRAY, const std::vector<std::string> &>::type
     get() const
     {
-        if (type_ != ParameterType::PARAMETER_STRING_ARRAY) {
-        throw ParameterTypeException(ParameterType::PARAMETER_STRING_ARRAY, type_);
+        switch (type_) {
+            case ParameterType::PARAMETER_STRING_ARRAY:
+                return std::get<std::vector<std::string>>(value_);
+            case ParameterType::PARAMETER_SCALAR_ARRAY:
+                if (!(cache_flags_ & STRING_ARRAY_CACHED)) {
+                    scalar_string_array_ = transform_scalar_array<std::string>(
+                        std::get<std::vector<Scalar>>(value_)
+                    );
+                    cache_flags_ |= STRING_ARRAY_CACHED;
+                }
+                return scalar_string_array_;
+            default:
+                throw ParameterTypeException(ParameterType::PARAMETER_STRING_ARRAY, type_);
         }
-        return std::get<std::vector<std::string>>(value_);
     }
 
     // ROS2 "GET" methods using primitive types
@@ -345,7 +458,7 @@ public:
 
     template<typename type>
     constexpr
-    typename std::enable_if<std::is_same<type, bool>::value, const bool &>::type
+    typename std::enable_if<std::is_same<type, bool>::value, const bool>::type
     get() const
     {
         return get<ParameterType::PARAMETER_BOOL>();
@@ -354,7 +467,7 @@ public:
     template<typename type>
     constexpr
     typename std::enable_if<
-        std::is_integral<type>::value && !std::is_same<type, bool>::value, const int64_t &>::type
+        std::is_integral<type>::value && !std::is_same<type, bool>::value, const int64_t>::type
     get() const
     {
         return get<ParameterType::PARAMETER_INTEGER>();
@@ -362,7 +475,7 @@ public:
 
     template<typename type>
     constexpr
-    typename std::enable_if<std::is_floating_point<type>::value, const double &>::type
+    typename std::enable_if<std::is_floating_point<type>::value, const double>::type
     get() const
     {
         return get<ParameterType::PARAMETER_DOUBLE>();
@@ -376,15 +489,17 @@ public:
         return get<ParameterType::PARAMETER_STRING>();
     }
 
-    template<typename type>
-    constexpr
-    typename std::enable_if<
-        std::is_convertible<
-        type, const std::vector<uint8_t> &>::value, const std::vector<uint8_t> &>::type
-    get() const
-    {
-        return get<ParameterType::PARAMETER_BYTE_ARRAY>();
-    }
+    // byte arrays are not supported
+
+    // template<typename type>
+    // constexpr
+    // typename std::enable_if<
+    //     std::is_convertible<
+    //     type, const std::vector<uint8_t> &>::value, const std::vector<uint8_t> &>::type
+    // get() const
+    // {
+    //     return get<ParameterType::PARAMETER_BYTE_ARRAY>();
+    // }
 
     template<typename type>
     constexpr
@@ -448,69 +563,245 @@ public:
 
     // ============================== MIRU INTERFACES ============================== //
 
+    /// Construct a parameter value with type PARAMETER_INTEGER.
+    explicit ParameterValue(const unsigned int uint_value);
+    /// Construct a parameter value with type PARAMETER_NULL.
+    explicit ParameterValue(const std::nullptr_t null_value);
+    /// Construct a parameter value with type PARAMETER_SCALAR.
+    explicit ParameterValue(const Scalar & scalar_value);
+    /// Construct a parameter value with type PARAMETER_SCALAR_ARRAY.
+    explicit ParameterValue(const std::vector<Scalar> & scalar_array_value);
+    /// Construct a parameter value with type PARAMETER_NESTED_ARRAY.
+    explicit ParameterValue(const NestedArray & nested_array_value);
+    /// Construct a parameter value with type PARAMETER_OBJECT.
+    explicit ParameterValue(const Object & object_value);
     /// Construct a parameter value with type PARAMETER_OBJECT_ARRAY.
-    explicit ParameterValue(
-        const ParameterType& type,
-        const std::vector<Parameter> & object_array_value
-    );
+    explicit ParameterValue(const ObjectArray & object_array_value);
 
-    static ParameterValue make_null();
-    static ParameterValue make_object(const std::vector<Parameter> & object_entries);
-    static ParameterValue make_object_array(const std::vector<Parameter> & object_entries);
+    /// Get the value of parameter as using the given ParameterType as a template argument
+    template<ParameterType ParamT>
+    decltype(auto)
+    get_nullable() const 
+    {
+        if (type_ == ParameterType::PARAMETER_NULL) {
+            return std::nullopt;
+        }
+        return get<ParamT>();
+    }
+
+    /// Get the value of parameter as using the given c++ type as a template argument 
+    template<typename T>
+    decltype(auto)
+    get_nullable() const
+    {
+        if (type_ == ParameterType::PARAMETER_NULL) {
+            return std::nullopt;
+        }
+        return get<T>();
+    }
 
     template<ParameterType type>
     constexpr
     typename std::enable_if<
-        type == ParameterType::PARAMETER_OBJECT || 
-        type == ParameterType::PARAMETER_OBJECT_ARRAY,
-        const std::vector<Parameter> &>::type
+        type == ParameterType::PARAMETER_NULL,
+        const std::nullptr_t>::type
+    get() const
+    {
+        if (type_ != ParameterType::PARAMETER_NULL) {
+            throw ParameterTypeException(ParameterType::PARAMETER_NULL, type_);
+        }
+        return nullptr;
+    }
+
+    template<ParameterType type>
+    constexpr
+    typename std::enable_if<
+        type == ParameterType::PARAMETER_SCALAR,
+        const Scalar &>::type
+    get() const
+    {
+        if (type_ != ParameterType::PARAMETER_SCALAR) {
+            throw ParameterTypeException(ParameterType::PARAMETER_SCALAR, type_);
+        }
+        return std::get<Scalar>(value_);
+    }
+
+    template<ParameterType type>
+    constexpr
+    typename std::enable_if<
+        type == ParameterType::PARAMETER_SCALAR_ARRAY,
+        const std::vector<Scalar> &>::type
+    get() const
+    {
+        if (type_ != ParameterType::PARAMETER_SCALAR_ARRAY) {
+            throw ParameterTypeException(ParameterType::PARAMETER_SCALAR_ARRAY, type_);
+        }
+        return std::get<std::vector<Scalar>>(value_);
+    }
+
+    template<ParameterType type>
+    constexpr
+    typename std::enable_if<
+        type == ParameterType::PARAMETER_NESTED_ARRAY,
+        const NestedArray &>::type
+    get() const
+    {
+        if (type_ != ParameterType::PARAMETER_NESTED_ARRAY) {
+            throw ParameterTypeException(ParameterType::PARAMETER_NESTED_ARRAY, type_);
+        }
+        return std::get<NestedArray>(value_);
+    }
+
+    template<ParameterType type>
+    constexpr
+    typename std::enable_if<
+        type == ParameterType::PARAMETER_OBJECT,
+        const Object &>::type
     get() const
     {
         if (type_ != ParameterType::PARAMETER_OBJECT) {
-        throw ParameterTypeException(ParameterType::PARAMETER_OBJECT, type_);
+            throw ParameterTypeException(ParameterType::PARAMETER_OBJECT, type_);
         }
-        return std::get<std::vector<Parameter>>(value_);
+        return std::get<Object>(value_);
+    }
+
+    template<ParameterType type>
+    constexpr
+    typename std::enable_if<
+        type == ParameterType::PARAMETER_OBJECT_ARRAY,
+        const ObjectArray &>::type
+    get() const
+    {
+        if (type_ != ParameterType::PARAMETER_OBJECT_ARRAY) {
+            throw ParameterTypeException(ParameterType::PARAMETER_OBJECT_ARRAY, type_);
+        }
+        return std::get<ObjectArray>(value_);
+    }
+
+    template<typename type>
+    constexpr
+    typename std::enable_if<
+        std::is_same<type, std::nullptr_t>::value, const std::nullptr_t>::type
+    get() const
+    {
+        if (type_ != ParameterType::PARAMETER_NULL) {
+            throw ParameterTypeException(ParameterType::PARAMETER_NULL, type_);
+        }
+        return nullptr;
+    }
+
+    template<typename type>
+    constexpr
+    typename std::enable_if<
+        std::is_same<type, Scalar>::value, const Scalar &>::type
+    get() const
+    {
+        return get<ParameterType::PARAMETER_SCALAR>();
+    }
+
+    template<typename type>
+    constexpr
+    typename std::enable_if<
+        std::is_same<type, std::vector<Scalar>>::value, const std::vector<Scalar> &>::type
+    get() const
+    {
+        return get<ParameterType::PARAMETER_SCALAR_ARRAY>();
     }
 
     template<typename type>
     constexpr
     typename std::enable_if<
         std::is_convertible<
-        type, const std::vector<Parameter> &>::value, const std::vector<Parameter> &>::type
+        type, const NestedArray &>::value, const NestedArray &>::type
+    get() const
+    {
+        return get<ParameterType::PARAMETER_NESTED_ARRAY>();
+    }
+
+    template<typename type>
+    constexpr
+    typename std::enable_if<
+        std::is_convertible<
+        type, const Object &>::value, const Object &>::type
     get() const
     {
         return get<ParameterType::PARAMETER_OBJECT>();
     }
 
+    template<typename type>
+    constexpr
+    typename std::enable_if<
+        std::is_convertible<
+        type, const ObjectArray &>::value, const ObjectArray &>::type
+    get() const
+    {
+        return get<ParameterType::PARAMETER_OBJECT_ARRAY>();
+    }
+
     bool is_null() const;
     bool is_scalar() const;
-    bool is_array() const;
     bool is_object() const;
+    bool is_scalar_array() const;
+    bool is_nested_array() const;
     bool is_object_array() const;
+    bool is_array() const;
+
+    bool is_leaf() const;
 
 private:
     explicit ParameterValue(ParameterType type);
 
     ParameterType type_;
     std::variant<
+        std::nullptr_t,
         bool,
         int64_t,
         double,
         std::string,
-        ScalarValue,
+        Scalar,
         std::vector<uint8_t>,
         std::vector<bool>,
         std::vector<int64_t>,
         std::vector<double>,
         std::vector<std::string>,
-        std::vector<Parameter>
+        std::vector<Scalar>,
+        NestedArray,
+        Object,
+        ObjectArray
     > value_;
 
+    // cached array conversions for scalar arrays
+    mutable std::vector<bool> scalar_bool_array_;
+    mutable std::vector<int64_t> scalar_int_array_;
+    mutable std::vector<double> scalar_double_array_;
+    mutable std::vector<std::string> scalar_string_array_;
+
+    mutable uint8_t cache_flags_ = 0;
+    static constexpr uint8_t BOOL_ARRAY_CACHED   = 1 << 0;  // 0b0001
+    static constexpr uint8_t INT_ARRAY_CACHED    = 1 << 1;  // 0b0010
+    static constexpr uint8_t DOUBLE_ARRAY_CACHED = 1 << 2;  // 0b0100
+    static constexpr uint8_t STRING_ARRAY_CACHED = 1 << 3;  // 0b1000
 };
 
 /// Return the value of a parameter as a string
 std::string
 to_string(const ParameterValue & value);
+
+
+
+
+
+
+
+
+
+
+
+// ================================================================================= //
+// ================================================================================= //
+// ================================== PARAMETERS =================================== //
+// ================================================================================= //
+// ================================================================================= //
 
 // primitive parameter class
 class Parameter {
@@ -528,26 +819,36 @@ public:
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L59
 
     /// Construct with given name and a parameter value of type ParameterType::PARAMETER_NOT_SET.
-    explicit Parameter(const std::string & name);
+    explicit Parameter(
+        const std::string & name,
+        const std::string & name_delimiter = "/"
+    );
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L63
 
     /// Construct with given name and given parameter value.
-    Parameter(const std::string & name, const ParameterValue & value);
+    Parameter(
+        const std::string & name,
+        const ParameterValue & parameter_value,
+        const std::string & name_delimiter = "/"
+    );
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L67
 
     /// Construct with given name and given parameter value.
     template<typename ValueTypeT>
-    Parameter(const std::string & name, ValueTypeT value)
-    : Parameter(name, ParameterValue(value))
+    Parameter(
+        const std::string & name,
+        ValueTypeT value,
+        const std::string & name_delimiter = "/"
+    )
+    : Parameter(name, ParameterValue(value), name_delimiter)
     {}
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L73
     // explicit Parameter(const rclcpp::node_interfaces::ParameterInfo &
     // parameter_info); is not supported since it uses ROS2 specific interface which has
     // no miru equivalent
-
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L76
 
@@ -627,8 +928,10 @@ public:
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L159
 
-    /// Get the value of parameter as a byte array (vector<uint8_t>)
-    const std::vector<uint8_t>& as_byte_array() const;
+    // byte arrays are not supported
+
+    // /// Get the value of parameter as a byte array (vector<uint8_t>)
+    // const std::vector<uint8_t>& as_byte_array() const;
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L167
 
@@ -664,23 +967,53 @@ public:
 
     // ============================== MIRU INTERFACES ============================== // 
 
-    /// Get the value of parameter as an object array (vector<Parameter>)
-    const std::vector<Parameter>& as_object_array() const;
-
-    /// Get the value of parameter as an object (Parameter)
-    const std::vector<Parameter>& as_object() const;
-
-    /// Get the key of the parameter (the final part of the name)
+    /// Get the key of the parameter
     std::string get_key() const;
 
-    /// Check if the parameter is null
+    /// Get the value of parameter as using the given ParameterType as a template argument
+    template<ParameterType ParamT>
+    decltype(auto)
+    get_nullable_value() const 
+    {
+        return value_.get_nullable<ParamT>();
+    }
+
+    /// Get the value of parameter as using the given c++ type as a template argument 
+    template<typename T>
+    decltype(auto)
+    get_nullable_value() const;
+
+    /// Get the value of parameter as a null type
+    const std::nullptr_t as_null() const;
+
+    /// Get the value of parameter as a scalar type
+    const Scalar& as_scalar() const;
+
+    /// Get the value of parameter as a scalar array type
+    const std::vector<Scalar>& as_scalar_array() const;
+
+    /// Get the value of parameter as a nested array type
+    const NestedArray& as_nested_array() const;
+
+    /// Get the value of parameter as an object (Parameter)
+    const Object& as_object() const;
+
+    /// Get the value of parameter as an object array (vector<Parameter>)
+    const ObjectArray& as_object_array() const;
+
     bool is_null() const;
     bool is_scalar() const;
+    bool is_scalar_array() const;
+    bool is_object() const;
+    bool is_object_array() const;
     bool is_array() const;
+
+    bool is_leaf() const;
 
 private:
     ParameterType type_;
     std::string name_;
+    std::string name_delimiter_;
     ParameterValue value_; 
 };
 
@@ -730,6 +1063,8 @@ Parameter::get_value() const
     }
 }
 
+
+
 // ================================ ROS2 INTERFACES ================================ //
 // We are not supporting the to_json_dict_entry function. This is a cascade effect of
 // not being able to support support type information in the public interface right now
@@ -756,5 +1091,21 @@ std::string to_string(const Parameter & param);
 
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L291
 std::string to_string(const std::vector<Parameter> & parameters);
+
+
+// ================================ MIRU INTERFACES ================================ //
+template<typename T> decltype(auto)
+Parameter::get_nullable_value() const
+{
+    if (type_ == ParameterType::PARAMETER_NULL) {
+        return std::nullopt;
+    }
+    try {
+        // use the helper to specialize for the ParameterValue and Parameter cases.
+        return detail::get_value_helper<T>(this);
+    } catch (const ParameterTypeException & ex) {
+        throw miru::params::InvalidParameterTypeException(this->name_, ex.what());
+    }
+}
 
 } // namespace miru::params

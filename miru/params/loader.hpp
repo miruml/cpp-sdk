@@ -9,7 +9,30 @@
 
 namespace miru::params {
 
-miru::params::Parameter load_yaml(const YAML::Node& node);
-miru::params::Parameter load_json(const nlohmann::json& node);
+miru::params::Parameter load_yaml(
+    const std::string& name,
+    const YAML::Node& node,
+    const std::string& delimiter = "/"
+);
+miru::params::Parameter load_yaml_array(
+    const std::string& name,
+    const YAML::Node& node,
+    const std::string& delimiter = "/"
+);
+
+miru::params::Parameter load_json(
+    const std::string& name,
+    const nlohmann::json& node,
+    const std::string& delimiter = "/"
+);
+miru::params::Parameter load_json_array(
+    const std::string& name,
+    const nlohmann::json& node,
+    const std::string& delimiter = "/"
+);
+
+miru::params::Parameter load_structured_data(
+    const std::variant<nlohmann::json, YAML::Node>& node
+);
 
 }  // namespace miru::params

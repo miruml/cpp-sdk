@@ -8,6 +8,9 @@ namespace miru::params {
 
 // ================================ ROS2 INTERFACES ================================ //
 
+// The following exceptions are taken from ros2 rclcpp:
+// https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/exceptions/exceptions.hpp
+
 /// Thrown if passed parameter value is invalid.
 class InvalidParameterValueException : public std::runtime_error
 {
@@ -33,19 +36,18 @@ public:
     {}
 };
 
-// ================================ MIRU INTERFACES ================================ //
-class ParamNotFound : public std::runtime_error {
-    public:
-        ParamNotFound(
-            const std::string& param_path
-        ) : runtime_error("Parameter '" + param_path + "' not found") {}
-};
-
-class NotAPrimitiveValue : public std::runtime_error {
-    public:
-        NotAPrimitiveValue(
-            const std::string& param_path
-        ) : runtime_error("Found object for parameter '" + param_path + "' when a primitive value (4, true, 'hello', etc.) was expected") {}
+// ================================ MIRU INTERFACES ================================= //
+class InvalidScalarConversion : public std::runtime_error
+{
+public:
+    InvalidScalarConversion(
+        const std::string & scalar_name,
+        const std::string & value,
+        const std::string & desired_type,
+        const std::string & message
+    )
+    : std::runtime_error("Unable to convert parameter '" + scalar_name + "' to " + desired_type + " from value '" + value + "': " + message)
+    {}
 };
 
 } // namespace miru::params

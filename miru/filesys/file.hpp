@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <variant>
 
 // internal
 #include <miru/filesys/path.hpp>
@@ -37,6 +38,8 @@ public:
 
     nlohmann::json read_json() const;
     YAML::Node read_yaml() const;
+    std::variant<nlohmann::json, YAML::Node> read_structured_data() const;
+    std::string read_string() const;
 };
 
 class FileNotFound : public std::runtime_error {

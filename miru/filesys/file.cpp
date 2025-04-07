@@ -10,6 +10,7 @@
 #include <yaml-cpp/yaml.h>
 #include <fmt/format.h>
 #include <fmt/ranges.h>
+#include <fmt/os.h>
 
 namespace miru::filesys {
 
@@ -54,6 +55,21 @@ void File::assert_exists() const {
 }
 
 // ================================= READING FILES ================================= //
+std::string File::read_string() const {
+    assert_exists();
+    std::ifstream file(path_, std::ios::binary | std::ios::ate);
+    if (!file) {
+        throw std::runtime_error("Failed to open file: " + path_.string());
+    }
+    
+    auto size = file.tellg();
+    std::string content(size, '\0');
+    file.seekg(0);
+    file.read(content.data(), size);
+    
+    return content;
+}
+
 nlohmann::json File::read_json() const {
     assert_exists();
 
@@ -77,6 +93,16 @@ YAML::Node File::read_yaml() const {
 
     std::ifstream file(path_);
     return YAML::Load(file);
+}
+
+std::variant<nlohmann::json, YAML::Node> File::read_structured_data() const {
+    switch (file_type()) {
+        case FileType::JSON:
+            return read_json();
+        case FileType::YAML:
+            return read_yaml();
+    }
+    throw InvalidFileType(path_.string());
 }
 
 // =============================== ERROR HANDLING ================================ //

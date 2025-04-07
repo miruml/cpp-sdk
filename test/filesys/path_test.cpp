@@ -1,6 +1,5 @@
 // std
 #include <filesystem>
-#include <fstream>
 
 // internal
 #include <miru/filesys/path.hpp>

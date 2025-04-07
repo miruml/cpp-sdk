@@ -3,6 +3,7 @@
 // internal
 #include <miru/client/http_client.hpp>
 #include <miru/client/models/BaseConcreteConfig.h>
+#include <miru/client/models/HashSchemaRequest.h>
 
 // external
 #include <boost/beast.hpp>
@@ -28,7 +29,7 @@ public:
 
     // route specific functions
     void test_route(); 
-    std::string hash_schema(const nlohmann::json& config_schema);
+    std::string hash_schema(const openapi::HashSchemaRequest& config_schema);
     openapi::BaseConcreteConfig get_concrete_config(
         const std::string& config_schema_digest,
         const std::string& config_slug

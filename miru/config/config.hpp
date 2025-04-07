@@ -7,7 +7,6 @@
 // internal
 #include <miru/filesys/file.hpp>
 #include <miru/params/parameter.hpp>
-#include <miru/utils.hpp>
 
 // external
 #include <nlohmann/json.hpp>
@@ -51,7 +50,7 @@ public:
 
     bool has_parameter(
         const std::string & parameter_name,
-        bool primitives_only = true
+        bool leaves_only = true
     ) const;
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node_interfaces/node_parameters_interface.hpp#L144
@@ -59,14 +58,14 @@ public:
     std::vector<miru::params::Parameter>
     get_parameters(
         const std::vector<std::string> & parameter_names,
-        bool primitives_only = true
+        bool leaves_only = true
     ) const;
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node_interfaces/node_parameters_interface.hpp#L155
 
     miru::params::Parameter get_parameter(
         const std::string & name,
-        bool primitives_only = true
+        bool leaves_only = true
     ) const;
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node_interfaces/node_parameters_interface.hpp#L194
@@ -94,13 +93,13 @@ public:
     std::vector<std::string>
     list_parameter_names(
         const std::vector<std::string> & parameter_prefixes,
-        bool primitives_only = true
+        bool leaves_only = true
     ) const;
 
     // ============================== MIRU INTERFACES ============================== //
 
     std::vector<miru::params::Parameter>
-    list_parameters(bool primitives_only = true) const;
+    list_parameters(bool leaves_only = true) const;
 
 
 private:
@@ -133,6 +132,8 @@ private:
     // only needed if sourcing from the file system
     std::optional<miru::filesys::File> config_file_;
 };
+
+std::string read_schema_config_slug(const miru::filesys::File& schema_file);
 
 class ConfigBuilder {
 public:
