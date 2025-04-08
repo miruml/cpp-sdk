@@ -4,7 +4,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
-#include <optional>
 #include <variant>
 
 // internal
@@ -383,26 +382,6 @@ public:
     /// Construct a parameter value with type PARAMETER_OBJECT_ARRAY.
     explicit ParameterValue(const ObjectArray & object_array_value);
 
-    /// Get the value of parameter as using the given ParameterType as a template argument
-    template<ParameterType ParamT>
-    decltype(auto)
-    get_nullable() const  {
-        if (type_ == ParameterType::PARAMETER_NULL) {
-            return std::nullopt;
-        }
-        return get<ParamT>();
-    }
-
-    /// Get the value of parameter as using the given c++ type as a template argument 
-    template<typename T>
-    decltype(auto)
-    get_nullable() const {
-        if (type_ == ParameterType::PARAMETER_NULL) {
-            return std::nullopt;
-        }
-        return get<T>();
-    }
-
     template<ParameterType type>
     constexpr
     typename std::enable_if<
@@ -580,8 +559,21 @@ private:
 /// Return the value of a parameter as a string
 std::string to_string(const ParameterValue & value);
 
-std::string param_value_array_to_string(const std::vector<ParameterValue> & array);
-std::string param_object_to_string(const miru::params::Object & object);
+std::string to_string(
+    const ParameterValue & value,
+    const int indent
+);
+
+std::string param_value_array_to_string(
+    const std::vector<ParameterValue> & array,
+    const int indent,
+    const bool with_newlines
+);
+
+std::string param_object_to_string(
+    const miru::params::Object & object,
+    const int indent
+);
 
 std::ostream & operator<<(std::ostream & os, const ParameterValue & value);
 
@@ -619,10 +611,7 @@ public:
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L59
 
     /// Construct with given name and a parameter value of type ParameterType::PARAMETER_NOT_SET.
-    explicit Parameter(
-        const std::string & name,
-        const std::string & name_delimiter = "/"
-    );
+    explicit Parameter(const std::string & name);
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L63
 
@@ -659,13 +648,6 @@ public:
 
     /// Not equal operator
     bool operator!=(const Parameter& other) const;
-
-    // we are not going to support type information in the public interface right now
-    // since yaml does not support strongly typed information ("4" vs 4) and we have no
-    // quick way of doing so ourself. ROS2 rolled their own parser to grab type
-    // information. We will be storing a SCALAR type and I don't want to expose this
-    // to users since it will likely confuse them when an integer is parsed as a scalar
-    // and not an integer when using yaml.
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L86
 
@@ -709,7 +691,17 @@ public:
 
     /// Get the value of parameter as using the given c++ type as a template argument 
     template<typename T>
-    decltype(auto) get_value() const;
+    decltype(auto) get_value() const {
+        try {
+            return value_.get<T>();
+        } catch (const InvalidParameterValueType & ex) {
+            throw InvalidParameterType(this->name_, ex.what());
+        } catch (const InvalidScalarConversion & ex) {
+            throw InvalidParameterType(this->name_, ex.what());
+        } catch (const InvalidTypeCast & ex) {
+            throw InvalidParameterType(this->name_, ex.what());
+        }
+    }
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L127
 
@@ -775,16 +767,6 @@ public:
     /// Get the key of the parameter
     std::string get_key() const;
 
-    /// Get the value of parameter as using the given ParameterType as a template argument
-    template<ParameterType ParamT>
-    decltype(auto) get_nullable_value() const {
-        return value_.get_nullable<ParamT>();
-    }
-
-    /// Get the value of parameter as using the given c++ type as a template argument 
-    template<typename T>
-    decltype(auto) get_nullable_value() const;
-
     /// Get the value of parameter as a null type
     const std::nullptr_t as_null() const;
 
@@ -806,6 +788,7 @@ public:
     bool is_null() const;
     bool is_scalar() const;
     bool is_scalar_array() const;
+    bool is_nested_array() const;
     bool is_object() const;
     bool is_object_array() const;
     bool is_array() const;
@@ -818,49 +801,6 @@ private:
     std::string name_delimiter_;
     ParameterValue value_; 
 };
-
-namespace detail
-{
-
-template<typename T>
-auto get_value_helper(const Parameter * parameter) {
-    return parameter->get_parameter_value().get<T>();
-}
-
-// Specialization allowing Parameter::get() to return a const ref to the parameter value object.
-template<> inline
-auto get_value_helper<ParameterValue>(const Parameter * parameter) {
-    return parameter->get_parameter_value();
-}
-
-// Specialization allowing Parameter::get() to return a const ref to the parameter itself.
-template<> inline
-auto get_value_helper<Parameter>(const Parameter * parameter) {
-    // Use this lambda to ensure it's a const reference being returned (and not a copy).
-    auto type_enforcing_lambda =
-        [&parameter]() -> const Parameter & {
-        return *parameter;
-        };
-    return type_enforcing_lambda();
-}
-
-}  // namespace detail
-
-template<typename T> decltype(auto)
-Parameter::get_value() const {
-    try {
-        // use the helper to specialize for the ParameterValue and Parameter cases.
-        return detail::get_value_helper<T>(this);
-    } catch (const InvalidParameterValueType & ex) {
-        throw InvalidParameterType(this->name_, ex.what());
-    } catch (const InvalidScalarConversion & ex) {
-        throw InvalidParameterType(this->name_, ex.what());
-    } catch (const InvalidTypeCast & ex) {
-        throw InvalidParameterType(this->name_, ex.what());
-    }
-}
-
-
 
 // ================================ ROS2 INTERFACES ================================ //
 // We are not supporting the to_json_dict_entry function. This is a cascade effect of
@@ -888,25 +828,5 @@ std::string to_string(const Parameter & param);
 
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L291
 std::string to_string(const std::vector<Parameter> & parameters);
-
-
-// ================================ MIRU INTERFACES ================================ //
-template<typename T> decltype(auto)
-Parameter::get_nullable_value() const
-{
-    if (type_ == ParameterType::PARAMETER_NULL) {
-        return std::nullopt;
-    }
-    try {
-        // use the helper to specialize for the ParameterValue and Parameter cases.
-        return detail::get_value_helper<T>(this);
-    } catch (const InvalidParameterValueType & ex) {
-        throw InvalidParameterType(this->name_, ex.what());
-    } catch (const InvalidScalarConversion & ex) {
-        throw InvalidParameterType(this->name_, ex.what());
-    } catch (const InvalidTypeCast & ex) {
-        throw InvalidParameterType(this->name_, ex.what());
-    }
-}
 
 } // namespace miru::params

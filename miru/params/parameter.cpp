@@ -12,10 +12,7 @@ namespace miru::params {
 
 Parameter::Parameter() : name_(""), name_delimiter_("/") {}
 
-Parameter::Parameter(
-    const std::string & name,
-    const std::string & name_delimiter
-) : name_(name), name_delimiter_(name_delimiter) {}
+Parameter::Parameter(const std::string & name) : name_(name), name_delimiter_("/") {}
 
 Parameter::Parameter(
     const std::string & name,
@@ -178,8 +175,12 @@ bool Parameter::is_scalar() const {
     return value_.is_scalar();
 }
 
-bool Parameter::is_array() const {
-    return value_.is_array();
+bool Parameter::is_scalar_array() const {
+    return value_.is_scalar_array();
+}
+
+bool Parameter::is_nested_array() const {
+    return value_.is_nested_array();
 }
 
 bool Parameter::is_object() const {
@@ -188,6 +189,10 @@ bool Parameter::is_object() const {
 
 bool Parameter::is_object_array() const {
     return value_.is_object_array();
+}
+
+bool Parameter::is_array() const {
+    return value_.is_array();
 }
 
 bool Parameter::is_leaf() const {

@@ -56,12 +56,17 @@ std::ostream& operator<<(std::ostream& os, const ParameterType& type) {
 }   
 
 std::string to_string(const ParameterValue & value) {
+    return to_string(value, 0);
+}
+
+std::string to_string(const ParameterValue & value, const int indent) {
+
     switch (value.get_type()) {
         // ros 2 parameter types
         case ParameterType::PARAMETER_NOT_SET:
             return "\"not set\"";
         case ParameterType::PARAMETER_BOOL:
-            return value.get<bool>() ? "true" : "false";
+            return (value.get<bool>() ? "true" : "false");
         case ParameterType::PARAMETER_INTEGER:
             return std::to_string(value.get<int>());
         case ParameterType::PARAMETER_DOUBLE:
@@ -73,28 +78,36 @@ std::string to_string(const ParameterValue & value) {
             for (const bool & bool_value : value.get<std::vector<bool>>()) {
                 bool_array.push_back(ParameterValue(bool_value));
             }
-            return miru::params::param_value_array_to_string(bool_array);
+            return miru::params::param_value_array_to_string(
+                bool_array, 0, false
+            );
         }
         case ParameterType::PARAMETER_INTEGER_ARRAY: {
             std::vector<ParameterValue> int_array;
             for (const int64_t & int_value : value.get<std::vector<int64_t>>()) {
                 int_array.push_back(ParameterValue(int_value));
             }
-            return miru::params::param_value_array_to_string(int_array);
+            return miru::params::param_value_array_to_string(
+                int_array, 0, false
+            );
         }
         case ParameterType::PARAMETER_DOUBLE_ARRAY: {
             std::vector<ParameterValue> double_array;
             for (const double & double_value : value.get<std::vector<double>>()) {
                 double_array.push_back(ParameterValue(double_value));
             }
-            return miru::params::param_value_array_to_string(double_array);
+            return miru::params::param_value_array_to_string(
+                double_array, 0, false
+            );
         }
         case ParameterType::PARAMETER_STRING_ARRAY: {
             std::vector<ParameterValue> string_array;
             for (const std::string & string_value : value.get<std::vector<std::string>>()) {
                 string_array.push_back(ParameterValue(string_value));
             }
-            return miru::params::param_value_array_to_string(string_array);
+            return miru::params::param_value_array_to_string(
+                string_array, 0, false
+            );
         }
 
         // miru parameter types
@@ -107,60 +120,89 @@ std::string to_string(const ParameterValue & value) {
             for (const Scalar & scalar_value : value.get<std::vector<Scalar>>()) {
                 scalar_array.push_back(ParameterValue(scalar_value));
             }
-            return miru::params::param_value_array_to_string(scalar_array);
+            return miru::params::param_value_array_to_string(
+                scalar_array, 0, false
+            );
         }
         case ParameterType::PARAMETER_NESTED_ARRAY: {
             std::vector<ParameterValue> nested_array;
             for (const Parameter & param: value.get<NestedArray>()) {
                 nested_array.push_back(param.get_parameter_value());
             }
-            return miru::params::param_value_array_to_string(nested_array);
+            return miru::params::param_value_array_to_string(
+                nested_array, 0, true
+            );
         }
         case ParameterType::PARAMETER_OBJECT: {
-            return miru::params::param_object_to_string(value.get<Object>());
+            return miru::params::param_object_to_string(
+                value.get<Object>(),
+                indent
+            );
         }
         case ParameterType::PARAMETER_OBJECT_ARRAY: {
             std::vector<ParameterValue> object_array;
             for (const Parameter & param: value.get<ObjectArray>()) {
                 object_array.push_back(param.get_parameter_value());
             }
-            return miru::params::param_value_array_to_string(object_array);           
+            return miru::params::param_value_array_to_string(
+                object_array, 0, true
+            );           
         }
     }
     return "unknown type";
 }
 
-std::string param_object_to_string(const miru::params::Object & object) {
+std::string param_object_to_string(
+    const miru::params::Object & object,
+    const int indent
+) {
     std::stringstream type_array;
     bool first_item = true;
-    type_array << "{";
+    type_array << std::string(indent, ' ') << "{";
     for (const Parameter & param: object) {
         if (!first_item) {
-            type_array << ", ";
+            type_array << ",";
         } else {
             first_item = false;
         }
-        type_array << "\"" << param.get_key() << "\": " << param.value_to_string();
+        type_array << "\n";
+        type_array << std::string(indent+2, ' ');
+        type_array << "\"" << param.get_key();
+        type_array << "\": ";
+        type_array << to_string(param.get_parameter_value(), indent+2);
     }
-    type_array << "}";
+    type_array << "\n";
+    type_array << std::string(indent, ' ') << "}";
     return type_array.str();
 }
 
 std::string param_value_array_to_string(
-    const std::vector<ParameterValue> & array
+    const std::vector<ParameterValue> & array,
+    const int indent,
+    const bool with_newlines
 ) {
     std::stringstream type_array;
     bool first_item = true;
-    type_array << "[";
+    with_newlines ? 
+        type_array << std::string(indent, ' ') << "["
+        : type_array << "[";
     for (const ParameterValue & value: array) {
         if (!first_item) {
-            type_array << ", ";
+            with_newlines ? 
+                type_array << ","
+                : type_array << ", ";
         } else {
             first_item = false;
         }
-        type_array << to_string(value);
+        with_newlines ? type_array << "\n": type_array << "";
+        with_newlines && value.is_leaf() ? 
+            type_array << std::string(indent+2, ' ')
+            : type_array << "";
+        type_array << to_string(value, with_newlines ? indent+2 : indent);
     }
-    type_array << "]";
+    with_newlines ? 
+        type_array << "\n" << std::string(indent, ' ') << "]"
+        : type_array << "]";
     return type_array.str();
 }
 
@@ -348,6 +390,15 @@ bool ParameterValue::is_array() const {
 }
 
 bool ParameterValue::is_leaf() const {
+    if (is_nested_array()) {
+        NestedArray nested_array = get<NestedArray>();
+        for (const Parameter & param: nested_array) {
+            if (!param.is_leaf()) {
+                return false;
+            }
+        }
+        return true;
+    }
     return !(is_object() || is_object_array());
 }
 
