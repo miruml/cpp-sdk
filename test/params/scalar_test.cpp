@@ -31,7 +31,7 @@ TEST_F(ScalarEquality, inequality) {
 
 TEST_F(ScalarConversion, bool_conversion_success) {
     for (const auto & test_case : bool_test_cases) {
-        if (test_case.expect_failure) {
+        if (test_case.expected_exception != ScalarException::None) {
             continue;
         }
         miru::params::Scalar scalar(test_case.scalar);
@@ -41,11 +41,17 @@ TEST_F(ScalarConversion, bool_conversion_success) {
 
 TEST_F(ScalarConversion, bool_conversion_failure) {
     for (const auto & test_case : bool_test_cases) {
-        if (!test_case.expect_failure) {
+        if (test_case.expected_exception == ScalarException::None) {
             continue;
         }
         miru::params::Scalar scalar(test_case.scalar);
-        EXPECT_THROW(scalar.as_bool(), miru::params::InvalidScalarConversion);
+        switch (test_case.expected_exception) {
+            case ScalarException::InvalidScalarConversion:
+                EXPECT_THROW(scalar.as_bool(), miru::params::InvalidScalarConversion);
+                break;
+            default:
+                FAIL() << "Unexpected exception type";
+        }
     }
 }
 
@@ -53,7 +59,7 @@ TEST_F(ScalarConversion, bool_array_conversion_success) {
     std::vector<miru::params::Scalar> scalars = {};
     std::vector<bool> expected = {};
     for (const auto & test_case : bool_test_cases) {
-        if (test_case.expect_failure) {
+        if (test_case.expected_exception != ScalarException::None) {
             continue;
         }
         scalars.push_back(miru::params::Scalar(test_case.scalar));
@@ -65,7 +71,7 @@ TEST_F(ScalarConversion, bool_array_conversion_success) {
 
 TEST_F(ScalarConversion, bool_array_conversion_failure) {
     for (const auto & test_case : bool_test_cases) {
-        if (!test_case.expect_failure) {
+        if (test_case.expected_exception == ScalarException::None) {
             continue;
         }
         std::vector<miru::params::Scalar> scalars = {};
@@ -79,7 +85,7 @@ TEST_F(ScalarConversion, bool_array_conversion_failure) {
 
 TEST_F(ScalarConversion, int_conversion_success) {
     for (const auto & test_case : int_test_cases) {
-        if (test_case.expect_failure) {
+        if (test_case.expected_exception != ScalarException::None) {
             continue;
         }
         int64_t expected = std::get<int64_t>(test_case.expected);
@@ -90,16 +96,28 @@ TEST_F(ScalarConversion, int_conversion_success) {
 
 TEST_F(ScalarConversion, int_conversion_failure) {
     for (const auto & test_case : int_test_cases) {
-        if (!test_case.expect_failure) {
+        if (test_case.expected_exception == ScalarException::None) {
             continue;
         }
         miru::params::Scalar scalar(test_case.scalar);
         std::visit([&](auto&& arg) {
             using T = std::decay_t<decltype(arg)>;
-            EXPECT_THROW(
-                scalar.as<T>(),
-                miru::params::InvalidScalarConversion
-            );
+            switch (test_case.expected_exception) {
+                case ScalarException::InvalidScalarConversion:
+                    EXPECT_THROW(
+                        scalar.as<T>(),
+                        miru::params::InvalidScalarConversion
+                    );
+                    break;
+                case ScalarException::InvalidTypeCast:
+                    EXPECT_THROW(
+                        scalar.as<T>(),
+                        miru::params::InvalidTypeCast
+                    );
+                    break;
+                default:
+                    FAIL() << "Unexpected exception type";
+            }
         }, test_case.expected);
     }
 }
@@ -108,7 +126,7 @@ TEST_F(ScalarConversion, int_array_conversion_success) {
     std::vector<miru::params::Scalar> scalars = {};
     std::vector<int64_t> expected = {};
     for (const auto & test_case : int_test_cases) {
-        if (test_case.expect_failure) {
+        if (test_case.expected_exception != ScalarException::None) {
             continue;
         }
         scalars.push_back(miru::params::Scalar(test_case.scalar));
@@ -120,26 +138,37 @@ TEST_F(ScalarConversion, int_array_conversion_success) {
 
 TEST_F(ScalarConversion, int_array_conversion_failure) {
     for (const auto & test_case : int_test_cases) {
-        if (!test_case.expect_failure) {
+        if (test_case.expected_exception == ScalarException::None) {
             continue;
         }
         miru::params::Scalar scalar(test_case.scalar);
-        std::visit([&scalar](auto&& arg) {
+        std::visit([&](auto&& arg) {
             using T = std::decay_t<decltype(arg)>;
             std::vector<miru::params::Scalar> scalars = {};
             scalars.push_back(scalar);
-            EXPECT_THROW(
-                miru::params::transform_scalar_array<T>(scalars), 
-                miru::params::InvalidScalarConversion
-            );
+            switch (test_case.expected_exception) {
+                case ScalarException::InvalidTypeCast:
+                    EXPECT_THROW(
+                        miru::params::transform_scalar_array<T>(scalars), 
+                        miru::params::InvalidTypeCast
+                    );
+                    break;
+                case ScalarException::InvalidScalarConversion:
+                    EXPECT_THROW(
+                        miru::params::transform_scalar_array<T>(scalars), 
+                        miru::params::InvalidScalarConversion
+                    );
+                    break;
+                default:
+                    FAIL() << "Unexpected exception type";
+            }
         }, test_case.expected);
-
     }
 }
 
 TEST_F(ScalarConversion, double_conversion_success) {
     for (const auto & test_case : double_test_cases) {
-        if (test_case.expect_failure) {
+        if (test_case.expected_exception != ScalarException::None) {
             continue;
         }
         double expected = std::get<double>(test_case.expected);
@@ -150,16 +179,28 @@ TEST_F(ScalarConversion, double_conversion_success) {
 
 TEST_F(ScalarConversion, double_conversion_failure) {
     for (const auto & test_case : double_test_cases) {
-        if (!test_case.expect_failure) {
+        if (test_case.expected_exception == ScalarException::None) {
             continue;
         }
         miru::params::Scalar scalar(test_case.scalar);
-        std::visit([&scalar](auto&& arg) {
+        std::visit([&](auto&& arg) {
             using T = std::decay_t<decltype(arg)>;
-            EXPECT_THROW(
-                scalar.as<T>(),
-                miru::params::InvalidScalarConversion
-            );
+            switch (test_case.expected_exception) {
+                case ScalarException::InvalidScalarConversion:
+                    EXPECT_THROW(
+                        scalar.as<T>(),
+                        miru::params::InvalidScalarConversion
+                    );
+                    break;
+                case ScalarException::InvalidTypeCast:
+                    EXPECT_THROW(
+                        scalar.as<T>(),
+                        miru::params::InvalidTypeCast
+                    );
+                    break;
+                default:
+                    FAIL() << "Unexpected exception type";
+            }
         }, test_case.expected);
     }
 }
@@ -168,7 +209,7 @@ TEST_F(ScalarConversion, double_array_conversion_success) {
     std::vector<miru::params::Scalar> scalars = {};
     std::vector<double> expected = {};
     for (const auto & test_case : double_test_cases) {
-        if (test_case.expect_failure) {
+        if (test_case.expected_exception != ScalarException::None) {
             continue;
         }
         scalars.push_back(miru::params::Scalar(test_case.scalar));
@@ -180,22 +221,37 @@ TEST_F(ScalarConversion, double_array_conversion_success) {
 
 TEST_F(ScalarConversion, double_array_conversion_failure) {
     for (const auto & test_case : double_test_cases) {
-        if (!test_case.expect_failure) {
+        if (test_case.expected_exception == ScalarException::None) {
             continue;
         }
         miru::params::Scalar scalar(test_case.scalar);
-        std::visit([&scalar](auto&& arg) {
+        std::visit([&](auto&& arg) {
             using T = std::decay_t<decltype(arg)>;
             std::vector<miru::params::Scalar> scalars = {};
             scalars.push_back(scalar);
-            EXPECT_THROW(miru::params::transform_scalar_array<T>(scalars), miru::params::InvalidScalarConversion);
+            switch (test_case.expected_exception) {
+                case ScalarException::InvalidTypeCast:
+                    EXPECT_THROW(
+                        miru::params::transform_scalar_array<T>(scalars), 
+                        miru::params::InvalidTypeCast
+                    );
+                    break;
+                case ScalarException::InvalidScalarConversion:
+                    EXPECT_THROW(
+                        miru::params::transform_scalar_array<T>(scalars), 
+                        miru::params::InvalidScalarConversion
+                    );
+                    break;
+                default:
+                    FAIL() << "Unexpected exception type";
+            }
         }, test_case.expected);
     }
 }
 
 TEST_F(ScalarConversion, string_conversion_success) {
     for (const auto & test_case : string_test_cases) {
-        if (test_case.expect_failure) {
+        if (test_case.expected_exception != ScalarException::None) {
             continue;
         }
         miru::params::Scalar scalar(test_case.scalar);
@@ -207,7 +263,7 @@ TEST_F(ScalarConversion, string_array_conversion_success) {
     std::vector<miru::params::Scalar> scalars = {};
     std::vector<std::string> expected = {};
     for (const auto & test_case : string_test_cases) {
-        if (test_case.expect_failure) {
+        if (test_case.expected_exception != ScalarException::None) {
             continue;
         }
         scalars.push_back(miru::params::Scalar(test_case.scalar));

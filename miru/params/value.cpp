@@ -1,4 +1,5 @@
 // internal
+#include "miru/params/type.hpp"
 #include <miru/params/parameter.hpp>
 
 // external
@@ -54,8 +55,7 @@ std::ostream& operator<<(std::ostream& os, const ParameterType& type) {
     return os;
 }   
 
-std::string to_string(const ParameterValue & value)
-{
+std::string to_string(const ParameterValue & value) {
     switch (value.get_type()) {
         // ros 2 parameter types
         case ParameterType::PARAMETER_NOT_SET:
@@ -68,30 +68,105 @@ std::string to_string(const ParameterValue & value)
             return std::to_string(value.get<double>());
         case ParameterType::PARAMETER_STRING:
             return "\"" + value.get<std::string>() + "\"";
-        case ParameterType::PARAMETER_BOOL_ARRAY:
-            return array_to_string(value.get<std::vector<bool>>(), std::ios::boolalpha);
-        case ParameterType::PARAMETER_INTEGER_ARRAY:
-            return array_to_string(value.get<std::vector<int64_t>>());
-        case ParameterType::PARAMETER_DOUBLE_ARRAY:
-            return array_to_string(value.get<std::vector<double>>());
-        case ParameterType::PARAMETER_STRING_ARRAY:
-            return array_to_string(value.get<std::vector<std::string>>());
+        case ParameterType::PARAMETER_BOOL_ARRAY: {
+            std::vector<ParameterValue> bool_array;
+            for (const bool & bool_value : value.get<std::vector<bool>>()) {
+                bool_array.push_back(ParameterValue(bool_value));
+            }
+            return miru::params::param_value_array_to_string(bool_array);
+        }
+        case ParameterType::PARAMETER_INTEGER_ARRAY: {
+            std::vector<ParameterValue> int_array;
+            for (const int64_t & int_value : value.get<std::vector<int64_t>>()) {
+                int_array.push_back(ParameterValue(int_value));
+            }
+            return miru::params::param_value_array_to_string(int_array);
+        }
+        case ParameterType::PARAMETER_DOUBLE_ARRAY: {
+            std::vector<ParameterValue> double_array;
+            for (const double & double_value : value.get<std::vector<double>>()) {
+                double_array.push_back(ParameterValue(double_value));
+            }
+            return miru::params::param_value_array_to_string(double_array);
+        }
+        case ParameterType::PARAMETER_STRING_ARRAY: {
+            std::vector<ParameterValue> string_array;
+            for (const std::string & string_value : value.get<std::vector<std::string>>()) {
+                string_array.push_back(ParameterValue(string_value));
+            }
+            return miru::params::param_value_array_to_string(string_array);
+        }
 
         // miru parameter types
         case ParameterType::PARAMETER_NULL:
             return "null";
         case ParameterType::PARAMETER_SCALAR:
             return "\"" + value.get<Scalar>().as_string() + "\"";
-        case ParameterType::PARAMETER_SCALAR_ARRAY:
-            return array_to_string(value.get<std::vector<Scalar>>());
-        case ParameterType::PARAMETER_NESTED_ARRAY:
-            return array_to_string(value.get<NestedArray>());
-        case ParameterType::PARAMETER_OBJECT_ARRAY:
-            return array_to_string(value.get<ObjectArray>());
-        case ParameterType::PARAMETER_OBJECT:
-            return to_string(value.get<Object>());
+        case ParameterType::PARAMETER_SCALAR_ARRAY: {
+            std::vector<ParameterValue> scalar_array;
+            for (const Scalar & scalar_value : value.get<std::vector<Scalar>>()) {
+                scalar_array.push_back(ParameterValue(scalar_value));
+            }
+            return miru::params::param_value_array_to_string(scalar_array);
+        }
+        case ParameterType::PARAMETER_NESTED_ARRAY: {
+            std::vector<ParameterValue> nested_array;
+            for (const Parameter & param: value.get<NestedArray>()) {
+                nested_array.push_back(param.get_parameter_value());
+            }
+            return miru::params::param_value_array_to_string(nested_array);
+        }
+        case ParameterType::PARAMETER_OBJECT: {
+            return miru::params::param_object_to_string(value.get<Object>());
+        }
+        case ParameterType::PARAMETER_OBJECT_ARRAY: {
+            std::vector<ParameterValue> object_array;
+            for (const Parameter & param: value.get<ObjectArray>()) {
+                object_array.push_back(param.get_parameter_value());
+            }
+            return miru::params::param_value_array_to_string(object_array);           
+        }
     }
     return "unknown type";
+}
+
+std::string param_object_to_string(const miru::params::Object & object) {
+    std::stringstream type_array;
+    bool first_item = true;
+    type_array << "{";
+    for (const Parameter & param: object) {
+        if (!first_item) {
+            type_array << ", ";
+        } else {
+            first_item = false;
+        }
+        type_array << "\"" << param.get_key() << "\": " << param.value_to_string();
+    }
+    type_array << "}";
+    return type_array.str();
+}
+
+std::string param_value_array_to_string(
+    const std::vector<ParameterValue> & array
+) {
+    std::stringstream type_array;
+    bool first_item = true;
+    type_array << "[";
+    for (const ParameterValue & value: array) {
+        if (!first_item) {
+            type_array << ", ";
+        } else {
+            first_item = false;
+        }
+        type_array << to_string(value);
+    }
+    type_array << "]";
+    return type_array.str();
+}
+
+std::ostream& operator<<(std::ostream& os, const ParameterValue& value) {
+    os << to_string(value);
+    return os;
 }
 
 ParameterValue::ParameterValue() {

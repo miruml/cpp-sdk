@@ -13,18 +13,51 @@
 // external
 #include <gtest/gtest.h>
 
-// ================================ CONSTRUCTORS =================================== //
+// ==================== CONSTRUCTORS + EQUALITY + INFO GETTERS ===================== //
 class ParameterConstructors : public ::testing::Test {
 protected:
 };
 
 TEST_F(ParameterConstructors, not_set_variant) {
+    // equal
     miru::params::Parameter not_set_variant1 = miru::params::Parameter();
-    miru::params::Parameter not_set_variant2 = miru::params::Parameter();
+    miru::params::Parameter not_set_variant2 = miru::params::Parameter("");
     EXPECT_EQ(not_set_variant1, not_set_variant2);
+    miru::params::Parameter not_set_variant3 = miru::params::Parameter(
+        "", miru::params::ParameterValue()
+    );
+
+    // not equal
+    miru::params::Parameter diff_name = miru::params::Parameter("arglebargle");
+    EXPECT_NE(not_set_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        not_set_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_NOT_SET
+    );
+
+    // get type name
+    EXPECT_EQ(
+        not_set_variant1.get_type_name(),
+        "not set"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        not_set_variant1.get_parameter_value(),
+        miru::params::ParameterValue()
+    );
+
+    // value to string
+    EXPECT_EQ(
+        not_set_variant1.value_to_string(),
+        "\"not set\""
+    );
 }
 
 TEST_F(ParameterConstructors, bool_variant) {
+    // equal
     miru::params::ParameterValue bool_value(true);
     miru::params::Parameter bool_variant1 = miru::params::Parameter(
         "bool_param", bool_value
@@ -33,9 +66,47 @@ TEST_F(ParameterConstructors, bool_variant) {
         "bool_param", true
     );
     EXPECT_EQ(bool_variant1, bool_variant2);
+
+    // value not equal
+    miru::params::Parameter diff_value = miru::params::Parameter(
+        "bool_param", false
+    );
+    EXPECT_NE(bool_variant1, diff_value);
+
+    // name not equal
+    miru::params::Parameter diff_name = miru::params::Parameter(
+        "arglebargle",
+        bool_value
+    );
+    EXPECT_NE(bool_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        bool_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_BOOL
+    );
+
+    // get type name
+    EXPECT_EQ(
+        bool_variant1.get_type_name(),
+        "bool"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        bool_variant1.get_parameter_value(),
+        bool_value
+    );
+
+    // value to string
+    EXPECT_EQ(
+        bool_variant1.value_to_string(),
+        "true"
+    );
 }
 
 TEST_F(ParameterConstructors, int_variant) {
+    // equal
     miru::params::ParameterValue int_value(4);
     miru::params::Parameter int_variant1 = miru::params::Parameter(
         "int_param", int_value
@@ -44,6 +115,43 @@ TEST_F(ParameterConstructors, int_variant) {
         "int_param", 4
     );
     EXPECT_EQ(int_variant1, int_variant2);
+
+    // value not equal
+    miru::params::Parameter diff_value = miru::params::Parameter(
+        "int_param", 5
+    );
+    EXPECT_NE(int_variant1, diff_value);
+
+    // name not equal
+    miru::params::Parameter diff_name = miru::params::Parameter(
+        "arglebargle",
+        int_value
+    );
+    EXPECT_NE(int_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        int_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_INTEGER
+    );
+
+    // get type name
+    EXPECT_EQ(
+        int_variant1.get_type_name(),
+        "int"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        int_variant1.get_parameter_value(),
+        int_value
+    );
+
+    // value to string
+    EXPECT_EQ(
+        int_variant1.value_to_string(),
+        "4"
+    );
 }
 
 TEST_F(ParameterConstructors, double_variant) {
@@ -55,6 +163,43 @@ TEST_F(ParameterConstructors, double_variant) {
         "double_param", 4.0
     );
     EXPECT_EQ(double_variant1, double_variant2);
+
+    // value not equal
+    miru::params::Parameter diff_value = miru::params::Parameter(
+        "double_param", 5.0
+    );
+    EXPECT_NE(double_variant1, diff_value);
+
+    // name not equal
+    miru::params::Parameter diff_name = miru::params::Parameter(
+        "arglebargle",
+        double_value
+    );
+    EXPECT_NE(double_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        double_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_DOUBLE
+    );
+
+    // get type name
+    EXPECT_EQ(
+        double_variant1.get_type_name(),
+        "double"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        double_variant1.get_parameter_value(),
+        double_value
+    );
+
+    // value to string
+    EXPECT_EQ(
+        double_variant1.value_to_string(),
+        "4.000000"
+    );
 }
 
 TEST_F(ParameterConstructors, string_variant) {
@@ -66,6 +211,43 @@ TEST_F(ParameterConstructors, string_variant) {
         "string_param", "test"
     );
     EXPECT_EQ(string_variant1, string_variant2);
+
+    // value not equal
+    miru::params::Parameter diff_value = miru::params::Parameter(
+        "string_param", "test2"
+    );
+    EXPECT_NE(string_variant1, diff_value);
+
+    // name not equal
+    miru::params::Parameter diff_name = miru::params::Parameter(
+        "arglebargle",
+        string_value
+    );
+    EXPECT_NE(string_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        string_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_STRING
+    );
+
+    // get type name
+    EXPECT_EQ(
+        string_variant1.get_type_name(),
+        "string"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        string_variant1.get_parameter_value(),
+        string_value
+    );
+
+    // value to string
+    EXPECT_EQ(
+        string_variant1.value_to_string(),
+        "\"test\""
+    );
 }
 
 TEST_F(ParameterConstructors, bool_array_variant) {
@@ -79,6 +261,43 @@ TEST_F(ParameterConstructors, bool_array_variant) {
         "bool_array_param", std::vector<bool>{true, false, true}
     );
     EXPECT_EQ(bool_array_variant1, bool_array_variant2);
+
+    // value not equal
+    miru::params::Parameter diff_value = miru::params::Parameter(
+        "bool_array_param", std::vector<bool>{true, true, true}
+    );
+    EXPECT_NE(bool_array_variant1, diff_value);
+
+    // name not equal
+    miru::params::Parameter diff_name = miru::params::Parameter(
+        "arglebargle",
+        bool_array_value
+    );
+    EXPECT_NE(bool_array_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        bool_array_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_BOOL_ARRAY
+    );
+
+    // get type name
+    EXPECT_EQ(
+        bool_array_variant1.get_type_name(),
+        "bool array"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        bool_array_variant1.get_parameter_value(),
+        bool_array_value
+    );
+
+    // value to string
+    EXPECT_EQ(
+        bool_array_variant1.value_to_string(),
+        "[true, false, true]"
+    );
 }
 
 TEST_F(ParameterConstructors, int_array_variant) {
@@ -92,19 +311,93 @@ TEST_F(ParameterConstructors, int_array_variant) {
         "int_array_param", std::vector<int>{1, 2, 3}
     );
     EXPECT_EQ(int_array_variant1, int_array_variant2);
+
+    // value not equal
+    miru::params::Parameter diff_value = miru::params::Parameter(
+        "int_array_param", std::vector<int>{1, 2, 4}
+    );
+    EXPECT_NE(int_array_variant1, diff_value);
+
+    // name not equal
+    miru::params::Parameter diff_name = miru::params::Parameter(
+        "arglebargle",
+        int_array_value
+    );
+    EXPECT_NE(int_array_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        int_array_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_INTEGER_ARRAY
+    );
+
+    // get type name
+    EXPECT_EQ(
+        int_array_variant1.get_type_name(),
+        "int array"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        int_array_variant1.get_parameter_value(),
+        int_array_value
+    );
+
+    // value to string
+    EXPECT_EQ(
+        int_array_variant1.value_to_string(),
+        "[1, 2, 3]"
+    );
 }
 
 TEST_F(ParameterConstructors, double_array_variant) {
     miru::params::ParameterValue double_array_value(
-        std::vector<double>{1.0, 2.0, 3.0}
+        std::vector<double>{1.0, 2.2, 3.3}
     );
     miru::params::Parameter double_array_variant1 = miru::params::Parameter(
         "double_array_param", double_array_value
     );
     miru::params::Parameter double_array_variant2 = miru::params::Parameter(
-        "double_array_param", std::vector<double>{1.0, 2.0, 3.0}
+        "double_array_param", std::vector<double>{1.0, 2.2, 3.3}
     );
     EXPECT_EQ(double_array_variant1, double_array_variant2);
+
+    // value not equal
+    miru::params::Parameter diff_value = miru::params::Parameter(
+        "double_array_param", std::vector<double>{1.0, 2.0, 4.0}
+    );
+    EXPECT_NE(double_array_variant1, diff_value);
+
+    // name not equal
+    miru::params::Parameter diff_name = miru::params::Parameter(
+        "arglebargle",
+        double_array_value
+    );
+    EXPECT_NE(double_array_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        double_array_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_DOUBLE_ARRAY
+    );
+
+    // get type name
+    EXPECT_EQ(
+        double_array_variant1.get_type_name(),
+        "double array"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        double_array_variant1.get_parameter_value(),
+        double_array_value
+    );
+
+    // value to string
+    EXPECT_EQ(
+        double_array_variant1.value_to_string(),
+        "[1.000000, 2.200000, 3.300000]"
+    );
 }
 
 TEST_F(ParameterConstructors, string_array_variant) {
@@ -118,6 +411,43 @@ TEST_F(ParameterConstructors, string_array_variant) {
         "string_array_param", std::vector<std::string>{"test1", "test2", "test3"}
     );
     EXPECT_EQ(string_array_variant1, string_array_variant2);
+
+    // value not equal
+    miru::params::Parameter diff_value = miru::params::Parameter(
+        "string_array_param", std::vector<std::string>{"test1", "test2", "test4"}
+    );
+    EXPECT_NE(string_array_variant1, diff_value);
+
+    // name not equal
+    miru::params::Parameter diff_name = miru::params::Parameter(
+        "arglebargle",
+        string_array_value
+    );
+    EXPECT_NE(string_array_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        string_array_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_STRING_ARRAY
+    );
+
+    // get type name
+    EXPECT_EQ(
+        string_array_variant1.get_type_name(),
+        "string array"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        string_array_variant1.get_parameter_value(),
+        string_array_value
+    );
+
+    // value to string
+    EXPECT_EQ(
+        string_array_variant1.value_to_string(),
+        "[\"test1\", \"test2\", \"test3\"]"
+    );
 }
 
 TEST_F(ParameterConstructors, null_variant) {
@@ -128,6 +458,39 @@ TEST_F(ParameterConstructors, null_variant) {
         "null_param", miru::params::ParameterValue(nullptr)
     );
     EXPECT_EQ(null_variant1, null_variant2);
+
+    // unequal value is not possible
+
+    // name not equal
+    miru::params::Parameter diff_name = miru::params::Parameter(
+        "arglebargle",
+        miru::params::ParameterValue(nullptr)
+    );
+    EXPECT_NE(null_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        null_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_NULL
+    );
+
+    // get type name
+    EXPECT_EQ(
+        null_variant1.get_type_name(),
+        "null"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        null_variant1.get_parameter_value(),
+        miru::params::ParameterValue(nullptr)
+    );
+
+    // value to string
+    EXPECT_EQ(
+        null_variant1.value_to_string(),
+        "null"
+    );
 }
 
 TEST_F(ParameterConstructors, scalar_variant) {
@@ -139,6 +502,43 @@ TEST_F(ParameterConstructors, scalar_variant) {
         "scalar_param", miru::params::Scalar("test")
     );
     EXPECT_EQ(scalar_variant1, scalar_variant2);
+
+    // value not equal
+    miru::params::Parameter diff_value = miru::params::Parameter(
+        "scalar_param", miru::params::Scalar("test2")
+    );
+    EXPECT_NE(scalar_variant1, diff_value);
+
+    // name not equal   
+    miru::params::Parameter diff_name = miru::params::Parameter(
+        "arglebargle",
+        scalar_value
+    );
+    EXPECT_NE(scalar_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        scalar_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_SCALAR
+    );
+
+    // get type name
+    EXPECT_EQ(
+        scalar_variant1.get_type_name(),
+        "scalar"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        scalar_variant1.get_parameter_value(),
+        scalar_value
+    );
+
+    // value to string
+    EXPECT_EQ(
+        scalar_variant1.value_to_string(),
+        "\"test\""
+    );
 }
 
 TEST_F(ParameterConstructors, scalar_array_variant) {
@@ -160,14 +560,61 @@ TEST_F(ParameterConstructors, scalar_array_variant) {
         }
     );
     EXPECT_EQ(scalar_array_variant1, scalar_array_variant2);
+
+    // value not equal
+    miru::params::Parameter diff_value = miru::params::Parameter(
+        "scalar_array_param", std::vector<miru::params::Scalar>{
+            miru::params::Scalar("true"),
+            miru::params::Scalar("false"),
+            miru::params::Scalar("false")
+        }
+    );
+    EXPECT_NE(scalar_array_variant1, diff_value);
+
+    // name not equal
+    miru::params::Parameter diff_name = miru::params::Parameter(
+        "arglebargle",
+        scalar_array_value
+    );
+    EXPECT_NE(scalar_array_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        scalar_array_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_SCALAR_ARRAY
+    );
+
+    // get type name
+    EXPECT_EQ(
+        scalar_array_variant1.get_type_name(),
+        "scalar array"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        scalar_array_variant1.get_parameter_value(),
+        scalar_array_value
+    );
+
+    // value to string
+    EXPECT_EQ(
+        scalar_array_variant1.value_to_string(),
+        "[\"true\", \"false\", \"true\"]"
+    );
 }
 
 TEST_F(ParameterConstructors, nested_array_variant) {
     miru::params::ParameterValue nested_array_value(
         miru::params::NestedArray{
             std::vector<miru::params::Parameter>{
-                miru::params::Parameter("nested_param1", miru::params::Scalar("test1")),
-                miru::params::Parameter("nested_param2", miru::params::Scalar("test2"))
+                miru::params::Parameter(
+                    "nested_param1", 
+                    std::vector<int>{1, 2, 3}
+                ),
+                miru::params::Parameter(
+                    "nested_param2", 
+                    std::vector<int>{4, 5, 6}
+                )
             }
         }
     );
@@ -177,12 +624,54 @@ TEST_F(ParameterConstructors, nested_array_variant) {
     miru::params::Parameter nested_array_variant2 = miru::params::Parameter(
         "nested_array_param", miru::params::NestedArray{
             std::vector<miru::params::Parameter>{
-                miru::params::Parameter("nested_param1", miru::params::Scalar("test1")),
-                miru::params::Parameter("nested_param2", miru::params::Scalar("test2"))
+                miru::params::Parameter("nested_param1", std::vector<int>{1, 2, 3}),
+                miru::params::Parameter("nested_param2", std::vector<int>{4, 5, 6})
             }
         }
     );
     EXPECT_EQ(nested_array_variant1, nested_array_variant2);
+
+    // value not equal
+    miru::params::Parameter diff_value = miru::params::Parameter(
+        "nested_array_param", miru::params::NestedArray{
+            std::vector<miru::params::Parameter>{
+                miru::params::Parameter("nested_param1", std::vector<int>{1, 2, 9}),
+                miru::params::Parameter("nested_param2", std::vector<int>{4, 5, 6})
+            }
+        }
+    );
+    EXPECT_NE(nested_array_variant1, diff_value);
+
+    // name not equal
+    miru::params::Parameter diff_name = miru::params::Parameter(
+        "arglebargle",
+        nested_array_value
+    );
+    EXPECT_NE(nested_array_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        nested_array_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_NESTED_ARRAY
+    );
+
+    // get type name
+    EXPECT_EQ(
+        nested_array_variant1.get_type_name(),
+        "nested array"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        nested_array_variant1.get_parameter_value(),
+        nested_array_value
+    );
+
+    // value to string
+    EXPECT_EQ(
+        nested_array_variant1.value_to_string(),
+        "[[1, 2, 3], [4, 5, 6]]"
+    );
 }
 
 TEST_F(ParameterConstructors, object_variant) {
@@ -206,18 +695,66 @@ TEST_F(ParameterConstructors, object_variant) {
         }
     );
     EXPECT_EQ(object_variant1, object_variant2);
+
+    // value not equal
+    miru::params::Parameter diff_value = miru::params::Parameter(
+        "object_param", miru::params::Object{
+            std::vector<miru::params::Parameter>{
+                miru::params::Parameter("object_param1", miru::params::Scalar("test1")),
+                miru::params::Parameter("object_param2", miru::params::Scalar("test3"))
+            }
+        }
+    );
+    EXPECT_NE(object_variant1, diff_value);
+
+    // name not equal
+    miru::params::Parameter diff_name = miru::params::Parameter(
+        "arglebargle",
+        object_value
+    );
+    EXPECT_NE(object_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        object_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_OBJECT
+    );
+
+    // get type name
+    EXPECT_EQ(
+        object_variant1.get_type_name(),
+        "object"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        object_variant1.get_parameter_value(),
+        object_value
+    );
+
+    // value to string
+    EXPECT_EQ(
+        object_variant1.value_to_string(),
+        "{\"object_param1\": \"test1\", \"object_param2\": \"test2\"}"
+    );
 }
 
 TEST_F(ParameterConstructors, object_array_variant) {
     miru::params::ParameterValue object_array_value(
         miru::params::ObjectArray{
             std::vector<miru::params::Parameter>{
-                miru::params::Object{
+                miru::params::Parameter("object1", miru::params::Object{
                     std::vector<miru::params::Parameter>{
-                        miru::params::Parameter("object_param1", miru::params::Scalar("test1")),
-                        miru::params::Parameter("object_param2", miru::params::Scalar("test2"))
+                        miru::params::Parameter("object1_param1", miru::params::Scalar("test1")),
+                        miru::params::Parameter("object1_param2", miru::params::Scalar("test2"))
                     }
-                }
+                }),
+                miru::params::Parameter("object2", miru::params::Object{
+                    std::vector<miru::params::Parameter>{
+                        miru::params::Parameter("object2_param1", miru::params::Scalar("test3")),
+                        miru::params::Parameter("object2_param2", miru::params::Scalar("test4"))
+                    }
+                })
             }
         }
     );
@@ -227,19 +764,126 @@ TEST_F(ParameterConstructors, object_array_variant) {
     miru::params::Parameter object_array_variant2 = miru::params::Parameter(
         "object_array_param", miru::params::ObjectArray{
             std::vector<miru::params::Parameter>{
-                miru::params::Object{
+                miru::params::Parameter("object1", miru::params::Object{
                     std::vector<miru::params::Parameter>{
-                        miru::params::Parameter("object_param1", miru::params::Scalar("test1")),
-                        miru::params::Parameter("object_param2", miru::params::Scalar("test2"))
+                        miru::params::Parameter("object1_param1", miru::params::Scalar("test1")),
+                        miru::params::Parameter("object1_param2", miru::params::Scalar("test2"))
                     }
-                }
+                }),
+                miru::params::Parameter("object2", miru::params::Object{
+                    std::vector<miru::params::Parameter>{
+                        miru::params::Parameter("object2_param1", miru::params::Scalar("test3")),
+                        miru::params::Parameter("object2_param2", miru::params::Scalar("test4"))
+                    }
+                })
             }
         }
     );
     EXPECT_EQ(object_array_variant1, object_array_variant2);
+
+    // value not equal
+    miru::params::Parameter diff_value = miru::params::Parameter(
+        "object_array_param", miru::params::ObjectArray{
+            std::vector<miru::params::Parameter>{
+                miru::params::Parameter("object1", miru::params::Object{
+                    std::vector<miru::params::Parameter>{
+                        miru::params::Parameter("object1_param1", miru::params::Scalar("test1")),
+                        miru::params::Parameter("object1_param2", miru::params::Scalar("test3"))
+                    }
+                }),
+                miru::params::Parameter("object2", miru::params::Object{
+                    std::vector<miru::params::Parameter>{
+                        miru::params::Parameter("object2_param1", miru::params::Scalar("test3")),
+                        miru::params::Parameter("object2_param2", miru::params::Scalar("test4"))
+                    }
+                })
+            }
+        }
+    );
+    EXPECT_NE(object_array_variant1, diff_value);
+
+    // name not equal
+    miru::params::Parameter diff_name = miru::params::Parameter(
+        "arglebargle",
+        object_array_value
+    );
+    EXPECT_NE(object_array_variant1, diff_name);
+
+    // get type
+    EXPECT_EQ(
+        object_array_variant1.get_type(), 
+        miru::params::ParameterType::PARAMETER_OBJECT_ARRAY
+    );
+
+    // get type name
+    EXPECT_EQ(
+        object_array_variant1.get_type_name(),
+        "object array"
+    );
+
+    // get parameter value
+    EXPECT_EQ(
+        object_array_variant1.get_parameter_value(),
+        object_array_value
+    );
+
+    // value to string
+    EXPECT_EQ(
+        object_array_variant1.value_to_string(),
+        "[{\"object1_param1\": \"test1\", \"object1_param2\": \"test2\"}, {\"object2_param1\": \"test3\", \"object2_param2\": \"test4\"}]"
+    );
 }
 
 
+
+
+
+
+
+
+
+// ================================= NAME + KEY ==================================== //
+struct KeyTestCase {
+    std::string name;
+    std::string delimiter;
+    std::string key;
+};
+
+class ParameterKey : public ::testing::Test {
+protected:
+    std::vector<KeyTestCase> test_cases = {
+        {"", "/", ""},
+        {"l1", "/", "l1"},
+        {"l1/l2", "/", "l2"},
+        {"l1.l2", ".", "l2"},
+        {"l1/l2", ".", "l1/l2"},
+        {"l1.l2", "/", "l1.l2"},
+        {"l1.l2/l3", ".", "l2/l3"},
+        {"l1.l2/l3.l4", ".", "l4"},
+    };
+};
+
+TEST_F(ParameterKey, names) {
+    for (const auto & test_case : test_cases) {
+        miru::params::Parameter param(
+            test_case.name,
+            miru::params::ParameterValue(),
+            test_case.delimiter
+        );
+        EXPECT_EQ(param.get_name(), test_case.name);
+    }
+}
+
+TEST_F(ParameterKey, keys) {
+    for (const auto & test_case : test_cases) {
+        miru::params::Parameter param(
+            test_case.name,
+            miru::params::ParameterValue(),
+            test_case.delimiter
+        );
+        EXPECT_EQ(param.get_key(), test_case.key);
+    }
+}
 
 
 
@@ -407,7 +1051,8 @@ void test_conversion_type_exceptions(
             },
             miru::params::ParameterType::PARAMETER_SCALAR_ARRAY
         );
-    }
+    } 
+
     // nested array
     if (std::find(exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_NESTED_ARRAY) == exclude.end()) {
         test_conversion_funcs_throw_type_exceptions(
@@ -420,6 +1065,7 @@ void test_conversion_type_exceptions(
             miru::params::ParameterType::PARAMETER_NESTED_ARRAY
         );
     }
+
     // object
     if (std::find(exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_OBJECT) == exclude.end()) {
         test_conversion_funcs_throw_type_exceptions(
@@ -432,6 +1078,7 @@ void test_conversion_type_exceptions(
             miru::params::ParameterType::PARAMETER_OBJECT
         );
     }
+
     // object array
     if (std::find(exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_OBJECT_ARRAY) == exclude.end()) {
         test_conversion_funcs_throw_type_exceptions(
@@ -474,8 +1121,6 @@ TEST_F(ParameterInvalidTypeConversions, int_variant) {
     };
     test_conversion_type_exceptions(int_variant, exclude);
 }
-
-
 
 TEST_F(ParameterInvalidTypeConversions, double_variant) {
     miru::params::Parameter double_variant = miru::params::Parameter(
@@ -647,8 +1292,8 @@ TEST_F(ParameterInvalidTypeConversions, nested_array_variant) {
     miru::params::Parameter nested_array_variant = miru::params::Parameter(
         "nested_array_param", miru::params::NestedArray{
             std::vector<miru::params::Parameter>{
-                miru::params::Parameter("nested_param1", miru::params::Scalar("test1")),
-                miru::params::Parameter("nested_param2", miru::params::Scalar("test2"))
+                miru::params::Parameter("nested_param1", std::vector<int>{1, 2, 3}),
+                miru::params::Parameter("nested_param2", std::vector<int>{4, 5, 6})
             }
         }
     );
@@ -667,6 +1312,7 @@ TEST_F(ParameterInvalidTypeConversions, object_variant) {
             }
         }
     );
+
     std::vector<miru::params::ParameterType> exclude = {
         miru::params::ParameterType::PARAMETER_OBJECT,
     };
@@ -677,8 +1323,18 @@ TEST_F(ParameterInvalidTypeConversions, object_array_variant) {
     miru::params::Parameter object_array_variant = miru::params::Parameter(
         "object_array_param", miru::params::ObjectArray{
             std::vector<miru::params::Parameter>{
-                miru::params::Parameter("object_param1", miru::params::Scalar("test1")),
-                miru::params::Parameter("object_param2", miru::params::Scalar("test2"))
+                miru::params::Parameter("object1", miru::params::Object{
+                    std::vector<miru::params::Parameter>{
+                        miru::params::Parameter("object1_param1", miru::params::Scalar("test1")),
+                        miru::params::Parameter("object1_param2", miru::params::Scalar("test2"))
+                    }
+                }),
+                miru::params::Parameter("object2", miru::params::Object{
+                    std::vector<miru::params::Parameter>{
+                        miru::params::Parameter("object2_param1", miru::params::Scalar("test3")),
+                        miru::params::Parameter("object2_param2", miru::params::Scalar("test4"))
+                    }
+                })
             }
         }
     );
@@ -703,7 +1359,7 @@ TEST_F(IntegerCasting, integer_type_casting_success) {
             using T = std::decay_t<decltype(arg)>;
             EXPECT_EQ(
                 integer_variant.get_value<T>(),
-                test_case.expected
+                std::get<T>(test_case.expected)
             );
         }, test_case.expected);
     }
@@ -728,3 +1384,47 @@ TEST_F(IntegerCasting, integer_type_casting_failure) {
         }, test_case.expected);
     }
 }
+
+// casting integer arrays to different types is not currently supported
+
+TEST_F(DoubleCasting, double_type_casting_success) {
+    for (const auto & test_case : double_test_cases) {
+        if (test_case.expect_failure) {
+            continue;
+        }
+        miru::params::Parameter double_variant = miru::params::Parameter(
+            "double_param",
+            test_case.input,
+            "/"
+        );
+        std::visit([&](auto&& arg) {
+            using T = std::decay_t<decltype(arg)>;
+            EXPECT_EQ(
+                double_variant.get_value<T>(),
+                std::get<T>(test_case.expected)
+            );
+        }, test_case.expected);
+    }
+}
+
+TEST_F(DoubleCasting, double_type_casting_failure) {
+    for (const auto & test_case : double_test_cases) {
+        if (!test_case.expect_failure) {
+            continue;
+        }
+        miru::params::Parameter double_variant = miru::params::Parameter(
+            "double_param",
+            test_case.input,
+            "/"
+        );
+        std::visit([&](auto&& arg) {
+            using T = std::decay_t<decltype(arg)>;
+            EXPECT_THROW(
+                double_variant.get_value<T>(),
+                miru::params::InvalidParameterType
+            );
+        }, test_case.expected);
+    }
+}
+
+// casting double arrays to different types is not currently supported

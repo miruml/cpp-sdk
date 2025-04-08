@@ -127,137 +127,175 @@ protected:
     }
 };
 
+// =================================== DOUBLES ===================================== //
+struct DoubleCastTestCase {
+    double input;
+    DoubleVariants expected;
+    bool expect_failure;
+};
+
+class DoubleCasting: public ::testing::Test {
+protected:
+    std::vector<DoubleCastTestCase> double_test_cases = {
+        // double success
+        {123.45, double(123.45), false},
+        {-123.45, double(-123.45), false},
+        {124, double(124.0), false},
+        {-124, double(-124.0), false},
+        {1.7976931348623157E308, double(1.7976931348623157E308), false},
+        {-1.7976931348623157E308, double(-1.7976931348623157E308), false},
+
+        // float success    
+        {123.45, float(123.45), false},
+        {-123.45, float(-123.45), false},
+        {124, float(124.0), false},
+        {-124, float(-124.0), false},
+
+        // float overflow
+        {3.4028234663852886E39, float(0.0), true},
+        {-3.4028234663852886E39, float(0.0), true},
+    };
+};
+
+
+
 // =================================== SCALARS ===================================== //
+enum class ScalarException {
+    None,
+    InvalidScalarConversion,
+    InvalidTypeCast,
+};
+
 struct ScalarToBoolTestCase {
     std::string scalar;
     bool expected;
-    bool expect_failure;
+    ScalarException expected_exception;
 };
 
 struct ScalarToIntTestCase {
     std::string scalar;
     IntVariants expected;
-    bool expect_failure;
+    ScalarException expected_exception;
 };
 
 struct ScalarToDoubleTestCase {
     std::string scalar;
     DoubleVariants expected;
-    bool expect_failure;
+    ScalarException expected_exception;
 };
 
 struct ScalarToStringTestCase {
     std::string scalar;
     std::string expected;
-    bool expect_failure;
+    ScalarException expected_exception;
 };
 
 class ScalarConversion: public ::testing::Test {
 protected:
     std::vector<ScalarToBoolTestCase> bool_test_cases = {
         // success
-        {"y", true, false},
-        {"Y", true, false},
-        {"yes", true, false},
-        {"YES", true, false},
-        {"true", true, false},
-        {"TRUE", true, false},
-        {"on", true, false},
-        {"ON", true, false},
-        {"n", false, false},
-        {"N", false, false},
-        {"no", false, false},
-        {"NO", false, false},
-        {"false", false, false},
-        {"FALSE", false, false},
-        {"off", false, false},
-        {"OFF", false, false},
+        {"y", true, ScalarException::None},
+        {"Y", true, ScalarException::None},
+        {"yes", true, ScalarException::None},
+        {"YES", true, ScalarException::None},
+        {"true", true, ScalarException::None},
+        {"TRUE", true, ScalarException::None},
+        {"on", true, ScalarException::None},
+        {"ON", true, ScalarException::None},
+        {"n", false, ScalarException::None},
+        {"N", false, ScalarException::None},
+        {"no", false, ScalarException::None},
+        {"NO", false, ScalarException::None},
+        {"false", false, ScalarException::None},
+        {"FALSE", false, ScalarException::None},
+        {"off", false, ScalarException::None},
+        {"OFF", false, ScalarException::None},
         // failure
-        {"arglebargle", false, true},
-        {"0", false, true},
-        {"1", true, true},
-        {"2", false, true},
+        {"arglebargle", false, ScalarException::InvalidScalarConversion},
+        {"0", false, ScalarException::InvalidScalarConversion},
+        {"1", true, ScalarException::InvalidScalarConversion},
+        {"2", false, ScalarException::InvalidScalarConversion},
     };
 
     std::vector<ScalarToIntTestCase> int_test_cases = {
         // success
-        {"123", int64_t(123), false},
-        {"-123", int64_t(-123), false},
-        {"9223372036854775807", int64_t(9223372036854775807), false},
-        {"-9223372036854775807", int64_t(-9223372036854775807), false},
+        {"123", int64_t(123), ScalarException::None},
+        {"-123", int64_t(-123), ScalarException::None},
+        {"9223372036854775807", int64_t(9223372036854775807), ScalarException::None},
+        {"-9223372036854775807", int64_t(-9223372036854775807), ScalarException::None},
 
         // invalid integers
-        {"123.45", int64_t(0), true},
-        {"arglebargle", int64_t(0), true},
-        {"123abc", int64_t(0), true},
-        {"-123abc", int64_t(0), true},
+        {"123.45", int64_t(0), ScalarException::InvalidScalarConversion},
+        {"arglebargle", int64_t(0), ScalarException::InvalidScalarConversion},
+        {"123abc", int64_t(0), ScalarException::InvalidScalarConversion},
+        {"-123abc", int64_t(0), ScalarException::InvalidScalarConversion},
 
         // int8 overflow
-        {"128", int8_t(0), true},
-        {"-129", int8_t(0), true},
+        {"128", int8_t(0), ScalarException::InvalidTypeCast},
+        {"-129", int8_t(0), ScalarException::InvalidTypeCast},
 
         // int16 overflow
-        {"32768", int16_t(0), true},
-        {"-32769", int16_t(0), true},
+        {"32768", int16_t(0), ScalarException::InvalidTypeCast},
+        {"-32769", int16_t(0), ScalarException::InvalidTypeCast},
 
         // int32 overflow
-        {"2147483648", int32_t(0), true},
-        {"-2147483649", int32_t(0), true},
+        {"2147483648", int32_t(0), ScalarException::InvalidTypeCast},
+        {"-2147483649", int32_t(0), ScalarException::InvalidTypeCast},
 
         // int64 overflow
-        {"9223372036854775808", int64_t(0), true},
-        {"-9223372036854775809", int64_t(0), true},
+        {"9223372036854775808", int64_t(0), ScalarException::InvalidScalarConversion},
+        {"-9223372036854775809", int64_t(0), ScalarException::InvalidScalarConversion},
 
         // uint8 overflow
-        {"256", uint8_t(0), true},
-        {"-1", uint8_t(0), true},
+        {"256", uint8_t(0), ScalarException::InvalidTypeCast},
+        {"-1", uint8_t(0), ScalarException::InvalidTypeCast},
 
         // uint16 overflow
-        {"65536", uint16_t(0), true},
-        {"-1", uint16_t(0), true},
+        {"65536", uint16_t(0), ScalarException::InvalidTypeCast},
+        {"-1", uint16_t(0), ScalarException::InvalidTypeCast},
 
         // uint32 overflow
-        {"4294967296", uint32_t(0), true},
-        {"-1", uint32_t(0), true},
+        {"4294967296", uint32_t(0), ScalarException::InvalidTypeCast},
+        {"-1", uint32_t(0), ScalarException::InvalidTypeCast},
 
         // uint64 overflow
-        {"18446744073709551616", uint64_t(0), true},
-        {"-1", uint64_t(0), true},
+        {"18446744073709551616", uint64_t(0), ScalarException::InvalidScalarConversion},
+        {"-1", uint64_t(0), ScalarException::InvalidTypeCast},
     };
 
     std::vector<ScalarToDoubleTestCase> double_test_cases = {
         // success
-        {"123.45", double(123.45), false},
-        {"-123.45", double(-123.45), false},
-        {"124", double(124.0), false},
-        {"-124", double(-124.0), false},
-        {"1.7976931348623157E308", double(1.7976931348623157E308), false},
-        {"-1.7976931348623157E308", double(-1.7976931348623157E308), false},
+        {"123.45", double(123.45), ScalarException::None},
+        {"-123.45", double(-123.45), ScalarException::None},
+        {"124", double(124.0), ScalarException::None},
+        {"-124", double(-124.0), ScalarException::None},
+        {"1.7976931348623157E308", double(1.7976931348623157E308), ScalarException::None},
+        {"-1.7976931348623157E308", double(-1.7976931348623157E308), ScalarException::None},
 
         // failure
-        {"arglebargle", double(0.0), true},
-        {"123.45.67", double(0.0), true},
-        {"123abc", double(0.0), true},
-        {"-123abc", double(0.0), true},
+        {"arglebargle", double(0.0), ScalarException::InvalidScalarConversion},
+        {"123.45.67", double(0.0), ScalarException::InvalidScalarConversion},
+        {"123abc", double(0.0), ScalarException::InvalidScalarConversion},
+        {"-123abc", double(0.0), ScalarException::InvalidScalarConversion},
 
         // float overflow
-        {"3.4028234663852886E39", float(0.0), true},
-        {"-3.4028234663852886E39", float(0.0), true},
+        {"3.4028234663852886E39", float(0.0), ScalarException::InvalidTypeCast},
+        {"-3.4028234663852886E39", float(0.0), ScalarException::InvalidTypeCast},
 
         // double overflow
-        {"1.7976931348623158E309", double(0.0), true},
-        {"-1.7976931348623158E309", double(0.0), true},
+        {"1.7976931348623158E309", double(0.0), ScalarException::InvalidScalarConversion},
+        {"-1.7976931348623158E309", double(0.0), ScalarException::InvalidScalarConversion},
     };
 
     std::vector<ScalarToStringTestCase> string_test_cases = {
         // success
-        {"123.45", "123.45", false},
-        {"-123.45", "-123.45", false},
-        {"124", "124", false},
-        {"-124", "-124", false},
-        {"arglebargle", "arglebargle", false},
-        {"123.45.67", "123.45.67", false},
-        {"123abc", "123abc", false},
-        {"-123abc", "-123abc", false},
+        {"123.45", "123.45", ScalarException::None},
+        {"-123.45", "-123.45", ScalarException::None},
+        {"124", "124", ScalarException::None},
+        {"-124", "-124", ScalarException::None},
+        {"arglebargle", "arglebargle", ScalarException::None},
+        {"123.45.67", "123.45.67", ScalarException::None},
+        {"123abc", "123abc", ScalarException::None},
+        {"-123abc", "-123abc", ScalarException::None},
     };
 };

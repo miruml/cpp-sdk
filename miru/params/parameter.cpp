@@ -91,14 +91,6 @@ std::string Parameter::value_to_string() const {
     return to_string(value_);
 }
 
-std::string _to_json_dict_entry(const Parameter & param) {
-    std::stringstream ss;
-    ss << "\"" << param.get_key() << "\": ";
-    ss << "{\"type\": \"" << param.get_type_name() << "\", ";
-    ss << "\"value\": \"" << param.value_to_string() << "\"}";
-    return ss.str();
-}
-
 std::ostream & operator<<(std::ostream & os, const Parameter & pv) {
     os << to_string(pv);
     return os;
@@ -118,18 +110,25 @@ std::string to_string(const Parameter & param) {
     return ss.str();
 }
 
-std::string to_string(const std::vector<Parameter> & parameters)
-{
+std::string to_string(const std::vector<Parameter> & parameters) {
+    auto add_param_entry = [](const Parameter & param) {
+        std::stringstream ss;
+        ss << "\"" << param.get_key() << "\": ";
+        ss << "{\"type\": \"" << param.get_type_name() << "\", ";
+        ss << "\"value\": \"" << param.value_to_string() << "\"}";
+        return ss.str();
+    };
+
     std::stringstream ss;
     ss << "{";
     bool first = true;
     for (const auto & pv : parameters) {
         if (first == false) {
-        ss << ", ";
+            ss << ", ";
         } else {
-        first = false;
+            first = false;
         }
-        ss << _to_json_dict_entry(pv);
+        ss << add_param_entry(pv);
     }
     ss << "}";
     return ss.str();

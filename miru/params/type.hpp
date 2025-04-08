@@ -79,7 +79,7 @@ public:
 template<typename type>  constexpr
 typename std::enable_if<
     std::is_integral<type>::value && !std::is_same<type, bool>::value, 
-    int64_t>::type
+    type>::type
 cast_int64_to(const int64_t & value) {
     // need to handle unsigned types separately
     if (std::is_unsigned<type>::value && value < 0) {
@@ -102,13 +102,13 @@ cast_int64_to(const int64_t & value) {
             "value outside target integer range [" + std::to_string(std::numeric_limits<type>::lowest()) + ", " + std::to_string(std::numeric_limits<type>::max()) + "]"
         );
     }
-    return value;
+    return static_cast<type>(value);
 }
 
 template<typename type>  constexpr
 typename std::enable_if<
     std::is_floating_point<type>::value,
-    double>::type
+    type>::type
 cast_double_to(const double & value) {
     // check for overflow with the target floating point type
     if (value > std::numeric_limits<type>::max() || 
@@ -121,7 +121,7 @@ cast_double_to(const double & value) {
             "value outside target floating point range [" + std::to_string(std::numeric_limits<type>::lowest()) + ", " + std::to_string(std::numeric_limits<type>::max()) + "]"
         );
     }
-    return value;
+    return static_cast<type>(value);
 }
 
 

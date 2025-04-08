@@ -2,6 +2,7 @@
 
 // std
 #include <cstddef>
+#include <cstdint>
 #include <string>
 #include <optional>
 #include <variant>
@@ -89,8 +90,7 @@ public:
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L124
 
     /// Return an enum indicating the type of the set value.
-    ParameterType
-    get_type() const;
+    ParameterType get_type() const;
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L129
 
@@ -99,12 +99,10 @@ public:
     // to_value_msg() const;
 
     /// Equal operator.
-    bool
-    operator==(const ParameterValue & rhs) const;
+    bool operator==(const ParameterValue & rhs) const;
 
     /// Not equal operator.
-    bool
-    operator!=(const ParameterValue & rhs) const;
+    bool operator!=(const ParameterValue & rhs) const;
 
     // ROS2 "GET" methods using the ParameterType enum
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L146
@@ -281,16 +279,18 @@ public:
     template<typename type> constexpr
     typename std::enable_if<
         std::is_integral<type>::value && !std::is_same<type, bool>::value,
-        const int64_t>::type
+        const type>::type
     get() const {
+        // use the type as the argument so that we reuse the same casting logic
         return cast_int64_to<type>(get<ParameterType::PARAMETER_INTEGER>());
     }
 
     template<typename type> constexpr
     typename std::enable_if<
         std::is_floating_point<type>::value,
-        const double>::type
+        const type>::type
     get() const {
+        // use the type as the argument so that we reuse the same casting logic
         return cast_double_to<type>(get<ParameterType::PARAMETER_DOUBLE>());
     }
 
@@ -322,21 +322,38 @@ public:
         return get<ParameterType::PARAMETER_BOOL_ARRAY>();
     }
 
-    template<typename type> constexpr
+    template<typename type>
+    constexpr
     typename std::enable_if<
-        std::is_integral<typename type::value_type>::value && 
-        !std::is_same<typename type::value_type, bool>::value &&
-        std::is_convertible<type, const std::vector<typename type::value_type>&>::value,
-        const std::vector<int64_t>&>::type
+        std::is_convertible<
+        type, const std::vector<int> &>::value, const std::vector<int64_t> &>::type
     get() const {
         return get<ParameterType::PARAMETER_INTEGER_ARRAY>();
     }
 
-    template<typename type> constexpr
+    template<typename type>
+    constexpr
     typename std::enable_if<
-        std::is_floating_point<typename type::value_type>::value &&
-        std::is_convertible<type, const std::vector<typename type::value_type>&>::value,
-        const std::vector<double> &>::type
+        std::is_convertible<
+        type, const std::vector<int64_t> &>::value, const std::vector<int64_t> &>::type
+    get() const {
+        return get<ParameterType::PARAMETER_INTEGER_ARRAY>();
+    }
+
+    template<typename type>
+    constexpr
+    typename std::enable_if<
+        std::is_convertible<
+        type, const std::vector<float> &>::value, const std::vector<double> &>::type
+    get() const {
+        return get<ParameterType::PARAMETER_DOUBLE_ARRAY>();
+    }
+
+    template<typename type>
+    constexpr
+    typename std::enable_if<
+        std::is_convertible<
+        type, const std::vector<double> &>::value, const std::vector<double> &>::type
     get() const {
         return get<ParameterType::PARAMETER_DOUBLE_ARRAY>();
     }
@@ -560,32 +577,11 @@ private:
     static constexpr uint8_t STRING_ARRAY_CACHED = 1 << 3;  // 0b1000
 };
 
-template<typename ValType, typename PrintType = ValType>
-std::string
-array_to_string(
-    const std::vector<ValType> & array,
-    const std::ios::fmtflags format_flags = std::ios::dec
-) {
-    std::stringstream type_array;
-    bool first_item = true;
-    type_array << "[";
-    type_array.setf(format_flags, std::ios_base::basefield | std::ios::boolalpha);
-    type_array << std::showbase;
-    for (const ValType & value : array) {
-        if (!first_item) {
-            type_array << ", ";
-        } else {
-            first_item = false;
-        }
-        type_array << static_cast<PrintType>(value);
-    }
-    type_array << "]";
-    return type_array.str();
-}
-
 /// Return the value of a parameter as a string
-std::string
-to_string(const ParameterValue & value);
+std::string to_string(const ParameterValue & value);
+
+std::string param_value_array_to_string(const std::vector<ParameterValue> & array);
+std::string param_object_to_string(const miru::params::Object & object);
 
 std::ostream & operator<<(std::ostream & os, const ParameterValue & value);
 
@@ -697,12 +693,10 @@ public:
 
     /// Get the value of parameter as using the given ParameterType as a template argument
     template<ParameterType ParamT>
-    decltype(auto)
-    get_value() const 
-    {
+    decltype(auto) get_value() const {
         try {
             return value_.get<ParamT>();
-        } catch (const InvalidParameterType & ex) {
+        } catch (const InvalidParameterValueType & ex) {
             throw InvalidParameterType(this->name_, ex.what());
         } catch (const InvalidScalarConversion & ex) {
             throw InvalidParameterType(this->name_, ex.what());
@@ -715,8 +709,7 @@ public:
 
     /// Get the value of parameter as using the given c++ type as a template argument 
     template<typename T>
-    decltype(auto)
-    get_value() const;
+    decltype(auto) get_value() const;
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L127
 
@@ -784,16 +777,13 @@ public:
 
     /// Get the value of parameter as using the given ParameterType as a template argument
     template<ParameterType ParamT>
-    decltype(auto)
-    get_nullable_value() const 
-    {
+    decltype(auto) get_nullable_value() const {
         return value_.get_nullable<ParamT>();
     }
 
     /// Get the value of parameter as using the given c++ type as a template argument 
     template<typename T>
-    decltype(auto)
-    get_nullable_value() const;
+    decltype(auto) get_nullable_value() const;
 
     /// Get the value of parameter as a null type
     const std::nullptr_t as_null() const;
@@ -833,27 +823,19 @@ namespace detail
 {
 
 template<typename T>
-auto
-get_value_helper(const Parameter * parameter)
-{
+auto get_value_helper(const Parameter * parameter) {
     return parameter->get_parameter_value().get<T>();
 }
 
 // Specialization allowing Parameter::get() to return a const ref to the parameter value object.
-template<>
-inline
-auto
-get_value_helper<ParameterValue>(const Parameter * parameter)
-{
+template<> inline
+auto get_value_helper<ParameterValue>(const Parameter * parameter) {
     return parameter->get_parameter_value();
 }
 
 // Specialization allowing Parameter::get() to return a const ref to the parameter itself.
-template<>
-inline
-auto
-get_value_helper<Parameter>(const Parameter * parameter)
-{
+template<> inline
+auto get_value_helper<Parameter>(const Parameter * parameter) {
     // Use this lambda to ensure it's a const reference being returned (and not a copy).
     auto type_enforcing_lambda =
         [&parameter]() -> const Parameter & {
@@ -865,12 +847,11 @@ get_value_helper<Parameter>(const Parameter * parameter)
 }  // namespace detail
 
 template<typename T> decltype(auto)
-Parameter::get_value() const
-{
+Parameter::get_value() const {
     try {
         // use the helper to specialize for the ParameterValue and Parameter cases.
         return detail::get_value_helper<T>(this);
-    } catch (const InvalidParameterType & ex) {
+    } catch (const InvalidParameterValueType & ex) {
         throw InvalidParameterType(this->name_, ex.what());
     } catch (const InvalidScalarConversion & ex) {
         throw InvalidParameterType(this->name_, ex.what());
@@ -890,9 +871,9 @@ Parameter::get_value() const
 // will likely confuse them when an integer is parsed as a scalar and not an integer
 // when using yaml.
 
+// this is a helper function that we don't use
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L219
-
-std::string _to_json_dict_entry(const Parameter & param);
+// std::string _to_json_dict_entry(const Parameter & param);
 
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L224
 
@@ -919,7 +900,7 @@ Parameter::get_nullable_value() const
     try {
         // use the helper to specialize for the ParameterValue and Parameter cases.
         return detail::get_value_helper<T>(this);
-    } catch (const InvalidParameterType & ex) {
+    } catch (const InvalidParameterValueType & ex) {
         throw InvalidParameterType(this->name_, ex.what());
     } catch (const InvalidScalarConversion & ex) {
         throw InvalidParameterType(this->name_, ex.what());
