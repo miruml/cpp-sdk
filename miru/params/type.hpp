@@ -1,10 +1,15 @@
-
 #pragma once
 
+// std
 #include <cstdint>
 #include <string>
 #include <stdexcept>
 #include <iostream>
+#include <type_traits>
+#include <limits>
+
+// miru
+#include <miru/params/exceptions.hpp>
 
 namespace miru::params {
 
@@ -54,23 +59,70 @@ enum ParameterType : uint8_t {
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L48
 
 /// Return the name of a parameter type
-std::string
-to_string(ParameterType type);
+std::string to_string(ParameterType type);
 
 std::ostream &operator<<(std::ostream & os, const ParameterType & type);
 
 /// Indicate the parameter type does not match the expected type.
-class ParameterTypeException : public std::runtime_error
-{
+class InvalidParameterValueType : public std::runtime_error {
 public:
-  /// Construct an instance.
-  /**
-   * \param[in] expected the expected parameter type.
-   * \param[in] actual the actual parameter type.
-   */
-  ParameterTypeException(ParameterType expected, ParameterType actual)
-  : std::runtime_error("expected [" + to_string(expected) + "] got [" + to_string(actual) + "]")
-  {}
+    /// Construct an instance.
+    /**
+    * \param[in] expected the expected parameter type.
+    * \param[in] actual the actual parameter type.
+    */
+    InvalidParameterValueType(ParameterType expected, ParameterType actual)
+    : std::runtime_error("expected [" + to_string(expected) + "] got [" + to_string(actual) + "]")
+    {}
 };
+
+template<typename type>  constexpr
+typename std::enable_if<
+    std::is_integral<type>::value && !std::is_same<type, bool>::value, 
+    int64_t>::type
+cast_int64_to(const int64_t & value) {
+    // need to handle unsigned types separately
+    if (std::is_unsigned<type>::value && value < 0) {
+        throw InvalidTypeCast(
+            std::to_string(value),
+            "int64_t",
+            "integer (type '" + std::string(typeid(type).name()) + "')",
+            "value is negative for unsigned type"
+        );
+    }
+
+    // check for overflow with the target integer type
+    if (value > std::numeric_limits<type>::max() || 
+        value < std::numeric_limits<type>::lowest()
+    ) {
+        throw InvalidTypeCast(
+            std::to_string(value),
+            "int64_t",
+            "integer (type '" + std::string(typeid(type).name()) + "')",
+            "value outside target integer range [" + std::to_string(std::numeric_limits<type>::lowest()) + ", " + std::to_string(std::numeric_limits<type>::max()) + "]"
+        );
+    }
+    return value;
+}
+
+template<typename type>  constexpr
+typename std::enable_if<
+    std::is_floating_point<type>::value,
+    double>::type
+cast_double_to(const double & value) {
+    // check for overflow with the target floating point type
+    if (value > std::numeric_limits<type>::max() || 
+        value < std::numeric_limits<type>::lowest()
+    ) {
+        throw InvalidTypeCast(
+            std::to_string(value),
+            "double",
+            "floating point (type '" + std::string(typeid(type).name()) + "')",
+            "value outside target floating point range [" + std::to_string(std::numeric_limits<type>::lowest()) + ", " + std::to_string(std::numeric_limits<type>::max()) + "]"
+        );
+    }
+    return value;
+}
+
 
 } // namespace miru::params

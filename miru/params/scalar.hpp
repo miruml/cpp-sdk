@@ -69,46 +69,14 @@ public:
     constexpr
     typename std::enable_if<std::is_integral<type>::value && !std::is_same<type, bool>::value, int64_t>::type
     as() const {
-        int64_t result = as_int();
-
-        // need to handle unsigned types separately
-        if (std::is_unsigned<type>::value && result < 0) {
-            throw InvalidScalarConversion(
-                value_,
-                "integer (type '" + std::string(typeid(type).name()) + "')",
-                "value is negative for unsigned type"
-            );
-        }
-
-        // check for overflow with the target integer type
-        if (result > std::numeric_limits<type>::max() || 
-            result < std::numeric_limits<type>::lowest()
-        ) {
-            throw InvalidScalarConversion(
-                value_,
-                "integer (type '" + std::string(typeid(type).name()) + "')",
-                "value outside target integer range [" + std::to_string(std::numeric_limits<type>::lowest()) + ", " + std::to_string(std::numeric_limits<type>::max()) + "]"
-            );
-        }
-        return result;
+        return cast_int64_to<type>(as_int());
     }
 
     template<typename type> 
     constexpr
     typename std::enable_if<std::is_floating_point<type>::value, double>::type
     as() const {
-        double result = as_double();
-        // check for overflow with the target floating point type
-        if (result > std::numeric_limits<type>::max() || 
-            result < std::numeric_limits<type>::lowest()
-        ) {
-            throw InvalidScalarConversion(
-                value_,
-                "floating point (type '" + std::string(typeid(type).name()) + "')",
-                "value outside target floating point range [" + std::to_string(std::numeric_limits<type>::lowest()) + ", " + std::to_string(std::numeric_limits<type>::max()) + "]"
-            );
-        }
-        return result;
+        return cast_double_to<type>(as_double());
     }
 
     template<typename type> 
@@ -117,7 +85,6 @@ public:
     as() const {
         return as_string();
     }
-    
 
 private:
     std::string value_;

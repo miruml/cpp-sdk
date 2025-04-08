@@ -6,8 +6,9 @@
 #include <string>
 
 // internal
-#include "miru/params/exceptions.hpp"
-#include "miru/params/parameter.hpp"
+#include <miru/params/exceptions.hpp>
+#include <miru/params/parameter.hpp>
+#include <test/params/scalar_test.hpp>
 
 // external
 #include <gtest/gtest.h>
@@ -238,6 +239,16 @@ TEST_F(ParameterConstructors, object_array_variant) {
     EXPECT_EQ(object_array_variant1, object_array_variant2);
 }
 
+
+
+
+
+
+
+
+
+
+
 // ================================= CONVERSIONS =================================== //
 void test_conversion_funcs_throw_type_exceptions(
     const miru::params::Parameter & param,
@@ -247,8 +258,8 @@ void test_conversion_funcs_throw_type_exceptions(
     for (const auto & conversion_func : conversion_funcs) {
         EXPECT_THROW(
             conversion_func(),
-            miru::params::InvalidParameterTypeWithParamName
-        ) << "Failed to throw InvalidParameterTypeWithParamName for target parameter type '" << target_type << "'";
+            miru::params::InvalidParameterType
+        ) << "Failed to throw InvalidParameterType for target parameter type '" << target_type << "'";
     }
 }
 
@@ -328,7 +339,7 @@ void test_conversion_type_exceptions(
             {
                 [&]() { param.as_integer_array(); },
                 [&]() { param.get_value<miru::params::ParameterType::PARAMETER_INTEGER_ARRAY>(); },
-                [&]() { param.get_value<std::vector<int>>(); }
+                [&]() { param.get_value<std::vector<int64_t>>(); }
             },
             miru::params::ParameterType::PARAMETER_INTEGER_ARRAY
         );
@@ -463,6 +474,8 @@ TEST_F(ParameterInvalidTypeConversions, int_variant) {
     };
     test_conversion_type_exceptions(int_variant, exclude);
 }
+
+
 
 TEST_F(ParameterInvalidTypeConversions, double_variant) {
     miru::params::Parameter double_variant = miru::params::Parameter(
@@ -673,4 +686,45 @@ TEST_F(ParameterInvalidTypeConversions, object_array_variant) {
         miru::params::ParameterType::PARAMETER_OBJECT_ARRAY,
     };
     test_conversion_type_exceptions(object_array_variant, exclude);
+}
+
+// ================================= TYPE CASTING ================================== //
+TEST_F(IntegerCasting, integer_type_casting_success) {
+    for (const auto & test_case : all_test_cases()) {
+        if (test_case.expect_failure) {
+            continue;
+        }
+        miru::params::Parameter integer_variant = miru::params::Parameter(
+            "integer_param",
+            test_case.input,
+            "/"
+        );
+        std::visit([&](auto&& arg) {
+            using T = std::decay_t<decltype(arg)>;
+            EXPECT_EQ(
+                integer_variant.get_value<T>(),
+                test_case.expected
+            );
+        }, test_case.expected);
+    }
+}
+
+TEST_F(IntegerCasting, integer_type_casting_failure) {
+    for (const auto & test_case : all_test_cases()) {
+        if (!test_case.expect_failure) {
+            continue;
+        }
+        miru::params::Parameter integer_variant = miru::params::Parameter(
+            "integer_param",
+            test_case.input,
+            "/"
+        );
+        std::visit([&](auto&& arg) {
+            using T = std::decay_t<decltype(arg)>;
+            EXPECT_THROW(
+                integer_variant.get_value<T>(),
+                miru::params::InvalidParameterType
+            );
+        }, test_case.expected);
+    }
 }

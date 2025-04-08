@@ -23,7 +23,7 @@ class InvalidParameterValue : public std::runtime_error
  * Essentially the same as rclcpp::ParameterTypeException, but with parameter
  * name in the error message.
  */
-class InvalidParameterTypeWithParamName : public std::runtime_error
+class InvalidParameterType : public std::runtime_error
 {
 public:
     /// Construct an instance.
@@ -31,22 +31,34 @@ public:
     * \param[in] name the name of the parameter.
     * \param[in] message custom exception message.
     */
-    InvalidParameterTypeWithParamName(const std::string & name, const std::string message)
+    InvalidParameterType(const std::string & name, const std::string message)
     : std::runtime_error("parameter '" + name + "' has invalid type: " + message)
     {}
 };
 
 // ================================ MIRU INTERFACES ================================= //
-class InvalidScalarConversion : public std::runtime_error
-{
+class InvalidScalarConversion : public std::runtime_error {
 public:
     InvalidScalarConversion(
         const std::string & value,
-        const std::string & desired_type,
+        const std::string & dest_type,
         const std::string & message
     )
-    : std::runtime_error("unable to convert scalar '" + value + "' to " + desired_type + ": " + message)
+    : std::runtime_error("unable to convert scalar '" + value + "' to " + dest_type + ": " + message)
     {}
 };
+
+class InvalidTypeCast : public std::runtime_error {
+public:
+    InvalidTypeCast(
+        const std::string & value,
+        const std::string & src_type,
+        const std::string & dest_type,
+        const std::string & message
+    )
+    : std::runtime_error("unable to cast value '" + value + "' from type '" + src_type + "' to type '" + dest_type + "': " + message)
+    {}
+};
+
 
 } // namespace miru::params

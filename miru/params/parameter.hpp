@@ -118,12 +118,14 @@ public:
             case ParameterType::PARAMETER_SCALAR:
                 return std::get<Scalar>(value_).as_bool();
             default:
-                throw ParameterTypeException(ParameterType::PARAMETER_BOOL, type_);
+                throw InvalidParameterValueType(ParameterType::PARAMETER_BOOL, type_);
         }
     }
 
     template<ParameterType type> constexpr
-    typename std::enable_if<type == ParameterType::PARAMETER_INTEGER, const int64_t>::type
+    typename std::enable_if<
+        type == ParameterType::PARAMETER_INTEGER, 
+        const int64_t>::type
     get() const {
         switch (type_) {
             case ParameterType::PARAMETER_INTEGER:
@@ -131,35 +133,37 @@ public:
             case ParameterType::PARAMETER_SCALAR:
                 return std::get<Scalar>(value_).as_int();
             default:
-                throw ParameterTypeException(ParameterType::PARAMETER_INTEGER, type_);
+                throw InvalidParameterValueType(ParameterType::PARAMETER_INTEGER, type_);
         }
     }
 
     template<ParameterType type> constexpr
-    typename std::enable_if<type == ParameterType::PARAMETER_DOUBLE, const double>::type
-    get() const
-    {
+    typename std::enable_if<
+        type == ParameterType::PARAMETER_DOUBLE, 
+        const double>::type
+    get() const {
         switch (type_) {
             case ParameterType::PARAMETER_DOUBLE:
                 return std::get<double>(value_);
             case ParameterType::PARAMETER_SCALAR:
                 return std::get<Scalar>(value_).as_double();
             default:
-                throw ParameterTypeException(ParameterType::PARAMETER_DOUBLE, type_);
+                throw InvalidParameterValueType(ParameterType::PARAMETER_DOUBLE, type_);
         }
     }
 
     template<ParameterType type> constexpr
-    typename std::enable_if<type == ParameterType::PARAMETER_STRING, const std::string &>::type
-    get() const
-    {
+    typename std::enable_if<
+        type == ParameterType::PARAMETER_STRING, 
+        const std::string &>::type
+    get() const {
         switch (type_) {
             case ParameterType::PARAMETER_STRING:
                 return std::get<std::string>(value_);
             case ParameterType::PARAMETER_SCALAR:
                 return std::get<Scalar>(value_).as_string();
             default:
-                throw ParameterTypeException(ParameterType::PARAMETER_STRING, type_);
+                throw InvalidParameterValueType(ParameterType::PARAMETER_STRING, type_);
         }
     }
 
@@ -182,9 +186,10 @@ public:
     // }
 
     template<ParameterType type> constexpr
-    typename std::enable_if<type == ParameterType::PARAMETER_BOOL_ARRAY, const std::vector<bool> &>::type
-    get() const
-    {
+    typename std::enable_if<
+        type == ParameterType::PARAMETER_BOOL_ARRAY, 
+        const std::vector<bool> &>::type
+    get() const {
         switch (type_) {
             case ParameterType::PARAMETER_BOOL_ARRAY:
                 return std::get<std::vector<bool>>(value_);
@@ -197,14 +202,15 @@ public:
                 }
                 return scalar_bool_array_;
             default:
-                throw ParameterTypeException(ParameterType::PARAMETER_BOOL_ARRAY, type_);
+                throw InvalidParameterValueType(ParameterType::PARAMETER_BOOL_ARRAY, type_);
         }
     }
 
     template<ParameterType type> constexpr
-    typename std::enable_if<type == ParameterType::PARAMETER_INTEGER_ARRAY, const std::vector<int64_t> &>::type
-    get() const
-    {
+    typename std::enable_if<
+        type == ParameterType::PARAMETER_INTEGER_ARRAY, 
+        const std::vector<int64_t> &>::type
+    get() const {
         switch (type_) {
             case ParameterType::PARAMETER_INTEGER_ARRAY:
                 return std::get<std::vector<int64_t>>(value_);
@@ -217,14 +223,15 @@ public:
                 }
                 return scalar_int_array_;
             default:
-                throw ParameterTypeException(ParameterType::PARAMETER_INTEGER_ARRAY, type_);
+                throw InvalidParameterValueType(ParameterType::PARAMETER_INTEGER_ARRAY, type_);
         }
     }
 
     template<ParameterType type> constexpr
-    typename std::enable_if<type == ParameterType::PARAMETER_DOUBLE_ARRAY, const std::vector<double> &>::type
-    get() const
-    {
+    typename std::enable_if<
+        type == ParameterType::PARAMETER_DOUBLE_ARRAY, 
+        const std::vector<double> &>::type
+    get() const {
         switch (type_) {
             case ParameterType::PARAMETER_DOUBLE_ARRAY:
                 return std::get<std::vector<double>>(value_);
@@ -237,14 +244,15 @@ public:
                 }
                 return scalar_double_array_;
             default:
-                throw ParameterTypeException(ParameterType::PARAMETER_DOUBLE_ARRAY, type_);
+                throw InvalidParameterValueType(ParameterType::PARAMETER_DOUBLE_ARRAY, type_);
         }
     }
 
     template<ParameterType type> constexpr
-    typename std::enable_if<type == ParameterType::PARAMETER_STRING_ARRAY, const std::vector<std::string> &>::type
-    get() const
-    {
+    typename std::enable_if<
+        type == ParameterType::PARAMETER_STRING_ARRAY, 
+        const std::vector<std::string> &>::type
+    get() const {
         switch (type_) {
             case ParameterType::PARAMETER_STRING_ARRAY:
                 return std::get<std::vector<std::string>>(value_);
@@ -257,7 +265,7 @@ public:
                 }
                 return scalar_string_array_;
             default:
-                throw ParameterTypeException(ParameterType::PARAMETER_STRING_ARRAY, type_);
+                throw InvalidParameterValueType(ParameterType::PARAMETER_STRING_ARRAY, type_);
         }
     }
 
@@ -265,8 +273,7 @@ public:
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L252
 
     template<typename type> constexpr
-    typename std::enable_if<std::is_same<type, bool>::value,
-    const bool>::type
+    typename std::enable_if<std::is_same<type, bool>::value, const bool>::type
     get() const {
         return get<ParameterType::PARAMETER_BOOL>();
     }
@@ -275,9 +282,8 @@ public:
     typename std::enable_if<
         std::is_integral<type>::value && !std::is_same<type, bool>::value,
         const int64_t>::type
-    get() const
-    {
-        return get<ParameterType::PARAMETER_INTEGER>();
+    get() const {
+        return cast_int64_to<type>(get<ParameterType::PARAMETER_INTEGER>());
     }
 
     template<typename type> constexpr
@@ -285,7 +291,7 @@ public:
         std::is_floating_point<type>::value,
         const double>::type
     get() const {
-        return get<ParameterType::PARAMETER_DOUBLE>();
+        return cast_double_to<type>(get<ParameterType::PARAMETER_DOUBLE>());
     }
 
     template<typename type> constexpr
@@ -318,15 +324,18 @@ public:
 
     template<typename type> constexpr
     typename std::enable_if<
-        std::is_convertible<type, const std::vector<int64_t> &>::value,
-        const std::vector<int64_t> &>::type
+        std::is_integral<typename type::value_type>::value && 
+        !std::is_same<typename type::value_type, bool>::value &&
+        std::is_convertible<type, const std::vector<typename type::value_type>&>::value,
+        const std::vector<int64_t>&>::type
     get() const {
         return get<ParameterType::PARAMETER_INTEGER_ARRAY>();
     }
 
     template<typename type> constexpr
     typename std::enable_if<
-        std::is_convertible<type, const std::vector<double> &>::value,
+        std::is_floating_point<typename type::value_type>::value &&
+        std::is_convertible<type, const std::vector<typename type::value_type>&>::value,
         const std::vector<double> &>::type
     get() const {
         return get<ParameterType::PARAMETER_DOUBLE_ARRAY>();
@@ -360,8 +369,7 @@ public:
     /// Get the value of parameter as using the given ParameterType as a template argument
     template<ParameterType ParamT>
     decltype(auto)
-    get_nullable() const 
-    {
+    get_nullable() const  {
         if (type_ == ParameterType::PARAMETER_NULL) {
             return std::nullopt;
         }
@@ -371,8 +379,7 @@ public:
     /// Get the value of parameter as using the given c++ type as a template argument 
     template<typename T>
     decltype(auto)
-    get_nullable() const
-    {
+    get_nullable() const {
         if (type_ == ParameterType::PARAMETER_NULL) {
             return std::nullopt;
         }
@@ -384,10 +391,9 @@ public:
     typename std::enable_if<
         type == ParameterType::PARAMETER_NULL,
         const std::nullptr_t>::type
-    get() const
-    {
+    get() const {
         if (type_ != ParameterType::PARAMETER_NULL) {
-            throw ParameterTypeException(ParameterType::PARAMETER_NULL, type_);
+            throw InvalidParameterValueType(ParameterType::PARAMETER_NULL, type_);
         }
         return nullptr;
     }
@@ -397,10 +403,9 @@ public:
     typename std::enable_if<
         type == ParameterType::PARAMETER_SCALAR,
         const Scalar &>::type
-    get() const
-    {
+    get() const {
         if (type_ != ParameterType::PARAMETER_SCALAR) {
-            throw ParameterTypeException(ParameterType::PARAMETER_SCALAR, type_);
+            throw InvalidParameterValueType(ParameterType::PARAMETER_SCALAR, type_);
         }
         return std::get<Scalar>(value_);
     }
@@ -410,10 +415,9 @@ public:
     typename std::enable_if<
         type == ParameterType::PARAMETER_SCALAR_ARRAY,
         const std::vector<Scalar> &>::type
-    get() const
-    {
+    get() const {
         if (type_ != ParameterType::PARAMETER_SCALAR_ARRAY) {
-            throw ParameterTypeException(ParameterType::PARAMETER_SCALAR_ARRAY, type_);
+            throw InvalidParameterValueType(ParameterType::PARAMETER_SCALAR_ARRAY, type_);
         }
         return std::get<std::vector<Scalar>>(value_);
     }
@@ -423,10 +427,9 @@ public:
     typename std::enable_if<
         type == ParameterType::PARAMETER_NESTED_ARRAY,
         const NestedArray &>::type
-    get() const
-    {
+    get() const {
         if (type_ != ParameterType::PARAMETER_NESTED_ARRAY) {
-            throw ParameterTypeException(ParameterType::PARAMETER_NESTED_ARRAY, type_);
+            throw InvalidParameterValueType(ParameterType::PARAMETER_NESTED_ARRAY, type_);
         }
         return std::get<NestedArray>(value_);
     }
@@ -436,10 +439,9 @@ public:
     typename std::enable_if<
         type == ParameterType::PARAMETER_OBJECT,
         const Object &>::type
-    get() const
-    {
+    get() const {
         if (type_ != ParameterType::PARAMETER_OBJECT) {
-            throw ParameterTypeException(ParameterType::PARAMETER_OBJECT, type_);
+            throw InvalidParameterValueType(ParameterType::PARAMETER_OBJECT, type_);
         }
         return std::get<Object>(value_);
     }
@@ -449,10 +451,9 @@ public:
     typename std::enable_if<
         type == ParameterType::PARAMETER_OBJECT_ARRAY,
         const ObjectArray &>::type
-    get() const
-    {
+    get() const {
         if (type_ != ParameterType::PARAMETER_OBJECT_ARRAY) {
-            throw ParameterTypeException(ParameterType::PARAMETER_OBJECT_ARRAY, type_);
+            throw InvalidParameterValueType(ParameterType::PARAMETER_OBJECT_ARRAY, type_);
         }
         return std::get<ObjectArray>(value_);
     }
@@ -460,11 +461,11 @@ public:
     template<typename type>
     constexpr
     typename std::enable_if<
-        std::is_same<type, std::nullptr_t>::value, const std::nullptr_t>::type
-    get() const
-    {
+        std::is_same<type, std::nullptr_t>::value, 
+        const std::nullptr_t>::type
+    get() const {
         if (type_ != ParameterType::PARAMETER_NULL) {
-            throw ParameterTypeException(ParameterType::PARAMETER_NULL, type_);
+            throw InvalidParameterValueType(ParameterType::PARAMETER_NULL, type_);
         }
         return nullptr;
     }
@@ -472,48 +473,45 @@ public:
     template<typename type>
     constexpr
     typename std::enable_if<
-        std::is_same<type, Scalar>::value, const Scalar &>::type
-    get() const
-    {
+        std::is_same<type, Scalar>::value, 
+        const Scalar &>::type
+    get() const {
         return get<ParameterType::PARAMETER_SCALAR>();
     }
 
     template<typename type>
     constexpr
     typename std::enable_if<
-        std::is_same<type, std::vector<Scalar>>::value, const std::vector<Scalar> &>::type
-    get() const
-    {
+        std::is_same<type, std::vector<Scalar>>::value, 
+        const std::vector<Scalar> &>::type
+    get() const {
         return get<ParameterType::PARAMETER_SCALAR_ARRAY>();
     }
 
     template<typename type>
     constexpr
     typename std::enable_if<
-        std::is_convertible<
-        type, const NestedArray &>::value, const NestedArray &>::type
-    get() const
-    {
+        std::is_convertible<type, const NestedArray &>::value, 
+        const NestedArray &>::type
+    get() const {
         return get<ParameterType::PARAMETER_NESTED_ARRAY>();
     }
 
     template<typename type>
     constexpr
     typename std::enable_if<
-        std::is_convertible<
-        type, const Object &>::value, const Object &>::type
-    get() const
-    {
+        std::is_convertible<type, const Object &>::value,
+        const Object &>::type
+    get() const {
         return get<ParameterType::PARAMETER_OBJECT>();
     }
 
     template<typename type>
     constexpr
     typename std::enable_if<
-        std::is_convertible<
-        type, const ObjectArray &>::value, const ObjectArray &>::type
-    get() const
-    {
+        std::is_convertible<type, const ObjectArray &>::value, 
+        const ObjectArray &>::type
+    get() const {
         return get<ParameterType::PARAMETER_OBJECT_ARRAY>();
     }
 
@@ -565,9 +563,9 @@ private:
 template<typename ValType, typename PrintType = ValType>
 std::string
 array_to_string(
-  const std::vector<ValType> & array,
-  const std::ios::fmtflags format_flags = std::ios::dec)
-{
+    const std::vector<ValType> & array,
+    const std::ios::fmtflags format_flags = std::ios::dec
+) {
     std::stringstream type_array;
     bool first_item = true;
     type_array << "[";
@@ -704,10 +702,12 @@ public:
     {
         try {
             return value_.get<ParamT>();
-        } catch (const ParameterTypeException & ex) {
-            throw InvalidParameterTypeWithParamName(this->name_, ex.what());
+        } catch (const InvalidParameterType & ex) {
+            throw InvalidParameterType(this->name_, ex.what());
         } catch (const InvalidScalarConversion & ex) {
-            throw InvalidParameterTypeWithParamName(this->name_, ex.what());
+            throw InvalidParameterType(this->name_, ex.what());
+        } catch (const InvalidTypeCast & ex) {
+            throw InvalidParameterType(this->name_, ex.what());
         }
     }
 
@@ -870,10 +870,12 @@ Parameter::get_value() const
     try {
         // use the helper to specialize for the ParameterValue and Parameter cases.
         return detail::get_value_helper<T>(this);
-    } catch (const ParameterTypeException & ex) {
-        throw InvalidParameterTypeWithParamName(this->name_, ex.what());
+    } catch (const InvalidParameterType & ex) {
+        throw InvalidParameterType(this->name_, ex.what());
     } catch (const InvalidScalarConversion & ex) {
-        throw InvalidParameterTypeWithParamName(this->name_, ex.what());
+        throw InvalidParameterType(this->name_, ex.what());
+    } catch (const InvalidTypeCast & ex) {
+        throw InvalidParameterType(this->name_, ex.what());
     }
 }
 
@@ -917,10 +919,12 @@ Parameter::get_nullable_value() const
     try {
         // use the helper to specialize for the ParameterValue and Parameter cases.
         return detail::get_value_helper<T>(this);
-    } catch (const ParameterTypeException & ex) {
-        throw InvalidParameterTypeWithParamName(this->name_, ex.what());
+    } catch (const InvalidParameterType & ex) {
+        throw InvalidParameterType(this->name_, ex.what());
     } catch (const InvalidScalarConversion & ex) {
-        throw InvalidParameterTypeWithParamName(this->name_, ex.what());
+        throw InvalidParameterType(this->name_, ex.what());
+    } catch (const InvalidTypeCast & ex) {
+        throw InvalidParameterType(this->name_, ex.what());
     }
 }
 
