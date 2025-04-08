@@ -71,6 +71,7 @@ add_library(miru
     miru/params/loader.cpp
     miru/params/parameter.hpp
     miru/params/parameter.cpp
+    miru/params/scalar.cpp
     miru/params/value.cpp
 )
 
@@ -105,9 +106,10 @@ if(BUILD_TESTING)
         test/test_utils/utils.hpp
         test/test_utils/utils.cpp
         test/params/loader_test.cpp
-        test/params/params_test.cpp
+        test/params/scalar_test.cpp
+        test/params/parameter_test.cpp
     )
-    
+
     target_link_libraries(test.out
         PRIVATE
         miru

@@ -3,11 +3,13 @@
 // std
 #include <cstddef>
 #include <string>
-#include <variant>
 #include <optional>
+#include <variant>
 
 // internal
 #include <miru/params/exceptions.hpp>
+#include <miru/params/scalar.hpp>
+#include <miru/params/type.hpp>
 
 // external
 #include <nlohmann/json.hpp>
@@ -17,198 +19,18 @@ namespace miru::params {
 
 // ================================================================================= //
 // ================================================================================= //
-// =============================== PARAMETER VALUES ================================ //
+// =============================== PARAMETER VALUE ================================= //
 // ================================================================================= //
 // ================================================================================= //
-
-enum ParameterType : uint8_t {
-    // ============================== ROS2 INTERFACES ============================== // 
-    // The following types are ALL the ros2 interface types for ros params. We will add
-    // some additions to this list but our parameter interface will be a superset of
-    // ros params
-    // rclcpp: https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L33
-    // rcl_interfaces: https://github.com/ros2/rcl_interfaces/blob/rolling/rcl_interfaces/msg/ParameterType.msg
-    PARAMETER_NOT_SET = 0,
-    PARAMETER_BOOL = 1,
-    PARAMETER_INTEGER = 2,
-    PARAMETER_DOUBLE = 3,
-    PARAMETER_STRING = 4,
-    // json schema does not support binary types directly (just a string). It is possible
-    // to support it by leveraging the contentEncoding field for strings but the json
-    // schema libraries in c++ aren't great so we'd probably be forced to write our own
-    // parser or fork a new one from existing libraries. Needless to say, byte arrays
-    // simply won't be supported for now.
-    // PARAMETER_BYTE_ARRAY = 5,
-    PARAMETER_BOOL_ARRAY = 6,
-    PARAMETER_INTEGER_ARRAY = 7,
-    PARAMETER_DOUBLE_ARRAY = 8,
-    PARAMETER_STRING_ARRAY = 9,
-
-    // ============================== MIRU INTERFACES ============================== // 
-    // we'll start our own types here starting at 128 (max is (2^8)-1 = 255 since
-    // uint8_t is 8 bits) so that we can add new ros param types without breaking
-    // existing code in the future
-
-    PARAMETER_NULL = 128,
-    // yaml scalar since yaml-cpp does not support strongly typed information ("4" vs 4)
-    PARAMETER_SCALAR = 129, 
-    PARAMETER_SCALAR_ARRAY = 130,
-    PARAMETER_NESTED_ARRAY = 131,
-    PARAMETER_OBJECT = 132,
-    PARAMETER_OBJECT_ARRAY = 133,
-};
-
-// ================================ ROS2 INTERFACES ================================ //
-// https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L48
-
-/// Return the name of a parameter type
-std::string
-to_string(ParameterType type);
-
-// https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L48
-
-std::ostream &operator<<(std::ostream & os, const ParameterType & type);
-
-// https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L57
-
-/// Indicate the parameter type does not match the expected type.
-class ParameterTypeException : public std::runtime_error
-{
-public:
-  /// Construct an instance.
-  /**
-   * \param[in] expected the expected parameter type.
-   * \param[in] actual the actual parameter type.
-   */
-  ParameterTypeException(ParameterType expected, ParameterType actual)
-  : std::runtime_error("expected [" + to_string(expected) + "] got [" + to_string(actual) + "]")
-  {}
-};
-
-// ================================ MIRU INTERFACES ================================ //
 
 class Parameter;
-
-/// Indicate the parameter type does not match the expected type.
-class ScalarConversionException: public std::runtime_error
-{
-public:
-  /// Construct an instance.
-  /**
-   * \param[in] scalar the scalar value.
-   * \param[in] target_type the target type attempted to convert to.
-   */
-  ScalarConversionException(const std::string& scalar, ParameterType target_type)
-  : std::runtime_error("scalar [" + scalar + "] cannot be converted to [" + to_string(target_type) + "]")
-  {}
-};
-
-template<typename T>
-struct is_scalar_type : std::false_type {};
-template<> struct is_scalar_type<bool> : std::true_type {};
-template<> struct is_scalar_type<int64_t> : std::true_type {};
-template<> struct is_scalar_type<double> : std::true_type {};
-template<> struct is_scalar_type<std::string> : std::true_type {};
-
-class Scalar {
-public:
-    Scalar(const std::string & value) : value_(value) {}
-
-    bool operator==(const Scalar & other) const { return value_ == other.value_; }
-    bool operator!=(const Scalar & other) const { return value_ != other.value_; }   
-
-    bool as_bool() const;
-    int64_t as_int() const;
-    double as_double() const;
-    const std::string & as_string() const { return value_; }
-    const std::vector<uint8_t> & as_byte_array() const;
-
-    template<ParameterType type>
-    typename std::enable_if<type == ParameterType::PARAMETER_BOOL, bool>::type
-    as() const {
-        return as_bool();
-    }
-
-    template<ParameterType type>
-    typename std::enable_if<type == ParameterType::PARAMETER_INTEGER, int64_t>::type
-    as() const {
-        return as_int();
-    }
-
-    template<ParameterType type>
-    typename std::enable_if<type == ParameterType::PARAMETER_DOUBLE, double>::type
-    as() const {
-        return as_double();
-    }
-
-    template<ParameterType type>
-    typename std::enable_if<type == ParameterType::PARAMETER_STRING, std::string>::type
-    as() const {
-        return as_string();
-    }
-
-    // byte arrays are not supported
-
-    // template<ParameterType type>
-    // typename std::enable_if<type == ParameterType::PARAMETER_BYTE_ARRAY, std::vector<uint8_t>>::type
-    // as() const {
-    //     return as_byte_array();
-    // }
-    
-    template<typename type> 
-    constexpr
-    typename std::enable_if<std::is_same<type, bool>::value, bool>::type
-    as() const {
-        return as_bool();
-    }
-
-    template<typename type> 
-    constexpr
-    typename std::enable_if<std::is_integral<type>::value && !std::is_same<type, bool>::value, int64_t>::type
-    as() const {
-        return as_int();
-    }
-
-    template<typename type> 
-    constexpr
-    typename std::enable_if<std::is_floating_point<type>::value, double>::type
-    as() const {
-        return as_double();
-    }
-
-    template<typename type> 
-    constexpr
-    typename std::enable_if<std::is_convertible<type, std::string>::value, std::string>::type
-    as() const {
-        return as_string();
-    }
-    
-
-private:
-    std::string value_;
-    mutable std::vector<uint8_t> byte_array_;
-    mutable bool byte_array_is_set_ = false;
-};
-
-std::string to_string(const Scalar & scalar);
-std::ostream & operator<<(std::ostream & os, const Scalar & scalar);
-
-template<typename T>
-typename std::enable_if<is_scalar_type<T>::value, std::vector<T>>::type
-transform_scalar_array(const std::vector<Scalar> & scalars) {
-    std::vector<T> dest;
-    dest.reserve(scalars.size());
-    std::transform(scalars.begin(), scalars.end(), std::back_inserter(dest), [](const Scalar & s) { return s.as<T>(); });
-    return dest;
-}
 
 struct Object : std::vector<Parameter> {};
 struct ObjectArray : std::vector<Parameter> {};
 struct NestedArray : std::vector<Parameter> {};
 
 /// Store the type and value of a parameter.
-class ParameterValue
-{
+class ParameterValue {
 public:
 
     // ============================== ROS2 INTERFACES ============================== //
@@ -287,11 +109,9 @@ public:
     // ROS2 "GET" methods using the ParameterType enum
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L146
 
-    template<ParameterType type>
-    constexpr
+    template<ParameterType type> constexpr
     typename std::enable_if<type == ParameterType::PARAMETER_BOOL, const bool>::type
-    get() const
-    {
+    get() const {
         switch (type_) {
             case ParameterType::PARAMETER_BOOL:
                 return std::get<bool>(value_);
@@ -302,11 +122,9 @@ public:
         }
     }
 
-    template<ParameterType type>
-    constexpr
+    template<ParameterType type> constexpr
     typename std::enable_if<type == ParameterType::PARAMETER_INTEGER, const int64_t>::type
-    get() const
-    {
+    get() const {
         switch (type_) {
             case ParameterType::PARAMETER_INTEGER:
                 return std::get<int64_t>(value_);
@@ -317,8 +135,7 @@ public:
         }
     }
 
-    template<ParameterType type>
-    constexpr
+    template<ParameterType type> constexpr
     typename std::enable_if<type == ParameterType::PARAMETER_DOUBLE, const double>::type
     get() const
     {
@@ -332,8 +149,7 @@ public:
         }
     }
 
-    template<ParameterType type>
-    constexpr
+    template<ParameterType type> constexpr
     typename std::enable_if<type == ParameterType::PARAMETER_STRING, const std::string &>::type
     get() const
     {
@@ -365,10 +181,8 @@ public:
     //     }
     // }
 
-    template<ParameterType type>
-    constexpr
-    typename std::enable_if<
-        type == ParameterType::PARAMETER_BOOL_ARRAY, const std::vector<bool> &>::type
+    template<ParameterType type> constexpr
+    typename std::enable_if<type == ParameterType::PARAMETER_BOOL_ARRAY, const std::vector<bool> &>::type
     get() const
     {
         switch (type_) {
@@ -387,10 +201,8 @@ public:
         }
     }
 
-    template<ParameterType type>
-    constexpr
-    typename std::enable_if<
-        type == ParameterType::PARAMETER_INTEGER_ARRAY, const std::vector<int64_t> &>::type
+    template<ParameterType type> constexpr
+    typename std::enable_if<type == ParameterType::PARAMETER_INTEGER_ARRAY, const std::vector<int64_t> &>::type
     get() const
     {
         switch (type_) {
@@ -409,10 +221,8 @@ public:
         }
     }
 
-    template<ParameterType type>
-    constexpr
-    typename std::enable_if<
-        type == ParameterType::PARAMETER_DOUBLE_ARRAY, const std::vector<double> &>::type
+    template<ParameterType type> constexpr
+    typename std::enable_if<type == ParameterType::PARAMETER_DOUBLE_ARRAY, const std::vector<double> &>::type
     get() const
     {
         switch (type_) {
@@ -431,10 +241,8 @@ public:
         }
     }
 
-    template<ParameterType type>
-    constexpr
-    typename std::enable_if<
-        type == ParameterType::PARAMETER_STRING_ARRAY, const std::vector<std::string> &>::type
+    template<ParameterType type> constexpr
+    typename std::enable_if<type == ParameterType::PARAMETER_STRING_ARRAY, const std::vector<std::string> &>::type
     get() const
     {
         switch (type_) {
@@ -454,38 +262,37 @@ public:
     }
 
     // ROS2 "GET" methods using primitive types
-    // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L149
+    // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L252
 
-    template<typename type>
-    constexpr
-    typename std::enable_if<std::is_same<type, bool>::value, const bool>::type
-    get() const
-    {
+    template<typename type> constexpr
+    typename std::enable_if<std::is_same<type, bool>::value,
+    const bool>::type
+    get() const {
         return get<ParameterType::PARAMETER_BOOL>();
     }
 
-    template<typename type>
-    constexpr
+    template<typename type> constexpr
     typename std::enable_if<
-        std::is_integral<type>::value && !std::is_same<type, bool>::value, const int64_t>::type
+        std::is_integral<type>::value && !std::is_same<type, bool>::value,
+        const int64_t>::type
     get() const
     {
         return get<ParameterType::PARAMETER_INTEGER>();
     }
 
-    template<typename type>
-    constexpr
-    typename std::enable_if<std::is_floating_point<type>::value, const double>::type
-    get() const
-    {
+    template<typename type> constexpr
+    typename std::enable_if<
+        std::is_floating_point<type>::value,
+        const double>::type
+    get() const {
         return get<ParameterType::PARAMETER_DOUBLE>();
     }
 
-    template<typename type>
-    constexpr
-    typename std::enable_if<std::is_convertible<type, std::string>::value, const std::string &>::type
-    get() const
-    {
+    template<typename type> constexpr
+    typename std::enable_if<
+        std::is_convertible<type, std::string>::value,
+        const std::string &>::type
+    get() const{
         return get<ParameterType::PARAMETER_STRING>();
     }
 
@@ -501,63 +308,35 @@ public:
     //     return get<ParameterType::PARAMETER_BYTE_ARRAY>();
     // }
 
-    template<typename type>
-    constexpr
+    template<typename type> constexpr
     typename std::enable_if<
-        std::is_convertible<
-        type, const std::vector<bool> &>::value, const std::vector<bool> &>::type
-    get() const
-    {
+        std::is_convertible<type, const std::vector<bool> &>::value,
+        const std::vector<bool> &>::type
+    get() const {
         return get<ParameterType::PARAMETER_BOOL_ARRAY>();
     }
 
-    template<typename type>
-    constexpr
+    template<typename type> constexpr
     typename std::enable_if<
-        std::is_convertible<
-        type, const std::vector<int> &>::value, const std::vector<int64_t> &>::type
-    get() const
-    {
+        std::is_convertible<type, const std::vector<int64_t> &>::value,
+        const std::vector<int64_t> &>::type
+    get() const {
         return get<ParameterType::PARAMETER_INTEGER_ARRAY>();
     }
 
-    template<typename type>
-    constexpr
+    template<typename type> constexpr
     typename std::enable_if<
-        std::is_convertible<
-        type, const std::vector<int64_t> &>::value, const std::vector<int64_t> &>::type
-    get() const
-    {
-        return get<ParameterType::PARAMETER_INTEGER_ARRAY>();
-    }
-
-    template<typename type>
-    constexpr
-    typename std::enable_if<
-        std::is_convertible<
-        type, const std::vector<float> &>::value, const std::vector<double> &>::type
-    get() const
-    {
+        std::is_convertible<type, const std::vector<double> &>::value,
+        const std::vector<double> &>::type
+    get() const {
         return get<ParameterType::PARAMETER_DOUBLE_ARRAY>();
     }
 
-    template<typename type>
-    constexpr
+    template<typename type> constexpr
     typename std::enable_if<
-        std::is_convertible<
-        type, const std::vector<double> &>::value, const std::vector<double> &>::type
-    get() const
-    {
-        return get<ParameterType::PARAMETER_DOUBLE_ARRAY>();
-    }
-
-    template<typename type>
-    constexpr
-    typename std::enable_if<
-        std::is_convertible<
-        type, const std::vector<std::string> &>::value, const std::vector<std::string> &>::type
-    get() const
-    {
+        std::is_convertible<type, const std::vector<std::string> &>::value,
+        const std::vector<std::string> &>::type
+    get() const {
         return get<ParameterType::PARAMETER_STRING_ARRAY>();
     }
 
@@ -783,9 +562,36 @@ private:
     static constexpr uint8_t STRING_ARRAY_CACHED = 1 << 3;  // 0b1000
 };
 
+template<typename ValType, typename PrintType = ValType>
+std::string
+array_to_string(
+  const std::vector<ValType> & array,
+  const std::ios::fmtflags format_flags = std::ios::dec)
+{
+    std::stringstream type_array;
+    bool first_item = true;
+    type_array << "[";
+    type_array.setf(format_flags, std::ios_base::basefield | std::ios::boolalpha);
+    type_array << std::showbase;
+    for (const ValType & value : array) {
+        if (!first_item) {
+            type_array << ", ";
+        } else {
+            first_item = false;
+        }
+        type_array << static_cast<PrintType>(value);
+    }
+    type_array << "]";
+    return type_array.str();
+}
+
 /// Return the value of a parameter as a string
 std::string
 to_string(const ParameterValue & value);
+
+std::ostream & operator<<(std::ostream & os, const ParameterValue & value);
+
+
 
 
 
@@ -896,7 +702,13 @@ public:
     decltype(auto)
     get_value() const 
     {
-        return value_.get<ParamT>();
+        try {
+            return value_.get<ParamT>();
+        } catch (const ParameterTypeException & ex) {
+            throw InvalidParameterTypeWithParamName(this->name_, ex.what());
+        } catch (const InvalidScalarConversion & ex) {
+            throw InvalidParameterTypeWithParamName(this->name_, ex.what());
+        }
     }
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L122
@@ -1059,7 +871,9 @@ Parameter::get_value() const
         // use the helper to specialize for the ParameterValue and Parameter cases.
         return detail::get_value_helper<T>(this);
     } catch (const ParameterTypeException & ex) {
-        throw miru::params::InvalidParameterTypeException(this->name_, ex.what());
+        throw InvalidParameterTypeWithParamName(this->name_, ex.what());
+    } catch (const InvalidScalarConversion & ex) {
+        throw InvalidParameterTypeWithParamName(this->name_, ex.what());
     }
 }
 
@@ -1104,7 +918,9 @@ Parameter::get_nullable_value() const
         // use the helper to specialize for the ParameterValue and Parameter cases.
         return detail::get_value_helper<T>(this);
     } catch (const ParameterTypeException & ex) {
-        throw miru::params::InvalidParameterTypeException(this->name_, ex.what());
+        throw InvalidParameterTypeWithParamName(this->name_, ex.what());
+    } catch (const InvalidScalarConversion & ex) {
+        throw InvalidParameterTypeWithParamName(this->name_, ex.what());
     }
 }
 
