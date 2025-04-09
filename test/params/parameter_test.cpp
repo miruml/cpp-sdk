@@ -804,16 +804,16 @@ TEST_F(ParameterConstructors, nested_array_variant) {
     miru::params::ParameterValue map_array_item2 = miru::params::ParameterValue(
         miru::params::MapArray{
             std::vector<miru::params::Parameter>{
-                miru::params::Parameter("nested_array/1/1", miru::params::Map{
-                    std::vector<miru::params::Parameter>{
-                        miru::params::Parameter("nested_array/1/1/scalar1", miru::params::Scalar("test5")),
-                        miru::params::Parameter("nested_array/1/1/scalar2", miru::params::Scalar("test6"))
-                    }
-                }),
                 miru::params::Parameter("nested_array/1/0", miru::params::Map{
                     std::vector<miru::params::Parameter>{
-                        miru::params::Parameter("nested_array/1/0/scalar1", miru::params::Scalar("test7")),
-                        miru::params::Parameter("nested_array/1/0/scalar2", miru::params::Scalar("test8"))
+                        miru::params::Parameter("nested_array/1/0/scalar1", miru::params::Scalar("test5")),
+                        miru::params::Parameter("nested_array/1/0/scalar2", miru::params::Scalar("test6"))
+                    }
+                }),
+                miru::params::Parameter("nested_array/1/1", miru::params::Map{
+                    std::vector<miru::params::Parameter>{
+                        miru::params::Parameter("nested_array/1/1/scalar1", miru::params::Scalar("test7")),
+                        miru::params::Parameter("nested_array/1/1/scalar2", miru::params::Scalar("test8"))
                     }
                 })
             }
@@ -841,6 +841,42 @@ TEST_F(ParameterConstructors, nested_array_variant) {
     EXPECT_FALSE(nested_array_not_a_leaf.is_map());
     EXPECT_FALSE(nested_array_not_a_leaf.is_map_array());
     EXPECT_TRUE(nested_array_not_a_leaf.is_array());
+}
+
+TEST_F(ParameterConstructors, nested_array_variant_parent_name_mismatch) {
+    EXPECT_THROW(
+        miru::params::Parameter(
+            "arglebargle", miru::params::NestedArray{
+                std::vector<miru::params::Parameter>{
+                    miru::params::Parameter("nested_array/0", std::vector<int>{1, 2, 9}),
+                    miru::params::Parameter("nested_array/1", std::vector<int>{4, 5, 6})
+                }
+            }
+        ),
+        miru::params::ChildParentNameMismatch
+    );
+    EXPECT_THROW(
+        miru::params::Parameter(
+            "too/deep/nested_array", miru::params::NestedArray{
+                std::vector<miru::params::Parameter>{
+                    miru::params::Parameter("nested_array/0", std::vector<int>{1, 2, 9}),
+                    miru::params::Parameter("nested_array/1", std::vector<int>{4, 5, 6})
+                }
+            }
+        ),
+        miru::params::ChildParentNameMismatch
+    );
+    EXPECT_THROW(
+        miru::params::Parameter(
+            "nested_array", miru::params::NestedArray{
+                std::vector<miru::params::Parameter>{
+                    miru::params::Parameter("too/deep/nested_array/0", std::vector<int>{1, 2, 9}),
+                    miru::params::Parameter("too/deep/nested_array/1", std::vector<int>{4, 5, 6})
+                }
+            }
+        ),
+        miru::params::ChildParentNameMismatch
+    );
 }
 
 TEST_F(ParameterConstructors, map_variant) {
@@ -918,6 +954,42 @@ TEST_F(ParameterConstructors, map_variant) {
     EXPECT_TRUE(map_variant1.is_map());
     EXPECT_FALSE(map_variant1.is_map_array());
     EXPECT_FALSE(map_variant1.is_array());
+}
+
+TEST_F(ParameterConstructors, map_variant_parent_name_mismatch) {
+    EXPECT_THROW(
+        miru::params::Parameter(
+            "pam", miru::params::Map{
+                std::vector<miru::params::Parameter>{
+                    miru::params::Parameter("map/param1", miru::params::Scalar("test1")),
+                    miru::params::Parameter("map/param2", miru::params::Scalar("test2"))
+                }
+            }
+        ),
+        miru::params::ChildParentNameMismatch
+    );
+    EXPECT_THROW(
+        miru::params::Parameter(
+            "map", miru::params::Map{
+                std::vector<miru::params::Parameter>{
+                    miru::params::Parameter("too/deep/map/param1", miru::params::Scalar("test1")),
+                    miru::params::Parameter("too/deep/map/param2", miru::params::Scalar("test2"))
+                }
+            }
+        ),
+        miru::params::ChildParentNameMismatch
+    );
+    EXPECT_THROW(
+        miru::params::Parameter(
+            "too/deep/map", miru::params::Map{
+                std::vector<miru::params::Parameter>{
+                    miru::params::Parameter("map/param1", miru::params::Scalar("test1")),
+                    miru::params::Parameter("map/param2", miru::params::Scalar("test2"))
+                }
+            }
+        ),
+        miru::params::ChildParentNameMismatch
+    );
 }
 
 TEST_F(ParameterConstructors, map_array_variant) {
@@ -1035,6 +1107,72 @@ TEST_F(ParameterConstructors, map_array_variant) {
     EXPECT_FALSE(map_array_variant1.is_map());
     EXPECT_TRUE(map_array_variant1.is_map_array());
     EXPECT_TRUE(map_array_variant1.is_array());
+}
+
+TEST_F(ParameterConstructors, map_array_variant_parent_name_mismatch) {
+    EXPECT_THROW(
+        miru::params::Parameter(
+            "map", miru::params::MapArray{
+                std::vector<miru::params::Parameter>{
+                    miru::params::Parameter("arglebargle/0", miru::params::Map{
+                        std::vector<miru::params::Parameter>{
+                            miru::params::Parameter("arglebargle/0/param1", miru::params::Scalar("test1")),
+                            miru::params::Parameter("arglebargle/0/param2", miru::params::Scalar("test3"))
+                        }
+                    }),
+                    miru::params::Parameter("arglebargle/1", miru::params::Map{
+                        std::vector<miru::params::Parameter>{
+                            miru::params::Parameter("arglebargle/1/param1", miru::params::Scalar("test3")),
+                            miru::params::Parameter("arglebargle/1/param2", miru::params::Scalar("test4"))
+                        }
+                    })
+                }
+            }
+        ),
+        miru::params::ChildParentNameMismatch
+    );
+    EXPECT_THROW(
+        miru::params::Parameter(
+            "map", miru::params::MapArray{
+                std::vector<miru::params::Parameter>{
+                    miru::params::Parameter("too/deep/map/0", miru::params::Map{
+                        std::vector<miru::params::Parameter>{
+                            miru::params::Parameter("too/deep/map/0/param1", miru::params::Scalar("test1")),
+                            miru::params::Parameter("too/deep/map/0/param2", miru::params::Scalar("test3"))
+                        }
+                    }),
+                    miru::params::Parameter("too/deep/map/1", miru::params::Map{
+                        std::vector<miru::params::Parameter>{
+                            miru::params::Parameter("too/deep/map/1/param1", miru::params::Scalar("test3")),
+                            miru::params::Parameter("too/deep/map/1/param2", miru::params::Scalar("test4"))
+                        }
+                    })
+                }
+            }
+        ),
+        miru::params::ChildParentNameMismatch
+    );
+    EXPECT_THROW(
+        miru::params::Parameter(
+            "too/deep/map", miru::params::MapArray{
+                std::vector<miru::params::Parameter>{
+                    miru::params::Parameter("map/0", miru::params::Map{
+                        std::vector<miru::params::Parameter>{
+                            miru::params::Parameter("map/0/param1", miru::params::Scalar("test1")),
+                            miru::params::Parameter("map/0/param2", miru::params::Scalar("test3"))
+                        }
+                    }),
+                    miru::params::Parameter("too/deep/map/1", miru::params::Map{
+                        std::vector<miru::params::Parameter>{
+                            miru::params::Parameter("map/1/param1", miru::params::Scalar("test3")),
+                            miru::params::Parameter("map/1/param2", miru::params::Scalar("test4"))
+                        }
+                    })
+                }
+            }
+        ),
+        miru::params::ChildParentNameMismatch
+    );
 }
 
 

@@ -78,4 +78,14 @@ class InvalidArrayKeys : public std::invalid_argument {
     ) : std::invalid_argument("Items in " + object_to_initialize + " must have keys that are integers in ascending order. Unable to find index '" + std::to_string(index) + "' in item '" + param_name + "'") {}
 };
 
+class ChildParentNameMismatch : public std::invalid_argument {
+  public:
+    ChildParentNameMismatch(
+      const std::string& object_to_initialize,
+      const std::string& child_name,
+      const std::string& child_parent_name,
+      const std::string& parent_name
+    ) : std::invalid_argument("child parameter with name '" + child_name + "' must have its parent parameter name '" + parent_name + "' as a prefix but has parent name '" + child_parent_name + "'") {}
+};
+
 }  // namespace miru::params

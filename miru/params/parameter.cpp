@@ -15,23 +15,16 @@ Parameter::Parameter() : name_("") {}
 
 Parameter::Parameter(const std::string& name) : name_(name) {}
 
-void validate_child_parameter_name(const std::string& parent_name,
-                                   const std::string& child_name) {
+void validate_child_parent_name_consistency(const std::string& parent_name,
+                                   const Parameter& child) {
   // the child's name must follow its parent's name
-  if (!utils::has_prefix(child_name, parent_name + "/")) {
-    throw std::invalid_argument("child parameter with name '" + child_name +
-                                "' must have its parent parameter name '" +
-                                parent_name + "' as a prefix");
-  }
-
-  // the child's key must be exactly one level deeper than the parent
-  std::string key = child_name.substr(parent_name.length() + 1);
-  if (key.find("/") != std::string::npos) {
-    throw std::invalid_argument("child key '" + key + "' (the child parameter name '" +
-                                child_name + "' with its parent parameter name '" +
-                                parent_name +
-                                "' removed) must not contain any slashes ('/') so that "
-                                "it is nested one level deeper than the parent");
+  if (child.get_parent_name() != parent_name) {
+    throw ChildParentNameMismatch(
+      "Parameter",
+      child.get_name(),
+      child.get_parent_name(),
+      parent_name
+    );
   }
 }
 
@@ -45,17 +38,17 @@ Parameter::Parameter(const std::string& name, const ParameterValue& value)
   switch (value_.get_type()) {
     case ParameterType::PARAMETER_MAP:
       for (const auto& field : value_.get<ParameterType::PARAMETER_MAP>()) {
-        validate_child_parameter_name(name_, field.get_name());
+        validate_child_parent_name_consistency(name_, field);
       }
       break;
     case ParameterType::PARAMETER_MAP_ARRAY:
       for (const auto& item : value_.get<ParameterType::PARAMETER_MAP_ARRAY>()) {
-        validate_child_parameter_name(name_, item.get_name());
+        validate_child_parent_name_consistency(name_, item);
       }
       break;
     case ParameterType::PARAMETER_NESTED_ARRAY:
       for (const auto& item : value_.get<ParameterType::PARAMETER_NESTED_ARRAY>()) {
-        validate_child_parameter_name(name_, item.get_name());
+        validate_child_parent_name_consistency(name_, item);
       }
       break;
     default:
