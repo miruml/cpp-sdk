@@ -92,7 +92,7 @@ string_as(const std::string & str) {
 
 template<typename type> 
 constexpr
-typename std::enable_if<std::is_convertible<type, std::string>::value, std::string>::type
+typename std::enable_if<std::is_convertible<type, std::string>::value, const std::string &>::type
 string_as(const std::string & str) {
     return str;
 }
@@ -122,7 +122,11 @@ typename std::enable_if<is_convertible_from_string<T>::value, std::vector<T>>::t
 string_array_as(const std::vector<std::string> & strings) {
     std::vector<T> dest;
     dest.reserve(strings.size());
-    std::transform(strings.begin(), strings.end(), std::back_inserter(dest), [](const std::string & s) { return string_as<T>(s); });
+    std::transform(
+        strings.begin(),
+        strings.end(),
+        std::back_inserter(dest),
+        [](const std::string & s) { return string_as<T>(s); });
     return dest;
 }
 

@@ -55,7 +55,7 @@ public:
     }
 
     template<ParameterType type>
-    typename std::enable_if<type == ParameterType::PARAMETER_STRING, std::string>::type
+    typename std::enable_if<type == ParameterType::PARAMETER_STRING, const std::string &>::type
     as() const {
         return as_string();
     }
@@ -90,7 +90,7 @@ public:
 
     template<typename type> 
     constexpr
-    typename std::enable_if<std::is_convertible<type, std::string>::value, std::string>::type
+    typename std::enable_if<std::is_convertible<type, std::string>::value, const std::string &>::type
     as() const {
         return as_string();
     }
