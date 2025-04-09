@@ -35,8 +35,8 @@ class Map {
   bool operator!=(const Map &other) const;
 
   // Iterator type aliases
-  using iterator = std::vector<Parameter>::iterator;
-  using const_iterator = std::vector<Parameter>::const_iterator;
+  using iterator = std::vector<std::pair<std::string, Parameter>>::iterator;
+  using const_iterator = std::vector<std::pair<std::string, Parameter>>::const_iterator;
 
   // Iterator access methods
   const_iterator begin() const { return sorted_fields_.begin(); }
@@ -47,7 +47,7 @@ class Map {
   const Parameter &operator[](const std::string &key) const;
 
  private:
-  std::vector<Parameter> sorted_fields_;
+  std::vector<std::pair<std::string, Parameter>> sorted_fields_;
 };
 
 class MapArray {

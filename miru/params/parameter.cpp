@@ -33,8 +33,8 @@ Parameter::Parameter(const std::string& name, const ParameterValue& value)
   std::vector<std::string> child_names;
   switch (value_.get_type()) {
     case ParameterType::PARAMETER_MAP:
-      for (const auto& field : value_.get<ParameterType::PARAMETER_MAP>()) {
-        validate_child_parent_name_consistency(name_, field);
+      for (const auto& [key, param] : value_.get<ParameterType::PARAMETER_MAP>()) {
+        validate_child_parent_name_consistency(name_, param);
       }
       break;
     case ParameterType::PARAMETER_MAP_ARRAY:

@@ -31,8 +31,14 @@ bool is_leaf(const Parameter& parameter) {
   return is_leaf(parameter.get_parameter_value());
 }
 
-bool parameter_exists_recursive(const Parameter& parameter,
-                                const std::string& param_name, bool leaves_only) {
+
+
+// ============================== PARAMETER EXISTENCE ============================== //
+bool parameter_exists_recursive(
+  const Parameter& parameter,
+  const std::string& param_name,
+  bool leaves_only
+) {
   // is a leaf
   if (is_leaf(parameter) || !leaves_only) {
     return parameter.get_name() == param_name;
@@ -47,33 +53,46 @@ bool parameter_exists_recursive(const Parameter& parameter,
   std::vector<Parameter>::const_iterator iter_begin, iter_end;
   switch (parameter.get_type()) {
     case ParameterType::PARAMETER_NESTED_ARRAY:
-      iter_begin = parameter.get_value<NestedArray>().begin();
-      iter_end = parameter.get_value<NestedArray>().end();
+      for (const auto& item : parameter.get_value<NestedArray>()) {
+        if (parameter_exists_recursive(item, param_name, leaves_only)) {
+          return true;
+        }
+      }
       break;
     case ParameterType::PARAMETER_MAP:
-      iter_begin = parameter.get_value<Map>().begin();
-      iter_end = parameter.get_value<Map>().end();
+      for (const auto& [key, value] : parameter.get_value<Map>()) {
+        if (parameter_exists_recursive(value, param_name, leaves_only)) {
+          return true;
+        }
+      }
       break;
     case ParameterType::PARAMETER_MAP_ARRAY:
-      iter_begin = parameter.get_value<MapArray>().begin();
-      iter_end = parameter.get_value<MapArray>().end();
+      for (const auto& item : parameter.get_value<MapArray>()) {
+        if (parameter_exists_recursive(item, param_name, leaves_only)) {
+          return true;
+        }
+      }
       break;
     default:
       throw std::invalid_argument(
           "Cannot list subparameters for non-composite parameter");
   }
 
-  // recursively collect all subparameters
-  for (std::vector<Parameter>::const_iterator iter = iter_begin; iter != iter_end;
-       ++iter) {
-    if (parameter_exists_recursive(*iter, param_name, leaves_only)) {
+  return false;
+}
+
+bool has_parameter(const Map& map, const std::string& param_name, bool leaves_only) {
+  for (const auto& [key, value] : map) {
+    if (parameter_exists_recursive(value, param_name, leaves_only)) {
       return true;
     }
   }
   return false;
 }
 
-//
+
+
+// ============================== PARAMETER GETTERS ============================== //
 std::vector<Parameter> get_parameters(const std::vector<Parameter>& parameters,
                                       const std::string& name) {
   std::vector<Parameter> result;
@@ -100,31 +119,31 @@ std::vector<std::reference_wrapper<const Parameter>> list_parameters_recursive(
   }
 
   // not a leaf -> collect the subparameters
-  std::vector<Parameter>::const_iterator iter_begin, iter_end;
+  std::vector<std::pair<std::string, Parameter>>::const_iterator iter_begin, iter_end;
   switch (parameter.get_type()) {
     case ParameterType::PARAMETER_NESTED_ARRAY:
-      iter_begin = parameter.get_value<NestedArray>().begin();
-      iter_end = parameter.get_value<NestedArray>().end();
+      for (const auto& item : parameter.get_value<NestedArray>()) {
+        auto recursive_results = list_parameters_recursive(item, leaves_only);
+        result.insert(result.end(), recursive_results.begin(), recursive_results.end());
+      }
       break;
     case ParameterType::PARAMETER_MAP:
-      iter_begin = parameter.get_value<Map>().begin();
-      iter_end = parameter.get_value<Map>().end();
+      for (const auto& [key, value] : parameter.get_value<Map>()) {
+        auto recursive_results = list_parameters_recursive(value, leaves_only);
+        result.insert(result.end(), recursive_results.begin(), recursive_results.end());
+      }
       break;
     case ParameterType::PARAMETER_MAP_ARRAY:
-      iter_begin = parameter.get_value<MapArray>().begin();
-      iter_end = parameter.get_value<MapArray>().end();
+      for (const auto& item : parameter.get_value<MapArray>()) {
+        auto recursive_results = list_parameters_recursive(item, leaves_only);
+        result.insert(result.end(), recursive_results.begin(), recursive_results.end());
+      }
       break;
     default:
       throw std::invalid_argument(
           "Cannot list subparameters for non-composite parameter");
   }
 
-  // recursively collect all subparameters
-  for (std::vector<Parameter>::const_iterator iter = iter_begin; iter != iter_end;
-       ++iter) {
-    auto recursive_results = list_parameters_recursive(*iter, leaves_only);
-    result.insert(result.end(), recursive_results.begin(), recursive_results.end());
-  }
   return result;
 }
 

@@ -57,7 +57,7 @@ void assert_ascending_integer_keys(const std::vector<Parameter>& items) {
 }
 
 // =================================== MAP ======================================== //
-Map::Map(const std::vector<Parameter>& fields) : sorted_fields_(fields) {
+Map::Map(const std::vector<Parameter>& fields) {
   if (fields.empty()) {
     throw EmptyInitialization("Map");
   }
@@ -66,11 +66,17 @@ Map::Map(const std::vector<Parameter>& fields) : sorted_fields_(fields) {
   assert_unique_field_names("Map", fields);
   assert_identical_parent_names(fields);
 
+  // set the fields
+  for (const auto& field : fields) {
+    sorted_fields_.push_back(std::make_pair(field.get_key(), field));
+  }
+
   // store the fields by name for comparison / access purposes in the future
-  std::sort(sorted_fields_.begin(), sorted_fields_.end(),
-            [](const Parameter& a, const Parameter& b) {
-              return a.get_name() < b.get_name();
-            });
+  std::sort(
+    sorted_fields_.begin(), sorted_fields_.end(),
+    [](const std::pair<std::string, Parameter>& a, const std::pair<std::string, Parameter>& b) {
+      return a.first < b.first;
+    });
 }
 
 bool Map::operator==(const Map& other) const {
@@ -82,13 +88,17 @@ bool Map::operator!=(const Map& other) const { return !(*this == other); }
 const Parameter& Map::operator[](const std::string& key) const {
   // use binary search to find the field since the fields are sorted
   auto it = std::lower_bound(
-      sorted_fields_.begin(), sorted_fields_.end(), key,
-      [](const Parameter& p, const std::string& key) { return p.get_key() < key; });
+      sorted_fields_.begin(),
+      sorted_fields_.end(),
+      key,
+      [](const std::pair<std::string, Parameter>& p, const std::string& key) {
+        return p.first < key;
+      });
 
-  if (it == sorted_fields_.end() || it->get_key() != key) {
+  if (it == sorted_fields_.end() || it->first != key) {
     throw std::invalid_argument("Unable to find map field with key: " + key);
   }
-  return *it;
+  return it->second;
 }
 
 // ================================= MAP ARRAY ===================================== //

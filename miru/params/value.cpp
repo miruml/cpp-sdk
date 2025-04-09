@@ -137,7 +137,7 @@ std::string param_map_to_string(const miru::params::Map& map, const int indent) 
   std::stringstream type_array;
   bool first_item = true;
   type_array << std::string(indent, ' ') << "{";
-  for (const Parameter& param : map) {
+  for (const auto& [key, param] : map) {
     if (!first_item) {
       type_array << ",";
     } else {
@@ -145,8 +145,7 @@ std::string param_map_to_string(const miru::params::Map& map, const int indent) 
     }
     type_array << "\n";
     type_array << std::string(indent + 2, ' ');
-    type_array << "\"" << param.get_key();
-    type_array << "\": ";
+    type_array << "\"" << key << "\": ";
     type_array << to_string(param.get_parameter_value(), indent + 2);
   }
   type_array << "\n";
