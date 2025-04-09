@@ -44,48 +44,56 @@ class InvalidScalarConversion : public std::runtime_error {
 
 // ================================ EXCEPTIONS ===================================== //
 class EmptyInitialization : public std::invalid_argument {
-  public:
-    EmptyInitialization(
-      const std::string& object_to_initialize
-    ) : std::invalid_argument(object_to_initialize + " must be initialized with at least one item") {}
+ public:
+  EmptyInitialization(const std::string& object_to_initialize)
+      : std::invalid_argument(object_to_initialize +
+                              " must be initialized with at least one item") {}
 };
 
 class DuplicateFieldNames : public std::invalid_argument {
-  public:
-    DuplicateFieldNames(
-      const std::string& object_to_initialize,
-      const std::string& duplicate_field_name
-    ) : std::invalid_argument("unable to initialize " + object_to_initialize + " with duplicate field name: " + duplicate_field_name) {}
+ public:
+  DuplicateFieldNames(const std::string& object_to_initialize,
+                      const std::string& duplicate_field_name)
+      : std::invalid_argument("unable to initialize " + object_to_initialize +
+                              " with duplicate field name: " + duplicate_field_name) {}
 };
 
 class MismatchingParentNames : public std::invalid_argument {
-  public:
-    MismatchingParentNames(
-      const std::string& object_to_initialize,
-      const std::string& param1_name,
-      const std::string& param1_parent_name,
-      const std::string& param2_name,
-      const std::string& param2_parent_name
-    ) : std::invalid_argument("unable to initialize " + object_to_initialize + " with mismatching parent names. Every field must have the same parent name but field '" + param1_name + "' has parent name '" + param1_parent_name + "' while field '" + param2_name + "' has parent name '" + param2_parent_name + "'") {}
+ public:
+  MismatchingParentNames(const std::string& object_to_initialize,
+                         const std::string& param1_name,
+                         const std::string& param1_parent_name,
+                         const std::string& param2_name,
+                         const std::string& param2_parent_name)
+      : std::invalid_argument("unable to initialize " + object_to_initialize +
+                              " with mismatching parent names. Every field must have "
+                              "the same parent name but field '" +
+                              param1_name + "' has parent name '" + param1_parent_name +
+                              "' while field '" + param2_name + "' has parent name '" +
+                              param2_parent_name + "'") {}
 };
 
 class InvalidArrayKeys : public std::invalid_argument {
-  public:
-    InvalidArrayKeys(
-      const std::string& object_to_initialize,
-      int index,
-      const std::string& param_name
-    ) : std::invalid_argument("Items in " + object_to_initialize + " must have keys that are integers in ascending order. Unable to find index '" + std::to_string(index) + "' in item '" + param_name + "'") {}
+ public:
+  InvalidArrayKeys(const std::string& object_to_initialize, int index,
+                   const std::string& param_name)
+      : std::invalid_argument("Items in " + object_to_initialize +
+                              " must have keys that are integers in ascending order. "
+                              "Unable to find index '" +
+                              std::to_string(index) + "' in item '" + param_name +
+                              "'") {}
 };
 
 class ChildParentNameMismatch : public std::invalid_argument {
-  public:
-    ChildParentNameMismatch(
-      const std::string& object_to_initialize,
-      const std::string& child_name,
-      const std::string& child_parent_name,
-      const std::string& parent_name
-    ) : std::invalid_argument("child parameter with name '" + child_name + "' must have its parent parameter name '" + parent_name + "' as a prefix but has parent name '" + child_parent_name + "'") {}
+ public:
+  ChildParentNameMismatch(const std::string& object_to_initialize,
+                          const std::string& child_name,
+                          const std::string& child_parent_name,
+                          const std::string& parent_name)
+      : std::invalid_argument("child parameter with name '" + child_name +
+                              "' must have its parent parameter name '" + parent_name +
+                              "' as a prefix but has parent name '" +
+                              child_parent_name + "'") {}
 };
 
 }  // namespace miru::params

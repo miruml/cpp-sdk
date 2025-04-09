@@ -133,8 +133,7 @@ std::string to_string(const ParameterValue& value, const int indent) {
   return "unknown type";
 }
 
-std::string param_map_to_string(const miru::params::Map& map,
-                                   const int indent) {
+std::string param_map_to_string(const miru::params::Map& map, const int indent) {
   std::stringstream type_array;
   bool first_item = true;
   type_array << std::string(indent, ' ') << "{";
@@ -319,9 +318,7 @@ bool ParameterValue::is_scalar() const {
   }
 }
 
-bool ParameterValue::is_map() const {
-  return type_ == ParameterType::PARAMETER_MAP;
-}
+bool ParameterValue::is_map() const { return type_ == ParameterType::PARAMETER_MAP; }
 
 bool ParameterValue::is_scalar_array() const {
   return type_ == ParameterType::PARAMETER_BOOL_ARRAY ||

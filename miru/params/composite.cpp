@@ -9,30 +9,23 @@
 
 namespace miru::params {
 
-
-
 // ============================= HELPER FUNCTIONS ================================== //
 void assert_valid_array_element_types(
-  const std::string& object_to_initialize,
-  const std::vector<Parameter>& items,
-  std::function<bool(const Parameter&)> is_valid_type,
-  const std::string& valid_type_name
-) {
+    const std::string& object_to_initialize, const std::vector<Parameter>& items,
+    std::function<bool(const Parameter&)> is_valid_type,
+    const std::string& valid_type_name) {
   for (const auto& item : items) {
     if (!is_valid_type(item)) {
       throw InvalidParameterType(
-        object_to_initialize,
-        "Cannot instantiate " + object_to_initialize + " with non-" +
-        valid_type_name + " parameters. Item '" + item.get_name() +
-        "' is of type '" + to_string(item.get_type()) + "'"
-      );
+          object_to_initialize,
+          "Cannot instantiate " + object_to_initialize + " with non-" +
+              valid_type_name + " parameters. Item '" + item.get_name() +
+              "' is of type '" + to_string(item.get_type()) + "'");
     }
   }
 }
-void assert_unique_field_names(
-  const std::string& object_to_initialize,
-  const std::vector<Parameter>& fields
-) {
+void assert_unique_field_names(const std::string& object_to_initialize,
+                               const std::vector<Parameter>& fields) {
   // ensure the field names are unique
   std::vector<std::string> field_names;
   for (const auto& field : fields) {
@@ -41,23 +34,16 @@ void assert_unique_field_names(
   try {
     utils::assert_unique_strings(field_names);
   } catch (const std::exception& e) {
-    throw DuplicateFieldNames(
-      object_to_initialize,
-      std::string(e.what())
-    );
+    throw DuplicateFieldNames(object_to_initialize, std::string(e.what()));
   }
 }
 
 void assert_identical_parent_names(const std::vector<Parameter>& fields) {
   for (const auto& field : fields) {
     if (field.get_parent_name() != fields[0].get_parent_name()) {
-      throw MismatchingParentNames(
-        "Map",
-        fields[0].get_name(),
-        fields[0].get_parent_name(),
-        field.get_name(),
-        field.get_parent_name()
-      );
+      throw MismatchingParentNames("Map", fields[0].get_name(),
+                                   fields[0].get_parent_name(), field.get_name(),
+                                   field.get_parent_name());
     }
   }
 }
@@ -65,11 +51,7 @@ void assert_identical_parent_names(const std::vector<Parameter>& fields) {
 void assert_ascending_integer_keys(const std::vector<Parameter>& items) {
   for (size_t i = 0; i < items.size(); ++i) {
     if (items[i].get_key() != std::to_string(i)) {
-      throw InvalidArrayKeys(
-        "MapArray",
-        i,
-        items[i].get_name()
-      );
+      throw InvalidArrayKeys("MapArray", i, items[i].get_name());
     }
   }
 }
@@ -100,13 +82,9 @@ bool Map::operator!=(const Map& other) const { return !(*this == other); }
 const Parameter& Map::operator[](const std::string& key) const {
   // use binary search to find the field since the fields are sorted
   auto it = std::lower_bound(
-    sorted_fields_.begin(),
-    sorted_fields_.end(),
-    key,
-    [](const Parameter& p, const std::string& key) {
-      return p.get_key() < key;
-    });
-  
+      sorted_fields_.begin(), sorted_fields_.end(), key,
+      [](const Parameter& p, const std::string& key) { return p.get_key() < key; });
+
   if (it == sorted_fields_.end() || it->get_key() != key) {
     throw std::invalid_argument("Unable to find map field with key: " + key);
   }
@@ -121,11 +99,7 @@ MapArray::MapArray(const std::vector<Parameter>& items) : items_(items) {
 
   // ensure the items are maps
   assert_valid_array_element_types(
-    "MapArray",
-    items,
-    [](const Parameter& item) { return item.is_map(); },
-    "Map"
-  );
+      "MapArray", items, [](const Parameter& item) { return item.is_map(); }, "Map");
 
   // name uniqueness and parent name consistency
   assert_unique_field_names("MapArray", items);
@@ -144,9 +118,7 @@ bool MapArray::operator==(const MapArray& other) const {
   return items_ == other.items_;
 }
 
-bool MapArray::operator!=(const MapArray& other) const {
-  return !(*this == other);
-}
+bool MapArray::operator!=(const MapArray& other) const { return !(*this == other); }
 
 const Parameter& MapArray::operator[](const size_t index) const {
   return items_[index];
@@ -160,11 +132,8 @@ NestedArray::NestedArray(const std::vector<Parameter>& items) : items_(items) {
 
   // ensure the items are arrays
   assert_valid_array_element_types(
-    "NestedArray",
-    items,
-    [](const Parameter& item) { return item.is_array(); },
-    "NestedArray"
-  );
+      "NestedArray", items, [](const Parameter& item) { return item.is_array(); },
+      "NestedArray");
 
   // name uniqueness and parent name consistency
   assert_unique_field_names("MapArray", items);

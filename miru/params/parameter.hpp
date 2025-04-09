@@ -44,7 +44,7 @@ class Map {
   size_t size() const { return sorted_fields_.size(); }
 
   // Access a parameter by key
-  const Parameter& operator[](const std::string &key) const;
+  const Parameter &operator[](const std::string &key) const;
 
  private:
   std::vector<Parameter> sorted_fields_;
@@ -67,7 +67,7 @@ class MapArray {
   bool operator!=(const MapArray &other) const;
 
   // Access a parameter by index
-  const Parameter& operator[](const size_t index) const;
+  const Parameter &operator[](const size_t index) const;
 
  private:
   std::vector<Parameter> items_;
@@ -90,7 +90,7 @@ class NestedArray {
   bool operator!=(const NestedArray &other) const;
 
   // Access a parameter by index
-  const Parameter& operator[](const size_t index) const;
+  const Parameter &operator[](const size_t index) const;
 
  private:
   std::vector<Parameter> items_;
@@ -476,9 +476,9 @@ class ParameterValue {
   }
 
   template <ParameterType type>
-  constexpr typename std::enable_if<type == ParameterType::PARAMETER_MAP,
-                                    const Map &>::type
-  get() const {
+  constexpr
+      typename std::enable_if<type == ParameterType::PARAMETER_MAP, const Map &>::type
+      get() const {
     if (type_ != ParameterType::PARAMETER_MAP) {
       throw InvalidParameterValueType(ParameterType::PARAMETER_MAP, type_);
     }
@@ -535,10 +535,9 @@ class ParameterValue {
   }
 
   template <typename type>
-  constexpr
-      typename std::enable_if<std::is_convertible<type, const MapArray &>::value,
-                              const MapArray &>::type
-      get() const {
+  constexpr typename std::enable_if<std::is_convertible<type, const MapArray &>::value,
+                                    const MapArray &>::type
+  get() const {
     return get<ParameterType::PARAMETER_MAP_ARRAY>();
   }
 
@@ -581,8 +580,7 @@ std::string to_string(const ParameterValue &value, const int indent);
 std::string param_value_array_to_string(const std::vector<ParameterValue> &array,
                                         const int indent, const bool with_newlines);
 
-std::string param_map_to_string(const miru::params::Map &map,
-                                   const int indent);
+std::string param_map_to_string(const miru::params::Map &map, const int indent);
 
 std::ostream &operator<<(std::ostream &os, const ParameterValue &value);
 

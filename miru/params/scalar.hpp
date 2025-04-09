@@ -89,8 +89,8 @@ class Scalar {
   }
 
   template <typename type>
-  typename std::enable_if<std::is_floating_point<type>::value, double>::type
-  as() const {
+  typename std::enable_if<std::is_floating_point<type>::value, double>::type as()
+      const {
     // for types returning doubles we'll use the string conversion function which
     // conducts additional checks for converting double to the target type
     try {
@@ -103,7 +103,7 @@ class Scalar {
 
   template <typename type>
   typename std::enable_if<std::is_convertible<type, std::string>::value,
-                                    const std::string &>::type
+                          const std::string &>::type
   as() const {
     return as_string();
   }

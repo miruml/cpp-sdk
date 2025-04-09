@@ -24,8 +24,8 @@ bool has_suffix(const std::string& str, const std::string& suffix) {
 }
 
 std::string remove_trailing(const std::string& str, const std::string& chars) {
-    size_t last = str.find_last_not_of(chars);
-    return (last != std::string::npos) ? str.substr(0, last + 1) : "";
+  size_t last = str.find_last_not_of(chars);
+  return (last != std::string::npos) ? str.substr(0, last + 1) : "";
 }
 
 void assert_unique_strings(const std::vector<std::string>& strings) {
@@ -37,7 +37,8 @@ void assert_unique_strings(const std::vector<std::string>& strings) {
   std::vector<std::string> duplicates;
   for (const auto& [str, count] : counts) {
     if (count > 1) {
-      duplicates.push_back("'" + str + "' (appears " + std::to_string(count) + " times)");
+      duplicates.push_back("'" + str + "' (appears " + std::to_string(count) +
+                           " times)");
     }
   }
 

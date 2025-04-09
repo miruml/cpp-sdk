@@ -64,7 +64,8 @@ bool parameter_exists_recursive(const Parameter& parameter,
   }
 
   // recursively collect all subparameters
-  for (std::vector<Parameter>::const_iterator iter = iter_begin; iter != iter_end; ++iter) {
+  for (std::vector<Parameter>::const_iterator iter = iter_begin; iter != iter_end;
+       ++iter) {
     if (parameter_exists_recursive(*iter, param_name, leaves_only)) {
       return true;
     }
@@ -119,7 +120,8 @@ std::vector<std::reference_wrapper<const Parameter>> list_parameters_recursive(
   }
 
   // recursively collect all subparameters
-  for (std::vector<Parameter>::const_iterator iter = iter_begin; iter != iter_end; ++iter) {
+  for (std::vector<Parameter>::const_iterator iter = iter_begin; iter != iter_end;
+       ++iter) {
     auto recursive_results = list_parameters_recursive(*iter, leaves_only);
     result.insert(result.end(), recursive_results.begin(), recursive_results.end());
   }

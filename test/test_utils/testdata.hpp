@@ -8,8 +8,7 @@
 
 namespace miru::test_utils {
 
-miru::filesys::Dir testdata_dir(); 
-miru::filesys::Dir filesys_testdata_dir(); 
+miru::filesys::Dir testdata_dir();
+miru::filesys::Dir filesys_testdata_dir();
 
-} // namespace miru::test_utils
-
+}  // namespace miru::test_utils

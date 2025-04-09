@@ -9,5 +9,5 @@ find miru \( -name "*.hpp" -o -name "*.cpp" \) \
     -exec clang-format -i {} +
 
 # Run clang-format on all files in the test directory
-find miru \( -name "*.hpp" -o -name "*.cpp" \) \
-    -exec clang-format -p . {} +
+find test \( -name "*.hpp" -o -name "*.cpp" \) \
+    -exec clang-format -i {} +
