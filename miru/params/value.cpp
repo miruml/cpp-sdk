@@ -1,7 +1,7 @@
 // internal
-#include "miru/params/parameter.hpp"
-#include "miru/params/type.hpp"
-#include "miru/params/utils.hpp"
+#include <miru/params/parameter.hpp>
+#include <miru/params/type.hpp>
+#include <miru/params/utils.hpp>
 
 // external
 #include <fmt/ranges.h>
@@ -114,7 +114,7 @@ std::string to_string(const ParameterValue& value, const int indent) {
     }
     case ParameterType::PARAMETER_NESTED_ARRAY: {
       std::vector<ParameterValue> nested_array;
-      for (const Parameter& param : value.get<NestedArray>().get_items()) {
+      for (const Parameter& param : value.get<NestedArray>()) {
         nested_array.push_back(param.get_parameter_value());
       }
       return miru::params::param_value_array_to_string(nested_array, 0, true);
@@ -124,7 +124,7 @@ std::string to_string(const ParameterValue& value, const int indent) {
     }
     case ParameterType::PARAMETER_MAP_ARRAY: {
       std::vector<ParameterValue> map_array;
-      for (const Parameter& param : value.get<MapArray>().get_items()) {
+      for (const Parameter& param : value.get<MapArray>()) {
         map_array.push_back(param.get_parameter_value());
       }
       return miru::params::param_value_array_to_string(map_array, 0, true);
@@ -138,7 +138,7 @@ std::string param_map_to_string(const miru::params::Map& map,
   std::stringstream type_array;
   bool first_item = true;
   type_array << std::string(indent, ' ') << "{";
-  for (const Parameter& param : map.get_fields()) {
+  for (const Parameter& param : map) {
     if (!first_item) {
       type_array << ",";
     } else {

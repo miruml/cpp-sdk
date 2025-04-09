@@ -17,7 +17,7 @@ namespace miru::params {
 bool is_leaf(const ParameterValue& value) {
   if (value.is_nested_array()) {
     NestedArray nested_array = value.get<NestedArray>();
-    for (const Parameter& param : nested_array.get_items()) {
+    for (const Parameter& param : nested_array) {
       if (!is_leaf(param)) {
         return false;
       }
@@ -44,16 +44,19 @@ bool parameter_exists_recursive(const Parameter& parameter,
   }
 
   // not a leaf -> collect the subparameters
-  std::vector<Parameter> one_level_subparameters;
+  std::vector<Parameter>::const_iterator iter_begin, iter_end;
   switch (parameter.get_type()) {
     case ParameterType::PARAMETER_NESTED_ARRAY:
-      one_level_subparameters = parameter.get_value<NestedArray>().get_items();
+      iter_begin = parameter.get_value<NestedArray>().begin();
+      iter_end = parameter.get_value<NestedArray>().end();
       break;
     case ParameterType::PARAMETER_MAP:
-      one_level_subparameters = parameter.get_value<Map>().get_fields();
+      iter_begin = parameter.get_value<Map>().begin();
+      iter_end = parameter.get_value<Map>().end();
       break;
     case ParameterType::PARAMETER_MAP_ARRAY:
-      one_level_subparameters = parameter.get_value<MapArray>().get_items();
+      iter_begin = parameter.get_value<MapArray>().begin();
+      iter_end = parameter.get_value<MapArray>().end();
       break;
     default:
       throw std::invalid_argument(
@@ -61,8 +64,8 @@ bool parameter_exists_recursive(const Parameter& parameter,
   }
 
   // recursively collect all subparameters
-  for (const Parameter& param : one_level_subparameters) {
-    if (parameter_exists_recursive(param, param_name, leaves_only)) {
+  for (std::vector<Parameter>::const_iterator iter = iter_begin; iter != iter_end; ++iter) {
+    if (parameter_exists_recursive(*iter, param_name, leaves_only)) {
       return true;
     }
   }
@@ -96,16 +99,19 @@ std::vector<std::reference_wrapper<const Parameter>> list_parameters_recursive(
   }
 
   // not a leaf -> collect the subparameters
-  std::vector<Parameter> one_level_subparameters;
+  std::vector<Parameter>::const_iterator iter_begin, iter_end;
   switch (parameter.get_type()) {
     case ParameterType::PARAMETER_NESTED_ARRAY:
-      one_level_subparameters = parameter.get_value<NestedArray>().get_items();
+      iter_begin = parameter.get_value<NestedArray>().begin();
+      iter_end = parameter.get_value<NestedArray>().end();
       break;
     case ParameterType::PARAMETER_MAP:
-      one_level_subparameters = parameter.get_value<Map>().get_fields();
+      iter_begin = parameter.get_value<Map>().begin();
+      iter_end = parameter.get_value<Map>().end();
       break;
     case ParameterType::PARAMETER_MAP_ARRAY:
-      one_level_subparameters = parameter.get_value<MapArray>().get_items();
+      iter_begin = parameter.get_value<MapArray>().begin();
+      iter_end = parameter.get_value<MapArray>().end();
       break;
     default:
       throw std::invalid_argument(
@@ -113,8 +119,8 @@ std::vector<std::reference_wrapper<const Parameter>> list_parameters_recursive(
   }
 
   // recursively collect all subparameters
-  for (const Parameter& param : one_level_subparameters) {
-    auto recursive_results = list_parameters_recursive(param, leaves_only);
+  for (std::vector<Parameter>::const_iterator iter = iter_begin; iter != iter_end; ++iter) {
+    auto recursive_results = list_parameters_recursive(*iter, leaves_only);
     result.insert(result.end(), recursive_results.begin(), recursive_results.end());
   }
   return result;

@@ -38,26 +38,23 @@ void validate_child_parameter_name(const std::string& parent_name,
 Parameter::Parameter(const std::string& name, const ParameterValue& value)
     : name_(name), value_(value) {
   // remove any trailing slashes from the name
-  name_ = name_.substr(0, name_.find_last_not_of("/") + 1);
+  name_ = utils::remove_trailing(name_, "/");
 
   // check that the key doesn't have any slashes
   std::vector<std::string> child_names;
   switch (value_.get_type()) {
     case ParameterType::PARAMETER_MAP:
-      for (const auto& field :
-           value_.get<ParameterType::PARAMETER_MAP>().get_fields()) {
+      for (const auto& field : value_.get<ParameterType::PARAMETER_MAP>()) {
         validate_child_parameter_name(name_, field.get_name());
       }
       break;
     case ParameterType::PARAMETER_MAP_ARRAY:
-      for (const auto& item :
-           value_.get<ParameterType::PARAMETER_MAP_ARRAY>().get_items()) {
+      for (const auto& item : value_.get<ParameterType::PARAMETER_MAP_ARRAY>()) {
         validate_child_parameter_name(name_, item.get_name());
       }
       break;
     case ParameterType::PARAMETER_NESTED_ARRAY:
-      for (const auto& item :
-           value_.get<ParameterType::PARAMETER_NESTED_ARRAY>().get_items()) {
+      for (const auto& item : value_.get<ParameterType::PARAMETER_NESTED_ARRAY>()) {
         validate_child_parameter_name(name_, item.get_name());
       }
       break;
@@ -160,6 +157,13 @@ std::string to_string(const std::vector<Parameter>& parameters) {
 
 std::string Parameter::get_key() const {
   return name_.substr(name_.find_last_of("/") + 1, name_.length());
+}
+
+std::string Parameter::get_parent_name() const {
+  return utils::remove_trailing(
+    name_.substr(0, name_.length() - get_key().length()),
+    "/"
+  );
 }
 
 const std::nullptr_t Parameter::as_null() const {

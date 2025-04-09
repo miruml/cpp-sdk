@@ -31,10 +31,20 @@ class Map {
  public:
   Map(const std::vector<Parameter> &fields);
 
-  const std::vector<Parameter> &get_fields() const;
-
   bool operator==(const Map &other) const;
   bool operator!=(const Map &other) const;
+
+  // Iterator type aliases
+  using iterator = std::vector<Parameter>::iterator;
+  using const_iterator = std::vector<Parameter>::const_iterator;
+
+  // Iterator access methods
+  const_iterator begin() const { return sorted_fields_.begin(); }
+  const_iterator end() const { return sorted_fields_.end(); }
+  size_t size() const { return sorted_fields_.size(); }
+
+  // Access a parameter by key
+  const Parameter& operator[](const std::string &key) const;
 
  private:
   std::vector<Parameter> sorted_fields_;
@@ -44,10 +54,20 @@ class MapArray {
  public:
   MapArray(const std::vector<Parameter> &maps);
 
-  const std::vector<Parameter> &get_items() const;
+  // Iterator type aliases
+  using iterator = std::vector<Parameter>::iterator;
+  using const_iterator = std::vector<Parameter>::const_iterator;
+
+  // Iterator access methods
+  const_iterator begin() const { return items_.begin(); }
+  const_iterator end() const { return items_.end(); }
+  size_t size() const { return items_.size(); }
 
   bool operator==(const MapArray &other) const;
   bool operator!=(const MapArray &other) const;
+
+  // Access a parameter by index
+  const Parameter& operator[](const size_t index) const;
 
  private:
   std::vector<Parameter> items_;
@@ -57,10 +77,20 @@ class NestedArray {
  public:
   NestedArray(const std::vector<Parameter> &items);
 
-  const std::vector<Parameter> &get_items() const;
+  // Iterator type aliases
+  using iterator = std::vector<Parameter>::iterator;
+  using const_iterator = std::vector<Parameter>::const_iterator;
+
+  // Iterator access methods
+  const_iterator begin() const { return items_.begin(); }
+  const_iterator end() const { return items_.end(); }
+  size_t size() const { return items_.size(); }
 
   bool operator==(const NestedArray &other) const;
   bool operator!=(const NestedArray &other) const;
+
+  // Access a parameter by index
+  const Parameter& operator[](const size_t index) const;
 
  private:
   std::vector<Parameter> items_;
@@ -727,6 +757,9 @@ class Parameter {
 
   /// Get the key of the parameter
   std::string get_key() const;
+
+  /// Get the name of the parent of the parameter
+  std::string get_parent_name() const;
 
   /// Get the value of parameter as a null type
   const std::nullptr_t as_null() const;

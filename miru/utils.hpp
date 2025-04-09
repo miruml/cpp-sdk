@@ -16,6 +16,7 @@ namespace miru::utils {
 
 bool has_prefix(const std::string &str, const std::string &prefix);
 bool has_suffix(const std::string &str, const std::string &suffix);
+std::string remove_trailing(const std::string &str, const std::string &chars);
 void assert_unique_strings(const std::vector<std::string> &strings);
 
 // ================================ NUMBER CASTING ================================= //

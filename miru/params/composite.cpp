@@ -3,16 +3,36 @@
 #include <vector>
 
 // miru
-#include "miru/params/parameter.hpp"
-#include "miru/utils.hpp"
+#include <miru/params/parameter.hpp>
+#include <miru/params/type.hpp>
+#include <miru/utils.hpp>
 
 namespace miru::params {
 
-Map::Map(const std::vector<Parameter>& fields) : sorted_fields_(fields) {
-  if (fields.empty()) {
-    throw std::invalid_argument("Map must be initialized with at least one field");
-  }
 
+
+// ============================= HELPER FUNCTIONS ================================== //
+void assert_valid_array_element_types(
+  const std::string& object_to_initialize,
+  const std::vector<Parameter>& items,
+  std::function<bool(const Parameter&)> is_valid_type,
+  const std::string& valid_type_name
+) {
+  for (const auto& item : items) {
+    if (!is_valid_type(item)) {
+      throw InvalidParameterType(
+        object_to_initialize,
+        "Cannot instantiate " + object_to_initialize + " with non-" +
+        valid_type_name + " parameters. Item '" + item.get_name() +
+        "' is of type '" + to_string(item.get_type()) + "'"
+      );
+    }
+  }
+}
+void assert_unique_field_names(
+  const std::string& object_to_initialize,
+  const std::vector<Parameter>& fields
+) {
   // ensure the field names are unique
   std::vector<std::string> field_names;
   for (const auto& field : fields) {
@@ -21,8 +41,48 @@ Map::Map(const std::vector<Parameter>& fields) : sorted_fields_(fields) {
   try {
     utils::assert_unique_strings(field_names);
   } catch (const std::exception& e) {
-    throw std::invalid_argument("Unable to instantiate Map with duplicate field names: " + std::string(e.what()));
+    throw DuplicateFieldNames(
+      object_to_initialize,
+      std::string(e.what())
+    );
   }
+}
+
+void assert_identical_parent_names(const std::vector<Parameter>& fields) {
+  for (const auto& field : fields) {
+    if (field.get_parent_name() != fields[0].get_parent_name()) {
+      throw MismatchingParentNames(
+        "Map",
+        fields[0].get_name(),
+        fields[0].get_parent_name(),
+        field.get_name(),
+        field.get_parent_name()
+      );
+    }
+  }
+}
+
+void assert_ascending_integer_keys(const std::vector<Parameter>& items) {
+  for (size_t i = 0; i < items.size(); ++i) {
+    if (items[i].get_key() != std::to_string(i)) {
+      throw InvalidArrayKeys(
+        "MapArray",
+        i,
+        items[i].get_name()
+      );
+    }
+  }
+}
+
+// =================================== MAP ======================================== //
+Map::Map(const std::vector<Parameter>& fields) : sorted_fields_(fields) {
+  if (fields.empty()) {
+    throw EmptyInitialization("Map");
+  }
+
+  // name uniqueness and parent name consistency
+  assert_unique_field_names("Map", fields);
+  assert_identical_parent_names(fields);
 
   // store the fields by name for comparison / access purposes in the future
   std::sort(sorted_fields_.begin(), sorted_fields_.end(),
@@ -31,33 +91,45 @@ Map::Map(const std::vector<Parameter>& fields) : sorted_fields_(fields) {
             });
 }
 
-const std::vector<Parameter>& Map::get_fields() const { return sorted_fields_; }
-
 bool Map::operator==(const Map& other) const {
   return sorted_fields_ == other.sorted_fields_;
 }
 
 bool Map::operator!=(const Map& other) const { return !(*this == other); }
 
+const Parameter& Map::operator[](const std::string& key) const {
+  // use binary search to find the field since the fields are sorted
+  auto it = std::lower_bound(
+    sorted_fields_.begin(),
+    sorted_fields_.end(),
+    key,
+    [](const Parameter& p, const std::string& key) {
+      return p.get_key() < key;
+    });
+  
+  if (it == sorted_fields_.end() || it->get_key() != key) {
+    throw std::invalid_argument("Unable to find map field with key: " + key);
+  }
+  return *it;
+}
+
+// ================================= MAP ARRAY ===================================== //
 MapArray::MapArray(const std::vector<Parameter>& items) : items_(items) {
   if (items.empty()) {
-    throw std::invalid_argument("MapArray must be initialized with at least one item");
+    throw EmptyInitialization("MapArray");
   }
 
   // ensure the items are maps
-  for (const Parameter& item : items_) {
-    if (!item.is_map()) {
-      throw std::invalid_argument(
-          "Cannot instantiate MapArray with non-Map parameters");
-    }
-  }
+  assert_valid_array_element_types(
+    "MapArray",
+    items,
+    [](const Parameter& item) { return item.is_map(); },
+    "Map"
+  );
 
-  // ensure the items have unique names
-  std::vector<std::string> item_names;
-  for (const auto& item : items_) {
-    item_names.push_back(item.get_name());
-  }
-  utils::assert_unique_strings(item_names);
+  // name uniqueness and parent name consistency
+  assert_unique_field_names("MapArray", items);
+  assert_identical_parent_names(items);
 
   // store the items by name for comparison / access purposes in the future
   std::sort(items_.begin(), items_.end(), [](const Parameter& a, const Parameter& b) {
@@ -65,18 +137,8 @@ MapArray::MapArray(const std::vector<Parameter>& items) : items_(items) {
   });
 
   // ensure the items keys are integers in ascending order
-  for (size_t i = 0; i < items_.size(); ++i) {
-    if (items_[i].get_key() != std::to_string(i)) {
-      throw std::invalid_argument(
-          "MapArray items must have keys that are integers in ascending order. "
-          "Unable to find index '" +
-          std::to_string(i) +
-          "' in the names of the provided items: " + items_[i].get_name());
-    }
-  }
+  assert_ascending_integer_keys(items);
 }
-
-const std::vector<Parameter>& MapArray::get_items() const { return items_; }
 
 bool MapArray::operator==(const MapArray& other) const {
   return items_ == other.items_;
@@ -86,23 +148,27 @@ bool MapArray::operator!=(const MapArray& other) const {
   return !(*this == other);
 }
 
+const Parameter& MapArray::operator[](const size_t index) const {
+  return items_[index];
+}
+
+// ================================= NESTED ARRAY ================================== //
 NestedArray::NestedArray(const std::vector<Parameter>& items) : items_(items) {
   if (items.empty()) {
-    throw std::invalid_argument("NestedArray must be initialized with at least one item");
-  }
-  for (const Parameter& item : items) {
-    if (!item.is_array()) {
-      throw std::invalid_argument(
-          "Cannot instantiate NestedArray with non-array parameters");
-    }
+    throw EmptyInitialization("NestedArray");
   }
 
-  // ensure the items have unique names
-  std::vector<std::string> item_names;
-  for (const auto& item : items_) {
-    item_names.push_back(item.get_name());
-  }
-  utils::assert_unique_strings(item_names);
+  // ensure the items are arrays
+  assert_valid_array_element_types(
+    "NestedArray",
+    items,
+    [](const Parameter& item) { return item.is_array(); },
+    "NestedArray"
+  );
+
+  // name uniqueness and parent name consistency
+  assert_unique_field_names("MapArray", items);
+  assert_identical_parent_names(items);
 
   // store the items by name for comparison / access purposes in the future
   std::sort(items_.begin(), items_.end(), [](const Parameter& a, const Parameter& b) {
@@ -110,18 +176,8 @@ NestedArray::NestedArray(const std::vector<Parameter>& items) : items_(items) {
   });
 
   // ensure the items keys are integers in ascending order
-  for (size_t i = 0; i < items_.size(); ++i) {
-    if (items_[i].get_key() != std::to_string(i)) {
-      throw std::invalid_argument(
-          "NestedArray items must have keys that are integers in ascending order. "
-          "Unable to find index '" +
-          std::to_string(i) +
-          "' in the names of the provided items: " + items_[i].get_name());
-    }
-  }
+  assert_ascending_integer_keys(items);
 }
-
-const std::vector<Parameter>& NestedArray::get_items() const { return items_; }
 
 bool NestedArray::operator==(const NestedArray& other) const {
   return items_ == other.items_;
@@ -129,6 +185,10 @@ bool NestedArray::operator==(const NestedArray& other) const {
 
 bool NestedArray::operator!=(const NestedArray& other) const {
   return !(*this == other);
+}
+
+const Parameter& NestedArray::operator[](const size_t index) const {
+  return items_[index];
 }
 
 }  // namespace miru::params
