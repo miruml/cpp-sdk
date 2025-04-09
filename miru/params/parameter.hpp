@@ -10,6 +10,7 @@
 #include <miru/params/exceptions.hpp>
 #include <miru/params/scalar.hpp>
 #include <miru/params/type.hpp>
+#include <miru/utils.hpp>
 
 // external
 #include <nlohmann/json.hpp>
@@ -25,9 +26,44 @@ namespace miru::params {
 
 class Parameter;
 
-struct Object : std::vector<Parameter> {};
-struct ObjectArray : std::vector<Parameter> {};
-struct NestedArray : std::vector<Parameter> {};
+class Object {
+public:
+    Object(const std::vector<Parameter> & fields);
+
+    const std::vector<Parameter> & get_fields() const;
+
+    bool operator==(const Object & other) const;
+    bool operator!=(const Object & other) const;
+
+private:
+    std::vector<Parameter> sorted_fields_;
+};
+
+class ObjectArray {
+public:
+    ObjectArray(const std::vector<Parameter> & objects);
+
+    const std::vector<Parameter> & get_items() const;
+
+    bool operator==(const ObjectArray & other) const;
+    bool operator!=(const ObjectArray & other) const;
+
+private:
+    std::vector<Parameter> items_;
+};
+
+class NestedArray {
+public:
+    NestedArray(const std::vector<Parameter> & items);
+
+    const std::vector<Parameter> & get_items() const;
+
+    bool operator==(const NestedArray & other) const;
+    bool operator!=(const NestedArray & other) const;
+
+private:
+    std::vector<Parameter> items_;
+};
 
 /// Store the type and value of a parameter.
 class ParameterValue {
@@ -192,7 +228,7 @@ public:
                 return std::get<std::vector<bool>>(value_);
             case ParameterType::PARAMETER_SCALAR_ARRAY:
                 if (!(cache_flags_ & BOOL_ARRAY_CACHED)) {
-                    scalar_bool_array_ = transform_scalar_array<bool>(
+                    scalar_bool_array_ = scalar_array_as<bool>(
                         std::get<std::vector<Scalar>>(value_)
                     );
                     cache_flags_ |= BOOL_ARRAY_CACHED;
@@ -213,7 +249,7 @@ public:
                 return std::get<std::vector<int64_t>>(value_);
             case ParameterType::PARAMETER_SCALAR_ARRAY:
                 if (!(cache_flags_ & INT_ARRAY_CACHED)) {
-                    scalar_int_array_ = transform_scalar_array<int64_t>(
+                    scalar_int_array_ = scalar_array_as<int64_t>(
                         std::get<std::vector<Scalar>>(value_)
                     );
                     cache_flags_ |= INT_ARRAY_CACHED;
@@ -234,7 +270,7 @@ public:
                 return std::get<std::vector<double>>(value_);
             case ParameterType::PARAMETER_SCALAR_ARRAY:
                 if (!(cache_flags_ & DOUBLE_ARRAY_CACHED)) {
-                    scalar_double_array_ = transform_scalar_array<double>(
+                    scalar_double_array_ = scalar_array_as<double>(
                         std::get<std::vector<Scalar>>(value_)
                     );
                     cache_flags_ |= DOUBLE_ARRAY_CACHED;
@@ -255,7 +291,7 @@ public:
                 return std::get<std::vector<std::string>>(value_);
             case ParameterType::PARAMETER_SCALAR_ARRAY:
                 if (!(cache_flags_ & STRING_ARRAY_CACHED)) {
-                    scalar_string_array_ = transform_scalar_array<std::string>(
+                    scalar_string_array_ = scalar_array_as<std::string>(
                         std::get<std::vector<Scalar>>(value_)
                     );
                     cache_flags_ |= STRING_ARRAY_CACHED;
@@ -280,8 +316,11 @@ public:
         std::is_integral<type>::value && !std::is_same<type, bool>::value,
         const type>::type
     get() const {
-        // use the type as the argument so that we reuse the same casting logic
-        return cast_int64_to<type>(get<ParameterType::PARAMETER_INTEGER>());
+        // use the integer conversion function which conducts additional checks
+        // for converting int64 to the target type
+        return miru::utils::int64_as<type>(
+            get<ParameterType::PARAMETER_INTEGER>()
+        );
     }
 
     template<typename type> constexpr
@@ -289,8 +328,11 @@ public:
         std::is_floating_point<type>::value,
         const type>::type
     get() const {
-        // use the type as the argument so that we reuse the same casting logic
-        return cast_double_to<type>(get<ParameterType::PARAMETER_DOUBLE>());
+        // use the double conversion function which conducts additional checks
+        // for converting double to the target type
+        return miru::utils::double_as<type>(
+            get<ParameterType::PARAMETER_DOUBLE>()
+        );
     }
 
     template<typename type> constexpr
@@ -519,8 +561,6 @@ public:
     bool is_object_array() const;
     bool is_array() const;
 
-    bool is_leaf() const;
-
 private:
     explicit ParameterValue(ParameterType type);
 
@@ -611,27 +651,18 @@ public:
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L59
 
     /// Construct with given name and a parameter value of type ParameterType::PARAMETER_NOT_SET.
-    explicit Parameter(const std::string & name);
+    explicit Parameter(const std::string & key);
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L63
 
     /// Construct with given name and given parameter value.
-    Parameter(
-        const std::string & name,
-        const ParameterValue & parameter_value,
-        const std::string & name_delimiter = "/"
-    );
+    Parameter(const std::string & name, const ParameterValue & parameter_value);
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L67
 
     /// Construct with given name and given parameter value.
     template<typename ValueTypeT>
-    Parameter(
-        const std::string & name,
-        ValueTypeT value,
-        const std::string & name_delimiter = "/"
-    )
-    : Parameter(name, ParameterValue(value), name_delimiter)
+    Parameter(const std::string & name, ValueTypeT value): Parameter(name, ParameterValue(value))
     {}
 
     // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L73
@@ -682,7 +713,7 @@ public:
             throw InvalidParameterType(this->name_, ex.what());
         } catch (const InvalidScalarConversion & ex) {
             throw InvalidParameterType(this->name_, ex.what());
-        } catch (const InvalidTypeCast & ex) {
+        } catch (const utils::InvalidTypeConversion & ex) {
             throw InvalidParameterType(this->name_, ex.what());
         }
     }
@@ -698,7 +729,7 @@ public:
             throw InvalidParameterType(this->name_, ex.what());
         } catch (const InvalidScalarConversion & ex) {
             throw InvalidParameterType(this->name_, ex.what());
-        } catch (const InvalidTypeCast & ex) {
+        } catch (const utils::InvalidTypeConversion & ex) {
             throw InvalidParameterType(this->name_, ex.what());
         }
     }
@@ -769,19 +800,14 @@ public:
 
     /// Get the value of parameter as a null type
     const std::nullptr_t as_null() const;
-
     /// Get the value of parameter as a scalar type
     const Scalar& as_scalar() const;
-
     /// Get the value of parameter as a scalar array type
     const std::vector<Scalar>& as_scalar_array() const;
-
     /// Get the value of parameter as a nested array type
     const NestedArray& as_nested_array() const;
-
     /// Get the value of parameter as an object (Parameter)
     const Object& as_object() const;
-
     /// Get the value of parameter as an object array (vector<Parameter>)
     const ObjectArray& as_object_array() const;
 
@@ -793,12 +819,9 @@ public:
     bool is_object_array() const;
     bool is_array() const;
 
-    bool is_leaf() const;
-
 private:
     ParameterType type_;
     std::string name_;
-    std::string name_delimiter_;
     ParameterValue value_; 
 };
 

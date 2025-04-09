@@ -5,11 +5,9 @@
 #include <string>
 #include <stdexcept>
 #include <iostream>
-#include <type_traits>
-#include <limits>
 
 // miru
-#include <miru/params/exceptions.hpp>
+#include <miru/exceptions.hpp>
 
 namespace miru::params {
 
@@ -75,54 +73,5 @@ public:
     : std::runtime_error("expected [" + to_string(expected) + "] got [" + to_string(actual) + "]")
     {}
 };
-
-template<typename type>  constexpr
-typename std::enable_if<
-    std::is_integral<type>::value && !std::is_same<type, bool>::value, 
-    type>::type
-cast_int64_to(const int64_t & value) {
-    // need to handle unsigned types separately
-    if (std::is_unsigned<type>::value && value < 0) {
-        throw InvalidTypeCast(
-            std::to_string(value),
-            "int64_t",
-            "integer (type '" + std::string(typeid(type).name()) + "')",
-            "value is negative for unsigned type"
-        );
-    }
-
-    // check for overflow with the target integer type
-    if (value > std::numeric_limits<type>::max() || 
-        value < std::numeric_limits<type>::lowest()
-    ) {
-        throw InvalidTypeCast(
-            std::to_string(value),
-            "int64_t",
-            "integer (type '" + std::string(typeid(type).name()) + "')",
-            "value outside target integer range [" + std::to_string(std::numeric_limits<type>::lowest()) + ", " + std::to_string(std::numeric_limits<type>::max()) + "]"
-        );
-    }
-    return static_cast<type>(value);
-}
-
-template<typename type>  constexpr
-typename std::enable_if<
-    std::is_floating_point<type>::value,
-    type>::type
-cast_double_to(const double & value) {
-    // check for overflow with the target floating point type
-    if (value > std::numeric_limits<type>::max() || 
-        value < std::numeric_limits<type>::lowest()
-    ) {
-        throw InvalidTypeCast(
-            std::to_string(value),
-            "double",
-            "floating point (type '" + std::string(typeid(type).name()) + "')",
-            "value outside target floating point range [" + std::to_string(std::numeric_limits<type>::lowest()) + ", " + std::to_string(std::numeric_limits<type>::max()) + "]"
-        );
-    }
-    return static_cast<type>(value);
-}
-
 
 } // namespace miru::params

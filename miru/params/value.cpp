@@ -1,6 +1,7 @@
 // internal
 #include "miru/params/type.hpp"
-#include <miru/params/parameter.hpp>
+#include "miru/params/parameter.hpp"
+#include "miru/params/utils.hpp"
 
 // external
 #include <fmt/ranges.h>
@@ -126,7 +127,7 @@ std::string to_string(const ParameterValue & value, const int indent) {
         }
         case ParameterType::PARAMETER_NESTED_ARRAY: {
             std::vector<ParameterValue> nested_array;
-            for (const Parameter & param: value.get<NestedArray>()) {
+            for (const Parameter & param: value.get<NestedArray>().get_items()) {
                 nested_array.push_back(param.get_parameter_value());
             }
             return miru::params::param_value_array_to_string(
@@ -141,7 +142,7 @@ std::string to_string(const ParameterValue & value, const int indent) {
         }
         case ParameterType::PARAMETER_OBJECT_ARRAY: {
             std::vector<ParameterValue> object_array;
-            for (const Parameter & param: value.get<ObjectArray>()) {
+            for (const Parameter & param: value.get<ObjectArray>().get_items()) {
                 object_array.push_back(param.get_parameter_value());
             }
             return miru::params::param_value_array_to_string(
@@ -159,7 +160,7 @@ std::string param_object_to_string(
     std::stringstream type_array;
     bool first_item = true;
     type_array << std::string(indent, ' ') << "{";
-    for (const Parameter & param: object) {
+    for (const Parameter & param: object.get_fields()) {
         if (!first_item) {
             type_array << ",";
         } else {
@@ -195,7 +196,7 @@ std::string param_value_array_to_string(
             first_item = false;
         }
         with_newlines ? type_array << "\n": type_array << "";
-        with_newlines && value.is_leaf() ? 
+        with_newlines && is_leaf(value) ? 
             type_array << std::string(indent+2, ' ')
             : type_array << "";
         type_array << to_string(value, with_newlines ? indent+2 : indent);
@@ -387,19 +388,6 @@ bool ParameterValue::is_object_array() const {
 
 bool ParameterValue::is_array() const {
     return is_scalar_array() || is_nested_array() || is_object_array();
-}
-
-bool ParameterValue::is_leaf() const {
-    if (is_nested_array()) {
-        NestedArray nested_array = get<NestedArray>();
-        for (const Parameter & param: nested_array) {
-            if (!param.is_leaf()) {
-                return false;
-            }
-        }
-        return true;
-    }
-    return !(is_object() || is_object_array());
 }
 
 } // namespace miru::params

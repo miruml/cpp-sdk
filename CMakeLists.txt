@@ -66,6 +66,7 @@ add_library(miru
     miru/filesys/file.cpp
     miru/filesys/path.hpp
     miru/filesys/path.cpp
+    miru/params/composite.cpp
     miru/params/exceptions.hpp
     miru/params/loader.hpp
     miru/params/loader.cpp
@@ -73,7 +74,12 @@ add_library(miru
     miru/params/parameter.cpp
     miru/params/scalar.hpp
     miru/params/scalar.cpp
+    miru/params/type.hpp
+    miru/params/utils.hpp
+    miru/params/utils.cpp
     miru/params/value.cpp
+    miru/utils.hpp
+    miru/utils.cpp
 )
 
 # Add include directories
@@ -107,9 +113,9 @@ if(BUILD_TESTING)
         test/test_utils/utils.hpp
         test/test_utils/utils.cpp
         test/params/loader_test.cpp
-        test/params/scalar_test.hpp
         test/params/scalar_test.cpp
         test/params/parameter_test.cpp
+        test/utils_test.hpp
     )
 
     target_link_libraries(test.out

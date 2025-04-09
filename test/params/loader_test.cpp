@@ -10,6 +10,8 @@
 #include <boost/stacktrace.hpp>
 #include <gtest/gtest.h>
 
+namespace test::params {
+
 enum class LoaderExceptionType {
     None,
     UnsupportedNode,
@@ -110,3 +112,5 @@ protected:
 TEST_F(LoadYaml, ValidBool) {
     EXPECT_EQ(true, false);
 }
+
+} // namespace test::params

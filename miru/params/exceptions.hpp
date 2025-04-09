@@ -48,17 +48,4 @@ public:
     {}
 };
 
-class InvalidTypeCast : public std::runtime_error {
-public:
-    InvalidTypeCast(
-        const std::string & value,
-        const std::string & src_type,
-        const std::string & dest_type,
-        const std::string & message
-    )
-    : std::runtime_error("unable to cast value '" + value + "' from type '" + src_type + "' to type '" + dest_type + "': " + message)
-    {}
-};
-
-
 } // namespace miru::params

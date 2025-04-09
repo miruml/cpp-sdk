@@ -10,6 +10,7 @@
 // internal
 #include <miru/params/exceptions.hpp>
 #include <miru/params/type.hpp>
+#include <miru/utils.hpp>
 
 namespace miru::params {
 
@@ -32,6 +33,8 @@ public:
     int64_t as_int() const;
     double as_double() const;
     const std::string & as_string() const { return value_; }
+
+    // using parameter type enum
 
     template<ParameterType type>
     typename std::enable_if<type == ParameterType::PARAMETER_BOOL, bool>::type
@@ -57,6 +60,8 @@ public:
         return as_string();
     }
 
+    // using c++ primitive types
+
     template<typename type> 
     constexpr
     typename std::enable_if<std::is_same<type, bool>::value, bool>::type
@@ -68,14 +73,19 @@ public:
     constexpr
     typename std::enable_if<std::is_integral<type>::value && !std::is_same<type, bool>::value, int64_t>::type
     as() const {
-        return cast_int64_to<type>(as_int());
+        // for types returning integers other than int64 we'll use the string conversion
+        // function which conducts additional checks for converting int64 to the target
+        // type
+        return miru::utils::string_as<type>(value_);
     }
 
     template<typename type> 
     constexpr
     typename std::enable_if<std::is_floating_point<type>::value, double>::type
     as() const {
-        return cast_double_to<type>(as_double());
+        // for types returning doubles we'll use the string conversion function which
+        // conducts additional checks for converting double to the target type
+        return miru::utils::string_as<type>(value_);
     }
 
     template<typename type> 
@@ -105,7 +115,7 @@ struct is_convertible_to_scalar_type :
 
 template<typename T>
 typename std::enable_if<is_convertible_to_scalar_type<T>::value, std::vector<T>>::type
-transform_scalar_array(const std::vector<Scalar> & scalars) {
+scalar_array_as(const std::vector<Scalar> & scalars) {
     std::vector<T> dest;
     dest.reserve(scalars.size());
     std::transform(scalars.begin(), scalars.end(), std::back_inserter(dest), [](const Scalar & s) { return s.as<T>(); });

@@ -19,53 +19,46 @@ miru::params::Parameter load_json(
         case nlohmann::json::value_t::null:
             return miru::params::Parameter(
                 name,
-                nullptr,
-                delimiter
+                nullptr
             );
         case nlohmann::json::value_t::boolean:
             return miru::params::Parameter(
                 name,
-                node.get<bool>(),
-                delimiter
+                node.get<bool>()
             );
         case nlohmann::json::value_t::number_integer:
             return miru::params::Parameter(
                 name,
-                node.get<int>(),
-                delimiter
+                node.get<int>()
             );
         case nlohmann::json::value_t::number_unsigned:
             return miru::params::Parameter(
                 name,
-                node.get<unsigned int>(),
-                delimiter
+                node.get<unsigned int>()
             );
         case nlohmann::json::value_t::number_float:
             return miru::params::Parameter(
                 name,
-                node.get<double>(),
-                delimiter
+                node.get<double>()
             );
         case nlohmann::json::value_t::binary:
             throw std::runtime_error("Binary values are not supported. Please contact Ben at ben@miruml.com if you need this feature.");
         case nlohmann::json::value_t::string:
             return miru::params::Parameter(
                 name,
-                node.get<std::string>(),
-                delimiter
+                node.get<std::string>()
             );
         case nlohmann::json::value_t::array:
             return load_json_array(name, node, delimiter);
         case nlohmann::json::value_t::object: {
-            miru::params::Object entries;
+            std::vector<miru::params::Parameter> entries;
             for (const auto& entry : node.items()) {
                 std::string entry_name = name + delimiter + entry.key();
                 entries.push_back(load_json(entry_name, entry.value(), delimiter));
             }
             return miru::params::Parameter(
                 name,
-                entries,
-                delimiter
+                miru::params::Object(entries)
             );
         }
     }
@@ -124,7 +117,7 @@ miru::params::Parameter load_json_array(
             return miru::params::Parameter(name, miru::params::ParameterValue(array));
         }
         case nlohmann::json::value_t::array: {
-            miru::params::NestedArray entries;
+            std::vector<miru::params::Parameter> entries;
             int i = 0;
             for (const auto& entry : node.items()) {
                 std::string entry_name = name + delimiter + std::to_string(i);
@@ -133,10 +126,13 @@ miru::params::Parameter load_json_array(
                 );
                 i++;
             }
-            return miru::params::Parameter(name, entries);
+            return miru::params::Parameter(
+                name,
+                miru::params::NestedArray(entries)
+            );
         }
         case nlohmann::json::value_t::object: {
-            miru::params::ObjectArray entries;
+            std::vector<miru::params::Parameter> entries;
             int i = 0;
             for (const auto& entry : node.items()) {
                 if (entry.value().type() != nlohmann::json::value_t::object) {
@@ -148,7 +144,10 @@ miru::params::Parameter load_json_array(
                 );
                 i++;
             }
-            return miru::params::Parameter(name, entries);
+            return miru::params::Parameter(
+                name,
+                miru::params::ObjectArray(entries)
+            );
         }
     }
     throw std::runtime_error("Unsupported node type");
@@ -217,7 +216,7 @@ miru::params::Parameter load_yaml(
         case YAML::NodeType::Sequence:
             return load_yaml_array(name, node, delimiter);
         case YAML::NodeType::Map: {
-            miru::params::Object entries;
+            std::vector<miru::params::Parameter> entries;
             for (const auto& entry : node) {
                 std::string entry_name = name + delimiter + entry.first.as<std::string>();
                 entries.push_back(
@@ -226,7 +225,7 @@ miru::params::Parameter load_yaml(
             }
             return miru::params::Parameter(
                 name,
-                entries
+                miru::params::Object(entries)
             );
         }
     }
