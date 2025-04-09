@@ -7,8 +7,8 @@ namespace miru::params {
 
 // ============================== MIRU INTERFACES ============================== //
 
-bool is_leaf(const ParameterValue & parameter);
-bool is_leaf(const Parameter & parameter);
+bool is_leaf(const ParameterValue& parameter);
+bool is_leaf(const Parameter& parameter);
 
 std::vector<miru::params::Parameter> list_parameters(bool leaves_only = true);
 
@@ -23,24 +23,16 @@ std::vector<miru::params::Parameter> list_parameters(bool leaves_only = true);
 
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node_interfaces/node_parameters_interface.hpp#L116
 
-bool has_parameter(
-    const std::string & parameter_name,
-    bool leaves_only = true
-);
+bool has_parameter(const std::string& parameter_name, bool leaves_only = true);
 
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node_interfaces/node_parameters_interface.hpp#L144
 
 std::vector<miru::params::Parameter> get_parameters(
-    const std::vector<std::string> & parameter_names,
-    bool leaves_only = true
-);
+    const std::vector<std::string>& parameter_names, bool leaves_only = true);
 
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node_interfaces/node_parameters_interface.hpp#L155
 
-miru::params::Parameter get_parameter(
-    const std::string & name,
-    bool leaves_only = true
-);
+miru::params::Parameter get_parameter(const std::string& name, bool leaves_only = true);
 
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node_interfaces/node_parameters_interface.hpp#L194
 // std::vector<rcl_interfaces::msg::ParameterDescriptor>
@@ -60,17 +52,12 @@ miru::params::Parameter get_parameter(
 // get_parameter_types(const std::vector<std::string> & parameter_names);
 
 // for the list_parameter_names method, we're altering the data structure a bit.
-// ROS2 calls it list parameters but it's actually just a list of parameter names. Our list_parameters methods will return the actual parameter data structures
+// ROS2 calls it list parameters but it's actually just a list of parameter names. Our
+// list_parameters methods will return the actual parameter data structures
 
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node_interfaces/node_parameters_interface.hpp#L204
 
 std::vector<std::string> list_parameter_names(
-    const std::vector<std::string> & parameter_prefixes,
-    bool leaves_only = true
-);
+    const std::vector<std::string>& parameter_prefixes, bool leaves_only = true);
 
-
-
-
-} // namespace miru::params
-
+}  // namespace miru::params

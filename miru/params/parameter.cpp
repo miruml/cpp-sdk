@@ -13,240 +13,191 @@ namespace miru::params {
 
 Parameter::Parameter() : name_("") {}
 
-Parameter::Parameter(const std::string & name) : name_(name) {}
+Parameter::Parameter(const std::string& name) : name_(name) {}
 
-void validate_child_parameter_name(
-    const std::string & parent_name,
-    const std::string & child_name
-) {
-    // the child's name must follow its parent's name
-    if (!utils::has_prefix(child_name, parent_name + "/")) {
-        throw std::invalid_argument(
-            "child parameter with name '" + child_name + "' must have its parent parameter name '" + parent_name + "' as a prefix"
-        );
-    }
+void validate_child_parameter_name(const std::string& parent_name,
+                                   const std::string& child_name) {
+  // the child's name must follow its parent's name
+  if (!utils::has_prefix(child_name, parent_name + "/")) {
+    throw std::invalid_argument("child parameter with name '" + child_name +
+                                "' must have its parent parameter name '" +
+                                parent_name + "' as a prefix");
+  }
 
-    // the child's key must be exactly one level deeper than the parent
-    std::string key = child_name.substr(parent_name.length() + 1);
-    if (key.find("/") != std::string::npos) {
-        throw std::invalid_argument(
-            "child key '" + key + "' (the child parameter name '" + child_name + "' with its parent parameter name '" + parent_name + "' removed) must not contain any slashes ('/') so that it is nested one level deeper than the parent"
-        );
-    }
+  // the child's key must be exactly one level deeper than the parent
+  std::string key = child_name.substr(parent_name.length() + 1);
+  if (key.find("/") != std::string::npos) {
+    throw std::invalid_argument("child key '" + key + "' (the child parameter name '" +
+                                child_name + "' with its parent parameter name '" +
+                                parent_name +
+                                "' removed) must not contain any slashes ('/') so that "
+                                "it is nested one level deeper than the parent");
+  }
 }
 
-Parameter::Parameter(
-    const std::string & name,
-    const ParameterValue & value
-) : name_(name), value_(value) {
+Parameter::Parameter(const std::string& name, const ParameterValue& value)
+    : name_(name), value_(value) {
+  // remove any trailing slashes from the name
+  name_ = name_.substr(0, name_.find_last_not_of("/") + 1);
 
-    // remove any trailing slashes from the name
-    name_ = name_.substr(0, name_.find_last_not_of("/") + 1);
-
-    // check that the key doesn't have any slashes
-    std::vector<std::string> child_names;
-    switch (value_.get_type()) {
-        case ParameterType::PARAMETER_OBJECT:
-            for (const auto & field : value_.get<ParameterType::PARAMETER_OBJECT>().get_fields()) {
-                validate_child_parameter_name(
-                    name_, field.get_name()
-                );
-            }
-            break;
-        case ParameterType::PARAMETER_OBJECT_ARRAY:
-            for (const auto & item : value_.get<ParameterType::PARAMETER_OBJECT_ARRAY>().get_items()) {
-                validate_child_parameter_name(
-                    name_, item.get_name()
-                );
-            }
-            break;
-        case ParameterType::PARAMETER_NESTED_ARRAY:
-            for (const auto & item : value_.get<ParameterType::PARAMETER_NESTED_ARRAY>().get_items()) {
-                validate_child_parameter_name(
-                    name_, item.get_name()
-                );
-            }
-            break;
-        default:
-            // has no child parameters with names to validate -> return
-            return;
-    }
+  // check that the key doesn't have any slashes
+  std::vector<std::string> child_names;
+  switch (value_.get_type()) {
+    case ParameterType::PARAMETER_OBJECT:
+      for (const auto& field :
+           value_.get<ParameterType::PARAMETER_OBJECT>().get_fields()) {
+        validate_child_parameter_name(name_, field.get_name());
+      }
+      break;
+    case ParameterType::PARAMETER_OBJECT_ARRAY:
+      for (const auto& item :
+           value_.get<ParameterType::PARAMETER_OBJECT_ARRAY>().get_items()) {
+        validate_child_parameter_name(name_, item.get_name());
+      }
+      break;
+    case ParameterType::PARAMETER_NESTED_ARRAY:
+      for (const auto& item :
+           value_.get<ParameterType::PARAMETER_NESTED_ARRAY>().get_items()) {
+        validate_child_parameter_name(name_, item.get_name());
+      }
+      break;
+    default:
+      // has no child parameters with names to validate -> return
+      return;
+  }
 }
 
-
-bool Parameter::operator==(const Parameter & other) const {
-    return name_ == other.name_ && value_ == other.value_;
+bool Parameter::operator==(const Parameter& other) const {
+  return name_ == other.name_ && value_ == other.value_;
 }
 
-bool Parameter::operator!=(const Parameter & other) const {
-    return !(*this == other);
+bool Parameter::operator!=(const Parameter& other) const { return !(*this == other); }
+
+ParameterType Parameter::get_type() const { return value_.get_type(); }
+
+std::string Parameter::get_type_name() const { return to_string(get_type()); }
+
+const std::string& Parameter::get_name() const { return name_; }
+
+const ParameterValue& Parameter::get_parameter_value() const { return value_; }
+
+bool Parameter::as_bool() const { return get_value<ParameterType::PARAMETER_BOOL>(); }
+
+int64_t Parameter::as_int() const {
+  return get_value<ParameterType::PARAMETER_INTEGER>();
 }
 
-ParameterType Parameter::get_type() const {
-    return value_.get_type();
+double Parameter::as_double() const {
+  return get_value<ParameterType::PARAMETER_DOUBLE>();
 }
 
-std::string Parameter::get_type_name() const {
-    return to_string(get_type());
+const std::string& Parameter::as_string() const {
+  return get_value<ParameterType::PARAMETER_STRING>();
 }
 
-const std::string& Parameter::get_name() const {
-    return name_;
+const std::vector<bool>& Parameter::as_bool_array() const {
+  return get_value<ParameterType::PARAMETER_BOOL_ARRAY>();
 }
 
-const ParameterValue& Parameter::get_parameter_value() const {
-    return value_;
+const std::vector<int64_t>& Parameter::as_integer_array() const {
+  return get_value<ParameterType::PARAMETER_INTEGER_ARRAY>();
 }
 
-bool
-Parameter::as_bool() const {
-    return get_value<ParameterType::PARAMETER_BOOL>();
+const std::vector<double>& Parameter::as_double_array() const {
+  return get_value<ParameterType::PARAMETER_DOUBLE_ARRAY>();
 }
 
-int64_t
-Parameter::as_int() const {
-    return get_value<ParameterType::PARAMETER_INTEGER>();
+const std::vector<std::string>& Parameter::as_string_array() const {
+  return get_value<ParameterType::PARAMETER_STRING_ARRAY>();
 }
 
-double
-Parameter::as_double() const {
-    return get_value<ParameterType::PARAMETER_DOUBLE>();
+std::string Parameter::value_to_string() const { return to_string(value_); }
+
+std::ostream& operator<<(std::ostream& os, const Parameter& pv) {
+  os << to_string(pv);
+  return os;
 }
 
-const std::string &
-Parameter::as_string() const {
-    return get_value<ParameterType::PARAMETER_STRING>();
+std::ostream& operator<<(std::ostream& os, const std::vector<Parameter>& parameters) {
+  os << to_string(parameters);
+  return os;
 }
 
-const std::vector<bool> &
-Parameter::as_bool_array() const {
-    return get_value<ParameterType::PARAMETER_BOOL_ARRAY>();
+std::string to_string(const Parameter& param) {
+  std::stringstream ss;
+  ss << "{\"name\": \"" << param.get_name() << "\", ";
+  ss << "\"key\": \"" << param.get_key() << "\", ";
+  ss << "\"type\": \"" << param.get_type_name() << "\", ";
+  ss << "\"value\": " << param.value_to_string() << "}";
+  return ss.str();
 }
 
-const std::vector<int64_t> &
-Parameter::as_integer_array() const {
-    return get_value<ParameterType::PARAMETER_INTEGER_ARRAY>();
-}
-
-const std::vector<double> &
-Parameter::as_double_array() const {
-    return get_value<ParameterType::PARAMETER_DOUBLE_ARRAY>();
-}
-
-const std::vector<std::string> &
-Parameter::as_string_array() const {
-    return get_value<ParameterType::PARAMETER_STRING_ARRAY>();
-}
-
-std::string Parameter::value_to_string() const {
-    return to_string(value_);
-}
-
-std::ostream & operator<<(std::ostream & os, const Parameter & pv) {
-    os << to_string(pv);
-    return os;
-}
-
-std::ostream & operator<<(std::ostream & os, const std::vector<Parameter> & parameters) {
-    os << to_string(parameters);
-    return os;
-}
-
-std::string to_string(const Parameter & param) {
+std::string to_string(const std::vector<Parameter>& parameters) {
+  auto add_param_entry = [](const Parameter& param) {
     std::stringstream ss;
-    ss << "{\"name\": \"" << param.get_name() << "\", ";
-    ss << "\"key\": \"" << param.get_key() << "\", ";
-    ss << "\"type\": \"" << param.get_type_name() << "\", ";
-    ss << "\"value\": " << param.value_to_string() << "}";
+    ss << "\"" << param.get_key() << "\": ";
+    ss << "{\"type\": \"" << param.get_type_name() << "\", ";
+    ss << "\"value\": \"" << param.value_to_string() << "\"}";
     return ss.str();
-}
+  };
 
-std::string to_string(const std::vector<Parameter> & parameters) {
-    auto add_param_entry = [](const Parameter & param) {
-        std::stringstream ss;
-        ss << "\"" << param.get_key() << "\": ";
-        ss << "{\"type\": \"" << param.get_type_name() << "\", ";
-        ss << "\"value\": \"" << param.value_to_string() << "\"}";
-        return ss.str();
-    };
-
-    std::stringstream ss;
-    ss << "{";
-    bool first = true;
-    for (const auto & pv : parameters) {
-        if (first == false) {
-            ss << ", ";
-        } else {
-            first = false;
-        }
-        ss << add_param_entry(pv);
+  std::stringstream ss;
+  ss << "{";
+  bool first = true;
+  for (const auto& pv : parameters) {
+    if (first == false) {
+      ss << ", ";
+    } else {
+      first = false;
     }
-    ss << "}";
-    return ss.str();
+    ss << add_param_entry(pv);
+  }
+  ss << "}";
+  return ss.str();
 }
 
 // ================================ MIRU INTERFACES ================================ //
 
 std::string Parameter::get_key() const {
-    return name_.substr(name_.find_last_of("/") + 1, name_.length());
+  return name_.substr(name_.find_last_of("/") + 1, name_.length());
 }
 
-const std::nullptr_t
-Parameter::as_null() const {
-    return get_value<ParameterType::PARAMETER_NULL>();
+const std::nullptr_t Parameter::as_null() const {
+  return get_value<ParameterType::PARAMETER_NULL>();
 }
 
-const Scalar &
-Parameter::as_scalar() const {
-    return get_value<ParameterType::PARAMETER_SCALAR>();
+const Scalar& Parameter::as_scalar() const {
+  return get_value<ParameterType::PARAMETER_SCALAR>();
 }
 
-const std::vector<Scalar> &
-Parameter::as_scalar_array() const {
-    return get_value<ParameterType::PARAMETER_SCALAR_ARRAY>();
+const std::vector<Scalar>& Parameter::as_scalar_array() const {
+  return get_value<ParameterType::PARAMETER_SCALAR_ARRAY>();
 }
 
-const NestedArray &
-Parameter::as_nested_array() const {
-    return get_value<ParameterType::PARAMETER_NESTED_ARRAY>();
+const NestedArray& Parameter::as_nested_array() const {
+  return get_value<ParameterType::PARAMETER_NESTED_ARRAY>();
 }
 
-const Object &
-Parameter::as_object() const {
-    return get_value<ParameterType::PARAMETER_OBJECT>();
+const Object& Parameter::as_object() const {
+  return get_value<ParameterType::PARAMETER_OBJECT>();
 }
 
-const ObjectArray &
-Parameter::as_object_array() const {
-    return get_value<ParameterType::PARAMETER_OBJECT_ARRAY>();
+const ObjectArray& Parameter::as_object_array() const {
+  return get_value<ParameterType::PARAMETER_OBJECT_ARRAY>();
 }
 
-bool Parameter::is_null() const {
-    return value_.is_null();
-}
+bool Parameter::is_null() const { return value_.is_null(); }
 
-bool Parameter::is_scalar() const {
-    return value_.is_scalar();
-}
+bool Parameter::is_scalar() const { return value_.is_scalar(); }
 
-bool Parameter::is_scalar_array() const {
-    return value_.is_scalar_array();
-}
+bool Parameter::is_scalar_array() const { return value_.is_scalar_array(); }
 
-bool Parameter::is_nested_array() const {
-    return value_.is_nested_array();
-}
+bool Parameter::is_nested_array() const { return value_.is_nested_array(); }
 
-bool Parameter::is_object() const {
-    return value_.is_object();
-}
+bool Parameter::is_object() const { return value_.is_object(); }
 
-bool Parameter::is_object_array() const {
-    return value_.is_object_array();
-}
+bool Parameter::is_object_array() const { return value_.is_object_array(); }
 
-bool Parameter::is_array() const {
-    return value_.is_array();
-}
+bool Parameter::is_array() const { return value_.is_array(); }
 
-} // namespace miru::params
+}  // namespace miru::params

@@ -1,132 +1,113 @@
 #pragma once
 
 // std
-#include <string>
 #include <optional>
+#include <string>
 
 // internal
 #include <miru/filesys/file.hpp>
 #include <miru/params/parameter.hpp>
 
 // external
-#include <nlohmann/json.hpp>
 #include <yaml-cpp/yaml.h>
+
+#include <nlohmann/json.hpp>
 
 namespace miru::config {
 
 // used to determine where to source the config from
 enum class ConfigSource {
-    Agent,
-    FileSystem,
+  Agent,
+  FileSystem,
 };
 
 // Config class
 class Config {
+ public:
+  // ============================== MIRU INTERFACES ============================== //
+  // Initialize the config from a file system source. The config will read its
+  // configuration and schema file from the file system.
+  static Config from_file(const std::string& schema_file_path,
+                          const std::string& config_file_path);
 
-public:
+  // Initialize the config from an agent source. The config will read its
+  // configuration and schema file from the on-device agent.
+  static Config from_agent(const std::string& schema_file_path);
 
-    // ============================== MIRU INTERFACES ============================== //
-    // Initialize the config from a file system source. The config will read its
-    // configuration and schema file from the file system.
-    static Config from_file(
-        const std::string& schema_file_path,
-        const std::string& config_file_path
-    );
+  std::vector<miru::params::Parameter> list_parameters(bool leaves_only = true) const;
 
-    // Initialize the config from an agent source. The config will read its
-    // configuration and schema file from the on-device agent.
-    static Config from_agent(
-        const std::string& schema_file_path
-    );
+  // ============================== ROS2 INTERFACES ============================== //
+  bool has_parameter(const std::string& parameter_name, bool leaves_only = true) const;
 
-    std::vector<miru::params::Parameter> list_parameters(bool leaves_only = true) const;
+  miru::params::Parameter get_parameter(const std::string& name,
+                                        bool leaves_only = true) const;
 
+  std::vector<miru::params::Parameter> get_parameters(
+      const std::vector<std::string>& parameter_names, bool leaves_only = true) const;
 
-    // ============================== ROS2 INTERFACES ============================== //
-    bool has_parameter(
-        const std::string & parameter_name,
-        bool leaves_only = true
-    ) const;
+  std::vector<std::string> list_parameter_names(
+      const std::vector<std::string>& parameter_prefixes,
+      bool leaves_only = true) const;
 
-    miru::params::Parameter get_parameter(
-        const std::string & name,
-        bool leaves_only = true
-    ) const;
+ private:
+  friend class ConfigBuilder;
 
-    std::vector<miru::params::Parameter> get_parameters(
-        const std::vector<std::string> & parameter_names,
-        bool leaves_only = true
-    ) const;
+  Config(const miru::filesys::File& schema_file, const std::string& config_slug,
+         ConfigSource source, const miru::params::Parameter& data,
+         const std::optional<std::string>& schema_digest,
+         const std::optional<miru::filesys::File>& config_file)
+      : schema_file_(schema_file),
+        config_slug_(config_slug),
+        source_(source),
+        data_(data),
+        schema_digest_(schema_digest),
+        config_file_(config_file) {}
 
-    std::vector<std::string> list_parameter_names(
-        const std::vector<std::string> & parameter_prefixes,
-        bool leaves_only = true
-    ) const;
+  // required
+  miru::filesys::File schema_file_;
+  std::string config_slug_;
+  ConfigSource source_;
+  miru::params::Parameter data_;
 
-private:
+  // only needed if sourcing from the agent
+  std::optional<std::string> schema_digest_;
 
-    friend class ConfigBuilder;
-
-    Config(
-        const miru::filesys::File& schema_file,
-        const std::string& config_slug,
-        ConfigSource source,
-        const miru::params::Parameter& data,
-        const std::optional<std::string>& schema_digest,
-        const std::optional<miru::filesys::File>& config_file
-    ) 
-        : schema_file_(schema_file)
-        , config_slug_(config_slug)
-        , source_(source)  
-        , data_(data)
-        , schema_digest_(schema_digest)
-        , config_file_(config_file)
-    {}
-
-    // required
-    miru::filesys::File schema_file_;
-    std::string config_slug_;
-    ConfigSource source_;
-    miru::params::Parameter data_;
-
-    // only needed if sourcing from the agent
-    std::optional<std::string> schema_digest_; 
-
-    // only needed if sourcing from the file system
-    std::optional<miru::filesys::File> config_file_;
+  // only needed if sourcing from the file system
+  std::optional<miru::filesys::File> config_file_;
 };
 
 std::string read_schema_config_slug(const miru::filesys::File& schema_file);
 
 class ConfigBuilder {
-public:
-    ConfigBuilder() {}
-    ConfigBuilder& with_schema_file(const miru::filesys::File& schema_file);
-    ConfigBuilder& with_config_slug(const std::string& config_slug);
-    ConfigBuilder& with_source(ConfigSource source);
-    ConfigBuilder& with_data(const miru::params::Parameter& data);
-    ConfigBuilder& with_schema_digest(const std::string& schema_digest);
-    ConfigBuilder& with_config_file(const miru::filesys::File& config_file);
-    Config build();
+ public:
+  ConfigBuilder() {}
+  ConfigBuilder& with_schema_file(const miru::filesys::File& schema_file);
+  ConfigBuilder& with_config_slug(const std::string& config_slug);
+  ConfigBuilder& with_source(ConfigSource source);
+  ConfigBuilder& with_data(const miru::params::Parameter& data);
+  ConfigBuilder& with_schema_digest(const std::string& schema_digest);
+  ConfigBuilder& with_config_file(const miru::filesys::File& config_file);
+  Config build();
 
-private:
-    // required
-    std::optional<miru::filesys::File> schema_file_;
-    std::optional<std::string> config_slug_;
-    std::optional<ConfigSource> source_;
-    std::optional<miru::params::Parameter> data_;
+ private:
+  // required
+  std::optional<miru::filesys::File> schema_file_;
+  std::optional<std::string> config_slug_;
+  std::optional<ConfigSource> source_;
+  std::optional<miru::params::Parameter> data_;
 
-    // only needed if sourcing from the agent
-    std::optional<std::string> schema_digest_; 
+  // only needed if sourcing from the agent
+  std::optional<std::string> schema_digest_;
 
-    // only needed if sourcing from the file system
-    std::optional<miru::filesys::File> config_file_;
+  // only needed if sourcing from the file system
+  std::optional<miru::filesys::File> config_file_;
 };
 
 class ConfigSlugNotFound : public std::runtime_error {
-public:
-    explicit ConfigSlugNotFound(const miru::filesys::File& schema_file) 
-        : std::runtime_error("Unable to find config slug in schema file '" + schema_file.abs_path().string() + "'")  {}
+ public:
+  explicit ConfigSlugNotFound(const miru::filesys::File& schema_file)
+      : std::runtime_error("Unable to find config slug in schema file '" +
+                           schema_file.abs_path().string() + "'") {}
 };
 
-} // namespace miru::config
+}  // namespace miru::config

@@ -1,57 +1,45 @@
 // internal
-#include <miru/params/parameter.hpp>
 #include <miru/params/exceptions.hpp>
+#include <miru/params/parameter.hpp>
 #include <miru/utils.hpp>
 
 namespace miru::params {
 
-std::string to_string(const Scalar & scalar) {
-    return scalar.as_string();
-}
+std::string to_string(const Scalar& scalar) { return scalar.as_string(); }
 
-std::ostream & operator<<(std::ostream & os, const Scalar & scalar) {
-    os << to_string(scalar);
-    return os;
+std::ostream& operator<<(std::ostream& os, const Scalar& scalar) {
+  os << to_string(scalar);
+  return os;
 }
 
 // Interprets the scalar as a boolean using YAML boolean rules
-// 
+//
 // https://yaml.org/type/bool.html
 bool Scalar::as_bool() const {
-    try {
-        return miru::utils::yaml_string_to_bool(value_);
-    } catch (const std::exception & e) {
-        throw InvalidScalarConversion(
-            value_,
-            to_string(ParameterType::PARAMETER_BOOL),
-            e.what()
-        );
-    }
+  try {
+    return miru::utils::yaml_string_to_bool(value_);
+  } catch (const std::exception& e) {
+    throw InvalidScalarConversion(value_, to_string(ParameterType::PARAMETER_BOOL),
+                                  e.what());
+  }
 }
 
 int64_t Scalar::as_int() const {
-    try {
-        return miru::utils::string_to_int64(value_);
-    } catch (const std::exception & e) {
-        throw InvalidScalarConversion(
-            value_,
-            to_string(ParameterType::PARAMETER_INTEGER),
-            e.what()
-        );
-    }
+  try {
+    return miru::utils::string_to_int64(value_);
+  } catch (const std::exception& e) {
+    throw InvalidScalarConversion(value_, to_string(ParameterType::PARAMETER_INTEGER),
+                                  e.what());
+  }
 }
 
 double Scalar::as_double() const {
-    try {
-        return miru::utils::string_to_double(value_);
-    } catch (const std::exception & e) {
-        throw InvalidScalarConversion(
-            value_,
-            to_string(ParameterType::PARAMETER_DOUBLE),
-            e.what()
-        );
-    }
+  try {
+    return miru::utils::string_to_double(value_);
+  } catch (const std::exception& e) {
+    throw InvalidScalarConversion(value_, to_string(ParameterType::PARAMETER_DOUBLE),
+                                  e.what());
+  }
 }
 
-} // namespace miru::params
-
+}  // namespace miru::params

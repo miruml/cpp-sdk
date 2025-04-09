@@ -5,6 +5,7 @@
 // external
 #include <fmt/format.h>
 #include <fmt/ranges.h>
+
 #include <algorithm>
 
 // miru
@@ -13,105 +14,82 @@
 namespace miru::utils {
 
 constexpr bool has_prefix(const std::string& str, const std::string& prefix) {
-    return str.size() >= prefix.size() &&
-           std::equal(prefix.begin(), prefix.end(), str.begin());
+  return str.size() >= prefix.size() &&
+         std::equal(prefix.begin(), prefix.end(), str.begin());
 }
 
 constexpr bool has_suffix(const std::string& str, const std::string& suffix) {
-    return str.size() >= suffix.size() &&
-           std::equal(suffix.rbegin(), suffix.rend(), str.rbegin());
+  return str.size() >= suffix.size() &&
+         std::equal(suffix.rbegin(), suffix.rend(), str.rbegin());
 }
 
-void assert_unique_strings(const std::vector<std::string> & strings) {
-    std::unordered_map<std::string, int> counts;
-    for (const auto& str : strings) {
-        counts[str]++;
+void assert_unique_strings(const std::vector<std::string>& strings) {
+  std::unordered_map<std::string, int> counts;
+  for (const auto& str : strings) {
+    counts[str]++;
+  }
+
+  std::vector<std::string> duplicates;
+  for (const auto& [str, count] : counts) {
+    if (count > 1) {
+      duplicates.push_back(str + " (appears " + std::to_string(count) + " times)");
     }
-    
-    std::vector<std::string> duplicates;
-    for (const auto& [str, count] : counts) {
-        if (count > 1) {
-            duplicates.push_back(str + " (appears " + std::to_string(count) + " times)");
-        }
-    }
-    
-    if (!duplicates.empty()) {
-        throw std::invalid_argument(
-            "children names must be unique. Duplicates found: " + 
-            fmt::format("{}", fmt::join(duplicates, ", "))
-        );
-    }
+  }
+
+  if (!duplicates.empty()) {
+    throw std::invalid_argument("children names must be unique. Duplicates found: " +
+                                fmt::format("{}", fmt::join(duplicates, ", ")));
+  }
 }
 
-bool yaml_string_to_bool(const std::string & str) {
-    std::string lower = str;
-    std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
-    if (lower == "y" || lower == "yes" || lower == "true" || lower == "on") {
-        return true;
-    }
-    if (lower == "n" || lower == "no" || lower == "false" || lower == "off") {
-        return false;
-    }
+bool yaml_string_to_bool(const std::string& str) {
+  std::string lower = str;
+  std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+  if (lower == "y" || lower == "yes" || lower == "true" || lower == "on") {
+    return true;
+  }
+  if (lower == "n" || lower == "no" || lower == "false" || lower == "off") {
+    return false;
+  }
+  throw InvalidTypeConversion(str, "string", "bool",
+                              "cannot interpret value as a boolean");
+}
+
+int64_t string_to_int64(const std::string& str) {
+  if (str.find(".") != std::string::npos) {
     throw InvalidTypeConversion(
-        str,
-        "string",
-        "bool",
-        "cannot interpret value as a boolean"
-    );
+        str, "string", "int64_t",
+        "cannot interpret value as an integer: contains a decimal point");
+  }
+  try {
+    size_t pos = 0;
+    int64_t result = std::stoll(str, &pos);
+    if (pos != str.size()) {
+      throw InvalidTypeConversion(str, "string", "int64_t",
+                                  "contains invalid characters");
+    }
+    return result;
+  } catch (const std::exception& e) {
+    throw InvalidTypeConversion(
+        str, "string", "int64_t",
+        "cannot interpret value as an integer: " + std::string(e.what()));
+  }
 }
 
-int64_t string_to_int64(const std::string & str) {
-    if (str.find(".") != std::string::npos) {
-        throw InvalidTypeConversion(
-            str,
-            "string",
-            "int64_t",
-            "cannot interpret value as an integer: contains a decimal point"
-        );
+double string_to_double(const std::string& str) {
+  try {
+    size_t pos = 0;
+    double result = std::stod(str, &pos);
+    if (pos != str.size()) {
+      throw InvalidTypeConversion(str, "string", "double",
+                                  "contains invalid characters");
     }
-    try {
-        size_t pos = 0;
-        int64_t result = std::stoll(str, &pos);
-        if (pos != str.size()) {
-            throw InvalidTypeConversion(
-                str,
-                "string",
-                "int64_t",
-                "contains invalid characters"
-            );
-        }
-        return result;
-    } catch (const std::exception& e) {
-        throw InvalidTypeConversion(
-            str,
-            "string",
-            "int64_t",
-            "cannot interpret value as an integer: " + std::string(e.what())
-        );
-    }
+    return result;
+  } catch (const std::exception& e) {
+    throw InvalidTypeConversion(
+        str, "string", "double",
+        "cannot interpret value as a double: " + std::string(e.what()));
+  }
 }
 
-double string_to_double(const std::string & str) {
-    try {
-        size_t pos = 0;
-        double result = std::stod(str, &pos);
-        if (pos != str.size()) {
-            throw InvalidTypeConversion(
-                str,
-                "string",
-                "double",
-                "contains invalid characters"
-            );
-        }
-        return result;
-    } catch (const std::exception& e) {
-        throw InvalidTypeConversion(
-            str,
-            "string",
-            "double",
-            "cannot interpret value as a double: " + std::string(e.what())
-        );
-    }
-}
-
-} // namespace miru::utils
+}  // namespace miru::utils
