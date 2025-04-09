@@ -13,7 +13,7 @@
 namespace miru::utils {
 
 // ================================ STRING UTILITIES =================================
-// //
+
 bool has_prefix(const std::string &str, const std::string &prefix);
 bool has_suffix(const std::string &str, const std::string &suffix);
 void assert_unique_strings(const std::vector<std::string> &strings);

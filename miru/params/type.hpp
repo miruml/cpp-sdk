@@ -50,8 +50,8 @@ enum ParameterType : uint8_t {
   PARAMETER_SCALAR = 129,
   PARAMETER_SCALAR_ARRAY = 130,
   PARAMETER_NESTED_ARRAY = 131,
-  PARAMETER_OBJECT = 132,
-  PARAMETER_OBJECT_ARRAY = 133,
+  PARAMETER_MAP = 132,
+  PARAMETER_MAP_ARRAY = 133,
 };
 
 // ================================ ROS2 INTERFACES ================================ //

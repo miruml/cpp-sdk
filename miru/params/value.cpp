@@ -43,10 +43,10 @@ std::string to_string(const ParameterType type) {
       return "scalar array";
     case ParameterType::PARAMETER_NESTED_ARRAY:
       return "nested array";
-    case ParameterType::PARAMETER_OBJECT:
-      return "object";
-    case ParameterType::PARAMETER_OBJECT_ARRAY:
-      return "object array";
+    case ParameterType::PARAMETER_MAP:
+      return "map";
+    case ParameterType::PARAMETER_MAP_ARRAY:
+      return "map array";
   }
   return "unknown type";
 }
@@ -119,26 +119,26 @@ std::string to_string(const ParameterValue& value, const int indent) {
       }
       return miru::params::param_value_array_to_string(nested_array, 0, true);
     }
-    case ParameterType::PARAMETER_OBJECT: {
-      return miru::params::param_object_to_string(value.get<Object>(), indent);
+    case ParameterType::PARAMETER_MAP: {
+      return miru::params::param_map_to_string(value.get<Map>(), indent);
     }
-    case ParameterType::PARAMETER_OBJECT_ARRAY: {
-      std::vector<ParameterValue> object_array;
-      for (const Parameter& param : value.get<ObjectArray>().get_items()) {
-        object_array.push_back(param.get_parameter_value());
+    case ParameterType::PARAMETER_MAP_ARRAY: {
+      std::vector<ParameterValue> map_array;
+      for (const Parameter& param : value.get<MapArray>().get_items()) {
+        map_array.push_back(param.get_parameter_value());
       }
-      return miru::params::param_value_array_to_string(object_array, 0, true);
+      return miru::params::param_value_array_to_string(map_array, 0, true);
     }
   }
   return "unknown type";
 }
 
-std::string param_object_to_string(const miru::params::Object& object,
+std::string param_map_to_string(const miru::params::Map& map,
                                    const int indent) {
   std::stringstream type_array;
   bool first_item = true;
   type_array << std::string(indent, ' ') << "{";
-  for (const Parameter& param : object.get_fields()) {
+  for (const Parameter& param : map.get_fields()) {
     if (!first_item) {
       type_array << ",";
     } else {
@@ -294,14 +294,14 @@ ParameterValue::ParameterValue(const NestedArray& nested_array_value) {
   type_ = ParameterType::PARAMETER_NESTED_ARRAY;
 }
 
-ParameterValue::ParameterValue(const Object& object_value) {
-  value_ = object_value;
-  type_ = ParameterType::PARAMETER_OBJECT;
+ParameterValue::ParameterValue(const Map& map_value) {
+  value_ = map_value;
+  type_ = ParameterType::PARAMETER_MAP;
 }
 
-ParameterValue::ParameterValue(const ObjectArray& object_array_value) {
-  value_ = object_array_value;
-  type_ = ParameterType::PARAMETER_OBJECT_ARRAY;
+ParameterValue::ParameterValue(const MapArray& map_array_value) {
+  value_ = map_array_value;
+  type_ = ParameterType::PARAMETER_MAP_ARRAY;
 }
 
 bool ParameterValue::is_null() const { return type_ == ParameterType::PARAMETER_NULL; }
@@ -319,8 +319,8 @@ bool ParameterValue::is_scalar() const {
   }
 }
 
-bool ParameterValue::is_object() const {
-  return type_ == ParameterType::PARAMETER_OBJECT;
+bool ParameterValue::is_map() const {
+  return type_ == ParameterType::PARAMETER_MAP;
 }
 
 bool ParameterValue::is_scalar_array() const {
@@ -335,12 +335,12 @@ bool ParameterValue::is_nested_array() const {
   return type_ == ParameterType::PARAMETER_NESTED_ARRAY;
 }
 
-bool ParameterValue::is_object_array() const {
-  return type_ == ParameterType::PARAMETER_OBJECT_ARRAY;
+bool ParameterValue::is_map_array() const {
+  return type_ == ParameterType::PARAMETER_MAP_ARRAY;
 }
 
 bool ParameterValue::is_array() const {
-  return is_scalar_array() || is_nested_array() || is_object_array();
+  return is_scalar_array() || is_nested_array() || is_map_array();
 }
 
 }  // namespace miru::params

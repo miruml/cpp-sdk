@@ -74,25 +74,35 @@ class Scalar {
   }
 
   template <typename type>
-  constexpr typename std::enable_if<
+  typename std::enable_if<
       std::is_integral<type>::value && !std::is_same<type, bool>::value, int64_t>::type
   as() const {
     // for types returning integers other than int64 we'll use the string conversion
     // function which conducts additional checks for converting int64 to the target
     // type
-    return miru::utils::string_as<type>(value_);
+    try {
+      return miru::utils::string_as<type>(value_);
+    } catch (const std::exception &e) {
+      throw InvalidScalarConversion(value_, to_string(ParameterType::PARAMETER_INTEGER),
+                                    e.what());
+    }
   }
 
   template <typename type>
-  constexpr typename std::enable_if<std::is_floating_point<type>::value, double>::type
+  typename std::enable_if<std::is_floating_point<type>::value, double>::type
   as() const {
     // for types returning doubles we'll use the string conversion function which
     // conducts additional checks for converting double to the target type
-    return miru::utils::string_as<type>(value_);
+    try {
+      return miru::utils::string_as<type>(value_);
+    } catch (const std::exception &e) {
+      throw InvalidScalarConversion(value_, to_string(ParameterType::PARAMETER_DOUBLE),
+                                    e.what());
+    }
   }
 
   template <typename type>
-  constexpr typename std::enable_if<std::is_convertible<type, std::string>::value,
+  typename std::enable_if<std::is_convertible<type, std::string>::value,
                                     const std::string &>::type
   as() const {
     return as_string();

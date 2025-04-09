@@ -38,7 +38,7 @@ miru::params::Parameter load_json(const std::string& name, const nlohmann::json&
         std::string entry_name = name + delimiter + entry.key();
         entries.push_back(load_json(entry_name, entry.value(), delimiter));
       }
-      return miru::params::Parameter(name, miru::params::Object(entries));
+      return miru::params::Parameter(name, miru::params::Map(entries));
     }
   }
   throw std::runtime_error("Unsupported node type");
@@ -118,7 +118,7 @@ miru::params::Parameter load_json_array(const std::string& name,
         entries.push_back(load_json(entry_name, entry.value(), delimiter));
         i++;
       }
-      return miru::params::Parameter(name, miru::params::ObjectArray(entries));
+      return miru::params::Parameter(name, miru::params::MapArray(entries));
     }
   }
   throw std::runtime_error("Unsupported node type");
@@ -163,7 +163,7 @@ miru::params::Parameter load_yaml_array(const std::string& name, const YAML::Nod
     }
     case YAML::NodeType::Map: {
       throw std::runtime_error(
-          "Nested objects are not supported. Please contact Ben at ben@miruml.com if "
+          "Nested maps are not supported. Please contact Ben at ben@miruml.com if "
           "you need this feature.");
     }
   }
@@ -187,7 +187,7 @@ miru::params::Parameter load_yaml(const std::string& name, const YAML::Node& nod
         std::string entry_name = name + delimiter + entry.first.as<std::string>();
         entries.push_back(load_yaml(entry_name, entry.second));
       }
-      return miru::params::Parameter(name, miru::params::Object(entries));
+      return miru::params::Parameter(name, miru::params::Map(entries));
     }
   }
   throw std::runtime_error("Unsupported node type");

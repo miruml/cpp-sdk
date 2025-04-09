@@ -24,7 +24,7 @@ bool is_leaf(const ParameterValue& value) {
     }
     return true;
   }
-  return !(value.is_object() || value.is_object_array());
+  return !(value.is_map() || value.is_map_array());
 }
 
 bool is_leaf(const Parameter& parameter) {
@@ -49,11 +49,11 @@ bool parameter_exists_recursive(const Parameter& parameter,
     case ParameterType::PARAMETER_NESTED_ARRAY:
       one_level_subparameters = parameter.get_value<NestedArray>().get_items();
       break;
-    case ParameterType::PARAMETER_OBJECT:
-      one_level_subparameters = parameter.get_value<Object>().get_fields();
+    case ParameterType::PARAMETER_MAP:
+      one_level_subparameters = parameter.get_value<Map>().get_fields();
       break;
-    case ParameterType::PARAMETER_OBJECT_ARRAY:
-      one_level_subparameters = parameter.get_value<ObjectArray>().get_items();
+    case ParameterType::PARAMETER_MAP_ARRAY:
+      one_level_subparameters = parameter.get_value<MapArray>().get_items();
       break;
     default:
       throw std::invalid_argument(
@@ -101,11 +101,11 @@ std::vector<std::reference_wrapper<const Parameter>> list_parameters_recursive(
     case ParameterType::PARAMETER_NESTED_ARRAY:
       one_level_subparameters = parameter.get_value<NestedArray>().get_items();
       break;
-    case ParameterType::PARAMETER_OBJECT:
-      one_level_subparameters = parameter.get_value<Object>().get_fields();
+    case ParameterType::PARAMETER_MAP:
+      one_level_subparameters = parameter.get_value<Map>().get_fields();
       break;
-    case ParameterType::PARAMETER_OBJECT_ARRAY:
-      one_level_subparameters = parameter.get_value<ObjectArray>().get_items();
+    case ParameterType::PARAMETER_MAP_ARRAY:
+      one_level_subparameters = parameter.get_value<MapArray>().get_items();
       break;
     default:
       throw std::invalid_argument(

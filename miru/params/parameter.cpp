@@ -43,15 +43,15 @@ Parameter::Parameter(const std::string& name, const ParameterValue& value)
   // check that the key doesn't have any slashes
   std::vector<std::string> child_names;
   switch (value_.get_type()) {
-    case ParameterType::PARAMETER_OBJECT:
+    case ParameterType::PARAMETER_MAP:
       for (const auto& field :
-           value_.get<ParameterType::PARAMETER_OBJECT>().get_fields()) {
+           value_.get<ParameterType::PARAMETER_MAP>().get_fields()) {
         validate_child_parameter_name(name_, field.get_name());
       }
       break;
-    case ParameterType::PARAMETER_OBJECT_ARRAY:
+    case ParameterType::PARAMETER_MAP_ARRAY:
       for (const auto& item :
-           value_.get<ParameterType::PARAMETER_OBJECT_ARRAY>().get_items()) {
+           value_.get<ParameterType::PARAMETER_MAP_ARRAY>().get_items()) {
         validate_child_parameter_name(name_, item.get_name());
       }
       break;
@@ -178,12 +178,12 @@ const NestedArray& Parameter::as_nested_array() const {
   return get_value<ParameterType::PARAMETER_NESTED_ARRAY>();
 }
 
-const Object& Parameter::as_object() const {
-  return get_value<ParameterType::PARAMETER_OBJECT>();
+const Map& Parameter::as_map() const {
+  return get_value<ParameterType::PARAMETER_MAP>();
 }
 
-const ObjectArray& Parameter::as_object_array() const {
-  return get_value<ParameterType::PARAMETER_OBJECT_ARRAY>();
+const MapArray& Parameter::as_map_array() const {
+  return get_value<ParameterType::PARAMETER_MAP_ARRAY>();
 }
 
 bool Parameter::is_null() const { return value_.is_null(); }
@@ -194,9 +194,9 @@ bool Parameter::is_scalar_array() const { return value_.is_scalar_array(); }
 
 bool Parameter::is_nested_array() const { return value_.is_nested_array(); }
 
-bool Parameter::is_object() const { return value_.is_object(); }
+bool Parameter::is_map() const { return value_.is_map(); }
 
-bool Parameter::is_object_array() const { return value_.is_object_array(); }
+bool Parameter::is_map_array() const { return value_.is_map_array(); }
 
 bool Parameter::is_array() const { return value_.is_array(); }
 

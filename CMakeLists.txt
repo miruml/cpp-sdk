@@ -112,10 +112,10 @@ if(BUILD_TESTING)
         test/test_utils/testdata.cpp
         test/test_utils/utils.hpp
         test/test_utils/utils.cpp
+        test/params/composite_test.cpp
         test/params/loader_test.cpp
         test/params/scalar_test.cpp
         test/params/parameter_test.cpp
-        test/utils_test.hpp
         test/utils_test.cpp
     )
 

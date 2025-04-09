@@ -15,10 +15,10 @@ std::vector<miru::params::Parameter> list_parameters(bool leaves_only = true);
 // ============================== ROS2 INTERFACES ============================== //
 
 // The following ROS2 interfaces are pulled from the rclcpp NodeParametersInterface.
-// ROS2 doesn't have a notion of a CompositeObjectParameter. The ParameterClient is
+// ROS2 doesn't have a notion of a CompositeMapeter. The ParameterClient is
 // actually our version of 'ConfigClient' but these methods are similar in form to
-// the ParameterClient methods in that a ComposeObjectParameter acts as a container
-// for parameters. Although a ComposeObjectParameter has less functionality since it
+// the ParameterClient methods in that a ComposeMapeter acts as a container
+// for parameters. Although a ComposeMapeter has less functionality since it
 // isn't a client but a simple data structure for parameters
 
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node_interfaces/node_parameters_interface.hpp#L116

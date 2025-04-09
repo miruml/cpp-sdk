@@ -27,27 +27,27 @@ namespace miru::params {
 
 class Parameter;
 
-class Object {
+class Map {
  public:
-  Object(const std::vector<Parameter> &fields);
+  Map(const std::vector<Parameter> &fields);
 
   const std::vector<Parameter> &get_fields() const;
 
-  bool operator==(const Object &other) const;
-  bool operator!=(const Object &other) const;
+  bool operator==(const Map &other) const;
+  bool operator!=(const Map &other) const;
 
  private:
   std::vector<Parameter> sorted_fields_;
 };
 
-class ObjectArray {
+class MapArray {
  public:
-  ObjectArray(const std::vector<Parameter> &objects);
+  MapArray(const std::vector<Parameter> &maps);
 
   const std::vector<Parameter> &get_items() const;
 
-  bool operator==(const ObjectArray &other) const;
-  bool operator!=(const ObjectArray &other) const;
+  bool operator==(const MapArray &other) const;
+  bool operator!=(const MapArray &other) const;
 
  private:
   std::vector<Parameter> items_;
@@ -400,10 +400,10 @@ class ParameterValue {
   explicit ParameterValue(const std::vector<Scalar> &scalar_array_value);
   /// Construct a parameter value with type PARAMETER_NESTED_ARRAY.
   explicit ParameterValue(const NestedArray &nested_array_value);
-  /// Construct a parameter value with type PARAMETER_OBJECT.
-  explicit ParameterValue(const Object &object_value);
-  /// Construct a parameter value with type PARAMETER_OBJECT_ARRAY.
-  explicit ParameterValue(const ObjectArray &object_array_value);
+  /// Construct a parameter value with type PARAMETER_MAP.
+  explicit ParameterValue(const Map &map_value);
+  /// Construct a parameter value with type PARAMETER_MAP_ARRAY.
+  explicit ParameterValue(const MapArray &map_array_value);
 
   template <ParameterType type>
   constexpr typename std::enable_if<type == ParameterType::PARAMETER_NULL,
@@ -446,23 +446,23 @@ class ParameterValue {
   }
 
   template <ParameterType type>
-  constexpr typename std::enable_if<type == ParameterType::PARAMETER_OBJECT,
-                                    const Object &>::type
+  constexpr typename std::enable_if<type == ParameterType::PARAMETER_MAP,
+                                    const Map &>::type
   get() const {
-    if (type_ != ParameterType::PARAMETER_OBJECT) {
-      throw InvalidParameterValueType(ParameterType::PARAMETER_OBJECT, type_);
+    if (type_ != ParameterType::PARAMETER_MAP) {
+      throw InvalidParameterValueType(ParameterType::PARAMETER_MAP, type_);
     }
-    return std::get<Object>(value_);
+    return std::get<Map>(value_);
   }
 
   template <ParameterType type>
-  constexpr typename std::enable_if<type == ParameterType::PARAMETER_OBJECT_ARRAY,
-                                    const ObjectArray &>::type
+  constexpr typename std::enable_if<type == ParameterType::PARAMETER_MAP_ARRAY,
+                                    const MapArray &>::type
   get() const {
-    if (type_ != ParameterType::PARAMETER_OBJECT_ARRAY) {
-      throw InvalidParameterValueType(ParameterType::PARAMETER_OBJECT_ARRAY, type_);
+    if (type_ != ParameterType::PARAMETER_MAP_ARRAY) {
+      throw InvalidParameterValueType(ParameterType::PARAMETER_MAP_ARRAY, type_);
     }
-    return std::get<ObjectArray>(value_);
+    return std::get<MapArray>(value_);
   }
 
   template <typename type>
@@ -498,26 +498,26 @@ class ParameterValue {
   }
 
   template <typename type>
-  constexpr typename std::enable_if<std::is_convertible<type, const Object &>::value,
-                                    const Object &>::type
+  constexpr typename std::enable_if<std::is_convertible<type, const Map &>::value,
+                                    const Map &>::type
   get() const {
-    return get<ParameterType::PARAMETER_OBJECT>();
+    return get<ParameterType::PARAMETER_MAP>();
   }
 
   template <typename type>
   constexpr
-      typename std::enable_if<std::is_convertible<type, const ObjectArray &>::value,
-                              const ObjectArray &>::type
+      typename std::enable_if<std::is_convertible<type, const MapArray &>::value,
+                              const MapArray &>::type
       get() const {
-    return get<ParameterType::PARAMETER_OBJECT_ARRAY>();
+    return get<ParameterType::PARAMETER_MAP_ARRAY>();
   }
 
   bool is_null() const;
   bool is_scalar() const;
-  bool is_object() const;
+  bool is_map() const;
   bool is_scalar_array() const;
   bool is_nested_array() const;
-  bool is_object_array() const;
+  bool is_map_array() const;
   bool is_array() const;
 
  private:
@@ -527,7 +527,7 @@ class ParameterValue {
   std::variant<std::nullptr_t, bool, int64_t, double, std::string, Scalar,
                std::vector<uint8_t>, std::vector<bool>, std::vector<int64_t>,
                std::vector<double>, std::vector<std::string>, std::vector<Scalar>,
-               NestedArray, Object, ObjectArray>
+               NestedArray, Map, MapArray>
       value_;
 
   // cached array conversions for scalar arrays
@@ -551,7 +551,7 @@ std::string to_string(const ParameterValue &value, const int indent);
 std::string param_value_array_to_string(const std::vector<ParameterValue> &array,
                                         const int indent, const bool with_newlines);
 
-std::string param_object_to_string(const miru::params::Object &object,
+std::string param_map_to_string(const miru::params::Map &map,
                                    const int indent);
 
 std::ostream &operator<<(std::ostream &os, const ParameterValue &value);
@@ -736,17 +736,17 @@ class Parameter {
   const std::vector<Scalar> &as_scalar_array() const;
   /// Get the value of parameter as a nested array type
   const NestedArray &as_nested_array() const;
-  /// Get the value of parameter as an object (Parameter)
-  const Object &as_object() const;
-  /// Get the value of parameter as an object array (vector<Parameter>)
-  const ObjectArray &as_object_array() const;
+  /// Get the value of parameter as a map (Parameter)
+  const Map &as_map() const;
+  /// Get the value of parameter as a map array (vector<Parameter>)
+  const MapArray &as_map_array() const;
 
   bool is_null() const;
   bool is_scalar() const;
   bool is_scalar_array() const;
   bool is_nested_array() const;
-  bool is_object() const;
-  bool is_object_array() const;
+  bool is_map() const;
+  bool is_map_array() const;
   bool is_array() const;
 
  private:

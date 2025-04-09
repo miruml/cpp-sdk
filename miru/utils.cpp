@@ -13,12 +13,12 @@
 
 namespace miru::utils {
 
-constexpr bool has_prefix(const std::string& str, const std::string& prefix) {
+bool has_prefix(const std::string& str, const std::string& prefix) {
   return str.size() >= prefix.size() &&
          std::equal(prefix.begin(), prefix.end(), str.begin());
 }
 
-constexpr bool has_suffix(const std::string& str, const std::string& suffix) {
+bool has_suffix(const std::string& str, const std::string& suffix) {
   return str.size() >= suffix.size() &&
          std::equal(suffix.rbegin(), suffix.rend(), str.rbegin());
 }
@@ -37,7 +37,7 @@ void assert_unique_strings(const std::vector<std::string>& strings) {
   }
 
   if (!duplicates.empty()) {
-    throw std::invalid_argument("children names must be unique. Duplicates found: " +
+    throw std::invalid_argument("duplicates found: " +
                                 fmt::format("{}", fmt::join(duplicates, ", ")));
   }
 }

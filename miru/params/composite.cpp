@@ -8,9 +8,9 @@
 
 namespace miru::params {
 
-Object::Object(const std::vector<Parameter>& fields) : sorted_fields_(fields) {
+Map::Map(const std::vector<Parameter>& fields) : sorted_fields_(fields) {
   if (fields.empty()) {
-    throw std::invalid_argument("Object must have at least one field");
+    throw std::invalid_argument("Map must be initialized with at least one field");
   }
 
   // ensure the field names are unique
@@ -18,7 +18,11 @@ Object::Object(const std::vector<Parameter>& fields) : sorted_fields_(fields) {
   for (const auto& field : fields) {
     field_names.push_back(field.get_name());
   }
-  utils::assert_unique_strings(field_names);
+  try {
+    utils::assert_unique_strings(field_names);
+  } catch (const std::exception& e) {
+    throw std::invalid_argument("Unable to instantiate Map with duplicate field names: " + std::string(e.what()));
+  }
 
   // store the fields by name for comparison / access purposes in the future
   std::sort(sorted_fields_.begin(), sorted_fields_.end(),
@@ -27,24 +31,24 @@ Object::Object(const std::vector<Parameter>& fields) : sorted_fields_(fields) {
             });
 }
 
-const std::vector<Parameter>& Object::get_fields() const { return sorted_fields_; }
+const std::vector<Parameter>& Map::get_fields() const { return sorted_fields_; }
 
-bool Object::operator==(const Object& other) const {
+bool Map::operator==(const Map& other) const {
   return sorted_fields_ == other.sorted_fields_;
 }
 
-bool Object::operator!=(const Object& other) const { return !(*this == other); }
+bool Map::operator!=(const Map& other) const { return !(*this == other); }
 
-ObjectArray::ObjectArray(const std::vector<Parameter>& items) : items_(items) {
+MapArray::MapArray(const std::vector<Parameter>& items) : items_(items) {
   if (items.empty()) {
-    throw std::invalid_argument("ObjectArray must have at least one object");
+    throw std::invalid_argument("MapArray must be initialized with at least one item");
   }
 
-  // ensure the items are objects
+  // ensure the items are maps
   for (const Parameter& item : items_) {
-    if (!item.is_object()) {
+    if (!item.is_map()) {
       throw std::invalid_argument(
-          "Cannot instantiate ObjectArray with non-Object parameters");
+          "Cannot instantiate MapArray with non-Map parameters");
     }
   }
 
@@ -64,7 +68,7 @@ ObjectArray::ObjectArray(const std::vector<Parameter>& items) : items_(items) {
   for (size_t i = 0; i < items_.size(); ++i) {
     if (items_[i].get_key() != std::to_string(i)) {
       throw std::invalid_argument(
-          "ObjectArray items must have keys that are integers in ascending order. "
+          "MapArray items must have keys that are integers in ascending order. "
           "Unable to find index '" +
           std::to_string(i) +
           "' in the names of the provided items: " + items_[i].get_name());
@@ -72,19 +76,19 @@ ObjectArray::ObjectArray(const std::vector<Parameter>& items) : items_(items) {
   }
 }
 
-const std::vector<Parameter>& ObjectArray::get_items() const { return items_; }
+const std::vector<Parameter>& MapArray::get_items() const { return items_; }
 
-bool ObjectArray::operator==(const ObjectArray& other) const {
+bool MapArray::operator==(const MapArray& other) const {
   return items_ == other.items_;
 }
 
-bool ObjectArray::operator!=(const ObjectArray& other) const {
+bool MapArray::operator!=(const MapArray& other) const {
   return !(*this == other);
 }
 
 NestedArray::NestedArray(const std::vector<Parameter>& items) : items_(items) {
   if (items.empty()) {
-    throw std::invalid_argument("NestedArray must have at least one parameter");
+    throw std::invalid_argument("NestedArray must be initialized with at least one item");
   }
   for (const Parameter& item : items) {
     if (!item.is_array()) {

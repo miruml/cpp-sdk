@@ -80,17 +80,17 @@ TEST_F(LoadJson, ValidDeepNestedArray) {
     EXPECT_EQ(param.get_type(), miru::params::ParameterType::PARAMETER_NESTED_ARRAY);
 }
 
-TEST_F(LoadJson, ValidObject) {
+TEST_F(LoadJson, ValidMap) {
     nlohmann::json json = json_file.read_json();
     auto param = miru::params::load_json("test", json);
-    EXPECT_EQ(param.get_type(), miru::params::ParameterType::PARAMETER_OBJECT);
+    EXPECT_EQ(param.get_type(), miru::params::ParameterType::PARAMETER_MAP);
 }
 
-TEST_F(LoadJson, ValidObjectArray) {
+TEST_F(LoadJson, ValidMapArray) {
     nlohmann::json json = json_file.read_json();
-    nlohmann::json object_array_json = json["object_array"];
-    auto param = miru::params::load_json("test", object_array_json);
-    EXPECT_EQ(param.get_type(), miru::params::ParameterType::PARAMETER_OBJECT_ARRAY);
+    nlohmann::json map_array_json = json["map_array"];
+    auto param = miru::params::load_json("test", map_array_json);
+    EXPECT_EQ(param.get_type(), miru::params::ParameterType::PARAMETER_MAP_ARRAY);
 }
 
 // ================================== load_yaml ==================================== //
