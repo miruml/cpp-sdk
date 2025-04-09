@@ -12,12 +12,12 @@
 
 namespace miru::utils {
 
-bool has_prefix(const std::string& str, const std::string& prefix) {
+constexpr bool has_prefix(const std::string& str, const std::string& prefix) {
     return str.size() >= prefix.size() &&
            std::equal(prefix.begin(), prefix.end(), str.begin());
 }
 
-bool has_suffix(const std::string& str, const std::string& suffix) {
+constexpr bool has_suffix(const std::string& str, const std::string& suffix) {
     return str.size() >= suffix.size() &&
            std::equal(suffix.rbegin(), suffix.rend(), str.rbegin());
 }

@@ -4,14 +4,12 @@
 #include <cstdint>
 #include <variant>
 
-// internal
-#include <miru/params/parameter.hpp>
-
 // external
 #include <gtest/gtest.h>
 
 namespace test::utils {
 
+// ================================== INTEGERS ===================================== //
 using IntVariants = std::variant<
     int8_t,
     int16_t,
@@ -23,12 +21,6 @@ using IntVariants = std::variant<
     uint64_t
 >;
 
-using DoubleVariants = std::variant<
-    float,
-    double
->;
-
-// ================================== INTEGERS ===================================== //
 struct IntCastTestCase {
     int64_t input;
     IntVariants expected;
@@ -129,6 +121,11 @@ protected:
 };
 
 // ================================ DOUBLE CASTING ================================= //
+using DoubleVariants = std::variant<
+    float,
+    double
+>;
+
 struct DoubleCastTestCase {
     double input;
     DoubleVariants expected;
@@ -161,30 +158,29 @@ protected:
 // =============================== STRING CONVERSIONS ============================== //
 enum class StringConversionException {
     None,
-    InvalidStringConversion,
-    InvalidTypeCast,
+    InvalidTypeConversion,
 };
 
 struct StringToBoolTestCase {
-    std::string scalar;
+    std::string str;
     bool expected;
     StringConversionException expected_exception;
 };
 
 struct StringToIntTestCase {
-    std::string scalar;
+    std::string str;
     IntVariants expected;
     StringConversionException expected_exception;
 };
 
 struct StringToDoubleTestCase {
-    std::string scalar;
+    std::string str;
     DoubleVariants expected;
     StringConversionException expected_exception;
 };
 
 struct StringToStringTestCase {
-    std::string scalar;
+    std::string str;
     std::string expected;
     StringConversionException expected_exception;
 };
@@ -210,10 +206,10 @@ protected:
         {"off", false, StringConversionException::None},
         {"OFF", false, StringConversionException::None},
         // failure
-        {"arglebargle", false, StringConversionException::InvalidStringConversion},
-        {"0", false, StringConversionException::InvalidStringConversion},
-        {"1", true, StringConversionException::InvalidStringConversion},
-        {"2", false, StringConversionException::InvalidStringConversion},
+        {"arglebargle", false, StringConversionException::InvalidTypeConversion},
+        {"0", false, StringConversionException::InvalidTypeConversion},
+        {"1", true, StringConversionException::InvalidTypeConversion},
+        {"2", false, StringConversionException::InvalidTypeConversion},
     };
 
     std::vector<StringToIntTestCase> int64_test_cases = {
@@ -224,56 +220,56 @@ protected:
         {"-9223372036854775807", int64_t(-9223372036854775807), StringConversionException::None},
 
         // invalid integers
-        {"123.45", int64_t(0), StringConversionException::InvalidStringConversion},
-        {"arglebargle", int64_t(0), StringConversionException::InvalidStringConversion},
-        {"123abc", int64_t(0), StringConversionException::InvalidStringConversion},
-        {"-123abc", int64_t(0), StringConversionException::InvalidStringConversion},
+        {"123.45", int64_t(0), StringConversionException::InvalidTypeConversion},
+        {"arglebargle", int64_t(0), StringConversionException::InvalidTypeConversion},
+        {"123abc", int64_t(0), StringConversionException::InvalidTypeConversion},
+        {"-123abc", int64_t(0), StringConversionException::InvalidTypeConversion},
 
         // int64 overflow
-        {"9223372036854775808", int64_t(0), StringConversionException::InvalidStringConversion},
-        {"-9223372036854775809", int64_t(0), StringConversionException::InvalidStringConversion},
+        {"9223372036854775808", int64_t(0), StringConversionException::InvalidTypeConversion},
+        {"-9223372036854775809", int64_t(0), StringConversionException::InvalidTypeConversion},
     };
 
     std::vector<StringToIntTestCase> int8_test_cases = {
         // int8 overflow
-        {"128", int8_t(0), StringConversionException::InvalidTypeCast},
-        {"-129", int8_t(0), StringConversionException::InvalidTypeCast},
+        {"128", int8_t(0), StringConversionException::InvalidTypeConversion},
+        {"-129", int8_t(0), StringConversionException::InvalidTypeConversion},
     };
 
     std::vector<StringToIntTestCase> int16_test_cases = {
         // int16 overflow
-        {"32768", int16_t(0), StringConversionException::InvalidTypeCast},
-        {"-32769", int16_t(0), StringConversionException::InvalidTypeCast},
+        {"32768", int16_t(0), StringConversionException::InvalidTypeConversion},
+        {"-32769", int16_t(0), StringConversionException::InvalidTypeConversion},
     };
 
     std::vector<StringToIntTestCase> int32_test_cases = {
         // int32 overflow
-        {"2147483648", int32_t(0), StringConversionException::InvalidTypeCast},
-        {"-2147483649", int32_t(0), StringConversionException::InvalidTypeCast},
+        {"2147483648", int32_t(0), StringConversionException::InvalidTypeConversion},
+        {"-2147483649", int32_t(0), StringConversionException::InvalidTypeConversion},
     };
 
     std::vector<StringToIntTestCase> uint8_test_cases = {
         // uint8 overflow
-        {"256", uint8_t(0), StringConversionException::InvalidTypeCast},
-        {"-1", uint8_t(0), StringConversionException::InvalidTypeCast},
+        {"256", uint8_t(0), StringConversionException::InvalidTypeConversion},
+        {"-1", uint8_t(0), StringConversionException::InvalidTypeConversion},
     };
     
     std::vector<StringToIntTestCase> uint16_test_cases = {
         // uint16 overflow
-        {"65536", uint16_t(0), StringConversionException::InvalidTypeCast},
-        {"-1", uint16_t(0), StringConversionException::InvalidTypeCast},
+        {"65536", uint16_t(0), StringConversionException::InvalidTypeConversion},
+        {"-1", uint16_t(0), StringConversionException::InvalidTypeConversion},
     };
 
     std::vector<StringToIntTestCase> uint32_test_cases = {
         // uint32 overflow
-        {"4294967296", uint32_t(0), StringConversionException::InvalidTypeCast},
-        {"-1", uint32_t(0), StringConversionException::InvalidTypeCast},
+        {"4294967296", uint32_t(0), StringConversionException::InvalidTypeConversion},
+        {"-1", uint32_t(0), StringConversionException::InvalidTypeConversion},
     };
 
     std::vector<StringToIntTestCase> uint64_test_cases = {
         // uint64 overflow
-        {"18446744073709551616", uint64_t(0), StringConversionException::InvalidTypeCast},
-        {"-1", uint64_t(0), StringConversionException::InvalidTypeCast},
+        {"18446744073709551616", uint64_t(0), StringConversionException::InvalidTypeConversion},
+        {"-1", uint64_t(0), StringConversionException::InvalidTypeConversion},
     };
 
     std::vector<StringToIntTestCase> int_test_cases() {
@@ -299,20 +295,20 @@ protected:
         {"-1.7976931348623157E308", double(-1.7976931348623157E308), StringConversionException::None},
 
         // failure
-        {"arglebargle", double(0.0), StringConversionException::InvalidStringConversion},
-        {"123.45.67", double(0.0), StringConversionException::InvalidStringConversion},
-        {"123abc", double(0.0), StringConversionException::InvalidStringConversion},
-        {"-123abc", double(0.0), StringConversionException::InvalidStringConversion},
+        {"arglebargle", double(0.0), StringConversionException::InvalidTypeConversion},
+        {"123.45.67", double(0.0), StringConversionException::InvalidTypeConversion},
+        {"123abc", double(0.0), StringConversionException::InvalidTypeConversion},
+        {"-123abc", double(0.0), StringConversionException::InvalidTypeConversion},
 
         // double overflow
-        {"1.7976931348623158E309", double(0.0), StringConversionException::InvalidTypeCast},
-        {"-1.7976931348623158E309", double(0.0), StringConversionException::InvalidTypeCast},
+        {"1.7976931348623158E309", double(0.0), StringConversionException::InvalidTypeConversion},
+        {"-1.7976931348623158E309", double(0.0), StringConversionException::InvalidTypeConversion},
     };
 
     std::vector<StringToDoubleTestCase> float32_test_cases = {
         // float overflow
-        {"3.4028234663852886E39", float(0.0), StringConversionException::InvalidTypeCast},
-        {"-3.4028234663852886E39", float(0.0), StringConversionException::InvalidTypeCast},
+        {"3.4028234663852886E39", float(0.0), StringConversionException::InvalidTypeConversion},
+        {"-3.4028234663852886E39", float(0.0), StringConversionException::InvalidTypeConversion},
     };
 
     std::vector<StringToDoubleTestCase> float_test_cases() {

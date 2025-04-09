@@ -116,6 +116,7 @@ if(BUILD_TESTING)
         test/params/scalar_test.cpp
         test/params/parameter_test.cpp
         test/utils_test.hpp
+        test/utils_test.cpp
     )
 
     target_link_libraries(test.out

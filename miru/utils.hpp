@@ -119,7 +119,7 @@ struct is_convertible_from_string :
 
 template<typename T>
 typename std::enable_if<is_convertible_from_string<T>::value, std::vector<T>>::type
-transform_string_array(const std::vector<std::string> & strings) {
+string_array_as(const std::vector<std::string> & strings) {
     std::vector<T> dest;
     dest.reserve(strings.size());
     std::transform(strings.begin(), strings.end(), std::back_inserter(dest), [](const std::string & s) { return string_as<T>(s); });
