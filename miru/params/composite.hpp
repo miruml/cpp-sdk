@@ -78,10 +78,14 @@ class Map {
   std::vector<Parameter> sorted_fields_;
 };
 
+std::string to_string(const Map& map);
+std::ostream& operator<<(std::ostream& os, const Map& map);
+
 // =============================== MAP ARRAY ======================================= //
 class MapArray {
  public:
   MapArray(const std::vector<Parameter> &maps);
+  MapArray(const std::vector<Map> &maps);
 
   // Iterator access methods
   ParameterIterator begin() const { return ParameterIterator(items_.begin()); }
@@ -98,10 +102,14 @@ class MapArray {
   std::vector<Parameter> items_;
 };
 
+std::string to_string(const MapArray& map_array);
+std::ostream& operator<<(std::ostream& os, const MapArray& map_array);
+
 // =============================== NESTED ARRAY ==================================== //
 class NestedArray {
  public:
   NestedArray(const std::vector<Parameter> &items);
+  NestedArray(const std::vector<NestedArray> &items);
 
   // Iterator access methods
   ParameterIterator begin() const { return ParameterIterator(items_.begin()); }
@@ -118,5 +126,7 @@ class NestedArray {
   std::vector<Parameter> items_;
 };
 
-} // namespace miru::params
+std::string to_string(const NestedArray& nested_array);
+std::ostream& operator<<(std::ostream& os, const NestedArray& nested_array);
 
+} // namespace miru::params

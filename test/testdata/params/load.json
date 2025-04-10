@@ -39,18 +39,18 @@
       ]
     ]
   ],
-  "object_array": [
+  "map_array": [
     {
       "key1": "value1",
       "key2": "value2"
     },
     {
-      "key1": "value1",
-      "key2": "value2"
+      "key3": "value3",
+      "key4": "value4"
     },
     {
-      "key1": "value1",
-      "key2": "value2"
+      "key5": "value5",
+      "key6": "value6"
     }
   ]
 }

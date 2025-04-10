@@ -14,27 +14,25 @@ using MapArray = miru::params::MapArray;
 // ================================ SEARCH FILTERS ================================ //
 class SearchParamFilters {
 public:
-  SearchParamFilters() : param_names(), prefix() {}
+  SearchParamFilters() : param_names(), prefix(), leaves_only(true) {}
 
-  const std::vector<std::string>& get_param_names() const { return param_names; }
-  const std::string& get_prefix() const { return prefix; }
+  std::vector<std::string> param_names;
+  std::string prefix;
+  bool leaves_only;
 
   bool has_param_name_filter() const { return !param_names.empty(); }
   bool has_prefix_filter() const { return !prefix.empty(); }
 
-  bool matches(const std::string_view& param_name) const;
-  
+  bool matches(const Parameter& parameter) const;
   bool continue_search(const Parameter& parameter) const;
 
 private:
   friend class SearchParamFiltersBuilder;
 
-  std::vector<std::string> param_names;
-  std::string prefix;
-
   // matching operations
   bool matches_name(const std::string_view& param_name) const;
   bool matches_prefix(const std::string_view& param_name) const;
+  bool matches_leaves_only(const Parameter& parameter) const;
 
   // continue searching operations
   bool child_might_match_name(const Parameter& parameter) const;
@@ -243,8 +241,8 @@ get_parameters(
   const SearchParamFilters& filters
 ) {
   std::vector<Parameter> result;
-  for (const auto& param : get_parameters(search_parameter, filters)) {
-    result.push_back(param);
+  for (const auto& param : find_parameters_recursive(search_parameter, filters)) {
+    result.push_back(*param);
   }
   return result;
 };

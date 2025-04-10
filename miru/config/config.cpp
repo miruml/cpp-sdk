@@ -3,7 +3,7 @@
 
 #include <miru/client/unix_socket.hpp>
 #include <miru/config/config.hpp>
-#include <miru/params/load.hpp>
+#include <miru/params/parse.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>
@@ -27,9 +27,10 @@ Config Config::from_file(const std::string& schema_file_path,
   // read the config file
   miru::filesys::File config_file(config_file_path);
   builder.with_config_file(config_file);
-  std::variant<nlohmann::json, YAML::Node> config_data =
-      config_file.read_structured_data();
-  builder.with_data(miru::params::load_structured_data(config_data));
+  builder.with_data(miru::params::parse_file(
+    config_slug,
+    config_file
+  ));
 
   // build the config
   Config config = builder.build();
@@ -52,7 +53,7 @@ Config Config::from_agent(const std::string& schema_file_path) {
   builder.with_schema_digest(config_schema_digest);
   nlohmann::json config_data =
       client.get_concrete_config(config_schema_digest, config_slug);
-  builder.with_data(miru::params::load_structured_data(config_data));
+  builder.with_data(miru::params::parse_json_node(config_slug, config_data));
 
   // build the config
   Config config = builder.build();

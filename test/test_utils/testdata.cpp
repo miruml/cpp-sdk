@@ -13,4 +13,9 @@ miru::filesys::Dir filesys_testdata_dir() {
   return miru::filesys::Dir(testdata_dir_.path() / "filesys");
 }
 
+miru::filesys::Dir params_testdata_dir() {
+  miru::filesys::Dir testdata_dir_ = testdata_dir();
+  return miru::filesys::Dir(testdata_dir_.path() / "params");
+}
+
 }  // namespace miru::test_utils

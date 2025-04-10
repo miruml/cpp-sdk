@@ -20,6 +20,8 @@
 
 namespace miru::params {
 
+const std::string DELIMITER = ".";
+
 class Parameter {
  public:
   // ============================== ROS2 INTERFACES ================================ //
@@ -181,6 +183,34 @@ class Parameter {
   std::string value_to_string() const;
 
   // ============================== MIRU INTERFACES ============================== //
+
+  /// Get the value of parameter as using the given ParameterType as a template argument
+  template <ParameterType ParamT>
+  decltype(auto) as() const {
+    try {
+      return value_.get<ParamT>();
+    } catch (const InvalidParameterValueType &ex) {
+      throw InvalidParameterType(this->name_, ex.what());
+    } catch (const InvalidScalarConversion &ex) {
+      throw InvalidParameterType(this->name_, ex.what());
+    } catch (const utils::InvalidTypeConversion &ex) {
+      throw InvalidParameterType(this->name_, ex.what());
+    }
+  }
+
+  /// Get the value of parameter as using the given c++ type as a template argument
+  template <typename T>
+  decltype(auto) as() const {
+    try {
+      return value_.get<T>();
+    } catch (const InvalidParameterValueType &ex) {
+      throw InvalidParameterType(this->name_, ex.what());
+    } catch (const InvalidScalarConversion &ex) {
+      throw InvalidParameterType(this->name_, ex.what());
+    } catch (const utils::InvalidTypeConversion &ex) {
+      throw InvalidParameterType(this->name_, ex.what());
+    }
+  }
 
   /// Get the key of the parameter
   std::string get_key() const;

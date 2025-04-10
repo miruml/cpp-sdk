@@ -16,8 +16,12 @@
 namespace miru::query {
 
 // ================================ SEARCH FILTERS ================================ //
-bool SearchParamFilters::matches(const std::string_view& param_name) const {
-  return matches_name(param_name) && matches_prefix(param_name);
+bool SearchParamFilters::matches(const Parameter& parameter) const {
+  return (
+    matches_name(parameter.get_name()) && 
+    matches_prefix(parameter.get_name()) && 
+    matches_leaves_only(parameter)
+  );
 }
 
 bool SearchParamFilters::continue_search(const Parameter& parameter) const {
@@ -37,6 +41,10 @@ bool SearchParamFilters::matches_prefix(const std::string_view& param_name) cons
     return true;
   }
   return utils::has_prefix(param_name, prefix);
+}
+
+bool SearchParamFilters::matches_leaves_only(const Parameter& parameter) const {
+  return !leaves_only || miru::params::is_leaf(parameter);
 }
 
 // continue searching operations
@@ -63,10 +71,10 @@ std::string to_string(const SearchParamFilters& filters) {
   std::stringstream ss;
   ss << "SearchParamFilters(";
   if (filters.has_param_name_filter()) {
-    ss << "param_names: " << utils::to_string(filters.get_param_names()) << ", ";
+    ss << "param_names: " << utils::to_string(filters.param_names) << ", ";
   }
   if (filters.has_prefix_filter()) {
-    ss << "prefix: " << filters.get_prefix() << ")";
+    ss << "prefix: " << filters.prefix << ")";
   }
   return ss.str();
 }
@@ -99,7 +107,7 @@ void find_parameters_recursive_helper(
   const SearchParamFilters& filters
 ) {
   // check for a match
-  if (filters.matches(parameter.get_name())) {
+  if (filters.matches(parameter)) {
     result.push_back(&parameter);
   }
 

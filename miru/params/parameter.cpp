@@ -15,7 +15,7 @@ Parameter::Parameter() : name_("") {}
 
 Parameter::Parameter(const std::string& name) : name_(name) {
   // remove any trailing slashes from the name
-  name_ = utils::remove_trailing(name_, "/");
+  name_ = utils::remove_trailing(name_, DELIMITER);
 }
 
 void validate_child_parent_name_consistency(const std::string& parent_name,
@@ -30,7 +30,7 @@ void validate_child_parent_name_consistency(const std::string& parent_name,
 Parameter::Parameter(const std::string& name, const ParameterValue& value)
     : name_(name), value_(value) {
   // remove any trailing slashes from the name
-  name_ = utils::remove_trailing(name_, "/");
+  name_ = utils::remove_trailing(name_, DELIMITER);
 
   // check that the key doesn't have any slashes
   std::vector<std::string> child_names;
@@ -126,7 +126,8 @@ std::string to_string(const std::vector<Parameter>& parameters) {
     std::stringstream ss;
     ss << "\"" << param.get_key() << "\": ";
     ss << "{\"type\": \"" << param.get_type_name() << "\", ";
-    ss << "\"value\": \"" << param.value_to_string() << "\"}";
+    ss << "\"name\": \"" << param.get_name() << "\", ";
+    ss << "\"value\": " << param.value_to_string() << "}";
     return ss.str();
   };
 
@@ -148,12 +149,14 @@ std::string to_string(const std::vector<Parameter>& parameters) {
 // ================================ MIRU INTERFACES ================================ //
 
 std::string Parameter::get_key() const {
-  return name_.substr(name_.find_last_of("/") + 1, name_.length());
+  return name_.substr(name_.find_last_of(DELIMITER) + 1, name_.length());
 }
 
 std::string Parameter::get_parent_name() const {
-  return utils::remove_trailing(name_.substr(0, name_.length() - get_key().length()),
-                                "/");
+  return utils::remove_trailing(
+    name_.substr(0, name_.length() - get_key().length()),
+    DELIMITER
+  );
 }
 
 const std::nullptr_t Parameter::as_null() const {

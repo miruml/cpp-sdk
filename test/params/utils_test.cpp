@@ -128,8 +128,8 @@ TEST_F(ParamUtils, scalar_array_variant) {
 
 TEST_F(ParamUtils, nested_array_variant) {
   miru::params::Parameter nested_array_param = miru::params::Parameter("nested_array", miru::params::NestedArray{std::vector<miru::params::Parameter>{
-          miru::params::Parameter("nested_array/0", std::vector<int>{1, 2, 3}),
-          miru::params::Parameter("nested_array/1", std::vector<int>{4, 5, 6})}});
+          miru::params::Parameter("nested_array.0", std::vector<int>{1, 2, 3}),
+          miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})}});
   EXPECT_TRUE(nested_array_param.get_type() == miru::params::ParameterType::PARAMETER_NESTED_ARRAY);
 
   EXPECT_TRUE(miru::params::is_leaf(nested_array_param));
@@ -137,9 +137,9 @@ TEST_F(ParamUtils, nested_array_variant) {
   int i = 0;
   for (const auto& child : miru::params::get_children_view(nested_array_param)) {
     if (i == 0) {
-      EXPECT_EQ(child.get_name(), "nested_array/0");
+      EXPECT_EQ(child.get_name(), "nested_array.0");
     } else if (i == 1) {
-      EXPECT_EQ(child.get_name(), "nested_array/1");
+      EXPECT_EQ(child.get_name(), "nested_array.1");
     }
     EXPECT_TRUE(miru::params::is_leaf(child));
     EXPECT_FALSE(miru::params::has_children(child));
@@ -151,8 +151,8 @@ TEST_F(ParamUtils, nested_array_variant) {
 
 TEST_F(ParamUtils, map_variant) {
   miru::params::Parameter map_param = miru::params::Parameter("map", miru::params::Map{std::vector<miru::params::Parameter>{
-          miru::params::Parameter("map/param1", miru::params::Scalar("test1")),
-          miru::params::Parameter("map/param2", miru::params::Scalar("test3"))}});
+          miru::params::Parameter("map.param1", miru::params::Scalar("test1")),
+          miru::params::Parameter("map.param2", miru::params::Scalar("test3"))}});
   EXPECT_TRUE(map_param.get_type() == miru::params::ParameterType::PARAMETER_MAP);
 
   EXPECT_FALSE(miru::params::is_leaf(map_param));
@@ -160,9 +160,9 @@ TEST_F(ParamUtils, map_variant) {
   int i = 0;
   for (const auto& child : miru::params::get_children_view(map_param)) {
     if (i == 0) {
-      EXPECT_EQ(child.get_name(), "map/param1");
+      EXPECT_EQ(child.get_name(), "map.param1");
     } else if (i == 1) {
-      EXPECT_EQ(child.get_name(), "map/param2");
+      EXPECT_EQ(child.get_name(), "map.param2");
     }
     EXPECT_TRUE(miru::params::is_leaf(child));
     EXPECT_FALSE(miru::params::has_children(child));
@@ -177,17 +177,17 @@ TEST_F(ParamUtils, map_array_variant) {
       "maps",
       miru::params::MapArray{std::vector<miru::params::Parameter>{
           miru::params::Parameter(
-              "maps/0", miru::params::Map{std::vector<miru::params::Parameter>{
-                            miru::params::Parameter("maps/0/param1",
+              "maps.0", miru::params::Map{std::vector<miru::params::Parameter>{
+                            miru::params::Parameter("maps.0.param1",
                                                     miru::params::Scalar("test1")),
-                            miru::params::Parameter("maps/0/param2",
+                            miru::params::Parameter("maps.0.param2",
                                                     miru::params::Scalar("test3"))}}),
           miru::params::Parameter(
-              "maps/1", miru::params::Map{std::vector<miru::params::Parameter>{
-                            miru::params::Parameter("maps/1/param1",
+              "maps.1", miru::params::Map{std::vector<miru::params::Parameter>{
+                            miru::params::Parameter("maps.1.param1",
                                                     miru::params::Scalar("test3")),
                             miru::params::Parameter(
-                                "maps/1/param2", miru::params::Scalar("test4"))}})}});
+                                "maps.1.param2", miru::params::Scalar("test4"))}})}});
   EXPECT_TRUE(map_array.get_type() == miru::params::ParameterType::PARAMETER_MAP_ARRAY);
 
   EXPECT_FALSE(miru::params::is_leaf(map_array));
@@ -195,9 +195,9 @@ TEST_F(ParamUtils, map_array_variant) {
   int i = 0;
   for (const auto& child : miru::params::get_children_view(map_array)) {
     if (i == 0) {
-      EXPECT_EQ(child.get_name(), "maps/0");
+      EXPECT_EQ(child.get_name(), "maps.0");
     } else if (i == 1) {
-      EXPECT_EQ(child.get_name(), "maps/1");
+      EXPECT_EQ(child.get_name(), "maps.1");
     }
     EXPECT_FALSE(miru::params::is_leaf(child));
     EXPECT_TRUE(miru::params::has_children(child));

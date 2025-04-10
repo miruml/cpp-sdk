@@ -465,6 +465,18 @@ class ParameterValue {
     return get<ParameterType::PARAMETER_MAP_ARRAY>();
   }
 
+  /// Get the value of parameter as using the given ParameterType as a template argument
+  template <ParameterType ParamT> constexpr
+  decltype(auto) as() const {
+    return get<ParamT>();
+  }
+
+  /// Get the value of parameter as using the given c++ type as a template argument
+  template <typename T> constexpr
+  decltype(auto) as() const {
+    return get<T>();
+  }
+
   bool is_null() const;
   bool is_scalar() const;
   bool is_map() const;

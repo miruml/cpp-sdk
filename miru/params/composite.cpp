@@ -127,13 +127,23 @@ const Parameter& Map::operator[](const std::string& key) const {
       sorted_fields_.end(),
       key,
       [](const Parameter& p, const std::string& key) {
-        return p.get_name() < key;
+        return p.get_key() < key;
       });
 
-  if (it == sorted_fields_.end() || it->get_name() != key) {
+  if (it == sorted_fields_.end() || it->get_key() != key) {
     throw std::invalid_argument("Unable to find map field with key: " + key);
   }
   return *it;
+}
+
+std::string to_string(const Map& map) {
+  return to_string(
+    std::vector<Parameter>(map.begin(), map.end())
+  );
+}
+
+std::ostream& operator<<(std::ostream& os, const Map& map) {
+  return os << to_string(map);
 }
 
 // ================================= MAP ARRAY ===================================== //
@@ -150,13 +160,21 @@ MapArray::MapArray(const std::vector<Parameter>& items) : items_(items) {
   assert_unique_field_names("MapArray", items);
   assert_identical_parent_names(items);
 
-  // store the items by name for comparison / access purposes in the future
+  // sort the items by name for comparison / access purposes in the future
   std::sort(items_.begin(), items_.end(), [](const Parameter& a, const Parameter& b) {
     return a.get_name() < b.get_name();
   });
 
   // ensure the items keys are integers in ascending order
   assert_ascending_integer_keys(items);
+}
+
+MapArray::MapArray(const std::vector<Map>& items) {
+  std::vector<Parameter> parameters;
+  for (size_t i = 0; i < items.size(); ++i) {
+    parameters.push_back(Parameter(items[i].begin()->get_parent_name(), items[i]));
+  }
+  *this = MapArray(parameters);
 }
 
 bool MapArray::operator==(const MapArray& other) const {
@@ -167,6 +185,16 @@ bool MapArray::operator!=(const MapArray& other) const { return !(*this == other
 
 const Parameter& MapArray::operator[](const size_t index) const {
   return items_[index];
+}
+
+std::string to_string(const MapArray& map_array) {
+  return to_string(
+    std::vector<Parameter>(map_array.begin(), map_array.end())
+  );
+}
+
+std::ostream& operator<<(std::ostream& os, const MapArray& map_array) {
+  return os << to_string(map_array);
 }
 
 // ================================= NESTED ARRAY ================================== //
@@ -193,6 +221,14 @@ NestedArray::NestedArray(const std::vector<Parameter>& items) : items_(items) {
   assert_ascending_integer_keys(items);
 }
 
+NestedArray::NestedArray(const std::vector<NestedArray>& items) {
+  std::vector<Parameter> parameters;
+  for (size_t i = 0; i < items.size(); ++i) {
+    parameters.push_back(Parameter(items[i].begin()->get_parent_name(), items[i]));
+  }
+  *this = NestedArray(parameters);
+}
+
 bool NestedArray::operator==(const NestedArray& other) const {
   return items_ == other.items_;
 }
@@ -204,5 +240,16 @@ bool NestedArray::operator!=(const NestedArray& other) const {
 const Parameter& NestedArray::operator[](const size_t index) const {
   return items_[index];
 }
+
+std::string to_string(const NestedArray& nested_array) {
+  return to_string(
+    std::vector<Parameter>(nested_array.begin(), nested_array.end())
+  );
+}
+
+std::ostream& operator<<(std::ostream& os, const NestedArray& nested_array) {
+  return os << to_string(nested_array);
+}
+
 
 }  // namespace miru::params
