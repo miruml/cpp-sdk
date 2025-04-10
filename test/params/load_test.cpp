@@ -2,13 +2,12 @@
 #include <execinfo.h>
 
 // internal
-#include <miru/params/loader.hpp>
+#include <miru/params/load.hpp>
 #include <test/test_utils/testdata.hpp>
 #include <test/test_utils/utils.hpp>
 
 // external
 #include <gtest/gtest.h>
-
 #include <boost/stacktrace.hpp>
 
 namespace test::params {

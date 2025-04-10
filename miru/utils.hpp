@@ -19,6 +19,9 @@ bool has_suffix(const std::string_view &str, const std::string_view &suffix);
 std::string remove_trailing(const std::string &str, const std::string &chars);
 void assert_unique_strings(const std::vector<std::string> &strings);
 
+std::string to_string(const std::string& value);
+std::string to_string(const std::string_view& value);
+
 template <typename T>
 std::string to_string(const std::vector<T>& values) {
     if (values.empty()) {

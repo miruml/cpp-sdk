@@ -66,20 +66,23 @@ add_library(miru
     miru/filesys/file.cpp
     miru/filesys/path.hpp
     miru/filesys/path.cpp
-    miru/params/compose.hpp
+    miru/params/composite.hpp
     miru/params/composite.cpp
     miru/params/exceptions.hpp
-    miru/params/loader.hpp
-    miru/params/loader.cpp
+    miru/params/load.hpp
+    miru/params/load.cpp
     miru/params/parameter.hpp
     miru/params/parameter.cpp
-    miru/params/scalar.hpp
     miru/params/scalar.cpp
     miru/params/type.hpp
-    miru/params/utils.hpp
-    miru/params/utils.cpp
     miru/params/value.hpp
     miru/params/value.cpp
+    miru/params/utils.hpp
+    miru/params/utils.cpp
+    miru/query/query.hpp
+    miru/query/query.cpp
+    miru/query/ros2.hpp
+    miru/query/ros2.cpp
     miru/utils.hpp
     miru/utils.cpp
 )
@@ -115,9 +118,10 @@ if(BUILD_TESTING)
         test/test_utils/utils.hpp
         test/test_utils/utils.cpp
         test/params/composite_test.cpp
-        test/params/loader_test.cpp
+        test/params/load_test.cpp
         test/params/scalar_test.cpp
         test/params/parameter_test.cpp
+        test/params/utils_test.cpp
         test/utils_test.cpp
     )
 

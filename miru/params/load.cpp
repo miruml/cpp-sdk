@@ -1,10 +1,9 @@
 // internal
-#include <miru/params/loader.hpp>
+#include <miru/params/load.hpp>
 #include <miru/params/parameter.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>
-
 #include <nlohmann/json.hpp>
 
 namespace miru::params {

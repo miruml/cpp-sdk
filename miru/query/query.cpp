@@ -7,56 +7,13 @@
 
 // internal
 #include <miru/params/parameter.hpp>
-#include <miru/params/query.hpp>
+#include <miru/params/value.hpp>
+#include <miru/params/type.hpp>
+#include <miru/params/utils.hpp>
+#include <miru/query/query.hpp>
 #include <miru/utils.hpp>
 
-namespace miru::params {
-
-bool is_leaf(const ParameterValue& value) {
-  if (value.is_nested_array()) {
-    NestedArray nested_array = value.get<NestedArray>();
-    for (const Parameter& param : nested_array) {
-      if (!is_leaf(param)) {
-        return false;
-      }
-    }
-    return true;
-  }
-  return !(value.is_map() || value.is_map_array());
-}
-
-bool is_leaf(const Parameter& parameter) {
-  return is_leaf(parameter.get_parameter_value());
-}
-
-bool has_children(const Parameter& parameter) {
-  return parameter.is_map() || parameter.is_map_array() || parameter.is_nested_array();
-}
-
-ParametersView children(const Parameter& parameter) {
-  switch (parameter.get_type()) {
-    case ParameterType::PARAMETER_MAP:
-      return ParametersView(
-        parameter.as_map().begin(),
-        parameter.as_map().end()
-      );
-    case ParameterType::PARAMETER_MAP_ARRAY:
-      return ParametersView(
-        parameter.as_map_array().begin(),
-        parameter.as_map_array().end()
-      );
-    case ParameterType::PARAMETER_NESTED_ARRAY:
-      return ParametersView(
-        parameter.as_nested_array().begin(),
-        parameter.as_nested_array().end()
-      );
-    default:
-      return ParametersView(
-        std::vector<Parameter>::const_iterator(),
-        std::vector<Parameter>::const_iterator()
-      );
-  }
-}
+namespace miru::query {
 
 // ================================ SEARCH FILTERS ================================ //
 bool SearchParamFilters::matches(const std::string_view& param_name) const {
@@ -114,19 +71,8 @@ std::string to_string(const SearchParamFilters& filters) {
   return ss.str();
 }
 
-SearchParamFiltersBuilder& SearchParamFiltersBuilder::with_param_name(const std::string_view& param_name) {
+SearchParamFiltersBuilder& SearchParamFiltersBuilder::with_param_name(const std::string& param_name) {
   filters.param_names.push_back(param_name);
-  return *this;
-}
-
-SearchParamFiltersBuilder& SearchParamFiltersBuilder::with_param_names(
-  const std::vector<std::string_view>& param_names
-) {
-  filters.param_names.insert(
-    filters.param_names.end(),
-    param_names.begin(),
-    param_names.end()
-  );
   return *this;
 }
 
@@ -141,7 +87,7 @@ SearchParamFiltersBuilder& SearchParamFiltersBuilder::with_param_names(
   return *this;
 }
 
-SearchParamFiltersBuilder& SearchParamFiltersBuilder::with_prefix(const std::string_view& prefix) {
+SearchParamFiltersBuilder& SearchParamFiltersBuilder::with_prefix(const std::string& prefix) {
   filters.prefix = prefix;
   return *this;
 }
@@ -158,12 +104,12 @@ void find_parameters_recursive_helper(
   }
 
   // check if we should continue searching
-  if (is_leaf(parameter) || !filters.continue_search(parameter)) {
+  if (miru::params::is_leaf(parameter) || !filters.continue_search(parameter)) {
     return;
   }
 
   // find recursively
-  for (const auto& item : children(parameter)) {
+  for (const auto& item : get_children_view(parameter)) {
     find_parameters_recursive_helper(
       item, result, filters
     );

@@ -3,7 +3,7 @@
 
 #include <miru/client/unix_socket.hpp>
 #include <miru/config/config.hpp>
-#include <miru/params/loader.hpp>
+#include <miru/params/load.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>

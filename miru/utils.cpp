@@ -48,6 +48,14 @@ void assert_unique_strings(const std::vector<std::string>& strings) {
   }
 }
 
+std::string to_string(const std::string& value) {
+  return value;
+}
+
+std::string to_string(const std::string_view& value) {
+  return std::string(value);
+}
+
 bool yaml_string_to_bool(const std::string& str) {
   std::string lower = str;
   std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);

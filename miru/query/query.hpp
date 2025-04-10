@@ -3,23 +3,21 @@
 // internal
 #include <miru/params/parameter.hpp>
 
-namespace miru::params {
+namespace miru::query {
 
-// ============================== MIRU INTERFACES ================================= //
-
-bool is_leaf(const ParameterValue& parameter);
-bool is_leaf(const Parameter& parameter);
-
-bool has_children(const Parameter& parameter);
-ParametersView children(const Parameter& parameter);
+using Parameter = miru::params::Parameter;
+using ParameterType = miru::params::ParameterType;
+using Map = miru::params::Map;
+using NestedArray = miru::params::NestedArray;
+using MapArray = miru::params::MapArray;
 
 // ================================ SEARCH FILTERS ================================ //
 class SearchParamFilters {
 public:
   SearchParamFilters() : param_names(), prefix() {}
 
-  const std::vector<std::string_view>& get_param_names() const { return param_names; }
-  const std::string_view& get_prefix() const { return prefix; }
+  const std::vector<std::string>& get_param_names() const { return param_names; }
+  const std::string& get_prefix() const { return prefix; }
 
   bool has_param_name_filter() const { return !param_names.empty(); }
   bool has_prefix_filter() const { return !prefix.empty(); }
@@ -31,8 +29,8 @@ public:
 private:
   friend class SearchParamFiltersBuilder;
 
-  std::vector<std::string_view> param_names;
-  std::string_view prefix;
+  std::vector<std::string> param_names;
+  std::string prefix;
 
   // matching operations
   bool matches_name(const std::string_view& param_name) const;
@@ -49,14 +47,11 @@ class SearchParamFiltersBuilder {
 public:
   SearchParamFiltersBuilder() : filters() {}
 
-  SearchParamFiltersBuilder& with_param_name(const std::string_view& param_name);
-  SearchParamFiltersBuilder& with_param_names(
-    const std::vector<std::string_view>& param_names
-  );
+  SearchParamFiltersBuilder& with_param_name(const std::string& param_name);
   SearchParamFiltersBuilder& with_param_names(
     const std::vector<std::string>& param_names
   );
-  SearchParamFiltersBuilder& with_prefix(const std::string_view& prefix);
+  SearchParamFiltersBuilder& with_prefix(const std::string& prefix);
   SearchParamFilters build() const { return filters; }
 
 private:
@@ -129,7 +124,7 @@ contains_parameter(
   return find_parameter_recursive(search_parameter, filters) != nullptr;
 }
 
-// ================================= MIRU GETTERS ================================== //
+// =================================== GETTERS ===================================== //
 template<typename searchT>
 constexpr typename std::enable_if<
   std::is_same<searchT, Parameter>::value ||
