@@ -22,7 +22,7 @@ namespace miru::params {
 
 class Parameter {
  public:
-  // ============================== ROS2 INTERFACES ============================== //
+  // ============================== ROS2 INTERFACES ================================ //
 
   // Although we'll conform to the ROS2 interfaces for constructors, we'll not be
   // exposing these to users initially
@@ -37,7 +37,7 @@ class Parameter {
 
   /// Construct with given name and a parameter value of type
   /// ParameterType::PARAMETER_NOT_SET.
-  explicit Parameter(const std::string &key);
+  explicit Parameter(const std::string &name);
 
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L63
 

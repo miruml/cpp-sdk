@@ -1,6 +1,7 @@
 // internal
-#include <miru/params/load.hpp>
+#include <miru/filesys/file.hpp>
 #include <miru/params/parameter.hpp>
+#include <miru/params/parse.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>
@@ -8,8 +9,11 @@
 
 namespace miru::params {
 
-miru::params::Parameter load_json(const std::string& name, const nlohmann::json& node,
-                                  const std::string& delimiter) {
+miru::params::Parameter parse_json_node(
+  const std::string& name,
+  const nlohmann::json& node,
+  const std::string& delimiter
+) {
   switch (node.type()) {
     case nlohmann::json::value_t::discarded:
       throw std::runtime_error("Discarded node");
@@ -30,12 +34,12 @@ miru::params::Parameter load_json(const std::string& name, const nlohmann::json&
     case nlohmann::json::value_t::string:
       return miru::params::Parameter(name, node.get<std::string>());
     case nlohmann::json::value_t::array:
-      return load_json_array(name, node, delimiter);
+      return parse_json_array(name, node, delimiter);
     case nlohmann::json::value_t::object: {
       std::vector<miru::params::Parameter> entries;
       for (const auto& entry : node.items()) {
         std::string entry_name = name + delimiter + entry.key();
-        entries.push_back(load_json(entry_name, entry.value(), delimiter));
+        entries.push_back(parse_json_node(entry_name, entry.value(), delimiter));
       }
       return miru::params::Parameter(name, miru::params::Map(entries));
     }
@@ -43,9 +47,11 @@ miru::params::Parameter load_json(const std::string& name, const nlohmann::json&
   throw std::runtime_error("Unsupported node type");
 }
 
-miru::params::Parameter load_json_array(const std::string& name,
-                                        const nlohmann::json& node,
-                                        const std::string& delimiter) {
+miru::params::Parameter parse_json_array(
+  const std::string& name,
+  const nlohmann::json& node,
+  const std::string& delimiter
+) {
   // double check the node is an array
   if (!node.is_array()) {
     throw std::runtime_error("Node is not an array");
@@ -53,8 +59,12 @@ miru::params::Parameter load_json_array(const std::string& name,
 
   // if it's empty then just return an empty scalar array
   if (node.empty()) {
-    return miru::params::Parameter(name,
-                                   miru::params::ParameterValue(std::vector<Scalar>()));
+    return miru::params::Parameter(
+      name,
+      miru::params::ParameterValue(
+        std::vector<Scalar>()
+      )
+    );
   }
 
   // create an array of the correct type
@@ -98,8 +108,13 @@ miru::params::Parameter load_json_array(const std::string& name,
       std::vector<miru::params::Parameter> entries;
       int i = 0;
       for (const auto& entry : node.items()) {
+        if (entry.value().type() != nlohmann::json::value_t::array) {
+          throw std::runtime_error(
+              "Heterogeneous array types are not supported. Please contact Ben at "
+              "ben@miruml.com if you need this feature.");
+        }
         std::string entry_name = name + delimiter + std::to_string(i);
-        entries.push_back(load_json_array(entry_name, entry.value(), delimiter));
+        entries.push_back(parse_json_array(entry_name, entry.value(), delimiter));
         i++;
       }
       return miru::params::Parameter(name, miru::params::NestedArray(entries));
@@ -114,7 +129,7 @@ miru::params::Parameter load_json_array(const std::string& name,
               "ben@miruml.com if you need this feature.");
         }
         std::string entry_name = name + delimiter + std::to_string(i);
-        entries.push_back(load_json(entry_name, entry.value(), delimiter));
+        entries.push_back(parse_json_node(entry_name, entry.value(), delimiter));
         i++;
       }
       return miru::params::Parameter(name, miru::params::MapArray(entries));
@@ -123,8 +138,11 @@ miru::params::Parameter load_json_array(const std::string& name,
   throw std::runtime_error("Unsupported node type");
 }
 
-miru::params::Parameter load_yaml_array(const std::string& name, const YAML::Node& node,
-                                        const std::string& delimiter) {
+miru::params::Parameter parse_yaml_array(
+  const std::string& name,
+  const YAML::Node& node,
+  const std::string& delimiter
+) {
   // double check the node is an array
   if (!node.IsSequence()) {
     throw std::runtime_error("Node is not an array");
@@ -132,8 +150,12 @@ miru::params::Parameter load_yaml_array(const std::string& name, const YAML::Nod
 
   // if it's empty than just return an empty scalar array
   if (node.size() == 0) {
-    return miru::params::Parameter(name,
-                                   miru::params::ParameterValue(std::vector<Scalar>()));
+    return miru::params::Parameter(
+      name,
+      miru::params::ParameterValue(
+        std::vector<Scalar>()
+      )
+    );
   }
 
   // create an array of the correct type
@@ -156,21 +178,44 @@ miru::params::Parameter load_yaml_array(const std::string& name, const YAML::Nod
       return miru::params::Parameter(name, miru::params::ParameterValue(scalar_array));
     }
     case YAML::NodeType::Sequence: {
-      throw std::runtime_error(
-          "Nested arrays are not supported. Please contact Ben at ben@miruml.com if "
-          "you need this feature.");
+      std::vector<miru::params::Parameter> entries;
+      int i = 0;
+      for (const auto& entry : node) {
+        if (entry.Type() != YAML::NodeType::Sequence) {
+          throw std::runtime_error(
+              "Heterogeneous array types are not supported. Please contact Ben at "
+              "ben@miruml.com if you need this feature.");
+        }
+        std::string entry_name = name + delimiter + std::to_string(i);
+        entries.push_back(parse_yaml_array(entry_name, entry, delimiter));
+        i++;
+      }
+      return miru::params::Parameter(name, miru::params::NestedArray(entries));
     }
     case YAML::NodeType::Map: {
-      throw std::runtime_error(
-          "Nested maps are not supported. Please contact Ben at ben@miruml.com if "
-          "you need this feature.");
+      std::vector<miru::params::Parameter> entries;
+      int i = 0;
+      for (const auto& entry : node) {
+        if (entry.second.Type() != YAML::NodeType::Map) {
+          throw std::runtime_error(
+              "Heterogeneous array types are not supported. Please contact Ben at "
+              "ben@miruml.com if you need this feature.");
+        }
+        std::string entry_name = name + delimiter + std::to_string(i);
+        entries.push_back(parse_yaml_node(entry_name, entry.second));
+        i++;
+      }
+      return miru::params::Parameter(name, miru::params::Map(entries));
     }
   }
   throw std::runtime_error("Unsupported node type");
 }
 
-miru::params::Parameter load_yaml(const std::string& name, const YAML::Node& node,
-                                  const std::string& delimiter) {
+miru::params::Parameter parse_yaml_node(
+  const std::string& name,
+  const YAML::Node& node,
+  const std::string& delimiter
+) {
   switch (node.Type()) {
     case YAML::NodeType::Undefined:
       throw std::runtime_error("Undefined node");
@@ -179,17 +224,48 @@ miru::params::Parameter load_yaml(const std::string& name, const YAML::Node& nod
     case YAML::NodeType::Scalar:
       return miru::params::Parameter(name, node.as<std::string>());
     case YAML::NodeType::Sequence:
-      return load_yaml_array(name, node, delimiter);
+      return parse_yaml_array(name, node, delimiter);
     case YAML::NodeType::Map: {
       std::vector<miru::params::Parameter> entries;
       for (const auto& entry : node) {
         std::string entry_name = name + delimiter + entry.first.as<std::string>();
-        entries.push_back(load_yaml(entry_name, entry.second));
+        entries.push_back(parse_yaml_node(entry_name, entry.second));
       }
       return miru::params::Parameter(name, miru::params::Map(entries));
     }
   }
   throw std::runtime_error("Unsupported node type");
+}
+
+miru::params::Parameter parse_structured_data(
+  const std::string& name,
+  const std::variant<nlohmann::json, YAML::Node>& node,
+  const std::string& delimiter
+) {
+  if (std::holds_alternative<nlohmann::json>(node)) {
+    return parse_json_node(
+      name,
+      std::get<nlohmann::json>(node),
+      delimiter
+    );
+  } else if (std::holds_alternative<YAML::Node>(node)) {
+    return parse_yaml_node(
+      name,
+      std::get<YAML::Node>(node),
+      delimiter
+    );
+  }
+  throw std::runtime_error("Unsupported node type");
+}
+
+miru::params::Parameter parse_file(
+  const std::string& name,
+  const std::string& file_path,
+  const std::string& delimiter
+) {
+  miru::filesys::File file(file_path);
+  std::variant<nlohmann::json, YAML::Node> data = file.read_structured_data();
+  return parse_structured_data(name, data, delimiter);
 }
 
 }  // namespace miru::params

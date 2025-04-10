@@ -13,7 +13,10 @@ namespace miru::params {
 
 Parameter::Parameter() : name_("") {}
 
-Parameter::Parameter(const std::string& name) : name_(name) {}
+Parameter::Parameter(const std::string& name) : name_(name) {
+  // remove any trailing slashes from the name
+  name_ = utils::remove_trailing(name_, "/");
+}
 
 void validate_child_parent_name_consistency(const std::string& parent_name,
                                             const Parameter& child) {

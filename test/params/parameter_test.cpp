@@ -17,25 +17,46 @@ class ParameterConstructors : public ::testing::Test {
 };
 
 TEST_F(ParameterConstructors, trailing_slash_in_constructor) {
-  // one level
-  miru::params::Parameter trailing_slash_param1 = miru::params::Parameter("test/");
-  EXPECT_EQ(trailing_slash_param1.get_name(), "test");
+  miru::params::ParameterValue value(2);
 
+  // one level
+  miru::params::Parameter param1_constructor1= miru::params::Parameter("test/");
+  miru::params::Parameter param1_constructor2 = miru::params::Parameter("test", value);
+  miru::params::Parameter param1_constructor3 = miru::params::Parameter("test", 2);
+  EXPECT_EQ(param1_constructor1.get_name(), "test");
+  EXPECT_EQ(param1_constructor2.get_name(), "test");
+  EXPECT_EQ(param1_constructor3.get_name(), "test");
   // two levels
-  miru::params::Parameter trailing_slash_param2 = miru::params::Parameter("l1/l2/");
-  EXPECT_EQ(trailing_slash_param2.get_name(), "l1/l2");
+  miru::params::Parameter param2_constructor1 = miru::params::Parameter("l1/l2/");
+  miru::params::Parameter param2_constructor2 = miru::params::Parameter("l1/l2", value);
+  miru::params::Parameter param2_constructor3 = miru::params::Parameter("l1/l2", 2);
+  EXPECT_EQ(param2_constructor1.get_name(), "l1/l2");
+  EXPECT_EQ(param2_constructor2.get_name(), "l1/l2");
+  EXPECT_EQ(param2_constructor3.get_name(), "l1/l2");
 
   // three levels
-  miru::params::Parameter trailing_slash_param3 = miru::params::Parameter("l1/l2/l3/");
-  EXPECT_EQ(trailing_slash_param3.get_name(), "l1/l2/l3");
+  miru::params::Parameter param3_constructor1 = miru::params::Parameter("l1/l2/l3/");
+  miru::params::Parameter param3_constructor2 = miru::params::Parameter("l1/l2/l3", value);
+  miru::params::Parameter param3_constructor3 = miru::params::Parameter("l1/l2/l3", 2);
+  EXPECT_EQ(param3_constructor1.get_name(), "l1/l2/l3");
+  EXPECT_EQ(param3_constructor2.get_name(), "l1/l2/l3");
+  EXPECT_EQ(param3_constructor3.get_name(), "l1/l2/l3");
 
   // many trailing slashes
-  miru::params::Parameter trailing_slash_param4 = miru::params::Parameter("l1/l2/l3///");
-  EXPECT_EQ(trailing_slash_param4.get_name(), "l1/l2/l3");
+  miru::params::Parameter param4_constructor1 = miru::params::Parameter("l1/l2/l3///");
+  miru::params::Parameter param4_constructor2 = miru::params::Parameter("l1/l2/l3", value);
+  miru::params::Parameter param4_constructor3 = miru::params::Parameter("l1/l2/l3", 2);
+  EXPECT_EQ(param4_constructor1.get_name(), "l1/l2/l3");
+  EXPECT_EQ(param4_constructor2.get_name(), "l1/l2/l3");
+  EXPECT_EQ(param4_constructor3.get_name(), "l1/l2/l3");
 
   // no trailing slashes
-  miru::params::Parameter no_trailing_slash_param1 = miru::params::Parameter("test");
-  EXPECT_EQ(no_trailing_slash_param1.get_name(), "test");
+  miru::params::Parameter param5_constructor1 = miru::params::Parameter("test");
+  miru::params::Parameter param5_constructor2 = miru::params::Parameter("test", value);
+  miru::params::Parameter param5_constructor3 = miru::params::Parameter("test", 2);
+  EXPECT_EQ(param5_constructor1.get_name(), "test");
+  EXPECT_EQ(param5_constructor2.get_name(), "test");
+  EXPECT_EQ(param5_constructor3.get_name(), "test");
 }
 
 TEST_F(ParameterConstructors, not_set_variant) {

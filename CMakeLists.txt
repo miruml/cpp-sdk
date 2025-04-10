@@ -69,10 +69,10 @@ add_library(miru
     miru/params/composite.hpp
     miru/params/composite.cpp
     miru/params/exceptions.hpp
-    miru/params/load.hpp
-    miru/params/load.cpp
     miru/params/parameter.hpp
     miru/params/parameter.cpp
+    miru/params/parse.hpp
+    miru/params/parse.cpp
     miru/params/scalar.cpp
     miru/params/type.hpp
     miru/params/value.hpp
@@ -118,7 +118,7 @@ if(BUILD_TESTING)
         test/test_utils/utils.hpp
         test/test_utils/utils.cpp
         test/params/composite_test.cpp
-        test/params/load_test.cpp
+        test/params/parse_test.cpp
         test/params/scalar_test.cpp
         test/params/parameter_test.cpp
         test/params/utils_test.cpp
