@@ -20,6 +20,28 @@ class ParameterConstructors : public ::testing::Test {
  protected:
 };
 
+TEST_F(ParameterConstructors, trailing_slash_in_constructor) {
+  // one level
+  miru::params::Parameter trailing_slash_param1 = miru::params::Parameter("test/");
+  EXPECT_EQ(trailing_slash_param1.get_name(), "test");
+
+  // two levels
+  miru::params::Parameter trailing_slash_param2 = miru::params::Parameter("l1/l2/");
+  EXPECT_EQ(trailing_slash_param2.get_name(), "l1/l2");
+
+  // three levels
+  miru::params::Parameter trailing_slash_param3 = miru::params::Parameter("l1/l2/l3/");
+  EXPECT_EQ(trailing_slash_param3.get_name(), "l1/l2/l3");
+
+  // many trailing slashes
+  miru::params::Parameter trailing_slash_param4 = miru::params::Parameter("l1/l2/l3///");
+  EXPECT_EQ(trailing_slash_param4.get_name(), "l1/l2/l3");
+
+  // no trailing slashes
+  miru::params::Parameter no_trailing_slash_param1 = miru::params::Parameter("test");
+  EXPECT_EQ(no_trailing_slash_param1.get_name(), "test");
+}
+
 TEST_F(ParameterConstructors, not_set_variant) {
   // equal
   miru::params::Parameter not_set_variant1 = miru::params::Parameter();

@@ -56,8 +56,40 @@ void assert_ascending_integer_keys(const std::vector<Parameter>& items) {
   }
 }
 
+// ================================ ITERATORS ====================================== //
+
+// parameter iterator
+ParameterIterator::ParameterIterator(std::vector<Parameter>::const_iterator it) : it_(it) {}
+
+ParameterIterator& ParameterIterator::operator++() {
+    ++it_;
+    return *this;
+}
+
+ParameterIterator ParameterIterator::operator++(int) {
+    ParameterIterator tmp = *this;
+    ++it_;
+    return tmp;
+}
+
+ParameterIterator::reference ParameterIterator::operator*() const {
+    return *it_;
+}
+
+ParameterIterator::pointer ParameterIterator::operator->() const {
+    return &(*it_);
+}
+
+bool ParameterIterator::operator==(const ParameterIterator& other) const {
+    return it_ == other.it_;
+}
+
+bool ParameterIterator::operator!=(const ParameterIterator& other) const {
+    return it_ != other.it_;
+}
+
 // =================================== MAP ======================================== //
-Map::Map(const std::vector<Parameter>& fields) {
+Map::Map(const std::vector<Parameter>& fields): sorted_fields_(fields) {
   if (fields.empty()) {
     throw EmptyInitialization("Map");
   }
@@ -66,16 +98,11 @@ Map::Map(const std::vector<Parameter>& fields) {
   assert_unique_field_names("Map", fields);
   assert_identical_parent_names(fields);
 
-  // set the fields
-  for (const auto& field : fields) {
-    sorted_fields_.push_back(std::make_pair(field.get_key(), field));
-  }
-
   // store the fields by name for comparison / access purposes in the future
   std::sort(
     sorted_fields_.begin(), sorted_fields_.end(),
-    [](const std::pair<std::string, Parameter>& a, const std::pair<std::string, Parameter>& b) {
-      return a.first < b.first;
+    [](const Parameter& a, const Parameter& b) {
+      return a.get_name() < b.get_name();
     });
 }
 
@@ -85,20 +112,28 @@ bool Map::operator==(const Map& other) const {
 
 bool Map::operator!=(const Map& other) const { return !(*this == other); }
 
+ParameterIterator Map::begin() const {
+  return ParameterIterator(sorted_fields_.begin());
+}
+
+ParameterIterator Map::end() const {
+  return ParameterIterator(sorted_fields_.end());
+}
+
 const Parameter& Map::operator[](const std::string& key) const {
   // use binary search to find the field since the fields are sorted
   auto it = std::lower_bound(
       sorted_fields_.begin(),
       sorted_fields_.end(),
       key,
-      [](const std::pair<std::string, Parameter>& p, const std::string& key) {
-        return p.first < key;
+      [](const Parameter& p, const std::string& key) {
+        return p.get_name() < key;
       });
 
-  if (it == sorted_fields_.end() || it->first != key) {
+  if (it == sorted_fields_.end() || it->get_name() != key) {
     throw std::invalid_argument("Unable to find map field with key: " + key);
   }
-  return it->second;
+  return *it;
 }
 
 // ================================= MAP ARRAY ===================================== //

@@ -24,7 +24,6 @@ enum class ConfigSource {
 // Config class
 class Config {
  public:
-  // ============================== MIRU INTERFACES ============================== //
   // Initialize the config from a file system source. The config will read its
   // configuration and schema file from the file system.
   static Config from_file(const std::string& schema_file_path,
@@ -36,27 +35,18 @@ class Config {
 
   std::vector<miru::params::Parameter> list_parameters(bool leaves_only = true) const;
 
-  // ============================== ROS2 INTERFACES ============================== //
-  bool has_parameter(const std::string& parameter_name, bool leaves_only = true) const;
-
-  miru::params::Parameter get_parameter(const std::string& name,
-                                        bool leaves_only = true) const;
-
-  std::vector<miru::params::Parameter> get_parameters(
-      const std::vector<std::string>& parameter_names, bool leaves_only = true) const;
-
-  std::vector<std::string> list_parameter_names(
-      const std::vector<std::string>& parameter_prefixes,
-      bool leaves_only = true) const;
-
  private:
   friend class ConfigBuilder;
 
-  Config(const miru::filesys::File& schema_file, const std::string& config_slug,
-         ConfigSource source, const miru::params::Parameter& data,
-         const std::optional<std::string>& schema_digest,
-         const std::optional<miru::filesys::File>& config_file)
-      : schema_file_(schema_file),
+  Config(
+    const miru::filesys::File& schema_file,
+    const std::string& config_slug,
+    ConfigSource source,
+    const miru::params::Parameter& data,
+    const std::optional<std::string>& schema_digest,
+    const std::optional<miru::filesys::File>& config_file
+  )
+    : schema_file_(schema_file),
         config_slug_(config_slug),
         source_(source),
         data_(data),

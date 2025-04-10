@@ -66,6 +66,7 @@ add_library(miru
     miru/filesys/file.cpp
     miru/filesys/path.hpp
     miru/filesys/path.cpp
+    miru/params/compose.hpp
     miru/params/composite.cpp
     miru/params/exceptions.hpp
     miru/params/loader.hpp
@@ -77,6 +78,7 @@ add_library(miru
     miru/params/type.hpp
     miru/params/utils.hpp
     miru/params/utils.cpp
+    miru/params/value.hpp
     miru/params/value.cpp
     miru/utils.hpp
     miru/utils.cpp

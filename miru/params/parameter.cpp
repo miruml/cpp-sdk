@@ -33,7 +33,7 @@ Parameter::Parameter(const std::string& name, const ParameterValue& value)
   std::vector<std::string> child_names;
   switch (value_.get_type()) {
     case ParameterType::PARAMETER_MAP:
-      for (const auto& [key, param] : value_.get<ParameterType::PARAMETER_MAP>()) {
+      for (const auto& param : value_.get<ParameterType::PARAMETER_MAP>()) {
         validate_child_parent_name_consistency(name_, param);
       }
       break;
@@ -190,5 +190,6 @@ bool Parameter::is_map() const { return value_.is_map(); }
 bool Parameter::is_map_array() const { return value_.is_map_array(); }
 
 bool Parameter::is_array() const { return value_.is_array(); }
+
 
 }  // namespace miru::params
