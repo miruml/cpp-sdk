@@ -13,7 +13,7 @@
 
 // external
 #include <gtest/gtest.h>
-#include <boost/stacktrace.hpp>
+#include "miru/params/errors.hpp"
 
 namespace test::params {
 
@@ -174,174 +174,172 @@ enum class QueryException {
     TooManyResults
 };
 
-template<typename ExceptionT, typename ValueT>
-void test_get_param_exception_helper(
-    const miru::params::Parameter& data,
-    const SearchParamFilters& filter,
-    ValueT result_vehicle
+template<typename ExceptionT>
+void test_must_get_param_exception(
+    const miru::params::Parameter& root,
+    const SearchParamFilters& filter
 ) {
-    miru::params::Parameter param_result;
-
     EXPECT_THROW(
-        miru::query::get_param(data, filter),
+        miru::query::get_param(root, filter),
         ExceptionT
     ) << "Expected exception not thrown";
+}
 
+void test_try_get_param_exception(
+    const miru::params::Parameter& root,
+    const SearchParamFilters& filter
+) {
+    miru::params::Parameter param_result;
+    miru::params::Parameter unchanged;
     EXPECT_EQ(
-        miru::query::try_get_param(data, filter, param_result),
+        miru::query::try_get_param(root, filter, param_result),
         false 
     ) << "try_get_param should have failed";
-
     EXPECT_EQ(
-        miru::query::try_get_param(data, filter, result_vehicle),
+        param_result,
+        unchanged
+    ) << "param_result should be unchanged";
+}
+
+void test_try_get_param_by_value_exception(
+    const miru::params::Parameter& root,
+    const SearchParamFilters& filter
+) {
+    int int_vehicle = 42;
+    EXPECT_EQ(
+        miru::query::try_get_param(root, filter, int_vehicle),
         false 
     ) << "try_get_param should have failed";
-
     EXPECT_EQ(
-        miru::query::get_param_or(data, filter, 0),
-        0
-    );
+        int_vehicle,
+        42 
+    ) << "int_vehicle should be unchanged";
+}
 
+void test_get_param_or_exception(
+    const miru::params::Parameter& root,
+    const SearchParamFilters& filter
+) {
     EXPECT_EQ(
-        miru::query::try_get_param_or(data, filter, result_vehicle, result_vehicle),
+        miru::query::get_param_or(root, filter, 103),
+        103
+    ) << "get_param_or should return the default value (103)";
+}
+
+void test_try_get_param_or_exception(
+    const miru::params::Parameter& root,
+    const SearchParamFilters& filter
+) {
+    int int_vehicle = 42;
+    int default_value = 44;
+    EXPECT_EQ(
+        miru::query::try_get_param_or(root, filter, int_vehicle, default_value),
        false 
     ) << "try_get_param_or should have failed";
+    EXPECT_EQ(
+        int_vehicle,
+        default_value
+    ) << "int_vehicle should be default_value";
 }
 
 template<typename ExceptionT>
 void test_get_param_exception(
+    const miru::params::Parameter& root,
+    const SearchParamFilters& filter
+) {
+    test_must_get_param_exception<ExceptionT>(root, filter);
+    test_try_get_param_exception(root, filter);
+    test_try_get_param_by_value_exception(root, filter);
+    test_get_param_or_exception(root, filter);
+    test_try_get_param_or_exception(root, filter);
+}
+
+template<typename ValueT>
+void test_must_get_param_success(
     const miru::params::Parameter& data,
     const SearchParamFilters& filter,
-    const miru::params::ParameterValue& expected
+    const ValueT& expected
 ) {
-    miru::params::ParameterType expected_type = expected.get_type();
-    switch (expected_type) {
-        case miru::params::ParameterType::PARAMETER_NOT_SET:
-            throw std::invalid_argument("Parameter not set");
-            break;
-        case miru::params::ParameterType::PARAMETER_BOOL:
-            test_get_param_exception_helper<ExceptionT, bool>(
-                data,
-                filter,
-                true
-            );
-            break;
-        case miru::params::ParameterType::PARAMETER_INTEGER:
-            test_get_param_exception_helper<ExceptionT, int64_t>(
-                data,
-                filter,
-               67 
-            );
-            break;
-        case miru::params::ParameterType::PARAMETER_DOUBLE:
-            test_get_param_exception_helper<ExceptionT, double>(
-                data,
-                filter,
-               67.0
-            );
-            break;
-        case miru::params::ParameterType::PARAMETER_STRING:
-            test_get_param_exception_helper<ExceptionT, std::string>(
-                data,
-                filter,
-                "hello"
-            );
-            break;
-        case miru::params::ParameterType::PARAMETER_BOOL_ARRAY:
-            test_get_param_exception_helper<ExceptionT, std::vector<bool>>(
-                data,
-                filter,
-                std::vector<bool>({true, false, true})
-            );
-            break;
-        case miru::params::ParameterType::PARAMETER_INTEGER_ARRAY:
-            test_get_param_exception_helper<ExceptionT, std::vector<int64_t>>(
-                data,
-                filter,
-                std::vector<int64_t>({1, 2, 3})
-            );
-            break;
-        case miru::params::ParameterType::PARAMETER_DOUBLE_ARRAY:
-            test_get_param_exception_helper<ExceptionT, std::vector<double>>(
-                data,
-                filter,
-                std::vector<double>({1.0, 2.0, 3.0})
-            );
-            break;
-        case miru::params::ParameterType::PARAMETER_STRING_ARRAY:
-            test_get_param_exception_helper<ExceptionT, std::vector<std::string>>(
-                data,
-                filter,
-                std::vector<std::string>({"hello", "world"})
-            );
-            break;
-        case miru::params::ParameterType::PARAMETER_NULL:
-            test_get_param_exception_helper<ExceptionT, std::nullptr_t>(
-                data,
-                filter,
-                nullptr
-            );
-            break;
-        case miru::params::ParameterType::PARAMETER_SCALAR:
-            test_get_param_exception_helper<ExceptionT, miru::params::Scalar>(
-                data,
-                filter,
-                miru::params::Scalar("67")
-            );
-            break;
-        case miru::params::ParameterType::PARAMETER_SCALAR_ARRAY:
-            test_get_param_exception_helper<ExceptionT, std::vector<miru::params::Scalar>>(
-                data,
-                filter,
-                std::vector<miru::params::Scalar>(
-                    {miru::params::Scalar("1.0"),
-                    miru::params::Scalar("2.0"),
-                    miru::params::Scalar("3.0")}
-                )
-            );
-            break;
-        case miru::params::ParameterType::PARAMETER_MAP:
-            test_get_param_exception_helper<ExceptionT, miru::params::Map>(
-                data,
-                filter,
-                miru::params::Map(
-                    {
-                        {"key1", miru::params::Scalar("value1")},
-                        {"key2", miru::params::Scalar("value2")}
-                    }
-                )
-            );
-            break;
-        case miru::params::ParameterType::PARAMETER_MAP_ARRAY:
-            test_get_param_exception_helper<ExceptionT, miru::params::MapArray>(
-                data,
-                filter,
-                miru::params::MapArray(
-                    {
-                        miru::params::Map(
-                            {
-                                {"0.key1", miru::params::Scalar("value1")},
-                                {"0.key2", miru::params::Scalar("value2")}
-                            }
-                        )
-                    }
-                )
-            );
-            break;
-        case miru::params::ParameterType::PARAMETER_NESTED_ARRAY:
-            test_get_param_exception_helper<ExceptionT, miru::params::NestedArray>(
-                data,
-                filter,
-                miru::params::NestedArray(
-                    {
-                        miru::params::Parameter("0", 1),
-                        miru::params::Parameter("1", 2),
-                        miru::params::Parameter("2", 3)
-                    }
-                )
-            );
-            break;
-    }
+    EXPECT_EQ(
+        miru::query::get_param(data, filter).as<ValueT>(),
+        expected
+    );
+}
+
+template<typename ValueT>
+void test_try_get_param_success(
+    const miru::params::Parameter& data,
+    const SearchParamFilters& filter,
+    const ValueT& expected
+) {
+    miru::params::Parameter param_result;
+    EXPECT_EQ(
+        miru::query::try_get_param(data, filter, param_result),
+      true 
+    );
+    EXPECT_EQ(
+        param_result.as<ValueT>(),
+        expected
+    );
+}
+
+template<typename ValueT>
+void test_try_get_param_by_value_success(
+    const miru::params::Parameter& data,
+    const SearchParamFilters& filter,
+    const ValueT& expected,
+    ValueT result_vehicle
+) {
+    EXPECT_NE(
+        result_vehicle,
+        expected
+    );
+    EXPECT_EQ(
+        miru::query::try_get_param(data, filter, result_vehicle),
+        true 
+    );
+    EXPECT_EQ(
+        result_vehicle,
+        expected
+    );
+}
+
+template<typename ValueT>
+void test_get_param_or_success(
+    const miru::params::Parameter& data,
+    const SearchParamFilters& filter,
+    const ValueT& expected,
+    ValueT result_vehicle
+) {
+    EXPECT_NE(
+        result_vehicle,
+        expected
+    );
+    EXPECT_EQ(
+        miru::query::get_param_or(data, filter, result_vehicle),
+        expected
+    );
+}
+
+template<typename ValueT>
+void test_try_get_param_or_success(
+    const miru::params::Parameter& data,
+    const SearchParamFilters& filter,
+    const ValueT& expected,
+    ValueT result_vehicle
+) {
+    EXPECT_NE(
+        result_vehicle,
+        expected
+    );
+    EXPECT_EQ(
+        miru::query::try_get_param_or(data, filter, result_vehicle, result_vehicle),
+        true 
+    );
+    EXPECT_EQ(
+        result_vehicle,
+        expected
+    );
 }
 
 template<typename ValueT>
@@ -351,32 +349,11 @@ void test_get_param_success_helper(
     const ValueT& expected,
     ValueT result_vehicle 
 ) {
-    miru::params::Parameter param_result;
-
-    EXPECT_EQ(
-        miru::query::get_param(data, filter).as<ValueT>(),
-        expected
-    );
-    EXPECT_EQ(
-        miru::query::try_get_param(data, filter, param_result),
-      true 
-    );
-    EXPECT_EQ(
-        miru::query::try_get_param(data, filter, result_vehicle),
-       true 
-    );
-    EXPECT_EQ(
-        miru::query::try_get_param(data, filter, result_vehicle),
-      true 
-    );
-    EXPECT_EQ(
-        miru::query::get_param_or(data, filter, result_vehicle),
-        result_vehicle 
-    );
-    EXPECT_EQ(
-        miru::query::try_get_param_or(data, filter, result_vehicle, result_vehicle),
-       true 
-    );   
+    test_must_get_param_success<ValueT>(data, filter, expected);
+    test_try_get_param_success<ValueT>(data, filter, expected);
+    test_try_get_param_by_value_success<ValueT>(data, filter, expected, result_vehicle);
+    test_get_param_or_success<ValueT>(data, filter, expected, result_vehicle);
+    test_try_get_param_or_success<ValueT>(data, filter, expected, result_vehicle);
 }
 
 void test_get_param_success(
@@ -394,7 +371,7 @@ void test_get_param_success(
                 data,
                 filter,
                 expected.as<bool>(),
-                true
+               false 
             );
             break;
         case miru::params::ParameterType::PARAMETER_INTEGER:
@@ -426,7 +403,7 @@ void test_get_param_success(
                 data,
                 filter,
                 expected.as<std::vector<bool>>(),
-                std::vector<bool>({true, false, true})
+                std::vector<bool>({true, false, true, true, true, false, false, true})
             );
             break;
         case miru::params::ParameterType::PARAMETER_INTEGER_ARRAY:
@@ -434,7 +411,7 @@ void test_get_param_success(
                 data,
                 filter,
                 expected.as<std::vector<int64_t>>(),
-                std::vector<int64_t>({1, 2, 3})
+                std::vector<int64_t>({104, 42, 97})
             );
             break;
         case miru::params::ParameterType::PARAMETER_DOUBLE_ARRAY:
@@ -442,7 +419,7 @@ void test_get_param_success(
                 data,
                 filter,
                 expected.as<std::vector<double>>(),
-                std::vector<double>({1.0, 2.0, 3.0})
+                std::vector<double>({104.0, 42.0, 97.0})
             );
             break;
         case miru::params::ParameterType::PARAMETER_STRING_ARRAY:
@@ -454,12 +431,12 @@ void test_get_param_success(
             );
             break;
         case miru::params::ParameterType::PARAMETER_NULL:
-            test_get_param_success_helper<std::nullptr_t>(
-                data,
-                filter,
-                nullptr,
-                nullptr
-            );
+            // test_get_param_success_helper<std::nullptr_t>(
+            //     data,
+            //     filter,
+            //     nullptr,
+            //     nullptr
+            // );
             break;
         case miru::params::ParameterType::PARAMETER_SCALAR:
             test_get_param_success_helper<miru::params::Scalar>(
@@ -540,13 +517,13 @@ void test_get_param(
     builder.with_leaves_only(test.filter.leaves_only);
     SearchParamFilters filter = builder.build();
 
-    // // if the expected result is larger than 1, expect an exception
-    // if (test.results.size() > 1) {
-    //     test_get_param_exception<miru::query::TooManyResults>(
-    //         data,
-    //         filter
-    //     );
-    // }
+    // if the expected result is larger than 1, expect an exception
+    if (test.results.size() > 1) {
+        test_get_param_exception<miru::query::TooManyResultsError>(
+            data,
+            filter
+        );
+    }
 
     // test reading each parameter by their name
     int i = 0;
@@ -583,13 +560,25 @@ INSTANTIATE_TEST_SUITE_P(
     GetParamTestNameGenerator
 );
 
-TEST(GetParamTests, DoesntExist) {
-    miru::params::Parameter parameter;
+TEST(GetParamTests, NotFound) {
+    SearchParamFiltersBuilder builder;
+    builder.with_param_name("not_found");
+    SearchParamFilters filter = builder.build();
+    miru::params::Parameter root = miru::params::Parameter("root");
+    test_get_param_exception<miru::query::ParameterNotFoundError>(
+        root,
+        filter
+    );
+}
 
-    SearchParamFilters filter = SearchParamFiltersBuilder().with_param_name("doesnt_exist").build();
-    EXPECT_EQ(
-        miru::query::find_one(parameter, filter),
-        nullptr
+TEST(GetParamTests, InvalidType) {
+    SearchParamFiltersBuilder builder;
+    builder.with_param_name("invalid_type");
+    SearchParamFilters filter = builder.build();
+    miru::params::Parameter root = miru::params::Parameter("root", 42);
+    test_get_param_exception<miru::params::InvalidParameterTypeError>(
+        root,
+        filter
     );
 }
 

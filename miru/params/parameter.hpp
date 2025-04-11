@@ -97,11 +97,11 @@ class Parameter {
   decltype(auto) get_value() const {
     try {
       return value_.get<ParamT>();
-    } catch (const InvalidParameterValueType &ex) {
+    } catch (const InvalidParameterValueTypeError &ex) {
       THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
-    } catch (const InvalidScalarConversion &ex) {
+    } catch (const InvalidScalarConversionError &ex) {
       THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
-    } catch (const errors::InvalidTypeConversion &ex) {
+    } catch (const errors::InvalidTypeConversionError &ex) {
       THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
     }
   }
@@ -113,11 +113,11 @@ class Parameter {
   decltype(auto) get_value() const {
     try {
       return value_.get<T>();
-    } catch (const InvalidParameterValueType &ex) {
+    } catch (const InvalidParameterValueTypeError &ex) {
       THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
-    } catch (const InvalidScalarConversion &ex) {
+    } catch (const InvalidScalarConversionError &ex) {
       THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
-    } catch (const errors::InvalidTypeConversion &ex) {
+    } catch (const errors::InvalidTypeConversionError &ex) {
       THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
     }
   }
@@ -189,11 +189,11 @@ class Parameter {
   decltype(auto) as() const {
     try {
       return value_.get<ParamT>();
-    } catch (const InvalidParameterValueType &ex) {
+    } catch (const InvalidParameterValueTypeError &ex) {
       THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
-    } catch (const InvalidScalarConversion &ex) {
+    } catch (const InvalidScalarConversionError &ex) {
       THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
-    } catch (const errors::InvalidTypeConversion &ex) {
+    } catch (const errors::InvalidTypeConversionError &ex) {
       THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
     }
   }
@@ -203,11 +203,11 @@ class Parameter {
   decltype(auto) as() const {
     try {
       return value_.get<T>();
-    } catch (const InvalidParameterValueType &ex) {
+    } catch (const InvalidParameterValueTypeError &ex) {
       THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
-    } catch (const InvalidScalarConversion &ex) {
+    } catch (const InvalidScalarConversionError &ex) {
       THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
-    } catch (const errors::InvalidTypeConversion &ex) {
+    } catch (const errors::InvalidTypeConversionError &ex) {
       THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
     }
   }

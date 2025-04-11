@@ -43,21 +43,6 @@ class File : public Path {
   std::string read_string() const;
 };
 
-class FileNotFound : public std::runtime_error {
- public:
-  explicit FileNotFound(const std::string& path);
-};
 
-class NotAFile : public std::runtime_error {
- public:
-  explicit NotAFile(const std::string& path);
-};
-
-class InvalidFileType : public std::runtime_error {
- public:
-  explicit InvalidFileType(const std::string& file_path);
-  explicit InvalidFileType(const std::string& file_path,
-                           const std::vector<FileType>& expected_file_types);
-};
 
 }  // namespace miru::filesys

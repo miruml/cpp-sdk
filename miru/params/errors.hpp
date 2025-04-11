@@ -1,13 +1,13 @@
 #pragma once
 
 // std
-#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
 // internal
 #include <miru/errors.hpp>
+#include <miru/utils.hpp>
 
 namespace miru::params {
 
@@ -17,7 +17,7 @@ namespace miru::params {
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/exceptions/exceptions.hpp
 
 /// Thrown if passed parameter value is invalid.
-class InvalidParameterValue : public std::runtime_error {
+class InvalidParameterValueError : public std::runtime_error {
   // Inherit constructors from runtime_error.
   using std::runtime_error::runtime_error;
 };
@@ -27,14 +27,14 @@ class InvalidParameterValue : public std::runtime_error {
  * Essentially the same as rclcpp::ParameterTypeException, but with parameter
  * name in the error message.
  */
-class InvalidParameterType : public std::runtime_error {
+class InvalidParameterTypeError : public std::runtime_error {
  public:
   /// Construct an instance.
   /**
    * \param[in] name the name of the parameter.
    * \param[in] message custom exception message.
    */
-  InvalidParameterType(
+  InvalidParameterTypeError(
     const std::string& name,
     const std::string& message,
     const errors::ErrorTrace& trace
@@ -51,12 +51,12 @@ class InvalidParameterType : public std::runtime_error {
 };
 
 #define THROW_INVALID_PARAMETER_TYPE(name, message) \
-    throw InvalidParameterType(name, message, ERROR_TRACE)
+    throw InvalidParameterTypeError(name, message, ERROR_TRACE)
 
 // ================================ MIRU INTERFACES ================================= //
-class InvalidScalarConversion : public std::runtime_error {
+class InvalidScalarConversionError : public std::runtime_error {
  public:
-  InvalidScalarConversion(
+  InvalidScalarConversionError(
     const std::string& value,
     const std::string& dest_type,
     const std::string& message,
@@ -75,12 +75,12 @@ class InvalidScalarConversion : public std::runtime_error {
 };
 
 #define THROW_INVALID_SCALAR_CONVERSION(value, dest_type, message) \
-    throw InvalidScalarConversion(value, dest_type, message, ERROR_TRACE)
+    throw InvalidScalarConversionError(value, dest_type, message, ERROR_TRACE)
 
 // ================================ EXCEPTIONS ===================================== //
-class EmptyInitialization : public std::invalid_argument {
+class EmptyInitializationError : public std::invalid_argument {
  public:
-  EmptyInitialization(
+  EmptyInitializationError(
     const std::string& object_to_initialize,
     const errors::ErrorTrace& trace
   )
@@ -95,11 +95,11 @@ class EmptyInitialization : public std::invalid_argument {
 };
 
 #define THROW_EMPTY_INITIALIZATION(object_to_initialize) \
-    throw EmptyInitialization(object_to_initialize, ERROR_TRACE)
+    throw EmptyInitializationError(object_to_initialize, ERROR_TRACE)
 
-class DuplicateFieldNames : public std::invalid_argument {
+class DuplicateFieldNamesError : public std::invalid_argument {
  public:
-  DuplicateFieldNames(
+  DuplicateFieldNamesError(
     const std::string& object_to_initialize,
     const std::string& duplicate_field_name,
     const errors::ErrorTrace& trace
@@ -123,11 +123,11 @@ class DuplicateFieldNames : public std::invalid_argument {
 };
 
 #define THROW_DUPLICATE_FIELD_NAMES(object_to_initialize, duplicate_field_name) \
-    throw DuplicateFieldNames(object_to_initialize, duplicate_field_name, ERROR_TRACE)
+    throw DuplicateFieldNamesError(object_to_initialize, duplicate_field_name, ERROR_TRACE)
 
-class MismatchingParentNames : public std::invalid_argument {
+class MismatchingParentNamesError : public std::invalid_argument {
  public:
-  MismatchingParentNames(
+  MismatchingParentNamesError(
     const std::string& object_to_initialize,
     const std::string& param1_name,
     const std::string& param1_parent_name,
@@ -155,11 +155,11 @@ class MismatchingParentNames : public std::invalid_argument {
 };
 
 #define THROW_MISMATCHING_PARENT_NAMES(object_to_initialize, param1_name, param1_parent_name, param2_name, param2_parent_name) \
-    throw MismatchingParentNames(object_to_initialize, param1_name, param1_parent_name, param2_name, param2_parent_name, ERROR_TRACE)
+    throw MismatchingParentNamesError(object_to_initialize, param1_name, param1_parent_name, param2_name, param2_parent_name, ERROR_TRACE)
 
-class EmptyParentName : public std::invalid_argument {
+class EmptyParentNameError : public std::invalid_argument {
  public:
-  EmptyParentName(
+  EmptyParentNameError(
     const std::string& object_to_initialize,
     const std::string& param_name,
     const errors::ErrorTrace& trace
@@ -178,11 +178,11 @@ class EmptyParentName : public std::invalid_argument {
 };
 
 #define THROW_EMPTY_PARENT_NAME(object_to_initialize, param_name) \
-    throw EmptyParentName(object_to_initialize, param_name, ERROR_TRACE)
+    throw EmptyParentNameError(object_to_initialize, param_name, ERROR_TRACE)
 
-class InvalidArrayKeys : public std::invalid_argument {
+class InvalidArrayKeysError : public std::invalid_argument {
  public:
-  InvalidArrayKeys(
+  InvalidArrayKeysError(
     const std::string& object_to_initialize,
     int index,
     const std::vector<std::string>& item_names,
@@ -196,29 +196,18 @@ class InvalidArrayKeys : public std::invalid_argument {
     const std::vector<std::string>& item_names,
     const errors::ErrorTrace& trace
   ) {
-    std::stringstream ss;
-    ss << "[";
-    bool is_first = true;
-    for (const auto& item : item_names) {
-    if (!is_first) {
-        ss << ", ";
-      }
-      ss << item;
-      is_first = false;
-    }
-    ss << "]";
     return "items in " + object_to_initialize +
            " must have keys that are integers in ascending order. "
-           "Unable to find index '" + std::to_string(index) + "' in items '" + ss.str() + "'" + errors::format_source_location(trace);
+           "Unable to find index '" + std::to_string(index) + "' in items '" + miru::utils::to_string(item_names) + "'" + errors::format_source_location(trace);
   }
 };
 
 #define THROW_INVALID_ARRAY_KEYS(object_to_initialize, index, item_names) \
-    throw InvalidArrayKeys(object_to_initialize, index, item_names, ERROR_TRACE)
+    throw InvalidArrayKeysError(object_to_initialize, index, item_names, ERROR_TRACE)
 
-class ChildParentNameMismatch : public std::invalid_argument {
+class ChildParentNameMismatchError : public std::invalid_argument {
  public:
-  ChildParentNameMismatch(
+  ChildParentNameMismatchError(
     const std::string& object_to_initialize,
     const std::string& child_name,
     const std::string& child_parent_name,
@@ -242,6 +231,6 @@ class ChildParentNameMismatch : public std::invalid_argument {
 };
 
 #define THROW_CHILD_PARENT_NAME_MISMATCH(object_to_initialize, child_name, child_parent_name, parent_name) \
-    throw ChildParentNameMismatch(object_to_initialize, child_name, child_parent_name, parent_name, ERROR_TRACE)
+    throw ChildParentNameMismatchError(object_to_initialize, child_name, child_parent_name, parent_name, ERROR_TRACE)
 
 }  // namespace miru::params

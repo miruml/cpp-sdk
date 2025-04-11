@@ -3,11 +3,9 @@
 
 // internal
 #include <miru/filesys/file.hpp>
+#include <miru/filesys/errors.hpp>
 
 // external
-#include <fmt/format.h>
-#include <fmt/os.h>
-#include <fmt/ranges.h>
 #include <yaml-cpp/yaml.h>
 
 #include <magic_enum/magic_enum.hpp>
@@ -44,15 +42,15 @@ FileType File::file_type() const {
   if (extension() == ".json") return FileType::JSON;
   if (extension() == ".yaml") return FileType::YAML;
   if (extension() == ".yml") return FileType::YAML;
-  throw InvalidFileType(path_.string());
+  THROW_INVALID_FILE_TYPE(path_.string(), file_types_to_strings(supported_file_types()));
 }
 
 void File::assert_exists() const {
   if (!std::filesystem::exists(path_)) {
-    throw FileNotFound(path_.string());
+    THROW_FILE_NOT_FOUND(path_.string());
   }
   if (!std::filesystem::is_regular_file(path_)) {
-    throw NotAFile(path_.string());
+    THROW_NOT_A_FILE(path_.string());
   }
 }
 
@@ -76,7 +74,7 @@ nlohmann::json File::read_json() const {
   assert_exists();
 
   if (file_type() != FileType::JSON) {
-    throw InvalidFileType(path_.string());
+    THROW_INVALID_FILE_TYPE(path_.string(), file_types_to_strings(supported_file_types()));
   }
 
   std::ifstream file(path_);
@@ -90,7 +88,7 @@ YAML::Node File::read_yaml() const {
   // of yaml) however if we want to read strict yaml then we should use the dedicated
   // yaml parser
   if (file_type() != FileType::YAML && file_type() != FileType::JSON) {
-    throw InvalidFileType(path_.string());
+    THROW_INVALID_FILE_TYPE(path_.string(), file_types_to_strings(supported_file_types()));
   }
 
   std::ifstream file(path_);
@@ -104,25 +102,7 @@ std::variant<nlohmann::json, YAML::Node> File::read_structured_data() const {
     case FileType::YAML:
       return read_yaml();
   }
-  throw InvalidFileType(path_.string());
+  THROW_INVALID_FILE_TYPE(path_.string(), file_types_to_strings(supported_file_types()));
 }
-
-// =============================== ERROR HANDLING ================================ //
-FileNotFound::FileNotFound(const std::string& path)
-    : std::runtime_error("File '" + path + "' does not exist") {}
-
-NotAFile::NotAFile(const std::string& path)
-    : std::runtime_error("Path '" + path + "' exists but is not a file") {}
-
-InvalidFileType::InvalidFileType(const std::string& file_path)
-    : std::runtime_error(fmt::format(
-          "'{}' is not a supported file type, must be one of: {}", file_path,
-          fmt::join(file_types_to_strings(supported_file_types()), ", "))) {}
-
-InvalidFileType::InvalidFileType(const std::string& file_path,
-                                 const std::vector<FileType>& expected_file_types)
-    : std::runtime_error(fmt::format(
-          "'{}' is not a supported file type, must be one of: {}", file_path,
-          fmt::join(file_types_to_strings(expected_file_types), ", "))) {}
 
 }  // namespace miru::filesys

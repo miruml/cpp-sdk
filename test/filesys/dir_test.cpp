@@ -4,6 +4,7 @@
 
 // internal
 #include <miru/filesys/dir.hpp>
+#include <miru/filesys/errors.hpp>
 #include <test/test_utils/testdata.hpp>
 #include <test/test_utils/utils.hpp>
 
@@ -37,11 +38,11 @@ TEST_P(Exists, Exists) {
       break;
     case DirExceptionType::DirNotFound:
       EXPECT_FALSE(dir.exists());
-      EXPECT_THROW(dir.assert_exists(), miru::filesys::DirNotFound);
+      EXPECT_THROW(dir.assert_exists(), miru::filesys::DirNotFoundError);
       break;
     case DirExceptionType::NotADir:
       EXPECT_FALSE(dir.exists());
-      EXPECT_THROW(dir.assert_exists(), miru::filesys::NotADir);
+      EXPECT_THROW(dir.assert_exists(), miru::filesys::NotADirError);
       break;
     default:
       FAIL() << "Unexpected exception type: " << static_cast<int>(expected_exception);
@@ -184,10 +185,10 @@ TEST_P(GitRepoRootDirs, GitRepoRootDir) {
       EXPECT_EQ(dir.git_repo_root_dir().path(), expected_git_repo_root_dir);
       break;
     case DirExceptionType::DirNotFound:
-      EXPECT_THROW(dir.git_repo_root_dir(), miru::filesys::DirNotFound);
+      EXPECT_THROW(dir.git_repo_root_dir(), miru::filesys::DirNotFoundError);
       break;
     case DirExceptionType::UnableToFindGitRepo:
-      EXPECT_THROW(dir.git_repo_root_dir(), miru::filesys::UnableToFindGitRepo);
+      EXPECT_THROW(dir.git_repo_root_dir(), miru::filesys::UnableToFindGitRepoError);
       break;
     default:
       FAIL() << "Unexpected exception type: " << static_cast<int>(expected_exception);

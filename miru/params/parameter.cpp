@@ -2,9 +2,6 @@
 #include <miru/params/parameter.hpp>
 #include <miru/utils.hpp>
 
-// external
-#include <fmt/ranges.h>
-
 namespace miru::params {
 
 // ================================ ROS2 INTERFACES ================================ //

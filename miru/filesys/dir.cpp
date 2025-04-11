@@ -1,6 +1,6 @@
 // internal
 #include <miru/filesys/dir.hpp>
-
+#include <miru/filesys/errors.hpp>
 namespace miru::filesys {
 
 Dir Dir::parent() const { return Dir(abs_path().parent_path()); }
@@ -12,7 +12,7 @@ Dir Dir::git_repo_root_dir() const {
 
   while (!current.subdir(".git").exists()) {
     if (current.parent().path_ == current.path_) {
-      throw UnableToFindGitRepo(path_.string());
+      THROW_UNABLE_TO_FIND_GIT_REPO(path_.string());
     }
     current = current.parent();
   }
@@ -22,10 +22,10 @@ Dir Dir::git_repo_root_dir() const {
 
 void Dir::assert_exists() const {
   if (!std::filesystem::exists(path_)) {
-    throw DirNotFound(path_.string());
+    THROW_DIR_NOT_FOUND(path_.string());
   }
   if (!std::filesystem::is_directory(path_)) {
-    throw NotADir(path_.string());
+    THROW_NOT_A_DIR(path_.string());
   }
 }
 

@@ -1,12 +1,9 @@
 // std
+#include <algorithm>
+#include <string>
+#include <sstream>
 #include <unordered_map>
 #include <vector>
-
-// external
-#include <fmt/format.h>
-#include <fmt/ranges.h>
-
-#include <algorithm>
 
 // miru
 #include <miru/errors.hpp>
@@ -28,6 +25,21 @@ std::string remove_trailing(const std::string& str, const std::string& chars) {
   return (last != std::string::npos) ? str.substr(0, last + 1) : "";
 }
 
+std::string to_string(const std::vector<std::string>& strings) {
+  std::stringstream ss;
+  ss << "[";
+  bool is_first = true;
+  for (const auto& item : strings) {
+  if (!is_first) {
+      ss << ", ";
+    }
+    ss << item;
+    is_first = false;
+  }
+  ss << "]";
+  return ss.str();
+}
+
 void assert_unique_strings(const std::vector<std::string>& strings) {
   std::unordered_map<std::string, int> counts;
   for (const auto& str : strings) {
@@ -43,8 +55,7 @@ void assert_unique_strings(const std::vector<std::string>& strings) {
   }
 
   if (!duplicates.empty()) {
-    throw std::invalid_argument("duplicates found: " +
-                                fmt::format("{}", fmt::join(duplicates, ", ")));
+    throw std::invalid_argument("duplicates found: " + to_string(duplicates));
   }
 }
 

@@ -18,9 +18,9 @@ using ParametersView = miru::params::ParametersView;
 using ParameterPtr = const Parameter*;
 using ParameterPtrs = std::vector<ParameterPtr>;
 
-// Define type trait for parameter containers
+// Define type trait for parameter roots
 template<typename T>
-struct is_parameter_container : std::disjunction<
+struct is_parameter_root : std::disjunction<
   std::is_same<T, Parameter>,
   std::is_same<T, ParametersView>,
   std::is_same<T, std::vector<Parameter>>,
@@ -31,7 +31,7 @@ struct is_parameter_container : std::disjunction<
 
 // Helper variable template for cleaner syntax
 template<typename T>
-inline constexpr bool is_parameter_container_v = is_parameter_container<T>::value;
+inline constexpr bool is_parameter_root_v = is_parameter_root<T>::value;
 
 // ================================ FIND PARAMETERS ================================ //
 void find_all_recursive_helper(
@@ -70,17 +70,17 @@ ParameterPtrs find_all(
   const SearchParamFilters& filters
 );
 
-template<typename containerT>
-typename std::enable_if<is_parameter_container<containerT>::value, ParameterPtr>::type
+template<typename rootT>
+typename std::enable_if<is_parameter_root<rootT>::value, ParameterPtr>::type
 find_one(
-  const containerT& container,
+  const rootT& root,
   const SearchParamFilters& filters,
   bool allow_throw = true
 ) {
-  ParameterPtrs result = find_all(container, filters);
+  ParameterPtrs result = find_all(root, filters);
   if (result.size() > 1) {
     if (allow_throw) {
-      throw TooManyResults("Multiple parameters found for filters: " + to_string(filters));
+      throw TooManyResultsError("Multiple parameters found for filters: " + to_string(filters));
     } else {
       return nullptr;
     }
@@ -89,56 +89,56 @@ find_one(
 }
 
 // =================================== EXISTS ==================================== //
-template<typename containerT>
-typename std::enable_if<is_parameter_container<containerT>::value, bool>::type
+template<typename rootT>
+typename std::enable_if<is_parameter_root<rootT>::value, bool>::type
 has_param(
-  const containerT& container,
+  const rootT& root,
   const SearchParamFilters& filters
 ) {
-  return !find_all(container, filters).empty();
+  return !find_all(root, filters).empty();
 }
 
 // ================================= GET PARAMS ==================================== //
-template<typename containerT>
-typename std::enable_if<is_parameter_container_v<containerT>, std::vector<Parameter>>::type
+template<typename rootT>
+typename std::enable_if<is_parameter_root_v<rootT>, std::vector<Parameter>>::type
 get_params(
-  const containerT& container,
+  const rootT& root,
   const SearchParamFilters& filters
 ) {
   std::vector<Parameter> result;
-  for (const auto& param : find_all(container, filters)) {
+  for (const auto& param : find_all(root, filters)) {
     result.push_back(*param);
   }
   return result;
 };
 
 // ================================== GET PARAM ==================================== //
-template<typename containerT>
-typename std::enable_if<is_parameter_container_v<containerT>, Parameter>::type
+template<typename rootT>
+typename std::enable_if<is_parameter_root_v<rootT>, Parameter>::type
 get_param(
-  const containerT& container,
+  const rootT& root,
   const SearchParamFilters& filters
 ) {
   const Parameter* result = find_one(
-    container,
+    root,
     filters,
    true 
   );
   if (result == nullptr) {
-    throw ParameterNotFound("Parameter not found");
+    throw ParameterNotFoundError("Parameter not found");
   }
   return *result;
 }
 
-template<typename containerT>
-typename std::enable_if<is_parameter_container_v<containerT>, bool>::type
+template<typename rootT>
+typename std::enable_if<is_parameter_root_v<rootT>, bool>::type
 try_get_param(
-  const containerT& container,
+  const rootT& root,
   const SearchParamFilters& filters,
   Parameter& param_result
 ) {
   ParameterPtr ptr_result = find_one(
-    container,
+    root,
     filters,
     false
   );
@@ -148,15 +148,15 @@ try_get_param(
   return ptr_result != nullptr;
 }
 
-template<typename containerT, typename ValueT>
-typename std::enable_if<is_parameter_container_v<containerT>, bool>::type
+template<typename rootT, typename ValueT>
+typename std::enable_if<is_parameter_root_v<rootT>, bool>::type
 try_get_param(
-  const containerT& container,
+  const rootT& root,
   const SearchParamFilters& filters,
   ValueT & value_result 
 ) {
   ParameterPtr ptr_result = find_one(
-    container,
+    root,
     filters,
     false
   );
@@ -166,15 +166,15 @@ try_get_param(
   return ptr_result != nullptr;
 }
 
-template<typename containerT, typename ValueT>
-typename std::enable_if<is_parameter_container_v<containerT>, ValueT>::type
+template<typename rootT, typename ValueT>
+typename std::enable_if<is_parameter_root_v<rootT>, ValueT>::type
 get_param_or(
-  const containerT& container,
+  const rootT& root,
   const SearchParamFilters& filters,
   const ValueT & default_value
 ) {
   ParameterPtr ptr_result = find_one(
-    container,
+    root,
     filters,
     false
   );
@@ -185,16 +185,16 @@ get_param_or(
   }
 }
 
-template<typename containerT, typename ValueT>
-typename std::enable_if<is_parameter_container_v<containerT>, bool>::type
+template<typename rootT, typename ValueT>
+typename std::enable_if<is_parameter_root_v<rootT>, bool>::type
 try_get_param_or(
-  const containerT& container,
+  const rootT& root,
   const SearchParamFilters& filters,
   ValueT & result,
   const ValueT & default_value
 ) {
   ParameterPtr ptr_result = find_one(
-    container,
+    root,
     filters,
     false
   );

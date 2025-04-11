@@ -10,7 +10,6 @@
 
 // external
 #include <gtest/gtest.h>
-#include <boost/stacktrace.hpp>
 
 namespace test::params {
 

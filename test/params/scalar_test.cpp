@@ -51,8 +51,8 @@ TEST_F(ScalarConversion, bool_conversion_failure) {
     miru::params::Scalar scalar(test_case.str);
     switch (test_case.expected_exception) {
       case test::utils::StringConversionException::InvalidTypeConversion:
-        EXPECT_THROW(scalar.as_bool(), miru::params::InvalidScalarConversion);
-        EXPECT_THROW(scalar.as<bool>(), miru::params::InvalidScalarConversion);
+        EXPECT_THROW(scalar.as_bool(), miru::params::InvalidScalarConversionError);
+        EXPECT_THROW(scalar.as<bool>(), miru::params::InvalidScalarConversionError);
         break;
       default:
         FAIL() << "Unexpected exception type";
@@ -82,7 +82,7 @@ TEST_F(ScalarConversion, int_conversion_failure) {
           using T = std::decay_t<decltype(arg)>;
           switch (test_case.expected_exception) {
             case test::utils::StringConversionException::InvalidTypeConversion:
-              EXPECT_THROW(scalar.as<T>(), miru::params::InvalidScalarConversion);
+              EXPECT_THROW(scalar.as<T>(), miru::params::InvalidScalarConversionError);
               break;
             default:
               FAIL() << "Unexpected exception type";
@@ -114,7 +114,7 @@ TEST_F(ScalarConversion, double_conversion_failure) {
           using T = std::decay_t<decltype(arg)>;
           switch (test_case.expected_exception) {
             case test::utils::StringConversionException::InvalidTypeConversion:
-              EXPECT_THROW(scalar.as<T>(), miru::params::InvalidScalarConversion);
+              EXPECT_THROW(scalar.as<T>(), miru::params::InvalidScalarConversionError);
               break;
             default:
               FAIL() << "Unexpected exception type";
@@ -159,7 +159,7 @@ TEST_F(ScalarConversion, bool_array_conversion_failure) {
     std::vector<miru::params::Scalar> scalars = {};
     scalars.push_back(miru::params::Scalar(test_case.str));
     EXPECT_THROW(miru::params::scalar_array_as<bool>(scalars),
-                 miru::params::InvalidScalarConversion);
+                 miru::params::InvalidScalarConversionError);
   }
 }
 
@@ -191,7 +191,7 @@ TEST_F(ScalarConversion, int_array_conversion_failure) {
           switch (test_case.expected_exception) {
             case test::utils::StringConversionException::InvalidTypeConversion:
               EXPECT_THROW(miru::params::scalar_array_as<T>(scalars),
-                           miru::params::InvalidScalarConversion);
+                           miru::params::InvalidScalarConversionError);
               break;
             default:
               FAIL() << "Unexpected exception type";
@@ -229,7 +229,7 @@ TEST_F(ScalarConversion, double_array_conversion_failure) {
           switch (test_case.expected_exception) {
             case test::utils::StringConversionException::InvalidTypeConversion:
               EXPECT_THROW(miru::params::scalar_array_as<T>(scalars),
-                           miru::params::InvalidScalarConversion);
+                           miru::params::InvalidScalarConversionError);
               break;
             default:
               FAIL() << "Unexpected exception type";

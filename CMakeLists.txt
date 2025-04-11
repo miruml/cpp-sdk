@@ -35,7 +35,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Find required packages
-find_package(fmt REQUIRED)
 find_package(magic_enum CONFIG REQUIRED)
 find_package(Boost REQUIRED COMPONENTS asio beast)
 find_package(nlohmann_json 3.11 REQUIRED)
@@ -99,7 +98,6 @@ target_include_directories(miru PUBLIC
 
 # Link dependencies
 target_link_libraries(miru PRIVATE
-    fmt::fmt
     magic_enum::magic_enum
     nlohmann_json::nlohmann_json
     yaml-cpp::yaml-cpp
@@ -135,7 +133,6 @@ if(BUILD_TESTING)
     target_link_libraries(test.out
         PRIVATE
         miru
-        fmt::fmt
         GTest::GTest
         GTest::Main
     )

@@ -95,7 +95,9 @@ class ROS2StyleQuery {
   template<typename ParameterT>
   bool
   get_parameter(const std::string & name, ParameterT & parameter) const {
-    SearchParamFilters filters = SearchParamFiltersBuilder().with_param_name(name).build();
+    SearchParamFiltersBuilder builder;
+    builder.with_param_name(name);
+    SearchParamFilters filters = builder.build();
     return miru::query::try_get_param(roots_, filters, parameter);
   }
 
@@ -122,7 +124,9 @@ class ROS2StyleQuery {
     const std::string & name,
     ParameterT & parameter,
     const ParameterT & alternative_value) const {
-    SearchParamFilters filters = SearchParamFiltersBuilder().with_param_name(name).build();
+    SearchParamFiltersBuilder builder;
+    builder.with_param_name(name);
+    SearchParamFilters filters = builder.build();
     return miru::query::try_get_param_or(roots_, filters, parameter, alternative_value);
   }
 
@@ -145,7 +149,9 @@ class ROS2StyleQuery {
   get_parameter_or(
     const std::string & name,
     const ParameterT & alternative_value) const {
-    SearchParamFilters filters = SearchParamFiltersBuilder().with_param_name(name).build();
+    SearchParamFiltersBuilder builder;
+    builder.with_param_name(name);
+    SearchParamFilters filters = builder.build();
     return miru::query::get_param_or(roots_, filters, alternative_value);
   }
 
@@ -219,7 +225,9 @@ class ROS2StyleQuery {
     const std::string & prefix,
     std::map<std::string, ParameterT> & values
   ) const {
-    SearchParamFilters filters = SearchParamFiltersBuilder().with_prefix(prefix).build();
+    SearchParamFiltersBuilder builder;
+    builder.with_prefix(prefix);
+    SearchParamFilters filters = builder.build();
     std::vector<Parameter> parameters = miru::query::get_params(roots_, filters);
     for (const auto& parameter : parameters) {
       std::string name_wo_prefix = parameter.get_name().substr(prefix.size());

@@ -9,8 +9,6 @@
 
 namespace miru::filesys {
 
-// error handling
-
 class Dir : public Path {
  public:
   explicit Dir(const std::filesystem::path& path) : Path(path) {}
@@ -27,24 +25,6 @@ class Dir : public Path {
   }
 
   Dir git_repo_root_dir() const;
-};
-
-class DirNotFound : public std::runtime_error {
- public:
-  explicit DirNotFound(const std::string& path)
-      : std::runtime_error("Directory '" + path + "' does not exist") {}
-};
-
-class NotADir : public std::runtime_error {
- public:
-  explicit NotADir(const std::string& path)
-      : std::runtime_error("Path '" + path + "' exists but is not a directory") {}
-};
-
-class UnableToFindGitRepo : public std::runtime_error {
- public:
-  explicit UnableToFindGitRepo(const std::string& path)
-      : std::runtime_error("The path '" + path + "' is not part of a git repository") {}
 };
 
 }  // namespace miru::filesys

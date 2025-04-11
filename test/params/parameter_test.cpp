@@ -650,14 +650,14 @@ TEST_F(ParameterConstructors, nested_array_variant_parent_name_mismatch) {
           miru::params::NestedArray{std::vector<miru::params::Parameter>{
               miru::params::Parameter("nested_array.0", std::vector<int>{1, 2, 9}),
               miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})}}),
-      miru::params::ChildParentNameMismatch);
+      miru::params::ChildParentNameMismatchError);
   EXPECT_THROW(
       miru::params::Parameter(
           "too/deep/nested_array",
           miru::params::NestedArray{std::vector<miru::params::Parameter>{
               miru::params::Parameter("nested_array.0", std::vector<int>{1, 2, 9}),
               miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})}}),
-      miru::params::ChildParentNameMismatch);
+      miru::params::ChildParentNameMismatchError);
   EXPECT_THROW(miru::params::Parameter(
                    "nested_array",
                    miru::params::NestedArray{std::vector<miru::params::Parameter>{
@@ -665,7 +665,7 @@ TEST_F(ParameterConstructors, nested_array_variant_parent_name_mismatch) {
                                                std::vector<int>{1, 2, 9}),
                        miru::params::Parameter("too/deep/nested_array.1",
                                                std::vector<int>{4, 5, 6})}}),
-               miru::params::ChildParentNameMismatch);
+               miru::params::ChildParentNameMismatchError);
 }
 
 TEST_F(ParameterConstructors, map_variant) {
@@ -727,21 +727,21 @@ TEST_F(ParameterConstructors, map_variant_parent_name_mismatch) {
           miru::params::Map{std::vector<miru::params::Parameter>{
               miru::params::Parameter("map.param1", miru::params::Scalar("test1")),
               miru::params::Parameter("map.param2", miru::params::Scalar("test2"))}}),
-      miru::params::ChildParentNameMismatch);
+      miru::params::ChildParentNameMismatchError);
   EXPECT_THROW(miru::params::Parameter(
                    "map", miru::params::Map{std::vector<miru::params::Parameter>{
                               miru::params::Parameter("too.deep.map.param1",
                                                       miru::params::Scalar("test1")),
                               miru::params::Parameter("too.deep.map.param2",
                                                       miru::params::Scalar("test2"))}}),
-               miru::params::ChildParentNameMismatch);
+               miru::params::ChildParentNameMismatchError);
   EXPECT_THROW(
       miru::params::Parameter(
           "too.deep.map",
           miru::params::Map{std::vector<miru::params::Parameter>{
               miru::params::Parameter("map.param1", miru::params::Scalar("test1")),
               miru::params::Parameter("map.param2", miru::params::Scalar("test2"))}}),
-      miru::params::ChildParentNameMismatch);
+      miru::params::ChildParentNameMismatchError);
 }
 
 TEST_F(ParameterConstructors, map_array_variant) {
@@ -859,7 +859,7 @@ TEST_F(ParameterConstructors, map_array_variant_parent_name_mismatch) {
                                               miru::params::Scalar("test3")),
                       miru::params::Parameter("arglebargle.1.param2",
                                               miru::params::Scalar("test4"))}})}}),
-      miru::params::ChildParentNameMismatch);
+      miru::params::ChildParentNameMismatchError);
   EXPECT_THROW(
       miru::params::Parameter(
           "map",
@@ -878,7 +878,7 @@ TEST_F(ParameterConstructors, map_array_variant_parent_name_mismatch) {
                                               miru::params::Scalar("test3")),
                       miru::params::Parameter("too.deep.map.1.param2",
                                               miru::params::Scalar("test4"))}})}}),
-      miru::params::ChildParentNameMismatch);
+      miru::params::ChildParentNameMismatchError);
   EXPECT_THROW(
       miru::params::Parameter(
           "too.deep.map",
@@ -896,7 +896,7 @@ TEST_F(ParameterConstructors, map_array_variant_parent_name_mismatch) {
                                               miru::params::Scalar("test3")),
                       miru::params::Parameter("map.1.param2",
                                               miru::params::Scalar("test4"))}})}}),
-      miru::params::ChildParentNameMismatch);
+      miru::params::ChildParentNameMismatchError);
 }
 
 
@@ -945,8 +945,8 @@ void test_conversion_funcs_throw_type_exceptions(
     std::vector<std::function<void()>> conversion_funcs,
     const miru::params::ParameterType target_type) {
   for (const auto &conversion_func : conversion_funcs) {
-    EXPECT_THROW(conversion_func(), miru::params::InvalidParameterType)
-        << "Failed to throw InvalidParameterType for target parameter type '"
+    EXPECT_THROW(conversion_func(), miru::params::InvalidParameterTypeError)
+        << "Failed to throw InvalidParameterTypeError for target parameter type '"
         << target_type << "'";
   }
 }
@@ -1431,7 +1431,7 @@ TEST_F(IntegerCasting, integer_type_casting_failure) {
         [&](auto &&arg) {
           using T = std::decay_t<decltype(arg)>;
           EXPECT_THROW(integer_variant.get_value<T>(),
-                       miru::params::InvalidParameterType);
+                       miru::params::InvalidParameterTypeError);
         },
         test_case.expected);
   }
@@ -1469,7 +1469,7 @@ TEST_F(DoubleCasting, double_type_casting_failure) {
         [&](auto &&arg) {
           using T = std::decay_t<decltype(arg)>;
           EXPECT_THROW(double_variant.get_value<T>(),
-                       miru::params::InvalidParameterType);
+                       miru::params::InvalidParameterTypeError);
         },
         test_case.expected);
   }

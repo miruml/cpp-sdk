@@ -6,15 +6,15 @@
 
 namespace miru::query {
 
-class ParameterNotFound : public std::runtime_error {
+class ParameterNotFoundError : public std::runtime_error {
  public:
-  ParameterNotFound(const std::string& message)
+  ParameterNotFoundError(const std::string& message)
       : std::runtime_error("Parameter not found: " + message) {}
 };
 
-class TooManyResults : public std::runtime_error {
+class TooManyResultsError : public std::runtime_error {
  public:
-  TooManyResults(const std::string& message)
+  TooManyResultsError(const std::string& message)
       : std::runtime_error("Too many results: " + message) {}
 };
 

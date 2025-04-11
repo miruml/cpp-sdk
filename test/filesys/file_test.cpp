@@ -3,6 +3,7 @@
 
 // internal
 #include <miru/filesys/file.hpp>
+#include <miru/filesys/errors.hpp>
 #include <test/test_utils/testdata.hpp>
 #include <test/test_utils/utils.hpp>
 
@@ -118,7 +119,7 @@ TEST_P(FileTypes, FileType) {
       EXPECT_EQ(file.file_type(), file_type);
       break;
     case FileExceptionType::InvalidFileType:
-      EXPECT_THROW(file.file_type(), miru::filesys::InvalidFileType);
+      EXPECT_THROW(file.file_type(), miru::filesys::InvalidFileTypeError);
       break;
     default:
       FAIL() << "Unexpected exception type: " << static_cast<int>(expected_exception);
@@ -165,10 +166,10 @@ TEST_P(AssertExistsTest, AssertExists) {
       EXPECT_NO_THROW(file.assert_exists());
       break;
     case FileExceptionType::FileNotFound:
-      EXPECT_THROW(file.assert_exists(), miru::filesys::FileNotFound);
+      EXPECT_THROW(file.assert_exists(), miru::filesys::FileNotFoundError);
       break;
     case FileExceptionType::NotAFile:
-      EXPECT_THROW(file.assert_exists(), miru::filesys::NotAFile);
+      EXPECT_THROW(file.assert_exists(), miru::filesys::NotAFileError);
       break;
     default:
       FAIL() << "Unexpected exception type: "
@@ -230,11 +231,11 @@ class ReadJson : public ::testing::Test {
 };
 
 TEST_F(ReadJson, FileNotFound) {
-  EXPECT_THROW(doesnt_exist.read_json(), miru::filesys::FileNotFound);
+  EXPECT_THROW(doesnt_exist.read_json(), miru::filesys::FileNotFoundError);
 }
 
 TEST_F(ReadJson, InvalidFileType) {
-  EXPECT_THROW(invalid_file_type.read_json(), miru::filesys::InvalidFileType);
+  EXPECT_THROW(invalid_file_type.read_json(), miru::filesys::InvalidFileTypeError);
 }
 
 TEST_F(ReadJson, InvalidJsonFile) { EXPECT_ANY_THROW(invalid_json_file.read_json()); }
@@ -261,11 +262,11 @@ class ReadYaml : public ::testing::Test {
 };
 
 TEST_F(ReadYaml, FileNotFound) {
-  EXPECT_THROW(doesnt_exist.read_yaml(), miru::filesys::FileNotFound);
+  EXPECT_THROW(doesnt_exist.read_yaml(), miru::filesys::FileNotFoundError);
 }
 
 TEST_F(ReadYaml, InvalidFileType) {
-  EXPECT_THROW(invalid_file_type.read_yaml(), miru::filesys::InvalidFileType);
+  EXPECT_THROW(invalid_file_type.read_yaml(), miru::filesys::InvalidFileTypeError);
 }
 
 TEST_F(ReadYaml, InvalidYamlFile) { EXPECT_ANY_THROW(invalid_yaml_file.read_yaml()); }

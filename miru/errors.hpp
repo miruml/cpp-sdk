@@ -16,9 +16,9 @@ std::string format_source_location(
     const ErrorTrace& trace
 );
 
-class InvalidTypeConversion : public std::runtime_error {
+class InvalidTypeConversionError : public std::runtime_error {
  public:
-  InvalidTypeConversion(
+  InvalidTypeConversionError(
     const std::string& value,
     const std::string& src_type,
     const std::string& dest_type,
@@ -45,7 +45,7 @@ class InvalidTypeConversion : public std::runtime_error {
 #define ERROR_TRACE (miru::errors::ErrorTrace { __FILE__, __FUNCTION__, __LINE__ })
 
 #define THROW_INVALID_TYPE_CONVERSION(value, src_type, dest_type, message) \
-    throw errors::InvalidTypeConversion(value, src_type, dest_type, message, ERROR_TRACE)
+    throw errors::InvalidTypeConversionError(value, src_type, dest_type, message, ERROR_TRACE)
 
 
 

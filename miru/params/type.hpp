@@ -64,14 +64,14 @@ std::string to_string(ParameterType type);
 std::ostream &operator<<(std::ostream &os, const ParameterType &type);
 
 /// Indicate the parameter type does not match the expected type.
-class InvalidParameterValueType : public std::runtime_error {
+class InvalidParameterValueTypeError : public std::runtime_error {
  public:
   /// Construct an instance.
   /**
    * \param[in] expected the expected parameter type.
    * \param[in] actual the actual parameter type.
    */
-  InvalidParameterValueType(ParameterType expected, ParameterType actual)
+  InvalidParameterValueTypeError(ParameterType expected, ParameterType actual)
       : std::runtime_error("expected [" + to_string(expected) + "] got [" +
                            to_string(actual) + "]") {}
 };
