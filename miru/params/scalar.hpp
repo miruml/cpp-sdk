@@ -8,7 +8,7 @@
 #include <vector>
 
 // internal
-#include <miru/params/exceptions.hpp>
+#include <miru/params/errors.hpp>
 #include <miru/params/type.hpp>
 #include <miru/utils.hpp>
 
@@ -83,8 +83,11 @@ class Scalar {
     try {
       return miru::utils::string_as<type>(value_);
     } catch (const std::exception &e) {
-      throw InvalidScalarConversion(value_, to_string(ParameterType::PARAMETER_INTEGER),
-                                    e.what());
+      THROW_INVALID_SCALAR_CONVERSION(
+        value_,
+        to_string(ParameterType::PARAMETER_INTEGER),
+        e.what()
+      );
     }
   }
 
@@ -96,8 +99,11 @@ class Scalar {
     try {
       return miru::utils::string_as<type>(value_);
     } catch (const std::exception &e) {
-      throw InvalidScalarConversion(value_, to_string(ParameterType::PARAMETER_DOUBLE),
-                                    e.what());
+      THROW_INVALID_SCALAR_CONVERSION(
+        value_,
+        to_string(ParameterType::PARAMETER_DOUBLE),
+        e.what()
+      );
     }
   }
 

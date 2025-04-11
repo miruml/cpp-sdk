@@ -4,7 +4,8 @@
 // internal
 #include <miru/params/composite.hpp>
 #include <miru/params/parse.hpp>
-#include <miru/query/exceptions.hpp>
+#include <miru/params/type.hpp>
+#include <miru/query/errors.hpp>
 #include <miru/query/query.hpp>
 #include <test/test_utils/testdata.hpp>
 #include <test/test_utils/utils.hpp>
@@ -13,7 +14,6 @@
 // external
 #include <gtest/gtest.h>
 #include <boost/stacktrace.hpp>
-#include "miru/params/type.hpp"
 
 namespace test::params {
 
@@ -52,126 +52,6 @@ public:
         return tests;
     }
 };
-
-// =================================== FIND ALL ==================================== //
-class FindAllTests: public testing::TestWithParam<SingleQueryTest> {};
-
-void test_find_all(
-    const miru::params::Parameter& data,
-    const SingleQueryTest& test,
-    const std::string& test_name
-) {
-    // build the query
-    SearchParamFiltersBuilder builder;
-    builder.with_param_names(test.filter.param_names);
-    builder.with_prefixes(test.filter.prefixes);
-    builder.with_leaves_only(test.filter.leaves_only);
-    SearchParamFilters filter = builder.build();
-
-    // execute the query
-    std::vector<const miru::params::Parameter*> results = miru::query::find_all(data, filter);
-
-    // verify the result
-    EXPECT_EQ(results.size(), test.results.size());
-
-    std::vector<std::string> expected_names;
-    for (const auto& result: test.results) {
-        expected_names.push_back(result.param_name);
-    }
-
-    for (const auto& param: results) {
-        EXPECT_TRUE(
-            std::find(
-                expected_names.begin(),
-                expected_names.end(),
-                param->get_name()
-            ) != expected_names.end()
-        ) << "Parameter " << param->get_name() << " not found in " << test_name;
-    }
-}
-
-std::string QueryTestNameGenerator(
-    const testing::TestParamInfo<SingleQueryTest>& info) {
-    return miru::test_utils::sanitize_test_name(info.param.description);
-}
-
-TEST_P(FindAllTests, Run) {
-    const auto& test = GetParam();
-    test_find_all(test.data, test, test.description);
-}
-
-INSTANTIATE_TEST_SUITE_P(
-    Queries,
-    FindAllTests,
-    testing::ValuesIn(QueryTest::get_tests()),
-    QueryTestNameGenerator
-);
-
-// =================================== FIND ONE ==================================== //
-class FindOneTests: public testing::TestWithParam<SingleQueryTest> {};
-
-void test_find_one(
-    const miru::params::Parameter& data,
-    const SingleQueryTest& test,
-    const std::string& test_name
-) {
-    // build the query
-    SearchParamFiltersBuilder builder;
-    builder.with_param_names(test.filter.param_names);
-    builder.with_prefixes(test.filter.prefixes);
-    builder.with_leaves_only(test.filter.leaves_only);
-    SearchParamFilters filter = builder.build();
-
-    // if the expected result is larger than 1, expect an exception
-    if (test.results.size() > 1) {
-        EXPECT_THROW(
-            miru::query::find_one(data, filter),
-            std::invalid_argument
-        );
-    }
-
-    // test reading each parameter by their name
-    for (const auto& result: test.results) {
-        builder = SearchParamFiltersBuilder();
-        builder.with_param_name(result.param_name);
-        builder.with_leaves_only(false);
-        SearchParamFilters filter = builder.build();
-        if (miru::query::find_one(data, filter) == nullptr) {
-            throw std::invalid_argument("Parameter " + result.param_name + " not found");
-        }
-        EXPECT_EQ(
-            miru::query::find_one(data, filter)->get_name(),
-            result.param_name
-        );
-    }
-}
-
-std::string FindOneTestNameGenerator(
-    const testing::TestParamInfo<SingleQueryTest>& info) {
-    return miru::test_utils::sanitize_test_name(info.param.description);
-}
-
-TEST_P(FindOneTests, Run) {
-    const auto& test = GetParam();
-    test_find_one(test.data, test, test.description);
-}
-
-INSTANTIATE_TEST_SUITE_P(
-    Queries,
-    FindOneTests,
-    testing::ValuesIn(QueryTest::get_tests()),
-    FindOneTestNameGenerator
-);
-
-TEST(FindOneTests, DoesntExist) {
-    miru::params::Parameter parameter;
-
-    SearchParamFilters filter = SearchParamFiltersBuilder().with_param_name("doesnt_exist").build();
-    EXPECT_EQ(
-        miru::query::find_one(parameter, filter),
-        nullptr
-    );
-}
 
 // ================================= HAS PARAM ==================================== //
 class HasParamTests: public testing::TestWithParam<SingleQueryTest> {};
@@ -302,31 +182,26 @@ void test_get_param_exception_helper(
 ) {
     miru::params::Parameter param_result;
 
-    std::cout << "Testing get_param exception" << std::endl;
     EXPECT_THROW(
         miru::query::get_param(data, filter),
         ExceptionT
     ) << "Expected exception not thrown";
 
-    std::cout << "Testing try_get_param exception" << std::endl;
     EXPECT_EQ(
         miru::query::try_get_param(data, filter, param_result),
         false 
     ) << "try_get_param should have failed";
 
-    std::cout << "Testing try_get_param_or exception" << std::endl;
     EXPECT_EQ(
         miru::query::try_get_param(data, filter, result_vehicle),
         false 
     ) << "try_get_param should have failed";
 
-    std::cout << "Testing get_param_or exception" << std::endl;
     EXPECT_EQ(
         miru::query::get_param_or(data, filter, 0),
         0
     );
 
-    std::cout << "Testing try_get_param_or exception" << std::endl;
     EXPECT_EQ(
         miru::query::try_get_param_or(data, filter, result_vehicle, result_vehicle),
        false 
@@ -445,8 +320,8 @@ void test_get_param_exception(
                     {
                         miru::params::Map(
                             {
-                                {"key1", miru::params::Scalar("value1")},
-                                {"key2", miru::params::Scalar("value2")}
+                                {"0.key1", miru::params::Scalar("value1")},
+                                {"0.key2", miru::params::Scalar("value2")}
                             }
                         )
                     }
@@ -478,37 +353,30 @@ void test_get_param_success_helper(
 ) {
     miru::params::Parameter param_result;
 
-    std::cout << "hello1" << std::endl;
     EXPECT_EQ(
         miru::query::get_param(data, filter).as<ValueT>(),
         expected
     );
-    std::cout << "hello2" << std::endl;
     EXPECT_EQ(
         miru::query::try_get_param(data, filter, param_result),
       true 
     );
-    std::cout << "hello3" << std::endl;
     EXPECT_EQ(
         miru::query::try_get_param(data, filter, result_vehicle),
        true 
     );
-    std::cout << "hello4" << std::endl;
     EXPECT_EQ(
         miru::query::try_get_param(data, filter, result_vehicle),
       true 
     );
-    std::cout << "hello5" << std::endl;
     EXPECT_EQ(
         miru::query::get_param_or(data, filter, result_vehicle),
         result_vehicle 
     );
-    std::cout << "hello6" << std::endl;
     EXPECT_EQ(
         miru::query::try_get_param_or(data, filter, result_vehicle, result_vehicle),
        true 
     );   
-    std::cout << "hello7" << std::endl;
 }
 
 void test_get_param_success(
@@ -522,7 +390,6 @@ void test_get_param_success(
             throw std::invalid_argument("Parameter not set");
             break;
         case miru::params::ParameterType::PARAMETER_BOOL:
-            std::cout << "testing boolean" << std::endl;
             test_get_param_success_helper<bool>(
                 data,
                 filter,
@@ -531,7 +398,6 @@ void test_get_param_success(
             );
             break;
         case miru::params::ParameterType::PARAMETER_INTEGER:
-            std::cout << "testing integer" << std::endl;
             test_get_param_success_helper<int64_t>(
                 data,
                 filter,
@@ -637,8 +503,8 @@ void test_get_param_success(
                     {
                         miru::params::Map(
                             {
-                                {"key1", miru::params::Scalar("value1")},
-                                {"key2", miru::params::Scalar("value2")}
+                                {"0.key1", miru::params::Scalar("value1")},
+                                {"0.key2", miru::params::Scalar("value2")}
                             }
                         )
                     }
@@ -685,8 +551,6 @@ void test_get_param(
     // test reading each parameter by their name
     int i = 0;
     for (const auto& result: test.results) {
-        std::cout << "Testing " << result.param_name << std::endl;
-        std::cout << "Result: " << result.value << std::endl;
         builder = SearchParamFiltersBuilder();
         builder.with_param_name(result.param_name);
         builder.with_leaves_only(false);

@@ -7,7 +7,7 @@
 #include <variant>
 
 // internal
-#include <miru/params/exceptions.hpp>
+#include <miru/params/errors.hpp>
 #include <miru/params/scalar.hpp>
 #include <miru/params/type.hpp>
 #include <miru/params/composite.hpp>

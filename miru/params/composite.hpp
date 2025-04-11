@@ -5,7 +5,7 @@
 #include <string>
 
 // internal
-#include <miru/params/exceptions.hpp>
+#include <miru/params/errors.hpp>
 #include <miru/params/parameter_fwd.hpp>
 #include <miru/params/iterator.hpp>
 #include <miru/utils.hpp>

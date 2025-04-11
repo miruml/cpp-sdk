@@ -1,5 +1,5 @@
 // internal
-#include <miru/params/exceptions.hpp>
+#include <miru/params/errors.hpp>
 #include <miru/params/parameter.hpp>
 #include <miru/utils.hpp>
 
@@ -19,8 +19,11 @@ bool Scalar::as_bool() const {
   try {
     return miru::utils::yaml_string_to_bool(value_);
   } catch (const std::exception& e) {
-    throw InvalidScalarConversion(value_, to_string(ParameterType::PARAMETER_BOOL),
-                                  e.what());
+    THROW_INVALID_SCALAR_CONVERSION(
+      value_,
+      to_string(ParameterType::PARAMETER_BOOL),
+      e.what()
+    );
   }
 }
 
@@ -28,8 +31,11 @@ int64_t Scalar::as_int() const {
   try {
     return miru::utils::string_to_int64(value_);
   } catch (const std::exception& e) {
-    throw InvalidScalarConversion(value_, to_string(ParameterType::PARAMETER_INTEGER),
-                                  e.what());
+    THROW_INVALID_SCALAR_CONVERSION(
+      value_,
+      to_string(ParameterType::PARAMETER_INTEGER),
+      e.what()
+    );
   }
 }
 
@@ -37,8 +43,11 @@ double Scalar::as_double() const {
   try {
     return miru::utils::string_to_double(value_);
   } catch (const std::exception& e) {
-    throw InvalidScalarConversion(value_, to_string(ParameterType::PARAMETER_DOUBLE),
-                                  e.what());
+    THROW_INVALID_SCALAR_CONVERSION(
+      value_,
+      to_string(ParameterType::PARAMETER_DOUBLE),
+      e.what()
+    );
   }
 }
 

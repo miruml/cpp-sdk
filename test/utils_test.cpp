@@ -144,7 +144,7 @@ TEST_F(UtilsIntegerCasting, integer_type_casting_failure) {
         [&](auto&& arg) {
           using T = std::decay_t<decltype(arg)>;
           EXPECT_THROW(miru::utils::int64_as<T>(test_case.input),
-                       miru::utils::InvalidTypeConversion);
+                       miru::errors::InvalidTypeConversion);
         },
         test_case.expected);
   }
@@ -179,7 +179,7 @@ TEST_F(UtilsDoubleCasting, double_type_casting_failure) {
         [&](auto&& arg) {
           using T = std::decay_t<decltype(arg)>;
           EXPECT_THROW(miru::utils::double_as<T>(test_case.input),
-                       miru::utils::InvalidTypeConversion);
+                       miru::errors::InvalidTypeConversion);
         },
         test_case.expected);
   }
@@ -206,9 +206,9 @@ TEST_F(UtilsStringConversion, bool_conversion_failure) {
     switch (test_case.expected_exception) {
       case test::utils::StringConversionException::InvalidTypeConversion:
         EXPECT_THROW(miru::utils::yaml_string_to_bool(test_case.str),
-                     miru::utils::InvalidTypeConversion);
+                     miru::errors::InvalidTypeConversion);
         EXPECT_THROW(miru::utils::string_as<bool>(test_case.str),
-                     miru::utils::InvalidTypeConversion);
+                     miru::errors::InvalidTypeConversion);
         break;
       default:
         FAIL() << "Unexpected exception type";
@@ -239,7 +239,7 @@ TEST_F(UtilsStringConversion, int_conversion_failure) {
           switch (test_case.expected_exception) {
             case test::utils::StringConversionException::InvalidTypeConversion:
               EXPECT_THROW(miru::utils::string_as<T>(test_case.str),
-                           miru::utils::InvalidTypeConversion)
+                           miru::errors::InvalidTypeConversion)
                   << "Exception not thrown for " << test_case.str;
               break;
             default:
@@ -273,7 +273,7 @@ TEST_F(UtilsStringConversion, double_conversion_failure) {
           switch (test_case.expected_exception) {
             case test::utils::StringConversionException::InvalidTypeConversion:
               EXPECT_THROW(miru::utils::string_as<T>(test_case.str),
-                           miru::utils::InvalidTypeConversion);
+                           miru::errors::InvalidTypeConversion);
               break;
             default:
               FAIL() << "Unexpected exception type";
@@ -316,7 +316,7 @@ TEST_F(UtilsStringConversion, bool_array_conversion_failure) {
     std::vector<std::string> strs = {};
     strs.push_back(test_case.str);
     EXPECT_THROW(miru::utils::string_array_as<bool>(strs),
-                 miru::utils::InvalidTypeConversion);
+                 miru::errors::InvalidTypeConversion);
   }
 }
 
@@ -347,7 +347,7 @@ TEST_F(UtilsStringConversion, int_array_conversion_failure) {
           switch (test_case.expected_exception) {
             case test::utils::StringConversionException::InvalidTypeConversion:
               EXPECT_THROW(miru::utils::string_array_as<T>(strs),
-                           miru::utils::InvalidTypeConversion);
+                           miru::errors::InvalidTypeConversion);
               break;
             default:
               FAIL() << "Unexpected exception type";
@@ -384,7 +384,7 @@ TEST_F(UtilsStringConversion, double_array_conversion_failure) {
           switch (test_case.expected_exception) {
             case test::utils::StringConversionException::InvalidTypeConversion:
               EXPECT_THROW(miru::utils::string_array_as<T>(strs),
-                           miru::utils::InvalidTypeConversion);
+                           miru::errors::InvalidTypeConversion);
               break;
             default:
               FAIL() << "Unexpected exception type";

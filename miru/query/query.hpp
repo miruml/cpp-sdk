@@ -1,8 +1,8 @@
 #pragma once
 
 // internal
-#include "miru/params/composite.hpp"
-#include "miru/query/exceptions.hpp"
+#include <miru/params/composite.hpp>
+#include <miru/query/errors.hpp>
 #include <miru/query/filter.hpp>
 #include <miru/params/parameter.hpp>
 
@@ -88,7 +88,7 @@ find_one(
   return result.empty() ? nullptr : result[0];
 }
 
-// =================================== CONTAINS ==================================== //
+// =================================== EXISTS ==================================== //
 template<typename containerT>
 typename std::enable_if<is_parameter_container<containerT>::value, bool>::type
 has_param(

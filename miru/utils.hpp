@@ -8,7 +8,7 @@
 #include <vector>
 
 // internal
-#include <miru/exceptions.hpp>
+#include <miru/errors.hpp>
 
 namespace miru::utils {
 
@@ -63,7 +63,7 @@ constexpr typename std::enable_if<
 int64_as(const int64_t &value) {
   // need to handle unsigned types separately
   if (std::is_unsigned<type>::value && value < 0) {
-    throw utils::InvalidTypeConversion(
+    THROW_INVALID_TYPE_CONVERSION(
         std::to_string(value), "int64_t",
         "integer (type '" + std::string(typeid(type).name()) + "')",
         "value is negative for unsigned type");
@@ -72,7 +72,7 @@ int64_as(const int64_t &value) {
   // check for overflow with the target integer type
   if (value > std::numeric_limits<type>::max() ||
       value < std::numeric_limits<type>::lowest()) {
-    throw utils::InvalidTypeConversion(
+    THROW_INVALID_TYPE_CONVERSION(
         std::to_string(value), "int64_t",
         "integer (type '" + std::string(typeid(type).name()) + "')",
         "value outside target integer range [" +
@@ -88,7 +88,7 @@ double_as(const double &value) {
   // check for overflow with the target floating point type
   if (value > std::numeric_limits<type>::max() ||
       value < std::numeric_limits<type>::lowest()) {
-    throw utils::InvalidTypeConversion(
+    THROW_INVALID_TYPE_CONVERSION(
         std::to_string(value), "double",
         "floating point (type '" + std::string(typeid(type).name()) + "')",
         "value outside target floating point range [" +

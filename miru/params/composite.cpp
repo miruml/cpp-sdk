@@ -16,7 +16,7 @@ void assert_valid_array_element_types(
     const std::string& valid_type_name) {
   for (const auto& item : items) {
     if (!is_valid_type(item)) {
-      throw InvalidParameterType(
+      THROW_INVALID_PARAMETER_TYPE(
           object_to_initialize,
           "Cannot instantiate " + object_to_initialize + " with non-" +
               valid_type_name + " parameters. Item '" + item.get_name() +
@@ -24,8 +24,10 @@ void assert_valid_array_element_types(
     }
   }
 }
-void assert_unique_field_names(const std::string& object_to_initialize,
-                               const std::vector<Parameter>& fields) {
+void assert_unique_field_names(
+  const std::string& object_to_initialize,
+  const std::vector<Parameter>& fields
+) {
   // ensure the field names are unique
   std::vector<std::string> field_names;
   for (const auto& field : fields) {
@@ -34,16 +36,20 @@ void assert_unique_field_names(const std::string& object_to_initialize,
   try {
     utils::assert_unique_strings(field_names);
   } catch (const std::exception& e) {
-    throw DuplicateFieldNames(object_to_initialize, std::string(e.what()));
+    THROW_DUPLICATE_FIELD_NAMES(object_to_initialize, std::string(e.what()));
   }
 }
 
 void assert_identical_parent_names(const std::vector<Parameter>& fields) {
   for (const auto& field : fields) {
     if (field.get_parent_name() != fields[0].get_parent_name()) {
-      throw MismatchingParentNames("Map", fields[0].get_name(),
-                                   fields[0].get_parent_name(), field.get_name(),
-                                   field.get_parent_name());
+      THROW_MISMATCHING_PARENT_NAMES(
+        "Map",
+        fields[0].get_name(),
+        fields[0].get_parent_name(),
+        field.get_name(),
+        field.get_parent_name()
+      );
     }
   }
 }
@@ -51,7 +57,11 @@ void assert_identical_parent_names(const std::vector<Parameter>& fields) {
 void assert_ascending_integer_keys(const std::vector<Parameter>& items) {
   for (size_t i = 0; i < items.size(); ++i) {
     if (items[i].get_key() != std::to_string(i)) {
-      throw InvalidArrayKeys("MapArray", i, items[i].get_name());
+      std::vector<std::string> item_names;
+      for (const auto& item : items) {
+        item_names.push_back(item.get_name());
+      }
+      THROW_INVALID_ARRAY_KEYS("MapArray", i, item_names);
     }
   }
 }
@@ -59,7 +69,7 @@ void assert_ascending_integer_keys(const std::vector<Parameter>& items) {
 // =================================== MAP ======================================== //
 Map::Map(const std::vector<Parameter>& fields): sorted_fields_(fields) {
   if (fields.empty()) {
-    throw EmptyInitialization("Map");
+    THROW_EMPTY_INITIALIZATION("Map");
   }
 
   // name uniqueness and parent name consistency
@@ -117,7 +127,7 @@ std::ostream& operator<<(std::ostream& os, const Map& map) {
 // ================================= MAP ARRAY ===================================== //
 MapArray::MapArray(const std::vector<Parameter>& items) : items_(items) {
   if (items.empty()) {
-    throw EmptyInitialization("MapArray");
+    THROW_EMPTY_INITIALIZATION("MapArray");
   }
 
   // ensure the items are maps
@@ -140,7 +150,14 @@ MapArray::MapArray(const std::vector<Parameter>& items) : items_(items) {
 MapArray::MapArray(const std::vector<Map>& items) {
   std::vector<Parameter> parameters;
   for (size_t i = 0; i < items.size(); ++i) {
-    parameters.push_back(Parameter(items[i].begin()->get_parent_name(), items[i]));
+    std::string parent_name = items[i].begin()->get_parent_name();
+    if (parent_name.empty()) {
+      THROW_EMPTY_PARENT_NAME(
+        "MapArray",
+        items[i].begin()->get_name()
+      );
+    }
+    parameters.push_back(Parameter(parent_name, items[i]));
   }
   *this = MapArray(parameters);
 }
@@ -168,7 +185,7 @@ std::ostream& operator<<(std::ostream& os, const MapArray& map_array) {
 // ================================= NESTED ARRAY ================================== //
 NestedArray::NestedArray(const std::vector<Parameter>& items) : items_(items) {
   if (items.empty()) {
-    throw EmptyInitialization("NestedArray");
+    THROW_EMPTY_INITIALIZATION("NestedArray");
   }
 
   // ensure the items are arrays
@@ -192,7 +209,14 @@ NestedArray::NestedArray(const std::vector<Parameter>& items) : items_(items) {
 NestedArray::NestedArray(const std::vector<NestedArray>& items) {
   std::vector<Parameter> parameters;
   for (size_t i = 0; i < items.size(); ++i) {
-    parameters.push_back(Parameter(items[i].begin()->get_parent_name(), items[i]));
+    std::string parent_name = items[i].begin()->get_parent_name();
+    if (parent_name.empty()) {
+      THROW_EMPTY_PARENT_NAME(
+        "NestedArray",
+        items[i].begin()->get_name()
+      );
+    }
+    parameters.push_back(Parameter(parent_name, items[i]));
   }
   *this = NestedArray(parameters);
 }

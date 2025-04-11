@@ -6,7 +6,7 @@
 #include <string>
 
 // internal
-#include <miru/params/exceptions.hpp>
+#include <miru/params/errors.hpp>
 #include <miru/params/scalar.hpp>
 #include <miru/params/type.hpp>
 #include <miru/params/value.hpp>
@@ -98,11 +98,11 @@ class Parameter {
     try {
       return value_.get<ParamT>();
     } catch (const InvalidParameterValueType &ex) {
-      throw InvalidParameterType(this->name_, ex.what());
+      THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
     } catch (const InvalidScalarConversion &ex) {
-      throw InvalidParameterType(this->name_, ex.what());
-    } catch (const utils::InvalidTypeConversion &ex) {
-      throw InvalidParameterType(this->name_, ex.what());
+      THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
+    } catch (const errors::InvalidTypeConversion &ex) {
+      THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
     }
   }
 
@@ -114,11 +114,11 @@ class Parameter {
     try {
       return value_.get<T>();
     } catch (const InvalidParameterValueType &ex) {
-      throw InvalidParameterType(this->name_, ex.what());
+      THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
     } catch (const InvalidScalarConversion &ex) {
-      throw InvalidParameterType(this->name_, ex.what());
-    } catch (const utils::InvalidTypeConversion &ex) {
-      throw InvalidParameterType(this->name_, ex.what());
+      THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
+    } catch (const errors::InvalidTypeConversion &ex) {
+      THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
     }
   }
 
@@ -190,11 +190,11 @@ class Parameter {
     try {
       return value_.get<ParamT>();
     } catch (const InvalidParameterValueType &ex) {
-      throw InvalidParameterType(this->name_, ex.what());
+      THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
     } catch (const InvalidScalarConversion &ex) {
-      throw InvalidParameterType(this->name_, ex.what());
-    } catch (const utils::InvalidTypeConversion &ex) {
-      throw InvalidParameterType(this->name_, ex.what());
+      THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
+    } catch (const errors::InvalidTypeConversion &ex) {
+      THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
     }
   }
 
@@ -204,11 +204,11 @@ class Parameter {
     try {
       return value_.get<T>();
     } catch (const InvalidParameterValueType &ex) {
-      throw InvalidParameterType(this->name_, ex.what());
+      THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
     } catch (const InvalidScalarConversion &ex) {
-      throw InvalidParameterType(this->name_, ex.what());
-    } catch (const utils::InvalidTypeConversion &ex) {
-      throw InvalidParameterType(this->name_, ex.what());
+      THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
+    } catch (const errors::InvalidTypeConversion &ex) {
+      THROW_INVALID_PARAMETER_TYPE(this->name_, ex.what());
     }
   }
 

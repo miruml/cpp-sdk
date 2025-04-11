@@ -2,7 +2,7 @@
 #include <string>
 
 // internal
-#include <miru/params/exceptions.hpp>
+#include <miru/params/errors.hpp>
 #include <miru/params/parameter.hpp>
 #include <test/utils_test.hpp>
 

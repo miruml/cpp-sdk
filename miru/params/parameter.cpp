@@ -22,8 +22,12 @@ void validate_child_parent_name_consistency(const std::string& parent_name,
                                             const Parameter& child) {
   // the child's name must follow its parent's name
   if (child.get_parent_name() != parent_name) {
-    throw ChildParentNameMismatch("Parameter", child.get_name(),
-                                  child.get_parent_name(), parent_name);
+    THROW_CHILD_PARENT_NAME_MISMATCH(
+      "Parameter",
+      child.get_name(),
+      child.get_parent_name(),
+      parent_name
+    );
   }
 }
 

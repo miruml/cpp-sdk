@@ -7,7 +7,7 @@
 #include <string>
 
 // miru
-#include <miru/exceptions.hpp>
+#include <miru/errors.hpp>
 
 namespace miru::params {
 
