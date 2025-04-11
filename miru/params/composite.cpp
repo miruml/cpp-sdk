@@ -56,38 +56,6 @@ void assert_ascending_integer_keys(const std::vector<Parameter>& items) {
   }
 }
 
-// ================================ ITERATORS ====================================== //
-
-// parameter iterator
-ParameterIterator::ParameterIterator(std::vector<Parameter>::const_iterator it) : it_(it) {}
-
-ParameterIterator& ParameterIterator::operator++() {
-    ++it_;
-    return *this;
-}
-
-ParameterIterator ParameterIterator::operator++(int) {
-    ParameterIterator tmp = *this;
-    ++it_;
-    return tmp;
-}
-
-ParameterIterator::reference ParameterIterator::operator*() const {
-    return *it_;
-}
-
-ParameterIterator::pointer ParameterIterator::operator->() const {
-    return &(*it_);
-}
-
-bool ParameterIterator::operator==(const ParameterIterator& other) const {
-    return it_ == other.it_;
-}
-
-bool ParameterIterator::operator!=(const ParameterIterator& other) const {
-    return it_ != other.it_;
-}
-
 // =================================== MAP ======================================== //
 Map::Map(const std::vector<Parameter>& fields): sorted_fields_(fields) {
   if (fields.empty()) {

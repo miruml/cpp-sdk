@@ -369,10 +369,6 @@ TEST_F(ParseYamlNode, ValidMapArray) {
   auto param = miru::params::parse_yaml_node(
     "config-slug", map_array_yaml
   );
-  auto params = miru::query::get_parameters(
-    param,
-    miru::query::SearchParamFilters()
-  );
 
   EXPECT_EQ(param.as_map_array(), miru::params::MapArray({
     miru::params::Map({

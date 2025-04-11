@@ -1,6 +1,9 @@
 #pragma once
 
 // internal
+#include "miru/params/composite.hpp"
+#include "miru/query/exceptions.hpp"
+#include <miru/query/filter.hpp>
 #include <miru/params/parameter.hpp>
 
 namespace miru::query {
@@ -10,253 +13,197 @@ using ParameterType = miru::params::ParameterType;
 using Map = miru::params::Map;
 using NestedArray = miru::params::NestedArray;
 using MapArray = miru::params::MapArray;
+using ParametersView = miru::params::ParametersView;
 
-// ================================ SEARCH FILTERS ================================ //
-class SearchParamFilters {
-public:
-  SearchParamFilters() : param_names(), prefix(), leaves_only(true) {}
+using ParameterPtr = const Parameter*;
+using ParameterPtrs = std::vector<ParameterPtr>;
 
-  std::vector<std::string> param_names;
-  std::string prefix;
-  bool leaves_only;
+// Define type trait for parameter containers
+template<typename T>
+struct is_parameter_container : std::disjunction<
+  std::is_same<T, Parameter>,
+  std::is_same<T, ParametersView>,
+  std::is_same<T, std::vector<Parameter>>,
+  std::is_same<T, Map>,
+  std::is_same<T, NestedArray>,
+  std::is_same<T, MapArray>
+> {};
 
-  bool has_param_name_filter() const { return !param_names.empty(); }
-  bool has_prefix_filter() const { return !prefix.empty(); }
-
-  bool matches(const Parameter& parameter) const;
-  bool continue_search(const Parameter& parameter) const;
-
-private:
-  friend class SearchParamFiltersBuilder;
-
-  // matching operations
-  bool matches_name(const std::string_view& param_name) const;
-  bool matches_prefix(const std::string_view& param_name) const;
-  bool matches_leaves_only(const Parameter& parameter) const;
-
-  // continue searching operations
-  bool child_might_match_name(const Parameter& parameter) const;
-  bool child_might_match_prefix(const Parameter& parameter) const;
-};
-
-std::string to_string(const SearchParamFilters& filters);
-
-class SearchParamFiltersBuilder {
-public:
-  SearchParamFiltersBuilder() : filters() {}
-
-  SearchParamFiltersBuilder& with_param_name(const std::string& param_name);
-  SearchParamFiltersBuilder& with_param_names(
-    const std::vector<std::string>& param_names
-  );
-  SearchParamFiltersBuilder& with_prefix(const std::string& prefix);
-  SearchParamFilters build() const { return filters; }
-
-private:
-  SearchParamFilters filters;
-};
+// Helper variable template for cleaner syntax
+template<typename T>
+inline constexpr bool is_parameter_container_v = is_parameter_container<T>::value;
 
 // ================================ FIND PARAMETERS ================================ //
-void find_parameters_recursive_helper(
+void find_all_recursive_helper(
   const Parameter& parameter,
-  std::vector<const Parameter*>& result,
+  ParameterPtrs& result,
   const SearchParamFilters& filters
 );
 
-std::vector<const Parameter*> find_parameters_recursive(
+ParameterPtrs find_all(
   const Parameter& parameter,
   const SearchParamFilters& filters
 );
 
-std::vector<const Parameter*> find_parameters_recursive(
+ParameterPtrs find_all(
+  const ParametersView& roots,
+  const SearchParamFilters& filters
+);
+
+ParameterPtrs find_all(
   const std::vector<Parameter>& roots,
   const SearchParamFilters& filters
 );
 
-std::vector<const Parameter*> find_parameters_recursive(
+ParameterPtrs find_all(
   const Map& map,
   const SearchParamFilters& filters
 );
 
-std::vector<const Parameter*> find_parameters_recursive(
+ParameterPtrs find_all(
   const NestedArray& nested_array,
   const SearchParamFilters& filters
 );
 
-std::vector<const Parameter*> find_parameters_recursive(
+ParameterPtrs find_all(
   const MapArray& map_array,
   const SearchParamFilters& filters
 );
 
-template<typename searchT>
-typename std::enable_if<
-  std::is_same<searchT, Parameter>::value ||
-  std::is_same<searchT, Map>::value ||
-  std::is_same<searchT, NestedArray>::value ||
-  std::is_same<searchT, MapArray>::value,
-  const Parameter*>::type
-find_parameter_recursive(
-  const searchT& search_parameter,
-  const SearchParamFilters& filters
+template<typename containerT>
+typename std::enable_if<is_parameter_container<containerT>::value, ParameterPtr>::type
+find_one(
+  const containerT& container,
+  const SearchParamFilters& filters,
+  bool allow_throw = true
 ) {
-  std::vector<const Parameter*> result;
-  find_parameters_recursive_helper(search_parameter, result, filters);
+  ParameterPtrs result = find_all(container, filters);
   if (result.size() > 1) {
-    throw std::invalid_argument("Multiple parameters found for filters: " + to_string(filters));
+    if (allow_throw) {
+      throw TooManyResults("Multiple parameters found for filters: " + to_string(filters));
+    } else {
+      return nullptr;
+    }
   }
   return result.empty() ? nullptr : result[0];
 }
 
-// ============================== CONTAINS PARAMETER =============================== //
-template<typename searchT>
-constexpr typename std::enable_if<
-  std::is_same<searchT, Parameter>::value ||
-  std::is_same<searchT, Map>::value ||
-  std::is_same<searchT, NestedArray>::value ||
-  std::is_same<searchT, MapArray>::value,
-  bool>::type
-contains_parameter(
-  const searchT& search_parameter,
+// =================================== CONTAINS ==================================== //
+template<typename containerT>
+typename std::enable_if<is_parameter_container<containerT>::value, bool>::type
+has_param(
+  const containerT& container,
   const SearchParamFilters& filters
 ) {
-  return find_parameter_recursive(search_parameter, filters) != nullptr;
+  return !find_all(container, filters).empty();
 }
 
-// =================================== GETTERS ===================================== //
-template<typename searchT>
-constexpr typename std::enable_if<
-  std::is_same<searchT, Parameter>::value ||
-  std::is_same<searchT, Map>::value ||
-  std::is_same<searchT, NestedArray>::value ||
-  std::is_same<searchT, MapArray>::value,
-  Parameter>::type
-get_parameter(
-  const searchT& search_parameter,
-  const SearchParamFilters& filters
-) {
-  const Parameter* result = find_parameter_recursive(
-    search_parameter,
-    filters
-  );
-  if (result == nullptr) {
-    throw std::invalid_argument("Parameter not found");
-  }
-  return *result;
-}
-
-template<typename searchT>
-constexpr typename std::enable_if<
-  std::is_same<searchT, Parameter>::value ||
-  std::is_same<searchT, Map>::value ||
-  std::is_same<searchT, NestedArray>::value ||
-  std::is_same<searchT, MapArray>::value,
-  bool>::type
-get_parameter(
-  const searchT& search_parameter,
-  const SearchParamFilters& filters,
-  Parameter& result
-) {
-  const Parameter* find_result = find_parameter_recursive(
-    search_parameter,
-    filters
-  );
-  if (find_result == nullptr) {
-    return false;
-  }
-  result = *find_result;
-  return true;
-}
-
-template<typename searchT, typename ValueT>
-constexpr typename std::enable_if<
-  std::is_same<searchT, Parameter>::value ||
-  std::is_same<searchT, Map>::value ||
-  std::is_same<searchT, NestedArray>::value ||
-  std::is_same<searchT, MapArray>::value,
-  bool>::type
-get_parameter(
-  const searchT& search_parameter,
-  const SearchParamFilters& filters,
-  ValueT & value
-) {
-  const Parameter* result = find_parameter_recursive(
-    search_parameter,
-    filters
-  );
-  if (result == nullptr) {
-    return false;
-  }
-  value = result->get_value<ValueT>();
-  return true;
-}
-
-template<typename searchT, typename ValueT>
-constexpr typename std::enable_if<
-  std::is_same<searchT, Parameter>::value ||
-  std::is_same<searchT, Map>::value ||
-  std::is_same<searchT, NestedArray>::value ||
-  std::is_same<searchT, MapArray>::value,
-  ValueT>::type
-get_parameter_or(
-  const searchT& search_parameter,
-  const SearchParamFilters& filters,
-  const ValueT & default_value
-) {
-  ValueT result;
-  if (get_parameter(search_parameter, filters, result)) {
-    return result;
-  }
-  return default_value;
-}
-
-template<typename searchT, typename ValueT>
-constexpr typename std::enable_if<
-  std::is_same<searchT, Parameter>::value ||
-  std::is_same<searchT, Map>::value ||
-  std::is_same<searchT, NestedArray>::value ||
-  std::is_same<searchT, MapArray>::value,
-  bool>::type
-get_parameter_or(
-  const searchT& search_parameter,
-  const SearchParamFilters& filters,
-  ValueT & value,
-  const ValueT & default_value
-) {
-  if (get_parameter(search_parameter, filters, value)) {
-    return true;
-  }
-  value = default_value;
-  return false;
-}
-
-template<typename searchT>
-typename std::enable_if<
-  std::is_same<searchT, Parameter>::value ||
-  std::is_same<searchT, Map>::value ||
-  std::is_same<searchT, NestedArray>::value ||
-  std::is_same<searchT, MapArray>::value,
-  std::vector<Parameter>>::type
-get_parameters(
-  const searchT& search_parameter,
+// ================================= GET PARAMS ==================================== //
+template<typename containerT>
+typename std::enable_if<is_parameter_container_v<containerT>, std::vector<Parameter>>::type
+get_params(
+  const containerT& container,
   const SearchParamFilters& filters
 ) {
   std::vector<Parameter> result;
-  for (const auto& param : find_parameters_recursive(search_parameter, filters)) {
+  for (const auto& param : find_all(container, filters)) {
     result.push_back(*param);
   }
   return result;
 };
 
-template<typename ParameterT>
-bool get_parameters(
-  const Parameter& root,
-  const SearchParamFilters& filters,
-  std::map<std::string, ParameterT>& values
+// ================================== GET PARAM ==================================== //
+template<typename containerT>
+typename std::enable_if<is_parameter_container_v<containerT>, Parameter>::type
+get_param(
+  const containerT& container,
+  const SearchParamFilters& filters
 ) {
-  for (const auto& param : get_parameters(root, filters)) {
-    values[param.get_name()] = param.get_value<ParameterT>();
+  const Parameter* result = find_one(
+    container,
+    filters,
+   true 
+  );
+  if (result == nullptr) {
+    throw ParameterNotFound("Parameter not found");
   }
-  return true;
+  return *result;
+}
+
+template<typename containerT>
+typename std::enable_if<is_parameter_container_v<containerT>, bool>::type
+try_get_param(
+  const containerT& container,
+  const SearchParamFilters& filters,
+  Parameter& param_result
+) {
+  ParameterPtr ptr_result = find_one(
+    container,
+    filters,
+    false
+  );
+  if (ptr_result) {
+    param_result = *ptr_result;
+  }
+  return ptr_result != nullptr;
+}
+
+template<typename containerT, typename ValueT>
+typename std::enable_if<is_parameter_container_v<containerT>, bool>::type
+try_get_param(
+  const containerT& container,
+  const SearchParamFilters& filters,
+  ValueT & value_result 
+) {
+  ParameterPtr ptr_result = find_one(
+    container,
+    filters,
+    false
+  );
+  if (ptr_result) {
+    value_result = ptr_result->as<ValueT>();
+  }
+  return ptr_result != nullptr;
+}
+
+template<typename containerT, typename ValueT>
+typename std::enable_if<is_parameter_container_v<containerT>, ValueT>::type
+get_param_or(
+  const containerT& container,
+  const SearchParamFilters& filters,
+  const ValueT & default_value
+) {
+  ParameterPtr ptr_result = find_one(
+    container,
+    filters,
+    false
+  );
+  if (ptr_result) {
+    return ptr_result->as<ValueT>();
+  } else {
+    return default_value;
+  }
+}
+
+template<typename containerT, typename ValueT>
+typename std::enable_if<is_parameter_container_v<containerT>, bool>::type
+try_get_param_or(
+  const containerT& container,
+  const SearchParamFilters& filters,
+  ValueT & result,
+  const ValueT & default_value
+) {
+  ParameterPtr ptr_result = find_one(
+    container,
+    filters,
+    false
+  );
+  if (ptr_result) {
+    result = ptr_result->as<ValueT>();
+  } else {
+    result = default_value;
+  }
+  return ptr_result != nullptr;
 }
 
 }  // namespace miru::params

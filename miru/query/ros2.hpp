@@ -17,9 +17,9 @@ namespace miru::query {
 using Parameter = miru::params::Parameter;
 
 // Config class
-class ROS2StyleParameterQuery {
+class ROS2StyleQuery {
  public:
-  ROS2StyleParameterQuery(const miru::params::Parameter& root) : root_(root) {}
+  ROS2StyleQuery(const std::vector<miru::params::Parameter>& roots) : roots_(roots) {}
 
     // ============================== ROS2 INTERFACES ============================== //
 
@@ -96,7 +96,7 @@ class ROS2StyleParameterQuery {
   bool
   get_parameter(const std::string & name, ParameterT & parameter) const {
     SearchParamFilters filters = SearchParamFiltersBuilder().with_param_name(name).build();
-    return miru::query::get_parameter(root_, filters, parameter);
+    return miru::query::try_get_param(roots_, filters, parameter);
   }
 
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L823
@@ -123,7 +123,7 @@ class ROS2StyleParameterQuery {
     ParameterT & parameter,
     const ParameterT & alternative_value) const {
     SearchParamFilters filters = SearchParamFiltersBuilder().with_param_name(name).build();
-    return miru::query::get_parameter_or(root_, filters, parameter, alternative_value);
+    return miru::query::try_get_param_or(roots_, filters, parameter, alternative_value);
   }
 
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L842
@@ -146,7 +146,7 @@ class ROS2StyleParameterQuery {
     const std::string & name,
     const ParameterT & alternative_value) const {
     SearchParamFilters filters = SearchParamFiltersBuilder().with_param_name(name).build();
-    return miru::query::get_parameter_or(root_, filters, alternative_value);
+    return miru::query::get_param_or(roots_, filters, alternative_value);
   }
 
 // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L868
@@ -220,7 +220,7 @@ class ROS2StyleParameterQuery {
     std::map<std::string, ParameterT> & values
   ) const {
     SearchParamFilters filters = SearchParamFiltersBuilder().with_prefix(prefix).build();
-    std::vector<Parameter> parameters = miru::query::get_parameters(root_, filters);
+    std::vector<Parameter> parameters = miru::query::get_params(roots_, filters);
     for (const auto& parameter : parameters) {
       std::string name_wo_prefix = parameter.get_name().substr(prefix.size());
       values[name_wo_prefix] = parameter.get_value<ParameterT>();
@@ -229,7 +229,7 @@ class ROS2StyleParameterQuery {
   }
 
  private:
-  miru::params::Parameter root_;
+  std::vector<miru::params::Parameter> roots_;
 };
 
 }  // namespace miru::params

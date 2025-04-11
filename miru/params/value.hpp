@@ -276,8 +276,11 @@ class ParameterValue {
   }
 
   template <typename type>
-  constexpr typename std::enable_if<std::is_convertible<type, std::string>::value,
-                                    const std::string &>::type
+  constexpr typename std::enable_if<
+    std::is_convertible<type, std::string>::value &&
+    !std::is_null_pointer_v<type> && // don't allow null types for strings
+    !std::is_same_v<type, std::nullptr_t>,
+    const std::string &>::type
   get() const {
     return get<ParameterType::PARAMETER_STRING>();
   }
@@ -471,7 +474,7 @@ class ParameterValue {
     return get<ParamT>();
   }
 
-  /// Get the value of parameter as using the given c++ type as a template argument
+  /// Get the value of a parameter using the given c++ type as a template argument
   template <typename T> constexpr
   decltype(auto) as() const {
     return get<T>();

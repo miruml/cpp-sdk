@@ -69,6 +69,7 @@ add_library(miru
     miru/params/composite.hpp
     miru/params/composite.cpp
     miru/params/exceptions.hpp
+    miru/params/iterator.hpp
     miru/params/parameter.hpp
     miru/params/parameter.cpp
     miru/params/parse.hpp
@@ -79,6 +80,8 @@ add_library(miru
     miru/params/value.cpp
     miru/params/utils.hpp
     miru/params/utils.cpp
+    miru/query/filter.hpp
+    miru/query/filter.cpp
     miru/query/query.hpp
     miru/query/query.cpp
     miru/query/ros2.hpp
@@ -122,6 +125,8 @@ if(BUILD_TESTING)
         test/params/scalar_test.cpp
         test/params/parameter_test.cpp
         test/params/utils_test.cpp
+        test/query/filter_test.cpp
+        test/query/query_test.cpp
         test/utils_test.cpp
     )
 

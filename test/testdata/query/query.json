@@ -1,0 +1,423 @@
+[
+    {
+        "description": "simple",
+        "config-slug": "simple",
+        "data": {
+            "boolean": true,
+            "integer": 42,
+            "double": 3.14
+        },
+        "queries": [
+            {
+                "filter": {
+                    "param_names": [],
+                    "prefixes": [],
+                    "leaves_only": true 
+                },
+                "results": [
+                    {
+                        "param_name": "simple.boolean",
+                        "value": true
+                    },
+                    {
+                        "param_name": "simple.integer",
+                        "value": 42
+                    },
+                    {
+                        "param_name": "simple.double",
+                        "value": 3.14
+                    }
+                ]
+            },
+            {
+                "filter": {
+                    "param_names": ["simple.boolean"],
+                    "prefixes": [],
+                    "leaves_only": true 
+                },
+                "results": [
+                    {
+                        "param_name": "simple.boolean",
+                        "value": true
+                    }
+                ]
+            },
+            {
+                "filter": {
+                    "param_names": [],
+                    "prefixes": ["simple"],
+                    "leaves_only": true 
+                },
+                "results": [
+                    {
+                        "param_name": "simple.boolean",
+                        "value": true
+                    },
+                    {
+                        "param_name": "simple.integer",
+                        "value": 42
+                    },
+                    {
+                        "param_name": "simple.double",
+                        "value": 3.14
+                    }
+                ]
+            },
+            {
+                "filter": {
+                    "param_names": [],
+                    "prefixes": ["simple.int"],
+                    "leaves_only": true 
+                },
+                "results": [
+                    {
+                        "param_name": "simple.integer",
+                        "value": 42
+                    }
+                ]
+            }
+        ]
+    },
+
+    {
+        "description": "nested",
+        "config-slug": "nested",
+        "data": {
+            "boolean": true,
+            "integer": 42,
+            "double": 3.14,
+            "string": "Hello, world!",
+            "bool_array": [true, false, true],
+            "int_array": [1, 2, 3],
+            "double_array": [1.0, 2.0, 3.0],
+            "string_array": ["foo", "bar", "baz"],
+            "null": null,
+            "nested_array": [
+                [1, 2, 3],
+                [4, 5, 6],
+                [7, 8, 9]
+            ],
+            "map_array": [
+                {
+                    "key1": "value1",
+                    "key2": "value2"
+                },
+                {
+                    "key3": "value3",
+                    "key4": "value4"
+                },
+                {
+                    "key5": "value5",
+                    "key6": "value6"
+                }
+            ]
+        },
+        "queries": [
+            {
+                "filter": {
+                    "param_names": [],
+                    "prefixes": [],
+                    "leaves_only": true 
+                },
+                "results": [
+                    {
+                        "param_name": "nested.boolean",
+                        "value": true
+                    },
+                    {
+                        "param_name": "nested.integer",
+                        "value": 42
+                    },
+                    {
+                        "param_name": "nested.double",
+                        "value": 3.14
+                    },
+                    {
+                        "param_name": "nested.string",
+                        "value": "Hello, world!"
+                    },
+                    {
+                        "param_name": "nested.bool_array",
+                        "value": [true, false, true]
+                    },
+                    {
+                        "param_name": "nested.int_array",
+                        "value": [1, 2, 3]
+                    },
+                    {
+                        "param_name": "nested.double_array",
+                        "value": [1.0, 2.0, 3.0]
+                    },
+                    {
+                        "param_name": "nested.string_array",
+                        "value": ["foo", "bar", "baz"]
+                    },
+                    {
+                        "param_name": "nested.null",
+                        "value": null
+                    },
+                    {
+                        "param_name": "nested.nested_array",
+                        "value": [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+                    },
+                    {
+                        "param_name": "nested.map_array.0.key1",
+                        "value": "value1"
+                    },
+                    {
+                        "param_name": "nested.map_array.0.key2",
+                        "value": "value2"
+                    },
+                    {
+                        "param_name": "nested.map_array.1.key3",
+                        "value": "value3"
+                    },
+                    {
+                        "param_name": "nested.map_array.1.key4",
+                        "value": "value4"
+                    },
+                    {
+                        "param_name": "nested.map_array.2.key5",
+                        "value": "value5"
+                    },
+                    {
+                        "param_name": "nested.map_array.2.key6",
+                        "value": "value6"
+                    }
+                ]
+            },
+            {
+                "filter": {
+                    "param_names": [],
+                    "prefixes": [],
+                    "leaves_only": false 
+                },
+                "results": [
+                    {
+                        "param_name": "nested",
+                        "value": {
+                            "boolean": true,
+                            "integer": 42,
+                            "double": 3.14,
+                            "string": "Hello, world!",
+                            "bool_array": [true, false, true],
+                            "int_array": [1, 2, 3],
+                            "double_array": [1.0, 2.0, 3.0],
+                            "string_array": ["foo", "bar", "baz"],
+                            "null": null,
+                            "nested_array": [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+                            "map_array": [
+                                {
+                                    "key1": "value1",
+                                    "key2": "value2"
+                                },
+                                {
+                                    "key3": "value3",
+                                    "key4": "value4"
+                                },
+                                {
+                                    "key5": "value5",
+                                    "key6": "value6"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "param_name": "nested.boolean",
+                        "value": true
+                    },
+                    {
+                        "param_name": "nested.integer",
+                        "value": 42
+                    },
+                    {
+                        "param_name": "nested.double",
+                        "value": 3.14
+                    },
+                    {
+                        "param_name": "nested.string",
+                        "value": "Hello, world!"
+                    },
+                    {
+                        "param_name": "nested.bool_array",
+                        "value": [true, false, true]
+                    },
+                    {
+                        "param_name": "nested.int_array",
+                        "value": [1, 2, 3]
+                    },
+                    {
+                        "param_name": "nested.double_array",
+                        "value": [1.0, 2.0, 3.0]
+                    },
+                    {
+                        "param_name": "nested.string_array",
+                        "value": ["foo", "bar", "baz"]
+                    },
+                    {
+                        "param_name": "nested.null",
+                        "value": null
+                    },
+                    {
+                        "param_name": "nested.nested_array",
+                        "value": [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+                    },
+                    {
+                        "param_name": "nested.map_array",
+                        "value": [
+                            {
+                                "key1": "value1",
+                                "key2": "value2"
+                            },
+                            {
+                                "key3": "value3",
+                                "key4": "value4"
+                            },
+                            {
+                                "key5": "value5",
+                                "key6": "value6"
+                            }
+                        ]
+                    },
+                    {
+                        "param_name": "nested.map_array.0",
+                        "value": {
+                            "key1": "value1",
+                            "key2": "value2"
+                        }
+                    },
+                    {
+                        "param_name": "nested.map_array.0.key1",
+                        "value": "value1"
+                    },
+                    {
+                        "param_name": "nested.map_array.0.key2",
+                        "value": "value2"
+                    },
+                    {
+                        "param_name": "nested.map_array.1",
+                        "value": {
+                            "key3": "value3",
+                            "key4": "value4"
+                        }
+                    },
+                    {
+                        "param_name": "nested.map_array.1.key3",
+                        "value": "value3"
+                    },
+                    {
+                        "param_name": "nested.map_array.1.key4",
+                        "value": "value4"
+                    },
+                    {
+                        "param_name": "nested.map_array.2",
+                        "value": {
+                            "key5": "value5",
+                            "key6": "value6"
+                        }
+                    },
+                    {
+                        "param_name": "nested.map_array.2.key5",
+                        "value": "value5"
+                    },
+                    {
+                        "param_name": "nested.map_array.2.key6",
+                        "value": "value6"
+                    }
+                ]
+            },
+            {
+                "filter": {
+                    "param_names": [],
+                    "prefixes": ["nested.m", "nested.d"],
+                    "leaves_only": false 
+                },
+                "results": [
+                    {
+                        "param_name": "nested.double",
+                        "value": 3.14
+                    },
+                    {
+                        "param_name": "nested.double_array",
+                        "value": [1.0, 2.0, 3.0]
+                    },
+                    {
+                        "param_name": "nested.map_array",
+                        "value": [
+                            {
+                                "key1": "value1",
+                                "key2": "value2"
+                            },
+                            {
+                                "key3": "value3",
+                                "key4": "value4"
+                            },
+                            {
+                                "key5": "value5",
+                                "key6": "value6"
+                            }
+                        ]
+                    },
+                    {
+                        "param_name": "nested.map_array.0",
+                        "value": {
+                            "key1": "value1",
+                            "key2": "value2"
+                        }
+                    },
+                    {
+                        "param_name": "nested.map_array.0.key1",
+                        "value": "value1"
+                    },
+                    {
+                        "param_name": "nested.map_array.0.key2",
+                        "value": "value2"
+                    },
+                    {
+                        "param_name": "nested.map_array.1",
+                        "value": {
+                            "key3": "value3",
+                            "key4": "value4"
+                        }
+                    },
+                    {
+                        "param_name": "nested.map_array.1.key3",
+                        "value": "value3"
+                    },
+                    {
+                        "param_name": "nested.map_array.1.key4",
+                        "value": "value4"
+                    },
+                    {
+                        "param_name": "nested.map_array.2",
+                        "value": {
+                            "key5": "value5",
+                            "key6": "value6"
+                        }
+                    },
+                    {
+                        "param_name": "nested.map_array.2.key5",
+                        "value": "value5"
+                    },
+                    {
+                        "param_name": "nested.map_array.2.key6",
+                        "value": "value6"
+                    }
+                ]
+            },
+            {
+                "filter": {
+                    "param_names": ["nested.map_array.0.key1"],
+                    "prefixes": ["nested"],
+                    "leaves_only": true 
+                },
+                "results": [
+                    {
+                        "param_name": "nested.map_array.0.key1",
+                        "value": "value1"
+                    }
+                ]
+            }
+        ]
+    }
+]

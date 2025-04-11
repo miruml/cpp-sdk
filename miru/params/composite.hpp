@@ -7,56 +7,16 @@
 // internal
 #include <miru/params/exceptions.hpp>
 #include <miru/params/parameter_fwd.hpp>
-#include <miru/params/scalar.hpp>
-#include <miru/params/type.hpp>
+#include <miru/params/iterator.hpp>
 #include <miru/utils.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>
-
 #include <nlohmann/json.hpp>
 
 namespace miru::params {
 
 class Parameter;
-
-// ============================== PARAMETER ITERATOR ============================== //
-class ParameterIterator {
-public:
-    using iterator_category = std::forward_iterator_tag;
-    using value_type = Parameter;
-    using reference = const Parameter&;
-    using pointer = const Parameter*;
-    using difference_type = std::ptrdiff_t;
-
-    ParameterIterator(std::vector<Parameter>::const_iterator it);
-    ParameterIterator(std::vector<std::pair<std::string, Parameter>>::const_iterator it);
-    ParameterIterator& operator++();
-    ParameterIterator operator++(int);
-    reference operator*() const;
-    pointer operator->() const;
-    bool operator==(const ParameterIterator& other) const;
-    bool operator!=(const ParameterIterator& other) const;
-
-private:
-    std::vector<Parameter>::const_iterator it_;
-};
-
-class ParametersView {
-public:
-    using difference_type = std::ptrdiff_t;
-
-    ParametersView(ParameterIterator begin, ParameterIterator end)
-        : begin_(begin), end_(end) {}
-
-    ParameterIterator begin() const { return begin_; }
-    ParameterIterator end() const { return end_; }
-    bool empty() const { return begin_ == end_; }
-
-private:
-    ParameterIterator begin_;
-    ParameterIterator end_;
-};
 
 // ================================ MAP ========================================== //
 class Map {
