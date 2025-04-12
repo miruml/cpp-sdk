@@ -1,9 +1,10 @@
 // internal
 #include <miru/client/models/HashSchemaRequest.h>
-
 #include <miru/client/unix_socket.hpp>
 #include <miru/config/config.hpp>
+#include <miru/config/errors.hpp>
 #include <miru/params/parse.hpp>
+#include <miru/query/ros2.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>
@@ -14,13 +15,16 @@ namespace miru::config {
 
 namespace openapi = org::openapitools::server::model;
 
-Config Config::from_file(const std::string& schema_file_path,
-                         const std::string& config_file_path) {
+Config Config::from_file(
+  const std::string& schema_file_path,
+  const std::string& config_file_path
+) {
   ConfigBuilder builder;
   builder.with_source(ConfigSource::FileSystem);
 
   // read the config slug from the schema file
   miru::filesys::File schema_file(schema_file_path);
+  builder.with_schema_file(schema_file);
   std::string config_slug = read_schema_config_slug(schema_file);
   builder.with_config_slug(config_slug);
 
@@ -65,23 +69,34 @@ std::string read_schema_config_slug(const miru::filesys::File& schema_file) {
   switch (schema_file.file_type()) {
     case miru::filesys::FileType::JSON: {
       nlohmann::json json_schema_content = schema_file.read_json();
-      config_slug = json_schema_content["config_slug"];
+      if (!json_schema_content.contains(MIRU_CONFIG_SLUG_FIELD_ID)) {
+        THROW_CONFIG_SLUG_NOT_FOUND(schema_file);
+      }
+      config_slug = json_schema_content[MIRU_CONFIG_SLUG_FIELD_ID];
       break;
     }
     case miru::filesys::FileType::YAML: {
       YAML::Node yaml_schema_content = schema_file.read_yaml();
-      config_slug = yaml_schema_content["config_slug"].as<std::string>();
+      if (!yaml_schema_content[MIRU_CONFIG_SLUG_FIELD_ID]) {
+        THROW_CONFIG_SLUG_NOT_FOUND(schema_file);
+      }
+      config_slug = yaml_schema_content[MIRU_CONFIG_SLUG_FIELD_ID].as<std::string>();
       break;
     }
     default:
       throw std::runtime_error("Unsupported schema file type");
   }
   if (config_slug.empty()) {
-    throw ConfigSlugNotFound(schema_file);
+    THROW_EMPTY_CONFIG_SLUG(schema_file);
   }
   return config_slug;
 }
 
+miru::query::ROS2StyleQuery Config::ros2() const {
+  return miru::query::ROS2StyleQuery(parameters_);
+}
+
+// ================================ CONFIG BUILDER ================================ //
 ConfigBuilder& ConfigBuilder::with_schema_file(const miru::filesys::File& schema_file) {
   if (schema_file_.has_value()) {
     throw std::runtime_error("Schema file already set");
@@ -155,4 +170,5 @@ Config ConfigBuilder::build() {
   return Config(*schema_file_, *config_slug_, *source_, *data_, schema_digest_,
                 config_file_);
 }
+
 }  // namespace miru::config

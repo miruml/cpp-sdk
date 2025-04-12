@@ -10,9 +10,8 @@
 #include <miru/filesys/path.hpp>
 
 // external
-#include <yaml-cpp/yaml.h>
-
 #include <nlohmann/json.hpp>
+#include <yaml-cpp/yaml.h>
 
 namespace miru::filesys {
 
@@ -23,11 +22,9 @@ enum class FileType {
 };
 
 std::vector<FileType> supported_file_types();
-std::string_view file_type_to_string(FileType file_type);
-std::vector<std::string_view> file_types_to_strings(
-    const std::vector<FileType>& file_types);
-
-FileType string_to_file_type(std::string_view str);
+std::string file_type_to_string(FileType file_type);
+std::vector<std::string> file_types_to_strings(const std::vector<FileType>& file_types);
+FileType string_to_file_type(std::string str);
 
 class File : public Path {
  public:

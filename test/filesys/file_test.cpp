@@ -10,10 +10,9 @@
 // external
 #include <gtest/gtest.h>
 
-enum class FileExceptionType {
-  // std errors
-  BadOptionalAccess,
+namespace test::filesys {
 
+enum class FileExceptionType {
   // miru errors
   None,
   FileNotFound,
@@ -41,9 +40,9 @@ TEST_P(FileTypeStringConversion, FileTypeStringConversion) {
       EXPECT_EQ(miru::filesys::file_type_to_string(file_type), file_type_string);
       EXPECT_EQ(miru::filesys::string_to_file_type(file_type_string), file_type);
       break;
-    case FileExceptionType::BadOptionalAccess:
+    case FileExceptionType::InvalidFileType:
       EXPECT_THROW(miru::filesys::string_to_file_type(file_type_string),
-                   std::bad_optional_access);
+                   miru::filesys::InvalidFileTypeError);
       break;
     default:
       FAIL() << "Unexpected exception type: " << static_cast<int>(expected_exception);
@@ -58,12 +57,31 @@ std::string FileTypeStringConversionTestNameGenerator(
 INSTANTIATE_TEST_SUITE_P(
     File, FileTypeStringConversion,
     testing::Values(
-        FileTypeStringConversionTestCase{"JSON", miru::filesys::FileType::JSON, "JSON",
-                                         FileExceptionType::None},
-        FileTypeStringConversionTestCase{"YAML", miru::filesys::FileType::YAML, "YAML",
-                                         FileExceptionType::None},
-        FileTypeStringConversionTestCase{"invalid file type", std::nullopt, "invalid",
-                                         FileExceptionType::BadOptionalAccess}),
+        FileTypeStringConversionTestCase{
+          "JSON",
+          miru::filesys::FileType::JSON,
+          "JSON",
+          FileExceptionType::None
+        },
+        FileTypeStringConversionTestCase{
+          "YAML",
+          miru::filesys::FileType::YAML,
+          "YAML",
+          FileExceptionType::None
+        },
+        FileTypeStringConversionTestCase{
+          "YML",
+          miru::filesys::FileType::YAML,
+          "YAML",
+          FileExceptionType::None
+        },
+        FileTypeStringConversionTestCase{
+          "invalid file type",
+          std::nullopt,
+          "invalid",
+          FileExceptionType::InvalidFileType
+        }
+      ),
     FileTypeStringConversionTestNameGenerator);
 
 // ================================ extension() ==================================== //
@@ -218,6 +236,23 @@ INSTANTIATE_TEST_SUITE_P(
                              FileExceptionType::NotAFile}),
     AssertExistsTestNameGenerator);
 
+// ================================= read_string() =================================== //
+class ReadString : public ::testing::Test {
+ protected:
+  miru::filesys::File doesnt_exist{"doesnt/exist.json"};
+  miru::filesys::File text_file =
+      miru::test_utils::filesys_testdata_dir().file("text.txt");
+};
+
+TEST_F(ReadString, FileNotFound) {
+  EXPECT_THROW(doesnt_exist.read_string(), miru::filesys::FileNotFoundError);
+}
+
+TEST_F(ReadString, ValidString) {
+  auto json = text_file.read_string();
+  EXPECT_EQ(json, "some random text that came from ben's brain at 7pm on a Wednesday");
+}
+
 // ================================= read_json() =================================== //
 class ReadJson : public ::testing::Test {
  protected:
@@ -232,17 +267,26 @@ class ReadJson : public ::testing::Test {
 
 TEST_F(ReadJson, FileNotFound) {
   EXPECT_THROW(doesnt_exist.read_json(), miru::filesys::FileNotFoundError);
+  EXPECT_THROW(doesnt_exist.read_structured_data(), miru::filesys::FileNotFoundError);
 }
 
 TEST_F(ReadJson, InvalidFileType) {
   EXPECT_THROW(invalid_file_type.read_json(), miru::filesys::InvalidFileTypeError);
+  EXPECT_THROW(invalid_file_type.read_structured_data(), miru::filesys::InvalidFileTypeError);
 }
 
-TEST_F(ReadJson, InvalidJsonFile) { EXPECT_ANY_THROW(invalid_json_file.read_json()); }
+TEST_F(ReadJson, InvalidJsonFile) { 
+  EXPECT_ANY_THROW(invalid_json_file.read_json()); 
+  EXPECT_ANY_THROW(invalid_json_file.read_structured_data());
+}
 
 TEST_F(ReadJson, ValidJson) {
   auto json = json_file.read_json();
   EXPECT_EQ(json["name"], "Example Test Data");
+
+  auto structured_data = json_file.read_structured_data();
+  EXPECT_EQ(structured_data.index(), 0);
+  EXPECT_EQ(std::get<nlohmann::json>(structured_data)["name"], "Example Test Data");
 }
 
 // ================================= read_yaml() =================================== //
@@ -263,13 +307,18 @@ class ReadYaml : public ::testing::Test {
 
 TEST_F(ReadYaml, FileNotFound) {
   EXPECT_THROW(doesnt_exist.read_yaml(), miru::filesys::FileNotFoundError);
+  EXPECT_THROW(doesnt_exist.read_structured_data(), miru::filesys::FileNotFoundError);
 }
 
 TEST_F(ReadYaml, InvalidFileType) {
   EXPECT_THROW(invalid_file_type.read_yaml(), miru::filesys::InvalidFileTypeError);
+  EXPECT_THROW(invalid_file_type.read_structured_data(), miru::filesys::InvalidFileTypeError);
 }
 
-TEST_F(ReadYaml, InvalidYamlFile) { EXPECT_ANY_THROW(invalid_yaml_file.read_yaml()); }
+TEST_F(ReadYaml, InvalidYamlFile) { 
+  EXPECT_ANY_THROW(invalid_yaml_file.read_yaml()); 
+  EXPECT_ANY_THROW(invalid_yaml_file.read_structured_data());
+}
 
 // the yaml-cpp parser can actually parse json files as well (since json is a subset of
 // yaml) however if we want to read strict json then we should use the dedicated json
@@ -282,12 +331,19 @@ TEST_F(ReadYaml, ValidJson) {
 TEST_F(ReadYaml, ValidYaml) {
   auto yaml = yaml_file.read_yaml();
   EXPECT_EQ(yaml["name"].as<std::string>(), "Example Test Data");
+
+  auto structured_data = yaml_file.read_structured_data();
+  EXPECT_EQ(structured_data.index(), 1);
+  EXPECT_EQ(std::get<YAML::Node>(structured_data)["name"].as<std::string>(), "Example Test Data");
 }
 
 TEST_F(ReadYaml, ValidYml) {
   auto yml = yml_file.read_yaml();
   EXPECT_EQ(yml["name"].as<std::string>(), "Example Test Data");
+
+  auto structured_data = yml_file.read_structured_data();
+  EXPECT_EQ(structured_data.index(), 1);
+  EXPECT_EQ(std::get<YAML::Node>(structured_data)["name"].as<std::string>(), "Example Test Data");
 }
 
-// ============================ read_structured_data() ============================= //
-TEST(ReadStructuredData, FileNotFound) { EXPECT_EQ(false, true); }
+}  // namespace test::filesys

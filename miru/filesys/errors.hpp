@@ -51,14 +51,14 @@ class InvalidFileTypeError : public std::runtime_error {
  public:
   explicit InvalidFileTypeError(
     const std::string& file_path,
-    const std::vector<std::string_view>& expected_file_types,
+    const std::vector<std::string>& expected_file_types,
     const errors::ErrorTrace& trace
   )
     : std::runtime_error(format_message(file_path, expected_file_types, trace)) {}
 
   static std::string format_message(
     const std::string& file_path,
-    const std::vector<std::string_view>& expected_file_types,
+    const std::vector<std::string>& expected_file_types,
     const errors::ErrorTrace& trace
   ) {
     return "File '" + file_path + "' is not a valid file type. Expected one of: " + miru::utils::to_string(expected_file_types) + errors::format_source_location(trace);

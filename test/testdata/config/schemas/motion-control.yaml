@@ -1,0 +1,76 @@
+$miru_config_slug: motion-control
+type: object
+properties:
+  speed:
+    $miru_tag_type_field_id: id.speed
+    type: [number]
+    minimum: 1
+    default: 10
+  
+  features:
+    type: object
+    properties:
+      spin:
+        $miru_tag_type_field_id: id.features.spin
+        type: boolean
+        default: true
+      jump:
+        $miru_tag_type_field_id: id.features.jump
+        type: boolean
+        default: false
+      backflip:
+        $miru_tag_type_field_id: id.features.backflip
+        type: boolean
+        default: false
+    required:
+      - spin
+      - jump
+      - backflip
+  
+  accelerometer:
+    type: object
+    properties:
+      id:
+        $miru_tag_type_field_id: id.accelerometer.id
+        type: string
+      offsets:
+        type: object
+        properties:
+          x:
+            $miru_tag_type_field_id: id.accelerometer.offsets.x
+            type: number
+          y:
+            $miru_tag_type_field_id: id.accelerometer.offsets.y
+            type: number
+          z:
+            $miru_tag_type_field_id: id.accelerometer.offsets.z
+            type: number
+        required:
+          - x
+          - y
+          - z
+      scaling_factor:
+        type: object
+        properties:
+          x:
+            $miru_tag_type_field_id: id.accelerometer.scaling_factor.x
+            type: number
+          y:
+            $miru_tag_type_field_id: id.accelerometer.scaling_factor.y
+            type: number
+          z:
+            $miru_tag_type_field_id: id.accelerometer.scaling_factor.z
+            type: number
+        required:
+          - x
+          - y
+          - z
+    required:
+      - id
+      - offsets
+      - scaling_factor
+
+required:
+  - speed
+  - features
+  - accelerometer

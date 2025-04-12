@@ -6,7 +6,7 @@ namespace miru::filesys {
 Dir Dir::parent() const { return Dir(abs_path().parent_path()); }
 
 // returns the root directory of the git repository from the given path
-Dir Dir::git_repo_root_dir() const {
+Dir Dir::git_root() const {
   assert_exists();
   Dir current = Dir(abs_path());
 

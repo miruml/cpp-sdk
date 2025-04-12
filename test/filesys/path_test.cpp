@@ -8,6 +8,8 @@
 // external
 #include <gtest/gtest.h>
 
+namespace test::filesys {
+
 // =================================== path() ====================================== //
 struct PathTestCase {
   std::string test_name;
@@ -106,3 +108,5 @@ INSTANTIATE_TEST_SUITE_P(
         NameTestCase{"arglebargle directory", std::filesystem::path("arglebargle"),
                      std::filesystem::path("arglebargle")}),
     NameTestNameGenerator);
+
+}  // namespace test::filesys

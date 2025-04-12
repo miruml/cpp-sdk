@@ -1,10 +1,11 @@
 #pragma once
 
 // internal
+#include <miru/config/config.hpp>
 #include <miru/params/composite.hpp>
+#include <miru/params/parameter.hpp>
 #include <miru/query/errors.hpp>
 #include <miru/query/filter.hpp>
-#include <miru/params/parameter.hpp>
 
 namespace miru::query {
 
@@ -26,7 +27,8 @@ struct is_parameter_root : std::disjunction<
   std::is_same<T, std::vector<Parameter>>,
   std::is_same<T, Map>,
   std::is_same<T, NestedArray>,
-  std::is_same<T, MapArray>
+  std::is_same<T, MapArray>,
+  std::is_same<T, miru::config::Config>
 > {};
 
 // Helper variable template for cleaner syntax
@@ -70,7 +72,12 @@ ParameterPtrs find_all(
   const SearchParamFilters& filters
 );
 
-template<typename rootT>
+ParameterPtrs find_all(
+  const miru::config::Config& config,
+  const SearchParamFilters& filters
+);
+
+template<typename rootT> 
 typename std::enable_if<is_parameter_root<rootT>::value, ParameterPtr>::type
 find_one(
   const rootT& root,
@@ -89,7 +96,7 @@ find_one(
 }
 
 // =================================== EXISTS ==================================== //
-template<typename rootT>
+template<typename rootT> constexpr
 typename std::enable_if<is_parameter_root<rootT>::value, bool>::type
 has_param(
   const rootT& root,
@@ -99,7 +106,7 @@ has_param(
 }
 
 // ================================= GET PARAMS ==================================== //
-template<typename rootT>
+template<typename rootT> 
 typename std::enable_if<is_parameter_root_v<rootT>, std::vector<Parameter>>::type
 get_params(
   const rootT& root,
@@ -112,8 +119,16 @@ get_params(
   return result;
 };
 
+template<typename rootT> constexpr
+typename std::enable_if<is_parameter_root_v<rootT>, std::vector<Parameter>>::type
+list_params(
+  const rootT& root
+) {
+  return get_params(root, SearchParamFilters());
+};
+
 // ================================== GET PARAM ==================================== //
-template<typename rootT>
+template<typename rootT> constexpr
 typename std::enable_if<is_parameter_root_v<rootT>, Parameter>::type
 get_param(
   const rootT& root,
@@ -130,7 +145,21 @@ get_param(
   return *result;
 }
 
-template<typename rootT>
+template<typename rootT> constexpr
+typename std::enable_if<is_parameter_root_v<rootT>, Parameter>::type
+get_param(
+  const rootT& root,
+  const std::string& param_name
+) {
+  return get_param(
+    root,
+    SearchParamFiltersBuilder()
+      .with_param_name(param_name)
+      .build()
+  );
+}
+
+template<typename rootT> constexpr
 typename std::enable_if<is_parameter_root_v<rootT>, bool>::type
 try_get_param(
   const rootT& root,
@@ -148,7 +177,7 @@ try_get_param(
   return ptr_result != nullptr;
 }
 
-template<typename rootT, typename ValueT>
+template<typename rootT, typename ValueT> constexpr
 typename std::enable_if<is_parameter_root_v<rootT>, bool>::type
 try_get_param(
   const rootT& root,
@@ -166,7 +195,7 @@ try_get_param(
   return ptr_result != nullptr;
 }
 
-template<typename rootT, typename ValueT>
+template<typename rootT, typename ValueT> constexpr
 typename std::enable_if<is_parameter_root_v<rootT>, ValueT>::type
 get_param_or(
   const rootT& root,
@@ -185,7 +214,7 @@ get_param_or(
   }
 }
 
-template<typename rootT, typename ValueT>
+template<typename rootT, typename ValueT> constexpr
 typename std::enable_if<is_parameter_root_v<rootT>, bool>::type
 try_get_param_or(
   const rootT& root,

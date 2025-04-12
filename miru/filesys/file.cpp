@@ -8,7 +8,6 @@
 // external
 #include <yaml-cpp/yaml.h>
 
-#include <magic_enum/magic_enum.hpp>
 #include <nlohmann/json.hpp>
 
 namespace miru::filesys {
@@ -20,21 +19,36 @@ std::vector<FileType> supported_file_types() {
   };
 }
 
-std::string_view file_type_to_string(FileType file_type) {
-  return magic_enum::enum_name(file_type);
+std::string file_type_to_string(FileType file_type) {
+  switch (file_type) {
+    case FileType::JSON:
+      return "JSON";
+    case FileType::YAML:
+      return "YAML";
+  }
+  return "unknown";
 }
 
-std::vector<std::string_view> file_types_to_strings(
+std::vector<std::string> file_types_to_strings(
     const std::vector<FileType>& file_types) {
-  std::vector<std::string_view> strings;
+  std::vector<std::string> strings;
   for (const auto& file_type : file_types) {
-    strings.push_back(magic_enum::enum_name(file_type));
+    strings.push_back(file_type_to_string(file_type));
   }
   return strings;
 }
 
-FileType string_to_file_type(std::string_view str) {
-  return magic_enum::enum_cast<FileType>(str).value();
+FileType string_to_file_type(std::string str) {
+  std::transform(
+    str.begin(),
+    str.end(),
+    str.begin(),
+    ::tolower
+  );
+  if (str == "json") return FileType::JSON;
+  if (str == "yaml") return FileType::YAML;
+  if (str == "yml") return FileType::YAML;
+  THROW_INVALID_FILE_TYPE(str, file_types_to_strings(supported_file_types()));
 }
 
 // returns the file type

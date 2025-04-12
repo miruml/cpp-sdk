@@ -1,0 +1,15 @@
+speed: 15
+features:
+  spin: true
+  jump: false
+  backflip: false
+accelerometer:
+  id: "123"
+  offsets:
+    x: 0
+    y: 0
+    z: 0
+  scaling_factor:
+    x: 1
+    y: 1
+    z: 1

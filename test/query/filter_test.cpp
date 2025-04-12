@@ -11,7 +11,7 @@
 // external
 #include <gtest/gtest.h>
 
-namespace test::params {
+namespace test::query {
 
 // ========================== SEARCH PARAM FILTER BUILDER ========================== //
 class SearchParamFiltersBuilderTest : public ::testing::Test {
@@ -338,4 +338,4 @@ TEST_F(SearchParamFiltersContinueSearchTest, ContinueSearchComplex1) {
     EXPECT_FALSE(filters.continue_search(map4));
 }
 
-}  // namespace test::params
+}  // namespace test::query

@@ -9,7 +9,7 @@ bool ROS2StyleQuery::has_parameter(const std::string& parameter_name) {
     SearchParamFiltersBuilder builder;
     builder.with_param_name(parameter_name);
     SearchParamFilters filters = builder.build();
-    return miru::query::has_param(roots_, filters);
+    return miru::query::has_param(root_, filters);
 }
 
 Parameter ROS2StyleQuery::get_parameter(const std::string& name) const {
@@ -17,7 +17,7 @@ Parameter ROS2StyleQuery::get_parameter(const std::string& name) const {
     builder.with_param_name(name);
     SearchParamFilters filters = builder.build();
     return miru::query::get_param(
-        roots_,
+        root_,
         filters
     );
 }
@@ -27,7 +27,7 @@ bool ROS2StyleQuery::get_parameter(const std::string& name, Parameter& parameter
     builder.with_param_name(name);
     SearchParamFilters filters = builder.build();
     return miru::query::try_get_param(
-        roots_,
+        root_,
         filters,
         parameter
     );
@@ -38,7 +38,7 @@ std::vector<Parameter> ROS2StyleQuery::get_parameters(const std::vector<std::str
     builder.with_param_names(names);
     SearchParamFilters filters = builder.build();
     return miru::query::get_params(
-        roots_,
+        root_,
         filters
     );
 }

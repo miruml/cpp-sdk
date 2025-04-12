@@ -35,7 +35,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Find required packages
-find_package(magic_enum CONFIG REQUIRED)
 find_package(Boost REQUIRED COMPONENTS asio beast)
 find_package(nlohmann_json 3.11 REQUIRED)
 find_package(yaml-cpp 0.8 REQUIRED)
@@ -98,7 +97,6 @@ target_include_directories(miru PUBLIC
 
 # Link dependencies
 target_link_libraries(miru PRIVATE
-    magic_enum::magic_enum
     nlohmann_json::nlohmann_json
     yaml-cpp::yaml-cpp
     Boost::asio
@@ -113,6 +111,7 @@ if(BUILD_TESTING)
     
     add_executable(
         test.out
+        test/config/config_test.cpp
         test/filesys/dir_test.cpp
         test/filesys/file_test.cpp
         test/filesys/path_test.cpp

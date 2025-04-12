@@ -11,6 +11,8 @@
 // external
 #include <gtest/gtest.h>
 
+namespace test::filesys {
+
 enum class DirExceptionType {
   None,
   DirNotFound,
@@ -182,13 +184,13 @@ TEST_P(GitRepoRootDirs, GitRepoRootDir) {
   miru::filesys::Dir dir(path);
   switch (expected_exception) {
     case DirExceptionType::None:
-      EXPECT_EQ(dir.git_repo_root_dir().path(), expected_git_repo_root_dir);
+      EXPECT_EQ(dir.git_root().path(), expected_git_repo_root_dir);
       break;
     case DirExceptionType::DirNotFound:
-      EXPECT_THROW(dir.git_repo_root_dir(), miru::filesys::DirNotFoundError);
+      EXPECT_THROW(dir.git_root(), miru::filesys::DirNotFoundError);
       break;
     case DirExceptionType::UnableToFindGitRepo:
-      EXPECT_THROW(dir.git_repo_root_dir(), miru::filesys::UnableToFindGitRepoError);
+      EXPECT_THROW(dir.git_root(), miru::filesys::UnableToFindGitRepoError);
       break;
     default:
       FAIL() << "Unexpected exception type: " << static_cast<int>(expected_exception);
@@ -211,7 +213,7 @@ INSTANTIATE_TEST_SUITE_P(
                 .abs_path(),
             DirExceptionType::None},
         GitRepoRootDirTestCase{
-            "git repo from current directory", miru::filesys::Dir::current_dir().path(),
+            "git repo from current directory", miru::filesys::Dir::from_current_dir().path(),
             miru::filesys::Dir(miru::test_utils::filesys_testdata_dir().path() / ".." /
                                ".." / "..")
                 .abs_path(),
@@ -224,3 +226,5 @@ INSTANTIATE_TEST_SUITE_P(
             miru::test_utils::filesys_testdata_dir().path() / ".." / ".." / ".." / "..",
             std::filesystem::path(), DirExceptionType::UnableToFindGitRepo}),
     GitRepoRootDirTestNameGenerator);
+
+}  // namespace test::filesys

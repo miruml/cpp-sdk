@@ -13,7 +13,7 @@ class Dir : public Path {
  public:
   explicit Dir(const std::filesystem::path& path) : Path(path) {}
 
-  static Dir current_dir() { return Dir(std::filesystem::current_path()); }
+  static Dir from_current_dir() { return Dir(std::filesystem::current_path()); }
 
   void assert_exists() const;
   bool exists() const;
@@ -24,7 +24,7 @@ class Dir : public Path {
     return miru::filesys::File(path_ / path);
   }
 
-  Dir git_repo_root_dir() const;
+  Dir git_root() const;
 };
 
 }  // namespace miru::filesys

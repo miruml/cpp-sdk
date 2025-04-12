@@ -3,6 +3,7 @@
 
 // internal
 #include <miru/params/composite.hpp>
+#include <miru/params/errors.hpp>
 #include <miru/params/parse.hpp>
 #include <miru/params/type.hpp>
 #include <miru/query/errors.hpp>
@@ -13,9 +14,8 @@
 
 // external
 #include <gtest/gtest.h>
-#include "miru/params/errors.hpp"
 
-namespace test::params {
+namespace test::query {
 
 using SearchParamFilters = miru::query::SearchParamFilters;
 using SearchParamFiltersBuilder = miru::query::SearchParamFiltersBuilder;
@@ -583,4 +583,4 @@ TEST(GetParamTests, InvalidType) {
 }
 
 
-} // test::params
+} // test::query

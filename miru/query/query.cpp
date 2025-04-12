@@ -95,4 +95,13 @@ std::vector<const Parameter*> find_all(
   );
 }
 
+std::vector<const Parameter*> find_all(
+  const miru::config::Config& config,
+  const SearchParamFilters& filters
+) {
+  return find_all(
+    config.root_parameter(),
+    filters
+  );
+}
 }  // namespace miru::params
