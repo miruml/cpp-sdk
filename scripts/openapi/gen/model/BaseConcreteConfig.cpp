@@ -50,7 +50,7 @@ bool BaseConcreteConfig::validate(std::stringstream& msg, const std::string& pat
     bool success = true;
     const std::string _pathPrefix = pathPrefix.empty() ? "BaseConcreteConfig" : pathPrefix;
 
-                                
+                            
     return success;
 }
 
@@ -58,7 +58,7 @@ bool BaseConcreteConfig::operator==(const BaseConcreteConfig& other) const
 {
     return
     
-    object == other.object && id == other.id && created_at == other.created_at && created_by_id == other.created_by_id && client_id == other.client_id && config_schema_id == other.config_schema_id && concrete_config == other.concrete_config;
+    object == other.object && id == other.id && created_at == other.created_at && client_id == other.client_id && config_schema_id == other.config_schema_id && concrete_config == other.concrete_config;
 }
 
 bool BaseConcreteConfig::operator!=(const BaseConcreteConfig& other) const
@@ -72,11 +72,6 @@ void to_json(nlohmann::json& j, const BaseConcreteConfig& o)
     j["object"] = o.object;
     j["id"] = o.id;
     j["created_at"] = o.created_at;
-    if (o.created_by_id.has_value()) {
-        j["created_by_id"] = o.created_by_id.value();
-    } else {
-        j["created_by_id"] = nullptr;
-    }
     j["client_id"] = o.client_id;
     j["config_schema_id"] = o.config_schema_id;
     if (o.concrete_config.has_value()) {
@@ -92,13 +87,6 @@ void from_json(const nlohmann::json& j, BaseConcreteConfig& o)
     j.at("object").get_to(o.object);
     j.at("id").get_to(o.id);
     j.at("created_at").get_to(o.created_at);
-    if (j.find("created_by_id") != j.end()) {
-        if (j.at("created_by_id").is_null()) {
-            o.created_by_id = std::nullopt;
-        } else {
-            o.created_by_id = j.at("created_by_id").get<std::string>();
-        }
-    }
     j.at("client_id").get_to(o.client_id);
     j.at("config_schema_id").get_to(o.config_schema_id);
     if (j.find("concrete_config") != j.end()) {

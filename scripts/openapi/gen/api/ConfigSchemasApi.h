@@ -77,7 +77,7 @@ private:
     virtual std::pair<Pistache::Http::Code, std::string> handleOperationException(const std::exception& ex) const noexcept;
 
     /// <summary>
-    /// Hash a config schema to determine its digest
+    /// Hash a config schema
     /// </summary>
     /// <remarks>
     /// 

@@ -7,10 +7,10 @@
 
 // internal
 #include <miru/params/errors.hpp>
+#include <miru/params/parameter_fwd.hpp>
 #include <miru/params/scalar.hpp>
 #include <miru/params/type.hpp>
 #include <miru/params/value.hpp>
-#include <miru/params/parameter_fwd.hpp>
 #include <miru/utils.hpp>
 
 // external
@@ -51,7 +51,7 @@ class Parameter {
   /// Construct with given name and given parameter value.
   template <typename ValueTypeT>
   Parameter(const std::string &name, ValueTypeT value)
-      : Parameter(name, ParameterValue(value)) {}
+    : Parameter(name, ParameterValue(value)) {}
 
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L73
   // explicit Parameter(const rclcpp::node_interfaces::ParameterInfo &

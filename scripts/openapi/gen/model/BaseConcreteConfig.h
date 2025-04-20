@@ -34,7 +34,6 @@ struct  BaseConcreteConfig
     std::string object;
     std::string id;
     std::string created_at;
-    std::optional<std::string> created_by_id;
     std::string client_id;
     std::string config_schema_id;
     std::optional<nlohmann::json> concrete_config;

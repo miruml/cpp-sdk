@@ -6,12 +6,13 @@
 
 // internal
 #include <miru/params/errors.hpp>
-#include <miru/params/parameter_fwd.hpp>
 #include <miru/params/iterator.hpp>
+#include <miru/params/parameter_fwd.hpp>
 #include <miru/utils.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>
+
 #include <nlohmann/json.hpp>
 
 namespace miru::params {
@@ -38,8 +39,8 @@ class Map {
   std::vector<Parameter> sorted_fields_;
 };
 
-std::string to_string(const Map& map);
-std::ostream& operator<<(std::ostream& os, const Map& map);
+std::string to_string(const Map &map);
+std::ostream &operator<<(std::ostream &os, const Map &map);
 
 // =============================== MAP ARRAY ======================================= //
 class MapArray {
@@ -62,8 +63,8 @@ class MapArray {
   std::vector<Parameter> items_;
 };
 
-std::string to_string(const MapArray& map_array);
-std::ostream& operator<<(std::ostream& os, const MapArray& map_array);
+std::string to_string(const MapArray &map_array);
+std::ostream &operator<<(std::ostream &os, const MapArray &map_array);
 
 // =============================== NESTED ARRAY ==================================== //
 class NestedArray {
@@ -86,7 +87,7 @@ class NestedArray {
   std::vector<Parameter> items_;
 };
 
-std::string to_string(const NestedArray& nested_array);
-std::ostream& operator<<(std::ostream& os, const NestedArray& nested_array);
+std::string to_string(const NestedArray &nested_array);
+std::ostream &operator<<(std::ostream &os, const NestedArray &nested_array);
 
-} // namespace miru::params
+}  // namespace miru::params

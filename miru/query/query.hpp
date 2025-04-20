@@ -20,74 +20,53 @@ using ParameterPtr = const Parameter*;
 using ParameterPtrs = std::vector<ParameterPtr>;
 
 // Define type trait for parameter roots
-template<typename T>
-struct is_parameter_root : std::disjunction<
-  std::is_same<T, Parameter>,
-  std::is_same<T, ParametersView>,
-  std::is_same<T, std::vector<Parameter>>,
-  std::is_same<T, Map>,
-  std::is_same<T, NestedArray>,
-  std::is_same<T, MapArray>,
-  std::is_same<T, miru::config::Config>
-> {};
+template <typename T>
+struct is_parameter_root
+  : std::disjunction<
+      std::is_same<T, Parameter>, std::is_same<T, ParametersView>,
+      std::is_same<T, std::vector<Parameter>>, std::is_same<T, Map>,
+      std::is_same<T, NestedArray>, std::is_same<T, MapArray>,
+      std::is_same<T, miru::config::Config>> {};
 
 // Helper variable template for cleaner syntax
-template<typename T>
+template <typename T>
 inline constexpr bool is_parameter_root_v = is_parameter_root<T>::value;
 
 // ================================ FIND PARAMETERS ================================ //
 void find_all_recursive_helper(
-  const Parameter& parameter,
-  ParameterPtrs& result,
-  const SearchParamFilters& filters
+  const Parameter& parameter, ParameterPtrs& result, const SearchParamFilters& filters
 );
+
+ParameterPtrs find_all(const Parameter& parameter, const SearchParamFilters& filters);
+
+ParameterPtrs find_all(const ParametersView& roots, const SearchParamFilters& filters);
 
 ParameterPtrs find_all(
-  const Parameter& parameter,
-  const SearchParamFilters& filters
+  const std::vector<Parameter>& roots, const SearchParamFilters& filters
 );
+
+ParameterPtrs find_all(const Map& map, const SearchParamFilters& filters);
 
 ParameterPtrs find_all(
-  const ParametersView& roots,
-  const SearchParamFilters& filters
+  const NestedArray& nested_array, const SearchParamFilters& filters
 );
+
+ParameterPtrs find_all(const MapArray& map_array, const SearchParamFilters& filters);
 
 ParameterPtrs find_all(
-  const std::vector<Parameter>& roots,
-  const SearchParamFilters& filters
+  const miru::config::Config& config, const SearchParamFilters& filters
 );
 
-ParameterPtrs find_all(
-  const Map& map,
-  const SearchParamFilters& filters
-);
-
-ParameterPtrs find_all(
-  const NestedArray& nested_array,
-  const SearchParamFilters& filters
-);
-
-ParameterPtrs find_all(
-  const MapArray& map_array,
-  const SearchParamFilters& filters
-);
-
-ParameterPtrs find_all(
-  const miru::config::Config& config,
-  const SearchParamFilters& filters
-);
-
-template<typename rootT> 
-typename std::enable_if<is_parameter_root<rootT>::value, ParameterPtr>::type
-find_one(
-  const rootT& root,
-  const SearchParamFilters& filters,
-  bool allow_throw = true
+template <typename rootT>
+typename std::enable_if<is_parameter_root<rootT>::value, ParameterPtr>::type find_one(
+  const rootT& root, const SearchParamFilters& filters, bool allow_throw = true
 ) {
   ParameterPtrs result = find_all(root, filters);
   if (result.size() > 1) {
     if (allow_throw) {
-      throw TooManyResultsError("Multiple parameters found for filters: " + to_string(filters));
+      throw TooManyResultsError(
+        "Multiple parameters found for filters: " + to_string(filters)
+      );
     } else {
       return nullptr;
     }
@@ -96,22 +75,16 @@ find_one(
 }
 
 // =================================== EXISTS ==================================== //
-template<typename rootT> constexpr
-typename std::enable_if<is_parameter_root<rootT>::value, bool>::type
-has_param(
-  const rootT& root,
-  const SearchParamFilters& filters
-) {
+template <typename rootT>
+constexpr typename std::enable_if<is_parameter_root<rootT>::value, bool>::type
+has_param(const rootT& root, const SearchParamFilters& filters) {
   return !find_all(root, filters).empty();
 }
 
 // ================================= GET PARAMS ==================================== //
-template<typename rootT> 
+template <typename rootT>
 typename std::enable_if<is_parameter_root_v<rootT>, std::vector<Parameter>>::type
-get_params(
-  const rootT& root,
-  const SearchParamFilters& filters
-) {
+get_params(const rootT& root, const SearchParamFilters& filters) {
   std::vector<Parameter> result;
   for (const auto& param : find_all(root, filters)) {
     result.push_back(*param);
@@ -119,94 +92,60 @@ get_params(
   return result;
 };
 
-template<typename rootT> constexpr
-typename std::enable_if<is_parameter_root_v<rootT>, std::vector<Parameter>>::type
-list_params(
-  const rootT& root
-) {
+template <typename rootT>
+constexpr
+  typename std::enable_if<is_parameter_root_v<rootT>, std::vector<Parameter>>::type
+  list_params(const rootT& root) {
   return get_params(root, SearchParamFilters());
 };
 
 // ================================== GET PARAM ==================================== //
-template<typename rootT> constexpr
-typename std::enable_if<is_parameter_root_v<rootT>, Parameter>::type
-get_param(
-  const rootT& root,
-  const SearchParamFilters& filters
-) {
-  const Parameter* result = find_one(
-    root,
-    filters,
-   true 
-  );
+template <typename rootT>
+constexpr typename std::enable_if<is_parameter_root_v<rootT>, Parameter>::type
+get_param(const rootT& root, const SearchParamFilters& filters) {
+  const Parameter* result = find_one(root, filters, true);
   if (result == nullptr) {
     throw ParameterNotFoundError("Parameter not found");
   }
   return *result;
 }
 
-template<typename rootT> constexpr
-typename std::enable_if<is_parameter_root_v<rootT>, Parameter>::type
-get_param(
-  const rootT& root,
-  const std::string& param_name
-) {
+template <typename rootT>
+constexpr typename std::enable_if<is_parameter_root_v<rootT>, Parameter>::type
+get_param(const rootT& root, const std::string& param_name) {
   return get_param(
-    root,
-    SearchParamFiltersBuilder()
-      .with_param_name(param_name)
-      .build()
+    root, SearchParamFiltersBuilder().with_param_name(param_name).build()
   );
 }
 
-template<typename rootT> constexpr
-typename std::enable_if<is_parameter_root_v<rootT>, bool>::type
-try_get_param(
-  const rootT& root,
-  const SearchParamFilters& filters,
-  Parameter& param_result
+template <typename rootT>
+constexpr typename std::enable_if<is_parameter_root_v<rootT>, bool>::type try_get_param(
+  const rootT& root, const SearchParamFilters& filters, Parameter& param_result
 ) {
-  ParameterPtr ptr_result = find_one(
-    root,
-    filters,
-    false
-  );
+  ParameterPtr ptr_result = find_one(root, filters, false);
   if (ptr_result) {
     param_result = *ptr_result;
   }
   return ptr_result != nullptr;
 }
 
-template<typename rootT, typename ValueT> constexpr
-typename std::enable_if<is_parameter_root_v<rootT>, bool>::type
-try_get_param(
-  const rootT& root,
-  const SearchParamFilters& filters,
-  ValueT & value_result 
+template <typename rootT, typename ValueT>
+constexpr typename std::enable_if<is_parameter_root_v<rootT>, bool>::type try_get_param(
+  const rootT& root, const SearchParamFilters& filters, ValueT& value_result
 ) {
-  ParameterPtr ptr_result = find_one(
-    root,
-    filters,
-    false
-  );
+  ParameterPtr ptr_result = find_one(root, filters, false);
   if (ptr_result) {
     value_result = ptr_result->as<ValueT>();
   }
   return ptr_result != nullptr;
 }
 
-template<typename rootT, typename ValueT> constexpr
-typename std::enable_if<is_parameter_root_v<rootT>, ValueT>::type
+template <typename rootT, typename ValueT>
+constexpr typename std::enable_if<is_parameter_root_v<rootT>, ValueT>::type
 get_param_or(
-  const rootT& root,
-  const SearchParamFilters& filters,
-  const ValueT & default_value
+  const rootT& root, const SearchParamFilters& filters, const ValueT& default_value
 ) {
-  ParameterPtr ptr_result = find_one(
-    root,
-    filters,
-    false
-  );
+  ParameterPtr ptr_result = find_one(root, filters, false);
   if (ptr_result) {
     return ptr_result->as<ValueT>();
   } else {
@@ -214,19 +153,13 @@ get_param_or(
   }
 }
 
-template<typename rootT, typename ValueT> constexpr
-typename std::enable_if<is_parameter_root_v<rootT>, bool>::type
+template <typename rootT, typename ValueT>
+constexpr typename std::enable_if<is_parameter_root_v<rootT>, bool>::type
 try_get_param_or(
-  const rootT& root,
-  const SearchParamFilters& filters,
-  ValueT & result,
-  const ValueT & default_value
+  const rootT& root, const SearchParamFilters& filters, ValueT& result,
+  const ValueT& default_value
 ) {
-  ParameterPtr ptr_result = find_one(
-    root,
-    filters,
-    false
-  );
+  ParameterPtr ptr_result = find_one(root, filters, false);
   if (ptr_result) {
     result = ptr_result->as<ValueT>();
   } else {
@@ -235,4 +168,4 @@ try_get_param_or(
   return ptr_result != nullptr;
 }
 
-}  // namespace miru::params
+}  // namespace miru::query

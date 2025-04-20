@@ -9,4 +9,4 @@ bool is_leaf(const Parameter& parameter);
 bool has_children(const Parameter& parameter);
 ParametersView get_children_view(const Parameter& parameter);
 
-} // namespace miru::params
+}  // namespace miru::params

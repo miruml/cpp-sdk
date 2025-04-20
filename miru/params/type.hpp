@@ -72,8 +72,9 @@ class InvalidParameterValueTypeError : public std::runtime_error {
    * \param[in] actual the actual parameter type.
    */
   InvalidParameterValueTypeError(ParameterType expected, ParameterType actual)
-      : std::runtime_error("expected [" + to_string(expected) + "] got [" +
-                           to_string(actual) + "]") {}
+    : std::runtime_error(
+        "expected [" + to_string(expected) + "] got [" + to_string(actual) + "]"
+      ) {}
 };
 
 }  // namespace miru::params

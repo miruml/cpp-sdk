@@ -10,8 +10,9 @@
 #include <miru/filesys/path.hpp>
 
 // external
-#include <nlohmann/json.hpp>
 #include <yaml-cpp/yaml.h>
+
+#include <nlohmann/json.hpp>
 
 namespace miru::filesys {
 
@@ -39,7 +40,5 @@ class File : public Path {
   std::variant<nlohmann::json, YAML::Node> read_structured_data() const;
   std::string read_string() const;
 };
-
-
 
 }  // namespace miru::filesys

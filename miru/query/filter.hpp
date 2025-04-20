@@ -13,7 +13,7 @@ using MapArray = miru::params::MapArray;
 
 // ================================ SEARCH FILTERS ================================ //
 class SearchParamFilters {
-public:
+ public:
   SearchParamFilters() : param_names(), prefixes(), leaves_only(true) {}
 
   std::vector<std::string> param_names;
@@ -39,7 +39,7 @@ public:
 std::string to_string(const SearchParamFilters& filters);
 
 class SearchParamFiltersBuilder {
-public:
+ public:
   SearchParamFiltersBuilder() : filters() {}
 
   SearchParamFiltersBuilder& with_param_name(const std::string& param_name);
@@ -47,14 +47,12 @@ public:
     const std::vector<std::string>& param_names
   );
   SearchParamFiltersBuilder& with_prefix(const std::string& prefix);
-  SearchParamFiltersBuilder& with_prefixes(
-    const std::vector<std::string>& prefixes
-  );
+  SearchParamFiltersBuilder& with_prefixes(const std::vector<std::string>& prefixes);
   SearchParamFiltersBuilder& with_leaves_only(bool leaves_only);
 
   SearchParamFilters build() const { return filters; }
 
-private:
+ private:
   SearchParamFilters filters;
 };
 

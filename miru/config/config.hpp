@@ -27,8 +27,8 @@ enum class ConfigSource {
 struct FromAgentOptions {
  public:
   FromAgentOptions()
-    : num_retries(3), // try to load from the agent 3 times
-      retry_delay(std::chrono::milliseconds(500)), // wait 500ms between retries
+    : num_retries(3),  // try to load from the agent 3 times
+      retry_delay(std::chrono::milliseconds(500)),  // wait 500ms between retries
       default_config_path() {}
 
   uint32_t num_retries;
@@ -39,7 +39,6 @@ struct FromAgentOptions {
 // Config class
 class Config {
  public:
-
   // Initialize the config from a file system source. The config will read its
   // configuration and schema file from the file system.
   static Config from_file(
@@ -54,29 +53,23 @@ class Config {
     const FromAgentOptions& options = FromAgentOptions()
   );
 
-  const miru::params::Parameter& root_parameter() const {
-    return parameters_;
-  }
+  const miru::params::Parameter& root_parameter() const { return parameters_; }
 
   miru::query::ROS2StyleQuery ros2() const;
 
  private:
-  friend class ConfigBuilder;
-
   Config(
-    const miru::filesys::File& schema_file,
-    const std::string& config_slug,
-    ConfigSource source,
-    const miru::params::Parameter& parameters,
+    const miru::filesys::File& schema_file, const std::string& config_slug,
+    ConfigSource source, const miru::params::Parameter& parameters,
     const std::optional<std::string>& schema_digest,
     const std::optional<miru::filesys::File>& config_file
   )
     : schema_file_(schema_file),
-        config_slug_(config_slug),
-        source_(source),
-        parameters_(parameters),
-        schema_digest_(schema_digest),
-        config_file_(config_file) {}
+      config_slug_(config_slug),
+      source_(source),
+      parameters_(parameters),
+      schema_digest_(schema_digest),
+      config_file_(config_file) {}
 
   // required
   miru::filesys::File schema_file_;
@@ -89,6 +82,9 @@ class Config {
 
   // only needed if sourcing from the file system
   std::optional<miru::filesys::File> config_file_;
+
+  // friends
+  friend class ConfigBuilder;
 };
 
 std::string read_schema_config_slug(const miru::filesys::File& schema_file);

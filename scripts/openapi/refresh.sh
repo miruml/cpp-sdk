@@ -39,7 +39,7 @@ cd -
 make gen
 
 gen_models_dir=$gen_dir/model
-target_models_dir=$cpp_sdk_dir/miru/client/models
+target_models_dir=$cpp_sdk_dir/miru/http/models
 
 # replace the target model directories with the generated ones
 rm -rf "${target_models_dir:?}"/*

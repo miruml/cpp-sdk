@@ -2,8 +2,8 @@
 #include <fstream>
 
 // internal
-#include <miru/filesys/file.hpp>
 #include <miru/filesys/errors.hpp>
+#include <miru/filesys/file.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>
@@ -14,8 +14,8 @@ namespace miru::filesys {
 
 std::vector<FileType> supported_file_types() {
   return {
-      FileType::JSON,
-      FileType::YAML,
+    FileType::JSON,
+    FileType::YAML,
   };
 }
 
@@ -29,8 +29,8 @@ std::string file_type_to_string(FileType file_type) {
   return "unknown";
 }
 
-std::vector<std::string> file_types_to_strings(
-    const std::vector<FileType>& file_types) {
+std::vector<std::string> file_types_to_strings(const std::vector<FileType>& file_types
+) {
   std::vector<std::string> strings;
   for (const auto& file_type : file_types) {
     strings.push_back(file_type_to_string(file_type));
@@ -39,12 +39,7 @@ std::vector<std::string> file_types_to_strings(
 }
 
 FileType string_to_file_type(std::string str) {
-  std::transform(
-    str.begin(),
-    str.end(),
-    str.begin(),
-    ::tolower
-  );
+  std::transform(str.begin(), str.end(), str.begin(), ::tolower);
   if (str == "json") return FileType::JSON;
   if (str == "yaml") return FileType::YAML;
   if (str == "yml") return FileType::YAML;
@@ -56,7 +51,9 @@ FileType File::file_type() const {
   if (extension() == ".json") return FileType::JSON;
   if (extension() == ".yaml") return FileType::YAML;
   if (extension() == ".yml") return FileType::YAML;
-  THROW_INVALID_FILE_TYPE(path_.string(), file_types_to_strings(supported_file_types()));
+  THROW_INVALID_FILE_TYPE(
+    path_.string(), file_types_to_strings(supported_file_types())
+  );
 }
 
 void File::assert_exists() const {
@@ -88,7 +85,9 @@ nlohmann::json File::read_json() const {
   assert_exists();
 
   if (file_type() != FileType::JSON) {
-    THROW_INVALID_FILE_TYPE(path_.string(), file_types_to_strings(supported_file_types()));
+    THROW_INVALID_FILE_TYPE(
+      path_.string(), file_types_to_strings(supported_file_types())
+    );
   }
 
   std::ifstream file(path_);
@@ -102,7 +101,9 @@ YAML::Node File::read_yaml() const {
   // of yaml) however if we want to read strict yaml then we should use the dedicated
   // yaml parser
   if (file_type() != FileType::YAML && file_type() != FileType::JSON) {
-    THROW_INVALID_FILE_TYPE(path_.string(), file_types_to_strings(supported_file_types()));
+    THROW_INVALID_FILE_TYPE(
+      path_.string(), file_types_to_strings(supported_file_types())
+    );
   }
 
   std::ifstream file(path_);
@@ -116,7 +117,9 @@ std::variant<nlohmann::json, YAML::Node> File::read_structured_data() const {
     case FileType::YAML:
       return read_yaml();
   }
-  THROW_INVALID_FILE_TYPE(path_.string(), file_types_to_strings(supported_file_types()));
+  THROW_INVALID_FILE_TYPE(
+    path_.string(), file_types_to_strings(supported_file_types())
+  );
 }
 
 }  // namespace miru::filesys

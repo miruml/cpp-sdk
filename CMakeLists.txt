@@ -40,30 +40,35 @@ find_package(nlohmann_json 3.11 REQUIRED)
 find_package(yaml-cpp 0.8 REQUIRED)
 
 add_library(miru
-    miru/client/http_client.hpp
-    miru/client/http_client.cpp
-    miru/client/unix_socket.hpp
-    miru/client/unix_socket.cpp
-    miru/client/models/BaseConcreteConfig.h
-    miru/client/models/BaseConcreteConfig.cpp
-    miru/client/models/Error.h
-    miru/client/models/Error.cpp
-    miru/client/models/ErrorResponse.h
-    miru/client/models/ErrorResponse.cpp
-    miru/client/models/HashSchemaRequest.h
-    miru/client/models/HashSchemaRequest.cpp
-    miru/client/models/Helpers.h
-    miru/client/models/Helpers.cpp
-    miru/client/models/SchemaDigestResponse.h
-    miru/client/models/SchemaDigestResponse.cpp
     miru/config/config.hpp
     miru/config/config.cpp
+    miru/config/errors.hpp
     miru/filesys/dir.hpp
     miru/filesys/dir.cpp
+    miru/filesys/errors.hpp
     miru/filesys/file.hpp
     miru/filesys/file.cpp
     miru/filesys/path.hpp
     miru/filesys/path.cpp
+    miru/http/client_fwd.hpp
+    miru/http/client.hpp
+    miru/http/client.cpp
+    miru/http/errors.hpp
+    miru/http/errors.cpp
+    miru/http/socket_client.hpp
+    miru/http/socket_client.cpp
+    miru/http/models/BaseConcreteConfig.h
+    miru/http/models/BaseConcreteConfig.cpp
+    miru/http/models/Error.h
+    miru/http/models/Error.cpp
+    miru/http/models/ErrorResponse.h
+    miru/http/models/ErrorResponse.cpp
+    miru/http/models/HashSchemaRequest.h
+    miru/http/models/HashSchemaRequest.cpp
+    miru/http/models/Helpers.h
+    miru/http/models/Helpers.cpp
+    miru/http/models/SchemaDigestResponse.h
+    miru/http/models/SchemaDigestResponse.cpp
     miru/params/composite.hpp
     miru/params/composite.cpp
     miru/params/errors.hpp
@@ -108,6 +113,7 @@ if(BUILD_TESTING)
     enable_testing()
 
     find_package(GTest REQUIRED)
+    find_package(OpenSSL REQUIRED)
     
     add_executable(
         test.out
@@ -115,6 +121,7 @@ if(BUILD_TESTING)
         test/filesys/dir_test.cpp
         test/filesys/file_test.cpp
         test/filesys/path_test.cpp
+        test/http/client_test.cpp
         test/test_utils/testdata.hpp
         test/test_utils/testdata.cpp
         test/test_utils/utils.hpp
@@ -134,6 +141,12 @@ if(BUILD_TESTING)
         miru
         GTest::GTest
         GTest::Main
+        nlohmann_json::nlohmann_json
+        yaml-cpp::yaml-cpp
+        Boost::asio
+        Boost::beast
+        OpenSSL::SSL
+        OpenSSL::Crypto
     )
     
     add_test(NAME test COMMAND test.out)

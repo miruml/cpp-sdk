@@ -25,5 +25,7 @@ model/HashSchemaRequest.cpp
 model/HashSchemaRequest.h
 model/Helpers.cpp
 model/Helpers.h
+model/RefreshLatestConcreteConfigRequest.cpp
+model/RefreshLatestConcreteConfigRequest.h
 model/SchemaDigestResponse.cpp
 model/SchemaDigestResponse.h

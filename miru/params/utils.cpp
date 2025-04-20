@@ -1,7 +1,7 @@
 // internal
 #include <miru/params/parameter.hpp>
-#include <miru/params/value.hpp>
 #include <miru/params/utils.hpp>
+#include <miru/params/value.hpp>
 
 namespace miru::params {
 
@@ -29,19 +29,14 @@ bool has_children(const Parameter& parameter) {
 ParametersView get_children_view(const Parameter& parameter) {
   switch (parameter.get_type()) {
     case ParameterType::PARAMETER_MAP:
-      return ParametersView(
-        parameter.as_map().begin(),
-        parameter.as_map().end()
-      );
+      return ParametersView(parameter.as_map().begin(), parameter.as_map().end());
     case ParameterType::PARAMETER_MAP_ARRAY:
       return ParametersView(
-        parameter.as_map_array().begin(),
-        parameter.as_map_array().end()
+        parameter.as_map_array().begin(), parameter.as_map_array().end()
       );
     case ParameterType::PARAMETER_NESTED_ARRAY:
       return ParametersView(
-        parameter.as_nested_array().begin(),
-        parameter.as_nested_array().end()
+        parameter.as_nested_array().begin(), parameter.as_nested_array().end()
       );
     default:
       return ParametersView(
@@ -51,4 +46,4 @@ ParametersView get_children_view(const Parameter& parameter) {
   }
 }
 
-} // namespace miru::params
+}  // namespace miru::params

@@ -34,6 +34,7 @@ void ConcreteConfigsApi::setupRoutes() {
     using namespace Pistache::Rest;
 
     Routes::Get(*router, base + "/concrete_configs/latest", Routes::bind(&ConcreteConfigsApi::get_latest_concrete_config_handler, this));
+    Routes::Post(*router, base + "/concrete_configs/refresh_latest", Routes::bind(&ConcreteConfigsApi::refresh_latest_concrete_config_handler, this));
 
     // Default handler, called when a route is not found
     router->addCustomHandler(Routes::bind(&ConcreteConfigsApi::concrete_configs_api_default_handler, this));
@@ -72,7 +73,9 @@ std::pair<Pistache::Http::Code, std::string> ConcreteConfigsApi::handleOperation
 void ConcreteConfigsApi::get_latest_concrete_config_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response) {
     try {
 
-
+    // Getting the path params
+    auto clientId = request.param(":clientId").as<std::string>();
+    
     // Getting the query params
     auto configSchemaDigestQuery = request.query().get("config_schema_digest");
     std::optional<std::string> configSchemaDigest;
@@ -82,17 +85,48 @@ void ConcreteConfigsApi::get_latest_concrete_config_handler(const Pistache::Rest
             configSchemaDigest = valueQuery_instance;
         }
     }
-    auto configSchemaSlugQuery = request.query().get("config_schema_slug");
-    std::optional<std::string> configSchemaSlug;
-    if(configSchemaSlugQuery.has_value()){
+    auto configSlugQuery = request.query().get("config_slug");
+    std::optional<std::string> configSlug;
+    if(configSlugQuery.has_value()){
         std::string valueQuery_instance;
-        if(fromStringValue(configSchemaSlugQuery.value(), valueQuery_instance)){
-            configSchemaSlug = valueQuery_instance;
+        if(fromStringValue(configSlugQuery.value(), valueQuery_instance)){
+            configSlug = valueQuery_instance;
         }
     }
     
     try {
-        this->get_latest_concrete_config(configSchemaDigest, configSchemaSlug, response);
+        this->get_latest_concrete_config(clientId, configSchemaDigest, configSlug, response);
+    } catch (Pistache::Http::HttpError &e) {
+        response.send(static_cast<Pistache::Http::Code>(e.code()), e.what());
+        return;
+    } catch (std::exception &e) {
+        this->handleOperationException(e, response);
+        return;
+    }
+
+    } catch (std::exception &e) {
+        response.send(Pistache::Http::Code::Internal_Server_Error, e.what());
+    }
+
+}
+void ConcreteConfigsApi::refresh_latest_concrete_config_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response) {
+    try {
+
+
+    // Getting the body param
+    
+    RefreshLatestConcreteConfigRequest refreshLatestConcreteConfigRequest;
+    
+    try {
+        nlohmann::json::parse(request.body()).get_to(refreshLatestConcreteConfigRequest);
+        refreshLatestConcreteConfigRequest.validate();
+    } catch (std::exception &e) {
+        this->handleParsingException(e, response);
+        return;
+    }
+
+    try {
+        this->refresh_latest_concrete_config(refreshLatestConcreteConfigRequest, response);
     } catch (Pistache::Http::HttpError &e) {
         response.send(static_cast<Pistache::Http::Code>(e.code()), e.what());
         return;

@@ -21,20 +21,20 @@ class ROS2StyleQuery {
  public:
   ROS2StyleQuery(const miru::params::Parameter& root) : root_(root) {}
 
-    // ============================== ROS2 INTERFACES ============================== //
+  // ============================== ROS2 INTERFACES ============================== //
 
-    // The following ROS2 interfaces are pulled from the rclcpp NodeParametersInterface.
+  // The following ROS2 interfaces are pulled from the rclcpp NodeParametersInterface.
 
-    // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L598
+  // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L598
 
-    /// Return true if a given parameter is declared.
-    /**
-    * \param[in] name The name of the parameter to check for being declared.
-    * \return true if the parameter name has been declared, otherwise false.
-    */
-    bool has_parameter(const std::string& parameter_name);
+  /// Return true if a given parameter is declared.
+  /**
+   * \param[in] name The name of the parameter to check for being declared.
+   * \return true if the parameter name has been declared, otherwise false.
+   */
+  bool has_parameter(const std::string& parameter_name);
 
-    // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L768
+  // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L768
 
   /// Return the parameter by the given name.
   /**
@@ -56,7 +56,7 @@ class ROS2StyleQuery {
    * \throws rclcpp::exceptions::ParameterUninitializedException if the parameter
    *   has not been initialized.
    */
-  Parameter get_parameter(const std::string & name) const;
+  Parameter get_parameter(const std::string& name) const;
 
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L787
 
@@ -75,7 +75,7 @@ class ROS2StyleQuery {
    * \param[out] parameter The output storage for the parameter being retrieved.
    * \return true if the parameter was previously declared, otherwise false.
    */
-  bool get_parameter(const std::string & name, Parameter & parameter) const;
+  bool get_parameter(const std::string& name, Parameter& parameter) const;
 
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L804
 
@@ -92,9 +92,8 @@ class ROS2StyleQuery {
    * \throws rclcpp::ParameterTypeException if the requested type does not
    *   match the value of the parameter which is stored.
    */
-  template<typename ParameterT>
-  bool
-  get_parameter(const std::string & name, ParameterT & parameter) const {
+  template <typename ParameterT>
+  bool get_parameter(const std::string& name, ParameterT& parameter) const {
     SearchParamFiltersBuilder builder;
     builder.with_param_name(name);
     SearchParamFilters filters = builder.build();
@@ -103,7 +102,8 @@ class ROS2StyleQuery {
 
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L823
 
-  /// Get the parameter value, or the "alternative_value" if not set, and assign it to "parameter".
+  /// Get the parameter value, or the "alternative_value" if not set, and assign it to
+  /// "parameter".
   /**
    * If the parameter was not set, then the "parameter" argument is assigned
    * the "alternative_value".
@@ -114,16 +114,14 @@ class ROS2StyleQuery {
    * In all cases, the parameter is never set or declared within the node.
    *
    * \param[in] name The name of the parameter to get.
-   * \param[out] parameter The output where the value of the parameter should be assigned.
-   * \param[in] alternative_value Value to be stored in output if the parameter was not set.
-   * \returns true if the parameter was set, false otherwise.
+   * \param[out] parameter The output where the value of the parameter should be
+   * assigned. \param[in] alternative_value Value to be stored in output if the
+   * parameter was not set. \returns true if the parameter was set, false otherwise.
    */
-  template<typename ParameterT>
-  bool
-  get_parameter_or(
-    const std::string & name,
-    ParameterT & parameter,
-    const ParameterT & alternative_value) const {
+  template <typename ParameterT>
+  bool get_parameter_or(
+    const std::string& name, ParameterT& parameter, const ParameterT& alternative_value
+  ) const {
     SearchParamFiltersBuilder builder;
     builder.with_param_name(name);
     SearchParamFilters filters = builder.build();
@@ -136,36 +134,37 @@ class ROS2StyleQuery {
   /**
    * If the parameter was not set, then the "alternative_value" argument is returned.
    *
-   * This method will not throw the rclcpp::exceptions::ParameterNotDeclaredException exception.
+   * This method will not throw the rclcpp::exceptions::ParameterNotDeclaredException
+   * exception.
    *
    * In all cases, the parameter is never set or declared within the node.
    *
    * \param[in] name The name of the parameter to get.
-   * \param[in] alternative_value Value to be stored in output if the parameter was not set.
-   * \returns The value of the parameter.
+   * \param[in] alternative_value Value to be stored in output if the parameter was not
+   * set. \returns The value of the parameter.
    */
-  template<typename ParameterT>
-  ParameterT
-  get_parameter_or(
-    const std::string & name,
-    const ParameterT & alternative_value) const {
+  template <typename ParameterT>
+  ParameterT get_parameter_or(
+    const std::string& name, const ParameterT& alternative_value
+  ) const {
     SearchParamFiltersBuilder builder;
     builder.with_param_name(name);
     SearchParamFilters filters = builder.build();
     return miru::query::get_param_or(root_, filters, alternative_value);
   }
 
-// https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L868
+  // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L868
 
   /// Return the parameters by the given parameter names.
   /**
    * Like get_parameter(const std::string &), this method may throw the
    * rclcpp::exceptions::ParameterNotDeclaredException exception if the
    * requested parameter has not been declared and undeclared parameters are
-   * not allowed, and may throw the rclcpp::exceptions::ParameterUninitializedException exception.
+   * not allowed, and may throw the rclcpp::exceptions::ParameterUninitializedException
+   * exception.
    *
-   * Also like get_parameter(const std::string &), if undeclared parameters are allowed and the
-   * parameter has not been declared, then the corresponding rclcpp::Parameter
+   * Also like get_parameter(const std::string &), if undeclared parameters are allowed
+   * and the parameter has not been declared, then the corresponding rclcpp::Parameter
    * will be default initialized and therefore have the type
    * rclcpp::ParameterType::PARAMETER_NOT_SET.
    *
@@ -177,10 +176,9 @@ class ROS2StyleQuery {
    * \throws rclcpp::exceptions::ParameterUninitializedException if any of the
    *   parameters have not been initialized.
    */
-  std::vector<Parameter>
-  get_parameters(const std::vector<std::string> & names) const;
+  std::vector<Parameter> get_parameters(const std::vector<std::string>& names) const;
 
-// https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L909
+  // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L909
 
   /// Get the parameter values for all parameters that have a given prefix.
   /**
@@ -219,11 +217,9 @@ class ROS2StyleQuery {
    * \throws rclcpp::ParameterTypeException if the requested type does not
    *   match the value of the parameter which is stored.
    */
-  template<typename ParameterT>
-  bool
-  get_parameters(
-    const std::string & prefix,
-    std::map<std::string, ParameterT> & values
+  template <typename ParameterT>
+  bool get_parameters(
+    const std::string& prefix, std::map<std::string, ParameterT>& values
   ) const {
     SearchParamFiltersBuilder builder;
     builder.with_prefix(prefix);
@@ -240,4 +236,4 @@ class ROS2StyleQuery {
   miru::params::Parameter root_;
 };
 
-}  // namespace miru::params
+}  // namespace miru::query

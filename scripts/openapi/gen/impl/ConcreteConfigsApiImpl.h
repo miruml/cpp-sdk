@@ -30,6 +30,7 @@
 
 
 #include "BaseConcreteConfig.h"
+#include "RefreshLatestConcreteConfigRequest.h"
 #include <string>
 
 namespace org::openapitools::server::api
@@ -42,7 +43,8 @@ public:
     explicit ConcreteConfigsApiImpl(const std::shared_ptr<Pistache::Rest::Router>& rtr);
     ~ConcreteConfigsApiImpl() override = default;
 
-    void get_latest_concrete_config(const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configSchemaSlug, Pistache::Http::ResponseWriter &response);
+    void get_latest_concrete_config(const std::string &clientId, const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configSlug, Pistache::Http::ResponseWriter &response);
+    void refresh_latest_concrete_config(const RefreshLatestConcreteConfigRequest &refreshLatestConcreteConfigRequest, Pistache::Http::ResponseWriter &response);
 
 };
 

@@ -15,21 +15,19 @@ Parameter::Parameter(const std::string& name) : name_(name) {
   name_ = utils::remove_trailing(name_, DELIMITER);
 }
 
-void validate_child_parent_name_consistency(const std::string& parent_name,
-                                            const Parameter& child) {
+void validate_child_parent_name_consistency(
+  const std::string& parent_name, const Parameter& child
+) {
   // the child's name must follow its parent's name
   if (child.get_parent_name() != parent_name) {
     THROW_CHILD_PARENT_NAME_MISMATCH(
-      "Parameter",
-      child.get_name(),
-      child.get_parent_name(),
-      parent_name
+      "Parameter", child.get_name(), child.get_parent_name(), parent_name
     );
   }
 }
 
 Parameter::Parameter(const std::string& name, const ParameterValue& value)
-    : name_(name), value_(value) {
+  : name_(name), value_(value) {
   // remove any trailing slashes from the name
   name_ = utils::remove_trailing(name_, DELIMITER);
 
@@ -155,8 +153,7 @@ std::string Parameter::get_key() const {
 
 std::string Parameter::get_parent_name() const {
   return utils::remove_trailing(
-    name_.substr(0, name_.length() - get_key().length()),
-    DELIMITER
+    name_.substr(0, name_.length() - get_key().length()), DELIMITER
   );
 }
 
@@ -197,6 +194,5 @@ bool Parameter::is_map() const { return value_.is_map(); }
 bool Parameter::is_map_array() const { return value_.is_map_array(); }
 
 bool Parameter::is_array() const { return value_.is_array(); }
-
 
 }  // namespace miru::params

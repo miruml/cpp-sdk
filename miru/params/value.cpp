@@ -150,8 +150,9 @@ std::string param_map_to_string(const miru::params::Map& map, const int indent) 
   return type_array.str();
 }
 
-std::string param_value_array_to_string(const std::vector<ParameterValue>& array,
-                                        const int indent, const bool with_newlines) {
+std::string param_value_array_to_string(
+  const std::vector<ParameterValue>& array, const int indent, const bool with_newlines
+) {
   std::stringstream type_array;
   bool first_item = true;
   with_newlines ? type_array << std::string(indent, ' ') << "[" : type_array << "[";
@@ -213,7 +214,7 @@ ParameterValue::ParameterValue(const std::string& string_value) {
 }
 
 ParameterValue::ParameterValue(const char* string_value)
-    : ParameterValue(std::string(string_value)) {}
+  : ParameterValue(std::string(string_value)) {}
 
 ParameterValue::ParameterValue(const std::vector<bool>& bool_array_value) {
   value_ = bool_array_value;

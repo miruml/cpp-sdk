@@ -17,32 +17,37 @@ class MapConstructor : public ::testing::Test {
 };
 
 TEST_F(MapConstructor, empty_map) {
-  EXPECT_THROW(miru::params::Map(std::vector<miru::params::Parameter>()),
-               miru::params::EmptyInitializationError);
+  EXPECT_THROW(
+    miru::params::Map(std::vector<miru::params::Parameter>()),
+    miru::params::EmptyInitializationError
+  );
 }
 
 TEST_F(MapConstructor, duplicate_field_names) {
   miru::params::Parameter param1("field1", miru::params::Scalar("value1"));
   miru::params::Parameter param2("field1", miru::params::Scalar("value2"));
   EXPECT_THROW(
-      miru::params::Map(std::vector<miru::params::Parameter>({param1, param2})),
-      miru::params::DuplicateFieldNamesError);
+    miru::params::Map(std::vector<miru::params::Parameter>({param1, param2})),
+    miru::params::DuplicateFieldNamesError
+  );
 }
 
 TEST_F(MapConstructor, mismatching_parent_names) {
   miru::params::Parameter param1("field1", miru::params::Scalar("value1"));
   miru::params::Parameter param2("field2.field2", miru::params::Scalar("value2"));
   EXPECT_THROW(
-      miru::params::Map(std::vector<miru::params::Parameter>({param1, param2})),
-      miru::params::MismatchingParentNamesError);
+    miru::params::Map(std::vector<miru::params::Parameter>({param1, param2})),
+    miru::params::MismatchingParentNamesError
+  );
 }
 
 TEST_F(MapConstructor, mismatching_parent_names_nested) {
   miru::params::Parameter param1("l1.l2.l3.field1", miru::params::Scalar("value1"));
   miru::params::Parameter param2("l1.l2.l4.field2", miru::params::Scalar("value2"));
   EXPECT_THROW(
-      miru::params::Map(std::vector<miru::params::Parameter>({param1, param2})),
-      miru::params::MismatchingParentNamesError);
+    miru::params::Map(std::vector<miru::params::Parameter>({param1, param2})),
+    miru::params::MismatchingParentNamesError
+  );
 }
 
 TEST_F(MapConstructor, success) {
@@ -68,10 +73,12 @@ TEST_F(MapAccessor, success) {
 }
 
 TEST_F(MapAccessor, nested_field) {
-  miru::params::Parameter param1("deeply.nested.field1",
-                                 miru::params::Scalar("value1"));
-  miru::params::Parameter param2("deeply.nested.field2",
-                                 miru::params::Scalar("value2"));
+  miru::params::Parameter param1(
+    "deeply.nested.field1", miru::params::Scalar("value1")
+  );
+  miru::params::Parameter param2(
+    "deeply.nested.field2", miru::params::Scalar("value2")
+  );
   miru::params::Map map({param1, param2});
   EXPECT_EQ(map["field1"].as_string(), "value1");
   EXPECT_EQ(map["field2"].as_string(), "value2");
@@ -88,8 +95,9 @@ TEST_F(MapAccessor, many_fields) {
   miru::params::Parameter param8("field8", miru::params::Scalar("value8"));
   miru::params::Parameter param9("field9", miru::params::Scalar("value9"));
   miru::params::Parameter param10("field10", miru::params::Scalar("value10"));
-  miru::params::Map map({param1, param2, param3, param4, param5, param6, param7, param8,
-                         param9, param10});
+  miru::params::Map map(
+    {param1, param2, param3, param4, param5, param6, param7, param8, param9, param10}
+  );
   EXPECT_EQ(map["field1"].as_string(), "value1");
   EXPECT_EQ(map["field2"].as_string(), "value2");
   EXPECT_EQ(map["field3"].as_string(), "value3");
@@ -109,92 +117,110 @@ class MapArrayConstructor : public ::testing::Test {
 
 TEST_F(MapArrayConstructor, empty_map_array) {
   // parameter constructor
-  EXPECT_THROW(miru::params::MapArray(std::vector<miru::params::Parameter>()),
-               miru::params::EmptyInitializationError);
+  EXPECT_THROW(
+    miru::params::MapArray(std::vector<miru::params::Parameter>()),
+    miru::params::EmptyInitializationError
+  );
 
   // map constructor
-  EXPECT_THROW(miru::params::MapArray(std::vector<miru::params::Map>()),
-               miru::params::EmptyInitializationError);
+  EXPECT_THROW(
+    miru::params::MapArray(std::vector<miru::params::Map>()),
+    miru::params::EmptyInitializationError
+  );
 }
 
 TEST_F(MapArrayConstructor, non_map_parameters) {
   miru::params::Parameter param1("field1", miru::params::Scalar("value1"));
   miru::params::Parameter param2("field1", miru::params::Scalar("value2"));
   EXPECT_THROW(
-      miru::params::MapArray(std::vector<miru::params::Parameter>({param1, param2})),
-      miru::params::InvalidParameterTypeError);
+    miru::params::MapArray(std::vector<miru::params::Parameter>({param1, param2})),
+    miru::params::InvalidParameterTypeError
+  );
 }
 
 TEST_F(MapArrayConstructor, duplicate_field_names) {
   miru::params::Map map1(
-      {miru::params::Parameter("0.scalar1", miru::params::Scalar("value1")),
-       miru::params::Parameter("0.int", 2)});
+    {miru::params::Parameter("0.scalar1", miru::params::Scalar("value1")),
+     miru::params::Parameter("0.int", 2)}
+  );
   miru::params::Map map2(
-      {miru::params::Parameter("0.string3", "value3"),
-       miru::params::Parameter("0.float4", 4.0)});
+    {miru::params::Parameter("0.string3", "value3"),
+     miru::params::Parameter("0.float4", 4.0)}
+  );
 
   // parameter constructor
   miru::params::Parameter param1("0", map1);
   miru::params::Parameter param2("0", map2);
   EXPECT_THROW(
-      miru::params::MapArray(std::vector<miru::params::Parameter>({param1, param2})),
-      miru::params::DuplicateFieldNamesError);
+    miru::params::MapArray(std::vector<miru::params::Parameter>({param1, param2})),
+    miru::params::DuplicateFieldNamesError
+  );
 
   // map constructor
   EXPECT_THROW(
-      miru::params::MapArray map_array({map1, map2}),
-      miru::params::DuplicateFieldNamesError);
+    miru::params::MapArray map_array({map1, map2}),
+    miru::params::DuplicateFieldNamesError
+  );
 }
 
 TEST_F(MapArrayConstructor, mismatching_parent_names) {
   miru::params::Map map1(
-      {miru::params::Parameter("parent1.0.scalar1", miru::params::Scalar("value1")),
-       miru::params::Parameter("parent1.0.int", 2)});
+    {miru::params::Parameter("parent1.0.scalar1", miru::params::Scalar("value1")),
+     miru::params::Parameter("parent1.0.int", 2)}
+  );
   miru::params::Map map2(
-      {miru::params::Parameter("parent2.1.string3", "value3"),
-       miru::params::Parameter("parent2.1.float4", 4.0)});
+    {miru::params::Parameter("parent2.1.string3", "value3"),
+     miru::params::Parameter("parent2.1.float4", 4.0)}
+  );
 
   // parameter constructor
   miru::params::Parameter param1("parent1.0", map1);
   miru::params::Parameter param2("parent2.1", map2);
   EXPECT_THROW(
-      miru::params::MapArray(std::vector<miru::params::Parameter>({param1, param2})),
-      miru::params::MismatchingParentNamesError);
+    miru::params::MapArray(std::vector<miru::params::Parameter>({param1, param2})),
+    miru::params::MismatchingParentNamesError
+  );
 
   // map constructor
   EXPECT_THROW(
-      miru::params::MapArray map_array({map1, map2}),
-      miru::params::MismatchingParentNamesError);
+    miru::params::MapArray map_array({map1, map2}),
+    miru::params::MismatchingParentNamesError
+  );
 }
 
 TEST_F(MapArrayConstructor, invalid_array_indices) {
   miru::params::Map map1(
-      {miru::params::Parameter("parent.0.scalar1", miru::params::Scalar("value1")),
-       miru::params::Parameter("parent.0.int", 2)});
+    {miru::params::Parameter("parent.0.scalar1", miru::params::Scalar("value1")),
+     miru::params::Parameter("parent.0.int", 2)}
+  );
   miru::params::Map map2(
-      {miru::params::Parameter("parent.2.string3", "value3"),
-       miru::params::Parameter("parent.2.float4", 4.0)});
+    {miru::params::Parameter("parent.2.string3", "value3"),
+     miru::params::Parameter("parent.2.float4", 4.0)}
+  );
 
   // parameter constructor
   miru::params::Parameter param1("parent.0", map1);
   miru::params::Parameter param2("parent.2", map2);
   EXPECT_THROW(
-      miru::params::MapArray(std::vector<miru::params::Parameter>({param1, param2})),
-      miru::params::InvalidArrayKeysError);
+    miru::params::MapArray(std::vector<miru::params::Parameter>({param1, param2})),
+    miru::params::InvalidArrayKeysError
+  );
 
   // map constructor
   EXPECT_THROW(
-      miru::params::MapArray map_array({map1, map2}),
-      miru::params::InvalidArrayKeysError);
+    miru::params::MapArray map_array({map1, map2}), miru::params::InvalidArrayKeysError
+  );
 }
 
 TEST_F(MapArrayConstructor, missing_parent_name) {
   miru::params::Map map1(
-      {miru::params::Parameter("scalar1", miru::params::Scalar("value1")),
-       miru::params::Parameter("int", 2)});
+    {miru::params::Parameter("scalar1", miru::params::Scalar("value1")),
+     miru::params::Parameter("int", 2)}
+  );
   miru::params::Map map2(
-      {miru::params::Parameter("string3", "value3"),
-       miru::params::Parameter("float4", 4.0)});
+    {miru::params::Parameter("string3", "value3"),
+     miru::params::Parameter("float4", 4.0)}
+  );
 
   EXPECT_THROW(
     miru::params::MapArray(std::vector<miru::params::Map>({map1, map2})),
@@ -204,11 +230,13 @@ TEST_F(MapArrayConstructor, missing_parent_name) {
 
 TEST_F(MapArrayConstructor, success) {
   miru::params::Map map1(
-      {miru::params::Parameter("parent.0.scalar1", miru::params::Scalar("value1")),
-       miru::params::Parameter("parent.0.int", 2)});
+    {miru::params::Parameter("parent.0.scalar1", miru::params::Scalar("value1")),
+     miru::params::Parameter("parent.0.int", 2)}
+  );
   miru::params::Map map2(
-      {miru::params::Parameter("parent.1.string3", "value3"),
-       miru::params::Parameter("parent.1.float4", 4.0)});
+    {miru::params::Parameter("parent.1.string3", "value3"),
+     miru::params::Parameter("parent.1.float4", 4.0)}
+  );
 
   // parameter constructor
   miru::params::Parameter param1("parent.0", map1);
@@ -235,25 +263,34 @@ class NestedArrayConstructor : public ::testing::Test {
 };
 
 TEST_F(NestedArrayConstructor, empty_nested_array) {
-  EXPECT_THROW(miru::params::NestedArray(std::vector<miru::params::Parameter>()),
-               miru::params::EmptyInitializationError);
-  EXPECT_THROW(miru::params::NestedArray(std::vector<miru::params::NestedArray>()),
-              miru::params::EmptyInitializationError);
+  EXPECT_THROW(
+    miru::params::NestedArray(std::vector<miru::params::Parameter>()),
+    miru::params::EmptyInitializationError
+  );
+  EXPECT_THROW(
+    miru::params::NestedArray(std::vector<miru::params::NestedArray>()),
+    miru::params::EmptyInitializationError
+  );
 }
 
 TEST_F(NestedArrayConstructor, non_array_parameters) {
   miru::params::Parameter param1(
-      "parent.0",
-      miru::params::Map(
-          {miru::params::Parameter("parent.0.scalar1", miru::params::Scalar("value1")),
-           miru::params::Parameter("parent.0.int", 2)}));
+    "parent.0",
+    miru::params::Map(
+      {miru::params::Parameter("parent.0.scalar1", miru::params::Scalar("value1")),
+       miru::params::Parameter("parent.0.int", 2)}
+    )
+  );
   miru::params::Parameter param2(
-      "parent.1",
-      miru::params::Map({miru::params::Parameter("parent.1.string3", "value3"),
-                         miru::params::Parameter("parent.1.float4", 4.0)}));
+    "parent.1", miru::params::Map(
+                  {miru::params::Parameter("parent.1.string3", "value3"),
+                   miru::params::Parameter("parent.1.float4", 4.0)}
+                )
+  );
   EXPECT_THROW(
-      miru::params::NestedArray(std::vector<miru::params::Parameter>({param1, param2})),
-      miru::params::InvalidParameterTypeError);
+    miru::params::NestedArray(std::vector<miru::params::Parameter>({param1, param2})),
+    miru::params::InvalidParameterTypeError
+  );
 }
 
 TEST_F(NestedArrayConstructor, parameter_constructor_duplicate_field_names) {
@@ -262,8 +299,9 @@ TEST_F(NestedArrayConstructor, parameter_constructor_duplicate_field_names) {
 
   // parameter constructor
   EXPECT_THROW(
-      miru::params::NestedArray(std::vector<miru::params::Parameter>({array1, array2})),
-      miru::params::DuplicateFieldNamesError);
+    miru::params::NestedArray(std::vector<miru::params::Parameter>({array1, array2})),
+    miru::params::DuplicateFieldNamesError
+  );
 }
 
 TEST_F(NestedArrayConstructor, nested_array_constructor_duplicate_field_names) {
@@ -277,16 +315,20 @@ TEST_F(NestedArrayConstructor, nested_array_constructor_duplicate_field_names) {
 
   // parameter constructor
   EXPECT_THROW(
-      miru::params::NestedArray(std::vector<miru::params::NestedArray>({nested_array1, nested_array2})),
-      miru::params::DuplicateFieldNamesError);
+    miru::params::NestedArray(
+      std::vector<miru::params::NestedArray>({nested_array1, nested_array2})
+    ),
+    miru::params::DuplicateFieldNamesError
+  );
 }
 
 TEST_F(NestedArrayConstructor, mismatching_parent_names) {
   miru::params::Parameter array1("parent1.0", std::vector<int>({1, 2, 3}));
   miru::params::Parameter array2("parent2.0", std::vector<int>({4, 5, 6}));
   EXPECT_THROW(
-      miru::params::NestedArray(std::vector<miru::params::Parameter>({array1, array2})),
-      miru::params::MismatchingParentNamesError);
+    miru::params::NestedArray(std::vector<miru::params::Parameter>({array1, array2})),
+    miru::params::MismatchingParentNamesError
+  );
 }
 
 TEST_F(NestedArrayConstructor, nested_array_constructor_mismatching_parent_names) {
@@ -300,16 +342,20 @@ TEST_F(NestedArrayConstructor, nested_array_constructor_mismatching_parent_names
 
   // parameter constructor
   EXPECT_THROW(
-      miru::params::NestedArray(std::vector<miru::params::NestedArray>({nested_array1, nested_array2})),
-      miru::params::MismatchingParentNamesError);
+    miru::params::NestedArray(
+      std::vector<miru::params::NestedArray>({nested_array1, nested_array2})
+    ),
+    miru::params::MismatchingParentNamesError
+  );
 }
 
 TEST_F(NestedArrayConstructor, invalid_array_indices) {
   miru::params::Parameter array1("parent.0", std::vector<int>({1, 2, 3}));
   miru::params::Parameter array2("parent.3", std::vector<int>({4, 5, 6}));
   EXPECT_THROW(
-      miru::params::NestedArray(std::vector<miru::params::Parameter>({array1, array2})),
-      miru::params::InvalidArrayKeysError);
+    miru::params::NestedArray(std::vector<miru::params::Parameter>({array1, array2})),
+    miru::params::InvalidArrayKeysError
+  );
 }
 
 TEST_F(NestedArrayConstructor, nested_array_constructor_invalid_array_indices) {
@@ -323,8 +369,11 @@ TEST_F(NestedArrayConstructor, nested_array_constructor_invalid_array_indices) {
 
   // parameter constructor
   EXPECT_THROW(
-      miru::params::NestedArray(std::vector<miru::params::NestedArray>({nested_array1, nested_array2})),
-      miru::params::InvalidArrayKeysError);
+    miru::params::NestedArray(
+      std::vector<miru::params::NestedArray>({nested_array1, nested_array2})
+    ),
+    miru::params::InvalidArrayKeysError
+  );
 }
 
 TEST_F(NestedArrayConstructor, missing_parent_name) {
@@ -337,8 +386,11 @@ TEST_F(NestedArrayConstructor, missing_parent_name) {
   miru::params::NestedArray nested_array2({array3, array4});
 
   EXPECT_THROW(
-      miru::params::NestedArray(std::vector<miru::params::NestedArray>({nested_array1, nested_array2})),
-      miru::params::EmptyParentNameError);
+    miru::params::NestedArray(
+      std::vector<miru::params::NestedArray>({nested_array1, nested_array2})
+    ),
+    miru::params::EmptyParentNameError
+  );
 }
 
 TEST_F(NestedArrayConstructor, success) {

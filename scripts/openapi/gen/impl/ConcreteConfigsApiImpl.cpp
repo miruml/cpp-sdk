@@ -24,7 +24,10 @@ ConcreteConfigsApiImpl::ConcreteConfigsApiImpl(const std::shared_ptr<Pistache::R
 {
 }
 
-void ConcreteConfigsApiImpl::get_latest_concrete_config(const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configSchemaSlug, Pistache::Http::ResponseWriter &response) {
+void ConcreteConfigsApiImpl::get_latest_concrete_config(const std::string &clientId, const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configSlug, Pistache::Http::ResponseWriter &response) {
+    response.send(Pistache::Http::Code::Ok, "Do some magic\n");
+}
+void ConcreteConfigsApiImpl::refresh_latest_concrete_config(const RefreshLatestConcreteConfigRequest &refreshLatestConcreteConfigRequest, Pistache::Http::ResponseWriter &response) {
     response.send(Pistache::Http::Code::Ok, "Do some magic\n");
 }
 
