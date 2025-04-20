@@ -16,7 +16,7 @@
 
 namespace miru::config {
 
-const std::string MIRU_CONFIG_SLUG_FIELD_ID = "$miru_config_slug";
+const std::string MIRU_CONFIG_SLUG_FIELD = "$miru_config_slug";
 
 // used to determine where to source the config from
 enum class ConfigSource {
@@ -24,19 +24,35 @@ enum class ConfigSource {
   FileSystem,
 };
 
+struct FromAgentOptions {
+ public:
+  FromAgentOptions()
+    : num_retries(3), // try to load from the agent 3 times
+      retry_delay(std::chrono::milliseconds(500)), // wait 500ms between retries
+      default_config_path() {}
+
+  uint32_t num_retries;
+  std::chrono::milliseconds retry_delay;
+  std::optional<std::string> default_config_path;
+};
+
 // Config class
 class Config {
  public:
+
   // Initialize the config from a file system source. The config will read its
   // configuration and schema file from the file system.
   static Config from_file(
-    const std::string& schema_file_path,
-    const std::string& config_file_path
+    const std::filesystem::path& schema_file_path,
+    const std::filesystem::path& config_file_path
   );
 
-  // Initialize the config from an agent source. The config will read its
-  // configuration and schema file from the on-device agent.
-  static Config from_agent(const std::string& schema_file_path);
+  // Initialize the config from an agent source. The config will read its configuration
+  // and schema file from the on-device agent.
+  static Config from_agent(
+    const std::filesystem::path& schema_file_path,
+    const FromAgentOptions& options = FromAgentOptions()
+  );
 
   const miru::params::Parameter& root_parameter() const {
     return parameters_;

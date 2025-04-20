@@ -1,3 +1,6 @@
+// std
+#include <thread>
+
 // internal
 #include <miru/client/models/HashSchemaRequest.h>
 #include <miru/client/unix_socket.hpp>
@@ -16,8 +19,8 @@ namespace miru::config {
 namespace openapi = org::openapitools::server::model;
 
 Config Config::from_file(
-  const std::string& schema_file_path,
-  const std::string& config_file_path
+  const std::filesystem::path& schema_file_path,
+  const std::filesystem::path& config_file_path
 ) {
   ConfigBuilder builder;
   builder.with_source(ConfigSource::FileSystem);
@@ -41,7 +44,10 @@ Config Config::from_file(
   return config;
 }
 
-Config Config::from_agent(const std::string& schema_file_path) {
+Config from_agent_internal(
+  const std::filesystem::path& schema_file_path,
+  const FromAgentOptions& options
+) {
   ConfigBuilder builder;
   builder.with_source(ConfigSource::Agent);
 
@@ -50,7 +56,7 @@ Config Config::from_agent(const std::string& schema_file_path) {
   std::string config_slug = read_schema_config_slug(schema_file);
   builder.with_config_slug(config_slug);
 
-  // get the config from the agent
+  // load the config from the agent
   miru::client::UnixSocketClient client;
   openapi::HashSchemaRequest config_schema{schema_file.read_string()};
   std::string config_schema_digest = client.hash_schema(config_schema);
@@ -64,23 +70,63 @@ Config Config::from_agent(const std::string& schema_file_path) {
   return config;
 }
 
+Config Config::from_agent(
+  const std::filesystem::path& schema_file_path,
+  const FromAgentOptions& options
+) {
+  if (options.num_retries == 0) {
+    THROW_FROM_AGENT_OPTIONS_ERROR("Number of retries must be greater than 0");
+  }
+
+  // attempt to load the config from the agent for the number of retries
+  std::exception_ptr last_from_agent_error;
+  for (uint32_t attempt = 1; attempt <= options.num_retries; attempt++) {
+    try {
+      return from_agent_internal(schema_file_path, options);
+    } catch (const std::exception& from_agent_error) {
+      last_from_agent_error = std::current_exception();
+    }
+    // sleep between retries
+    if (attempt < options.num_retries) {
+      std::this_thread::sleep_for(options.retry_delay);
+    }
+  }
+
+  // loading from the agent failed, try loading the default config from the file system
+  if (options.default_config_path.has_value()) {
+    try {
+      return from_file(
+        schema_file_path,
+        options.default_config_path.value()
+      );
+    } catch (const std::exception& from_default_config_error) {
+      // do nothing
+    }
+  }
+
+  // if we've made it here, we've tried to load the config from the agent
+  // for the number of retries and failed each time
+  // so we need to throw the last error
+  std::rethrow_exception(last_from_agent_error);
+}
+
 std::string read_schema_config_slug(const miru::filesys::File& schema_file) {
   std::string config_slug;
   switch (schema_file.file_type()) {
     case miru::filesys::FileType::JSON: {
       nlohmann::json json_schema_content = schema_file.read_json();
-      if (!json_schema_content.contains(MIRU_CONFIG_SLUG_FIELD_ID)) {
+      if (!json_schema_content.contains(MIRU_CONFIG_SLUG_FIELD)) {
         THROW_CONFIG_SLUG_NOT_FOUND(schema_file);
       }
-      config_slug = json_schema_content[MIRU_CONFIG_SLUG_FIELD_ID];
+      config_slug = json_schema_content[MIRU_CONFIG_SLUG_FIELD];
       break;
     }
     case miru::filesys::FileType::YAML: {
       YAML::Node yaml_schema_content = schema_file.read_yaml();
-      if (!yaml_schema_content[MIRU_CONFIG_SLUG_FIELD_ID]) {
+      if (!yaml_schema_content[MIRU_CONFIG_SLUG_FIELD]) {
         THROW_CONFIG_SLUG_NOT_FOUND(schema_file);
       }
-      config_slug = yaml_schema_content[MIRU_CONFIG_SLUG_FIELD_ID].as<std::string>();
+      config_slug = yaml_schema_content[MIRU_CONFIG_SLUG_FIELD].as<std::string>();
       break;
     }
     default:

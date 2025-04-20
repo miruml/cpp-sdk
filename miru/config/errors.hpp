@@ -7,6 +7,18 @@
 
 namespace miru::config {
 
+class FromAgentOptionsError : public std::runtime_error {
+ public:
+  explicit FromAgentOptionsError(
+    const std::string& message,
+    const errors::ErrorTrace& trace
+  )
+    : std::runtime_error(message + errors::format_source_location(trace)) {}
+};
+
+#define THROW_FROM_AGENT_OPTIONS_ERROR(message) \
+    throw FromAgentOptionsError(message, ERROR_TRACE)
+
 class ConfigSlugNotFound : public std::runtime_error {
  public:
   explicit ConfigSlugNotFound(
