@@ -50,8 +50,7 @@ void assert_unique_strings(const std::vector<std::string>& strings) {
   for (const auto& [str, count] : counts) {
     if (count > 1) {
       duplicates.push_back(
-        "'" + str + "' (appears " + std::to_string(count) + " times)"
-      );
+        "'" + str + "' (appears " + std::to_string(count) + " times)");
     }
   }
 
@@ -74,31 +73,31 @@ bool yaml_string_to_bool(const std::string& str) {
     return false;
   }
   THROW_INVALID_TYPE_CONVERSION(
-    str, "string", "bool", "cannot interpret value as a boolean"
-  );
+    str, "string", "bool", "cannot interpret value as a boolean");
 }
 
 int64_t string_to_int64(const std::string& str) {
   if (str.find(".") != std::string::npos) {
     THROW_INVALID_TYPE_CONVERSION(
-      str, "string", "int64_t",
-      "cannot interpret value as an integer: contains a decimal point"
-    );
+      str,
+      "string",
+      "int64_t",
+      "cannot interpret value as an integer: contains a decimal point");
   }
   try {
     size_t pos = 0;
     int64_t result = std::stoll(str, &pos);
     if (pos != str.size()) {
       THROW_INVALID_TYPE_CONVERSION(
-        str, "string", "int64_t", "contains invalid characters"
-      );
+        str, "string", "int64_t", "contains invalid characters");
     }
     return result;
   } catch (const std::exception& e) {
     THROW_INVALID_TYPE_CONVERSION(
-      str, "string", "int64_t",
-      "cannot interpret value as an integer: " + std::string(e.what())
-    );
+      str,
+      "string",
+      "int64_t",
+      "cannot interpret value as an integer: " + std::string(e.what()));
   }
 }
 
@@ -108,15 +107,15 @@ double string_to_double(const std::string& str) {
     double result = std::stod(str, &pos);
     if (pos != str.size()) {
       THROW_INVALID_TYPE_CONVERSION(
-        str, "string", "double", "contains invalid characters"
-      );
+        str, "string", "double", "contains invalid characters");
     }
     return result;
   } catch (const std::exception& e) {
     THROW_INVALID_TYPE_CONVERSION(
-      str, "string", "double",
-      "cannot interpret value as a double: " + std::string(e.what())
-    );
+      str,
+      "string",
+      "double",
+      "cannot interpret value as a double: " + std::string(e.what()));
   }
 }
 

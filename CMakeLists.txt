@@ -113,7 +113,6 @@ if(BUILD_TESTING)
     enable_testing()
 
     find_package(GTest REQUIRED)
-    find_package(OpenSSL REQUIRED)
     
     add_executable(
         test.out
@@ -145,8 +144,6 @@ if(BUILD_TESTING)
         yaml-cpp::yaml-cpp
         Boost::asio
         Boost::beast
-        OpenSSL::SSL
-        OpenSSL::Crypto
     )
     
     add_test(NAME test COMMAND test.out)
@@ -164,5 +161,16 @@ if (BUILD_EXAMPLES OR BUILD_SOCKET_EXAMPLE)
         socket_example.out PRIVATE
         miru
         Boost::asio
+    )
+endif()
+
+option(BUILD_HTTP_EXAMPLE "Build HTTP example" ON)
+if (BUILD_EXAMPLES OR BUILD_HTTP_EXAMPLE)
+    add_executable(http_example.out examples/http/main.cpp)
+    target_link_libraries(
+        http_example.out PRIVATE
+        miru
+        Boost::asio
+        Boost::beast
     )
 endif()

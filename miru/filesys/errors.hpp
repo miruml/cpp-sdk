@@ -15,8 +15,8 @@ class FileNotFoundError : public std::runtime_error {
     : std::runtime_error(format_message(path, trace)) {}
 
   static std::string format_message(
-    const std::string& path, const errors::ErrorTrace& trace
-  ) {
+    const std::string& path,
+    const errors::ErrorTrace& trace) {
     return "File '" + path + "' not found" + errors::format_source_location(trace);
   }
 };
@@ -29,8 +29,8 @@ class NotAFileError : public std::runtime_error {
     : std::runtime_error(format_message(path, trace)) {}
 
   static std::string format_message(
-    const std::string& path, const errors::ErrorTrace& trace
-  ) {
+    const std::string& path,
+    const errors::ErrorTrace& trace) {
     return "File '" + path + "' exists but is not a file" +
            errors::format_source_location(trace);
   }
@@ -41,15 +41,15 @@ class NotAFileError : public std::runtime_error {
 class InvalidFileTypeError : public std::runtime_error {
  public:
   explicit InvalidFileTypeError(
-    const std::string& file_path, const std::vector<std::string>& expected_file_types,
-    const errors::ErrorTrace& trace
-  )
+    const std::string& file_path,
+    const std::vector<std::string>& expected_file_types,
+    const errors::ErrorTrace& trace)
     : std::runtime_error(format_message(file_path, expected_file_types, trace)) {}
 
   static std::string format_message(
-    const std::string& file_path, const std::vector<std::string>& expected_file_types,
-    const errors::ErrorTrace& trace
-  ) {
+    const std::string& file_path,
+    const std::vector<std::string>& expected_file_types,
+    const errors::ErrorTrace& trace) {
     return "File '" + file_path + "' is not a valid file type. Expected one of: " +
            miru::utils::to_string(expected_file_types) +
            errors::format_source_location(trace);
@@ -66,8 +66,8 @@ class DirNotFoundError : public std::runtime_error {
     : std::runtime_error(format_message(path, trace)) {}
 
   static std::string format_message(
-    const std::string& path, const errors::ErrorTrace& trace
-  ) {
+    const std::string& path,
+    const errors::ErrorTrace& trace) {
     return "Directory '" + path + "' does not exist" +
            errors::format_source_location(trace);
   }
@@ -81,8 +81,8 @@ class NotADirError : public std::runtime_error {
     : std::runtime_error(format_message(path, trace)) {}
 
   static std::string format_message(
-    const std::string& path, const errors::ErrorTrace& trace
-  ) {
+    const std::string& path,
+    const errors::ErrorTrace& trace) {
     return "Path '" + path + "' exists but is not a directory" +
            errors::format_source_location(trace);
   }
@@ -93,13 +93,13 @@ class NotADirError : public std::runtime_error {
 class UnableToFindGitRepoError : public std::runtime_error {
  public:
   explicit UnableToFindGitRepoError(
-    const std::string& path, const errors::ErrorTrace& trace
-  )
+    const std::string& path,
+    const errors::ErrorTrace& trace)
     : std::runtime_error(format_message(path, trace)) {}
 
   static std::string format_message(
-    const std::string& path, const errors::ErrorTrace& trace
-  ) {
+    const std::string& path,
+    const errors::ErrorTrace& trace) {
     return "The path '" + path + "' is not part of a git repository" +
            errors::format_source_location(trace);
   }

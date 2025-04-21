@@ -16,13 +16,12 @@ Parameter::Parameter(const std::string& name) : name_(name) {
 }
 
 void validate_child_parent_name_consistency(
-  const std::string& parent_name, const Parameter& child
-) {
+  const std::string& parent_name,
+  const Parameter& child) {
   // the child's name must follow its parent's name
   if (child.get_parent_name() != parent_name) {
     THROW_CHILD_PARENT_NAME_MISMATCH(
-      "Parameter", child.get_name(), child.get_parent_name(), parent_name
-    );
+      "Parameter", child.get_name(), child.get_parent_name(), parent_name);
   }
 }
 
@@ -153,8 +152,7 @@ std::string Parameter::get_key() const {
 
 std::string Parameter::get_parent_name() const {
   return utils::remove_trailing(
-    name_.substr(0, name_.length() - get_key().length()), DELIMITER
-  );
+    name_.substr(0, name_.length() - get_key().length()), DELIMITER);
 }
 
 const std::nullptr_t Parameter::as_null() const {

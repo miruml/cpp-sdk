@@ -1,4 +1,5 @@
 // internal
+#include <chrono>
 #include <miru/config/config.hpp>
 #include <miru/config/errors.hpp>
 #include <miru/http/client.hpp>
@@ -10,50 +11,11 @@
 #include <gtest/gtest.h>
 
 #include <boost/asio.hpp>
-#include <boost/asio/ssl.hpp>
 #include <boost/beast.hpp>
 
 namespace test::client {
 
 namespace http = boost::beast::http;
-
-using https_stream = boost::asio::ssl::stream<boost::asio::ip::tcp::socket>;
-
-https_stream prepare_https_stream(const http::request<http::string_body>& req) {
-  boost::asio::io_context ioc;
-  boost::asio::ssl::context ctx(boost::asio::ssl::context::tlsv12_client);
-
-  // Create endpoint
-  boost::asio::ip::tcp::resolver resolver(ioc);
-  auto const results = resolver.resolve(req.find(http::field::host)->value(), "443");
-
-  // Create and connect stream
-  boost::asio::ssl::stream<boost::asio::ip::tcp::socket> stream(ioc, ctx);
-  boost::asio::connect(stream.next_layer(), results.begin(), results.end());
-
-  // Perform SSL handshake
-  stream.handshake(boost::asio::ssl::stream_base::client);
-  return stream;
-}
-
-boost::asio::ip::tcp::socket prepare_http_stream(
-  const http::request<http::string_body>& req
-) {
-  boost::asio::io_context ioc;
-
-  // Create endpoint
-  boost::asio::ip::tcp::resolver resolver(ioc);
-  auto const results = resolver.resolve(
-    req.find(http::field::host)->value(),
-    "80"  // Standard HTTP port instead of 443
-  );
-
-  // Create and connect socket
-  boost::asio::ip::tcp::socket socket(ioc);
-  boost::asio::connect(socket, results.begin(), results.end());
-
-  return socket;
-}
 
 // ============================== BUILD GET REQUEST ================================ //
 TEST(HTTPClient, BuildGetRequest) {
@@ -67,8 +29,7 @@ TEST(HTTPClient, BuildGetRequest) {
   EXPECT_EQ(req.body(), "");
   EXPECT_EQ(req.find(http::field::host)->value(), "localhost");
   EXPECT_EQ(
-    req.find(http::field::user_agent)->value(), "Miru Unix Client (BoostBeast)"
-  );
+    req.find(http::field::user_agent)->value(), "Miru Unix Client (BoostBeast)");
 }
 
 // ============================= BUILD POST REQUEST ================================ //
@@ -84,74 +45,57 @@ TEST(HTTPClient, BuildPostRequest) {
   EXPECT_EQ(req.body(), "{\"key\":\"value\"}");
   EXPECT_EQ(req.find(http::field::host)->value(), "localhost");
   EXPECT_EQ(
-    req.find(http::field::user_agent)->value(), "Miru Unix Client (BoostBeast)"
-  );
+    req.find(http::field::user_agent)->value(), "Miru Unix Client (BoostBeast)");
 }
 
 // =============================== SEND REQUEST ==================================== //
 TEST(HTTPClient, SendGetRequest) {
-  miru::client::HTTPClient client("example.com");
-  std::string path = "/";
+  miru::client::HTTPClient client("httpbin.org", "80");
+  std::string path = "/get";
   http::request<http::string_body> req = client.build_get_request(path);
-  http::response<http::string_body> res;
 
-  https_stream stream = prepare_https_stream(req);
-  miru::client::RequestContext error_context(
-    req.method(), client.url(path), std::chrono::seconds(10)
+  http::response<http::string_body> res = client.execute(
+    req, std::chrono::seconds(10)
   );
-  client.send(stream, req, error_context, res);
   EXPECT_EQ(res.result(), http::status::ok);
 }
 
 TEST(HTTPClient, SendPostRequest) {
-  miru::client::HTTPClient client("httpbin.org");
+  miru::client::HTTPClient client("httpbin.org", "80");
   std::string path = "/post";
   http::request<http::string_body> req =
     client.build_post_request(path, "{\"key\":\"value\"}");
-  http::response<http::string_body> res;
 
-  https_stream stream = prepare_https_stream(req);
-  miru::client::RequestContext error_context(
-    req.method(), client.url(path), std::chrono::seconds(10)
+  http::response<http::string_body> res = client.execute(
+    req, std::chrono::seconds(10)
   );
-  client.send(stream, req, error_context, res);
   EXPECT_EQ(res.result(), http::status::ok);
 }
 
 TEST(HTTPClient, Timeout) {
-  miru::client::HTTPClient client("httpstat.us");
-  std::string path = "/200?sleep=1000";
+  miru::client::HTTPClient client;
+  std::string path = "/get";
   http::request<http::string_body> req = client.build_get_request(path);
-  http::response<http::string_body> res;
 
-  https_stream stream = prepare_https_stream(req);
-  miru::client::RequestContext error_context(
-    req.method(), client.url(path), std::chrono::milliseconds(100)
+  boost::asio::io_context ioc;
+  auto session = std::make_shared<miru::client::Session>(
+    ioc,
+    req,
+    std::chrono::seconds(10),
+    miru::client::RequestContext(req.method(), client.url(path), std::chrono::seconds(10))
   );
-
-  EXPECT_THROW(
-    client.async_http_with_timeout(
-      stream, req, res, std::chrono::seconds(10),
-      [](auto ec, auto) { EXPECT_EQ(ec, boost::asio::error::timed_out); }
-    ),
-    miru::http::errors::RequestFailedError
-  );
+  session->execute("443");
+  ioc.run();
 }
 
 TEST(HTTPClient, EndpointNotFound) {
   miru::client::HTTPClient client("httpstat.us");
   std::string path = "/404";
   http::request<http::string_body> req = client.build_get_request(path);
-  http::response<http::string_body> res;
-
-  https_stream stream = prepare_https_stream(req);
-  miru::client::RequestContext error_context(
-    req.method(), client.url(path), std::chrono::seconds(10)
-  );
 
   EXPECT_THROW(
-    client.send(stream, req, error_context, res), miru::http::errors::RequestFailedError
-  );
+    client.execute(req, std::chrono::seconds(10)),
+    miru::http::errors::RequestFailedError);
 }
 
 }  // namespace test::client

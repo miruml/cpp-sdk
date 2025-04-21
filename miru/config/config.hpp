@@ -43,15 +43,13 @@ class Config {
   // configuration and schema file from the file system.
   static Config from_file(
     const std::filesystem::path& schema_file_path,
-    const std::filesystem::path& config_file_path
-  );
+    const std::filesystem::path& config_file_path);
 
   // Initialize the config from an agent source. The config will read its configuration
   // and schema file from the on-device agent.
   static Config from_agent(
     const std::filesystem::path& schema_file_path,
-    const FromAgentOptions& options = FromAgentOptions()
-  );
+    const FromAgentOptions& options = FromAgentOptions());
 
   const miru::params::Parameter& root_parameter() const { return parameters_; }
 
@@ -59,11 +57,12 @@ class Config {
 
  private:
   Config(
-    const miru::filesys::File& schema_file, const std::string& config_slug,
-    ConfigSource source, const miru::params::Parameter& parameters,
+    const miru::filesys::File& schema_file,
+    const std::string& config_slug,
+    ConfigSource source,
+    const miru::params::Parameter& parameters,
     const std::optional<std::string>& schema_digest,
-    const std::optional<miru::filesys::File>& config_file
-  )
+    const std::optional<miru::filesys::File>& config_file)
     : schema_file_(schema_file),
       config_slug_(config_slug),
       source_(source),

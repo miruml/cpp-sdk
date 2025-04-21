@@ -72,8 +72,7 @@ TEST_F(ParamUtils, int_array_variant) {
   miru::params::Parameter int_array_param =
     miru::params::Parameter("int_array_param", std::vector<int>{1, 2, 3});
   EXPECT_TRUE(
-    int_array_param.get_type() == miru::params::ParameterType::PARAMETER_INTEGER_ARRAY
-  );
+    int_array_param.get_type() == miru::params::ParameterType::PARAMETER_INTEGER_ARRAY);
 
   EXPECT_TRUE(miru::params::is_leaf(int_array_param));
   EXPECT_FALSE(miru::params::has_children(int_array_param));
@@ -84,8 +83,8 @@ TEST_F(ParamUtils, double_array_variant) {
   miru::params::Parameter double_array_param =
     miru::params::Parameter("double_array_param", std::vector<double>{1.0, 2.2, 3.3});
   EXPECT_TRUE(
-    double_array_param.get_type() == miru::params::ParameterType::PARAMETER_DOUBLE_ARRAY
-  );
+    double_array_param.get_type() ==
+    miru::params::ParameterType::PARAMETER_DOUBLE_ARRAY);
 
   EXPECT_TRUE(miru::params::is_leaf(double_array_param));
   EXPECT_FALSE(miru::params::has_children(double_array_param));
@@ -94,11 +93,10 @@ TEST_F(ParamUtils, double_array_variant) {
 
 TEST_F(ParamUtils, string_array_variant) {
   miru::params::Parameter string_array_param = miru::params::Parameter(
-    "string_array_param", std::vector<std::string>{"test1", "test2", "test3"}
-  );
+    "string_array_param", std::vector<std::string>{"test1", "test2", "test3"});
   EXPECT_TRUE(
-    string_array_param.get_type() == miru::params::ParameterType::PARAMETER_STRING_ARRAY
-  );
+    string_array_param.get_type() ==
+    miru::params::ParameterType::PARAMETER_STRING_ARRAY);
 
   EXPECT_TRUE(miru::params::is_leaf(string_array_param));
   EXPECT_FALSE(miru::params::has_children(string_array_param));
@@ -128,13 +126,12 @@ TEST_F(ParamUtils, scalar_array_variant) {
   miru::params::Parameter scalar_array_param = miru::params::Parameter(
     "scalar_array_param",
     std::vector<miru::params::Scalar>{
-      miru::params::Scalar("true"), miru::params::Scalar("false"),
-      miru::params::Scalar("true")
-    }
-  );
+      miru::params::Scalar("true"),
+      miru::params::Scalar("false"),
+      miru::params::Scalar("true")});
   EXPECT_TRUE(
-    scalar_array_param.get_type() == miru::params::ParameterType::PARAMETER_SCALAR_ARRAY
-  );
+    scalar_array_param.get_type() ==
+    miru::params::ParameterType::PARAMETER_SCALAR_ARRAY);
 
   EXPECT_TRUE(miru::params::is_leaf(scalar_array_param));
   EXPECT_FALSE(miru::params::has_children(scalar_array_param));
@@ -146,12 +143,10 @@ TEST_F(ParamUtils, nested_array_variant) {
     "nested_array",
     miru::params::NestedArray{std::vector<miru::params::Parameter>{
       miru::params::Parameter("nested_array.0", std::vector<int>{1, 2, 3}),
-      miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})
-    }}
-  );
+      miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})}});
   EXPECT_TRUE(
-    nested_array_param.get_type() == miru::params::ParameterType::PARAMETER_NESTED_ARRAY
-  );
+    nested_array_param.get_type() ==
+    miru::params::ParameterType::PARAMETER_NESTED_ARRAY);
 
   EXPECT_TRUE(miru::params::is_leaf(nested_array_param));
   EXPECT_TRUE(miru::params::has_children(nested_array_param));
@@ -172,11 +167,10 @@ TEST_F(ParamUtils, nested_array_variant) {
 
 TEST_F(ParamUtils, map_variant) {
   miru::params::Parameter map_param = miru::params::Parameter(
-    "map", miru::params::Map{std::vector<miru::params::Parameter>{
-             miru::params::Parameter("map.param1", miru::params::Scalar("test1")),
-             miru::params::Parameter("map.param2", miru::params::Scalar("test3"))
-           }}
-  );
+    "map",
+    miru::params::Map{std::vector<miru::params::Parameter>{
+      miru::params::Parameter("map.param1", miru::params::Scalar("test1")),
+      miru::params::Parameter("map.param2", miru::params::Scalar("test3"))}});
   EXPECT_TRUE(map_param.get_type() == miru::params::ParameterType::PARAMETER_MAP);
 
   EXPECT_FALSE(miru::params::is_leaf(map_param));
@@ -204,18 +198,12 @@ TEST_F(ParamUtils, map_array_variant) {
         "maps.0",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter("maps.0.param1", miru::params::Scalar("test1")),
-          miru::params::Parameter("maps.0.param2", miru::params::Scalar("test3"))
-        }}
-      ),
+          miru::params::Parameter("maps.0.param2", miru::params::Scalar("test3"))}}),
       miru::params::Parameter(
         "maps.1",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter("maps.1.param1", miru::params::Scalar("test3")),
-          miru::params::Parameter("maps.1.param2", miru::params::Scalar("test4"))
-        }}
-      )
-    }}
-  );
+          miru::params::Parameter("maps.1.param2", miru::params::Scalar("test4"))}})}});
   EXPECT_TRUE(map_array.get_type() == miru::params::ParameterType::PARAMETER_MAP_ARRAY);
 
   EXPECT_FALSE(miru::params::is_leaf(map_array));

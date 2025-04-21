@@ -23,9 +23,9 @@ class UnixSocketClient {
   ~UnixSocketClient() {}
 
   void send(
-    const http::request<http::string_body>& req, const RequestContext& error_context,
-    http::response<http::string_body>& res
-  );
+    const http::request<http::string_body>& req,
+    const RequestContext& error_context,
+    http::response<http::string_body>& res);
 
   std::string base_path() const { return "/v1"; }
 
@@ -34,11 +34,10 @@ class UnixSocketClient {
   // route specific functions
   std::string hash_schema(const openapi::HashSchemaRequest& config_schema);
   openapi::BaseConcreteConfig get_latest_concrete_config(
-    const std::string& config_schema_digest, const std::string& config_slug
-  );
+    const std::string& config_schema_digest,
+    const std::string& config_slug);
   openapi::BaseConcreteConfig refresh_latest_concrete_config(
-    const openapi::RefreshLatestConcreteConfigRequest& request
-  );
+    const openapi::RefreshLatestConcreteConfigRequest& request);
 
  private:
   HTTPClient client_;

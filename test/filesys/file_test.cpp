@@ -43,8 +43,7 @@ TEST_P(FileTypeStringConversion, FileTypeStringConversion) {
     case FileExceptionType::InvalidFileType:
       EXPECT_THROW(
         miru::filesys::string_to_file_type(file_type_string),
-        miru::filesys::InvalidFileTypeError
-      );
+        miru::filesys::InvalidFileTypeError);
       break;
     default:
       FAIL() << "Unexpected exception type: " << static_cast<int>(expected_exception);
@@ -52,29 +51,35 @@ TEST_P(FileTypeStringConversion, FileTypeStringConversion) {
 }
 
 std::string FileTypeStringConversionTestNameGenerator(
-  const testing::TestParamInfo<FileTypeStringConversionTestCase>& info
-) {
+  const testing::TestParamInfo<FileTypeStringConversionTestCase>& info) {
   return miru::test_utils::sanitize_test_name(info.param.test_name);
 }
 
 INSTANTIATE_TEST_SUITE_P(
-  File, FileTypeStringConversion,
+  File,
+  FileTypeStringConversion,
   testing::Values(
     FileTypeStringConversionTestCase{
-      "JSON", miru::filesys::FileType::JSON, "JSON", FileExceptionType::None
-    },
+      "JSON",
+      miru::filesys::FileType::JSON,
+      "JSON",
+      FileExceptionType::None},
     FileTypeStringConversionTestCase{
-      "YAML", miru::filesys::FileType::YAML, "YAML", FileExceptionType::None
-    },
+      "YAML",
+      miru::filesys::FileType::YAML,
+      "YAML",
+      FileExceptionType::None},
     FileTypeStringConversionTestCase{
-      "YML", miru::filesys::FileType::YAML, "YAML", FileExceptionType::None
-    },
+      "YML",
+      miru::filesys::FileType::YAML,
+      "YAML",
+      FileExceptionType::None},
     FileTypeStringConversionTestCase{
-      "invalid file type", std::nullopt, "invalid", FileExceptionType::InvalidFileType
-    }
-  ),
-  FileTypeStringConversionTestNameGenerator
-);
+      "invalid file type",
+      std::nullopt,
+      "invalid",
+      FileExceptionType::InvalidFileType}),
+  FileTypeStringConversionTestNameGenerator);
 
 // ================================ extension() ==================================== //
 struct ExtensionTestCase {
@@ -92,26 +97,26 @@ TEST_P(Extensions, Extension) {
 }
 
 std::string ExtensionTestNameGenerator(
-  const testing::TestParamInfo<ExtensionTestCase>& info
-) {
+  const testing::TestParamInfo<ExtensionTestCase>& info) {
   return miru::test_utils::sanitize_test_name(info.param.test_name);
 }
 
 INSTANTIATE_TEST_SUITE_P(
-  File, Extensions,
+  File,
+  Extensions,
   testing::Values(
     ExtensionTestCase{
-      "txt file", std::filesystem::path("test") / "file_test" / "test.txt", ".txt"
-    },
+      "txt file",
+      std::filesystem::path("test") / "file_test" / "test.txt",
+      ".txt"},
     ExtensionTestCase{"json file", std::filesystem::path("arglebargle.json"), ".json"},
     ExtensionTestCase{"yaml file", std::filesystem::path("lebron.james.yaml"), ".yaml"},
     ExtensionTestCase{"xml file", std::filesystem::path("mj.xml"), ".xml"},
     ExtensionTestCase{
-      "is a directory", miru::test_utils::filesys_testdata_dir().path(), ""
-    }
-  ),
-  ExtensionTestNameGenerator
-);
+      "is a directory",
+      miru::test_utils::filesys_testdata_dir().path(),
+      ""}),
+  ExtensionTestNameGenerator);
 
 // ================================= file_type() =================================== //
 struct FileTypeTestCase {
@@ -138,39 +143,40 @@ TEST_P(FileTypes, FileType) {
   }
 }
 std::string FileTypeTestNameGenerator(
-  const testing::TestParamInfo<FileTypeTestCase>& info
-) {
+  const testing::TestParamInfo<FileTypeTestCase>& info) {
   return miru::test_utils::sanitize_test_name(info.param.test_name);
 }
 
 INSTANTIATE_TEST_SUITE_P(
-  File, FileTypes,
+  File,
+  FileTypes,
   testing::Values(
     FileTypeTestCase{
-      "json file", std::filesystem::path("arglebargle.json"),
+      "json file",
+      std::filesystem::path("arglebargle.json"),
       std::optional<miru::filesys::FileType>(miru::filesys::FileType::JSON),
-      FileExceptionType::None
-    },
+      FileExceptionType::None},
     FileTypeTestCase{
-      "yaml file", std::filesystem::path("lebron.james.yaml"),
+      "yaml file",
+      std::filesystem::path("lebron.james.yaml"),
       std::optional<miru::filesys::FileType>(miru::filesys::FileType::YAML),
-      FileExceptionType::None
-    },
+      FileExceptionType::None},
     FileTypeTestCase{
-      "text file", std::filesystem::path("mj.txt"), std::nullopt,
-      FileExceptionType::InvalidFileType
-    },
+      "text file",
+      std::filesystem::path("mj.txt"),
+      std::nullopt,
+      FileExceptionType::InvalidFileType},
     FileTypeTestCase{
-      "xml file", std::filesystem::path("mj.xml"), std::nullopt,
-      FileExceptionType::InvalidFileType
-    },
+      "xml file",
+      std::filesystem::path("mj.xml"),
+      std::nullopt,
+      FileExceptionType::InvalidFileType},
     FileTypeTestCase{
-      "go file", std::filesystem::path("golang.go"), std::nullopt,
-      FileExceptionType::InvalidFileType
-    }
-  ),
-  FileTypeTestNameGenerator
-);
+      "go file",
+      std::filesystem::path("golang.go"),
+      std::nullopt,
+      FileExceptionType::InvalidFileType}),
+  FileTypeTestNameGenerator);
 
 // ================================ assert_exists() ================================ //
 struct AssertExistsTestCase {
@@ -201,52 +207,48 @@ TEST_P(AssertExistsTest, AssertExists) {
 }
 
 std::string AssertExistsTestNameGenerator(
-  const testing::TestParamInfo<AssertExistsTestCase>& info
-) {
+  const testing::TestParamInfo<AssertExistsTestCase>& info) {
   return miru::test_utils::sanitize_test_name(info.param.test_name);
 }
 
 INSTANTIATE_TEST_SUITE_P(
-  File, AssertExistsTest,
+  File,
+  AssertExistsTest,
   testing::Values(
     // file exists
     AssertExistsTestCase{
-      "golang file", miru::test_utils::filesys_testdata_dir().path() / "golang.go",
-      FileExceptionType::None
-    },
+      "golang file",
+      miru::test_utils::filesys_testdata_dir().path() / "golang.go",
+      FileExceptionType::None},
     AssertExistsTestCase{
-      "json file", miru::test_utils::filesys_testdata_dir().path() / "invalid.json",
-      FileExceptionType::None
-    },
+      "json file",
+      miru::test_utils::filesys_testdata_dir().path() / "invalid.json",
+      FileExceptionType::None},
     AssertExistsTestCase{
-      "yaml file", miru::test_utils::filesys_testdata_dir().path() / "invalid.yaml",
-      FileExceptionType::None
-    },
+      "yaml file",
+      miru::test_utils::filesys_testdata_dir().path() / "invalid.yaml",
+      FileExceptionType::None},
     AssertExistsTestCase{
-      "text file", miru::test_utils::filesys_testdata_dir().path() / "text.txt",
-      FileExceptionType::None
-    },
+      "text file",
+      miru::test_utils::filesys_testdata_dir().path() / "text.txt",
+      FileExceptionType::None},
 
     // file does not exists
     AssertExistsTestCase{
       "doesnt exist",
       miru::test_utils::filesys_testdata_dir().path() / "doesnt/exist.yaml",
-      FileExceptionType::FileNotFound
-    },
+      FileExceptionType::FileNotFound},
     AssertExistsTestCase{
       "doesnt exist and is a directory",
       miru::test_utils::filesys_testdata_dir().path() / "doesnt/exist",
-      FileExceptionType::FileNotFound
-    },
+      FileExceptionType::FileNotFound},
 
     // exists but is a directory
     AssertExistsTestCase{
-      "is a directory", miru::test_utils::filesys_testdata_dir().path(),
-      FileExceptionType::NotAFile
-    }
-  ),
-  AssertExistsTestNameGenerator
-);
+      "is a directory",
+      miru::test_utils::filesys_testdata_dir().path(),
+      FileExceptionType::NotAFile}),
+  AssertExistsTestNameGenerator);
 
 // ================================= read_string() ===================================
 // //
@@ -286,8 +288,7 @@ TEST_F(ReadJson, FileNotFound) {
 TEST_F(ReadJson, InvalidFileType) {
   EXPECT_THROW(invalid_file_type.read_json(), miru::filesys::InvalidFileTypeError);
   EXPECT_THROW(
-    invalid_file_type.read_structured_data(), miru::filesys::InvalidFileTypeError
-  );
+    invalid_file_type.read_structured_data(), miru::filesys::InvalidFileTypeError);
 }
 
 TEST_F(ReadJson, InvalidJsonFile) {
@@ -328,8 +329,7 @@ TEST_F(ReadYaml, FileNotFound) {
 TEST_F(ReadYaml, InvalidFileType) {
   EXPECT_THROW(invalid_file_type.read_yaml(), miru::filesys::InvalidFileTypeError);
   EXPECT_THROW(
-    invalid_file_type.read_structured_data(), miru::filesys::InvalidFileTypeError
-  );
+    invalid_file_type.read_structured_data(), miru::filesys::InvalidFileTypeError);
 }
 
 TEST_F(ReadYaml, InvalidYamlFile) {
@@ -352,8 +352,8 @@ TEST_F(ReadYaml, ValidYaml) {
   auto structured_data = yaml_file.read_structured_data();
   EXPECT_EQ(structured_data.index(), 1);
   EXPECT_EQ(
-    std::get<YAML::Node>(structured_data)["name"].as<std::string>(), "Example Test Data"
-  );
+    std::get<YAML::Node>(structured_data)["name"].as<std::string>(),
+    "Example Test Data");
 }
 
 TEST_F(ReadYaml, ValidYml) {
@@ -363,8 +363,8 @@ TEST_F(ReadYaml, ValidYml) {
   auto structured_data = yml_file.read_structured_data();
   EXPECT_EQ(structured_data.index(), 1);
   EXPECT_EQ(
-    std::get<YAML::Node>(structured_data)["name"].as<std::string>(), "Example Test Data"
-  );
+    std::get<YAML::Node>(structured_data)["name"].as<std::string>(),
+    "Example Test Data");
 }
 
 }  // namespace test::filesys

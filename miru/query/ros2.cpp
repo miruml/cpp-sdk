@@ -28,8 +28,7 @@ bool ROS2StyleQuery::get_parameter(const std::string& name, Parameter& parameter
 }
 
 std::vector<Parameter> ROS2StyleQuery::get_parameters(
-  const std::vector<std::string>& names
-) const {
+  const std::vector<std::string>& names) const {
   SearchParamFiltersBuilder builder;
   builder.with_param_names(names);
   SearchParamFilters filters = builder.build();

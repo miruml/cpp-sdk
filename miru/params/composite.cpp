@@ -11,24 +11,23 @@ namespace miru::params {
 
 // ============================= HELPER FUNCTIONS ================================== //
 void assert_valid_array_element_types(
-  const std::string& object_to_initialize, const std::vector<Parameter>& items,
+  const std::string& object_to_initialize,
+  const std::vector<Parameter>& items,
   std::function<bool(const Parameter&)> is_valid_type,
-  const std::string& valid_type_name
-) {
+  const std::string& valid_type_name) {
   for (const auto& item : items) {
     if (!is_valid_type(item)) {
       THROW_INVALID_PARAMETER_TYPE(
-        object_to_initialize, "Cannot instantiate " + object_to_initialize +
-                                " with non-" + valid_type_name + " parameters. Item '" +
-                                item.get_name() + "' is of type '" +
-                                to_string(item.get_type()) + "'"
-      );
+        object_to_initialize,
+        "Cannot instantiate " + object_to_initialize + " with non-" + valid_type_name +
+          " parameters. Item '" + item.get_name() + "' is of type '" +
+          to_string(item.get_type()) + "'");
     }
   }
 }
 void assert_unique_field_names(
-  const std::string& object_to_initialize, const std::vector<Parameter>& fields
-) {
+  const std::string& object_to_initialize,
+  const std::vector<Parameter>& fields) {
   // ensure the field names are unique
   std::vector<std::string> field_names;
   for (const auto& field : fields) {
@@ -45,9 +44,11 @@ void assert_identical_parent_names(const std::vector<Parameter>& fields) {
   for (const auto& field : fields) {
     if (field.get_parent_name() != fields[0].get_parent_name()) {
       THROW_MISMATCHING_PARENT_NAMES(
-        "Map", fields[0].get_name(), fields[0].get_parent_name(), field.get_name(),
-        field.get_parent_name()
-      );
+        "Map",
+        fields[0].get_name(),
+        fields[0].get_parent_name(),
+        field.get_name(),
+        field.get_parent_name());
     }
   }
 }
@@ -76,9 +77,9 @@ Map::Map(const std::vector<Parameter>& fields) : sorted_fields_(fields) {
 
   // store the fields by name for comparison / access purposes in the future
   std::sort(
-    sorted_fields_.begin(), sorted_fields_.end(),
-    [](const Parameter& a, const Parameter& b) { return a.get_name() < b.get_name(); }
-  );
+    sorted_fields_.begin(),
+    sorted_fields_.end(),
+    [](const Parameter& a, const Parameter& b) { return a.get_name() < b.get_name(); });
 }
 
 bool Map::operator==(const Map& other) const {
@@ -96,9 +97,10 @@ ParameterIterator Map::end() const { return ParameterIterator(sorted_fields_.end
 const Parameter& Map::operator[](const std::string& key) const {
   // use binary search to find the field since the fields are sorted
   auto it = std::lower_bound(
-    sorted_fields_.begin(), sorted_fields_.end(), key,
-    [](const Parameter& p, const std::string& key) { return p.get_key() < key; }
-  );
+    sorted_fields_.begin(),
+    sorted_fields_.end(),
+    key,
+    [](const Parameter& p, const std::string& key) { return p.get_key() < key; });
 
   if (it == sorted_fields_.end() || it->get_key() != key) {
     throw std::invalid_argument("Unable to find map field with key: " + key);
@@ -122,8 +124,7 @@ MapArray::MapArray(const std::vector<Parameter>& items) : items_(items) {
 
   // ensure the items are maps
   assert_valid_array_element_types(
-    "MapArray", items, [](const Parameter& item) { return item.is_map(); }, "Map"
-  );
+    "MapArray", items, [](const Parameter& item) { return item.is_map(); }, "Map");
 
   // name uniqueness and parent name consistency
   assert_unique_field_names("MapArray", items);
@@ -176,9 +177,10 @@ NestedArray::NestedArray(const std::vector<Parameter>& items) : items_(items) {
 
   // ensure the items are arrays
   assert_valid_array_element_types(
-    "NestedArray", items, [](const Parameter& item) { return item.is_array(); },
-    "NestedArray"
-  );
+    "NestedArray",
+    items,
+    [](const Parameter& item) { return item.is_array(); },
+    "NestedArray");
 
   // name uniqueness and parent name consistency
   assert_unique_field_names("MapArray", items);

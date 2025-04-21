@@ -110,9 +110,9 @@ class ParameterValue {
   }
 
   template <ParameterType type>
-  constexpr typename std::enable_if<
-    type == ParameterType::PARAMETER_INTEGER, const int64_t>::type
-  get() const {
+  constexpr typename std::
+    enable_if<type == ParameterType::PARAMETER_INTEGER, const int64_t>::type
+    get() const {
     switch (type_) {
       case ParameterType::PARAMETER_INTEGER:
         return std::get<int64_t>(value_);
@@ -138,9 +138,9 @@ class ParameterValue {
   }
 
   template <ParameterType type>
-  constexpr typename std::enable_if<
-    type == ParameterType::PARAMETER_STRING, const std::string &>::type
-  get() const {
+  constexpr typename std::
+    enable_if<type == ParameterType::PARAMETER_STRING, const std::string &>::type
+    get() const {
     switch (type_) {
       case ParameterType::PARAMETER_STRING:
         return std::get<std::string>(value_);
@@ -173,7 +173,8 @@ class ParameterValue {
 
   template <ParameterType type>
   constexpr typename std::enable_if<
-    type == ParameterType::PARAMETER_BOOL_ARRAY, const std::vector<bool> &>::type
+    type == ParameterType::PARAMETER_BOOL_ARRAY,
+    const std::vector<bool> &>::type
   get() const {
     switch (type_) {
       case ParameterType::PARAMETER_BOOL_ARRAY:
@@ -187,14 +188,14 @@ class ParameterValue {
         return scalar_bool_array_;
       default:
         throw InvalidParameterValueTypeError(
-          ParameterType::PARAMETER_BOOL_ARRAY, type_
-        );
+          ParameterType::PARAMETER_BOOL_ARRAY, type_);
     }
   }
 
   template <ParameterType type>
   constexpr typename std::enable_if<
-    type == ParameterType::PARAMETER_INTEGER_ARRAY, const std::vector<int64_t> &>::type
+    type == ParameterType::PARAMETER_INTEGER_ARRAY,
+    const std::vector<int64_t> &>::type
   get() const {
     switch (type_) {
       case ParameterType::PARAMETER_INTEGER_ARRAY:
@@ -208,14 +209,14 @@ class ParameterValue {
         return scalar_int_array_;
       default:
         throw InvalidParameterValueTypeError(
-          ParameterType::PARAMETER_INTEGER_ARRAY, type_
-        );
+          ParameterType::PARAMETER_INTEGER_ARRAY, type_);
     }
   }
 
   template <ParameterType type>
   constexpr typename std::enable_if<
-    type == ParameterType::PARAMETER_DOUBLE_ARRAY, const std::vector<double> &>::type
+    type == ParameterType::PARAMETER_DOUBLE_ARRAY,
+    const std::vector<double> &>::type
   get() const {
     switch (type_) {
       case ParameterType::PARAMETER_DOUBLE_ARRAY:
@@ -229,8 +230,7 @@ class ParameterValue {
         return scalar_double_array_;
       default:
         throw InvalidParameterValueTypeError(
-          ParameterType::PARAMETER_DOUBLE_ARRAY, type_
-        );
+          ParameterType::PARAMETER_DOUBLE_ARRAY, type_);
     }
   }
 
@@ -251,8 +251,7 @@ class ParameterValue {
         return scalar_string_array_;
       default:
         throw InvalidParameterValueTypeError(
-          ParameterType::PARAMETER_STRING_ARRAY, type_
-        );
+          ParameterType::PARAMETER_STRING_ARRAY, type_);
     }
   }
 
@@ -267,7 +266,8 @@ class ParameterValue {
 
   template <typename type>
   constexpr typename std::enable_if<
-    std::is_integral<type>::value && !std::is_same<type, bool>::value, const type>::type
+    std::is_integral<type>::value && !std::is_same<type, bool>::value,
+    const type>::type
   get() const {
     // use the integer conversion function which conducts additional checks
     // for converting int64 to the target type
@@ -372,9 +372,9 @@ class ParameterValue {
   explicit ParameterValue(const MapArray &map_array_value);
 
   template <ParameterType type>
-  constexpr typename std::enable_if<
-    type == ParameterType::PARAMETER_NULL, const std::nullptr_t>::type
-  get() const {
+  constexpr typename std::
+    enable_if<type == ParameterType::PARAMETER_NULL, const std::nullptr_t>::type
+    get() const {
     if (type_ != ParameterType::PARAMETER_NULL) {
       throw InvalidParameterValueTypeError(ParameterType::PARAMETER_NULL, type_);
     }
@@ -382,9 +382,9 @@ class ParameterValue {
   }
 
   template <ParameterType type>
-  constexpr typename std::enable_if<
-    type == ParameterType::PARAMETER_SCALAR, const Scalar &>::type
-  get() const {
+  constexpr typename std::
+    enable_if<type == ParameterType::PARAMETER_SCALAR, const Scalar &>::type
+    get() const {
     if (type_ != ParameterType::PARAMETER_SCALAR) {
       throw InvalidParameterValueTypeError(ParameterType::PARAMETER_SCALAR, type_);
     }
@@ -393,24 +393,23 @@ class ParameterValue {
 
   template <ParameterType type>
   constexpr typename std::enable_if<
-    type == ParameterType::PARAMETER_SCALAR_ARRAY, const std::vector<Scalar> &>::type
+    type == ParameterType::PARAMETER_SCALAR_ARRAY,
+    const std::vector<Scalar> &>::type
   get() const {
     if (type_ != ParameterType::PARAMETER_SCALAR_ARRAY) {
       throw InvalidParameterValueTypeError(
-        ParameterType::PARAMETER_SCALAR_ARRAY, type_
-      );
+        ParameterType::PARAMETER_SCALAR_ARRAY, type_);
     }
     return std::get<std::vector<Scalar>>(value_);
   }
 
   template <ParameterType type>
-  constexpr typename std::enable_if<
-    type == ParameterType::PARAMETER_NESTED_ARRAY, const NestedArray &>::type
-  get() const {
+  constexpr typename std::
+    enable_if<type == ParameterType::PARAMETER_NESTED_ARRAY, const NestedArray &>::type
+    get() const {
     if (type_ != ParameterType::PARAMETER_NESTED_ARRAY) {
       throw InvalidParameterValueTypeError(
-        ParameterType::PARAMETER_NESTED_ARRAY, type_
-      );
+        ParameterType::PARAMETER_NESTED_ARRAY, type_);
     }
     return std::get<NestedArray>(value_);
   }
@@ -426,9 +425,9 @@ class ParameterValue {
   }
 
   template <ParameterType type>
-  constexpr typename std::enable_if<
-    type == ParameterType::PARAMETER_MAP_ARRAY, const MapArray &>::type
-  get() const {
+  constexpr typename std::
+    enable_if<type == ParameterType::PARAMETER_MAP_ARRAY, const MapArray &>::type
+    get() const {
     if (type_ != ParameterType::PARAMETER_MAP_ARRAY) {
       throw InvalidParameterValueTypeError(ParameterType::PARAMETER_MAP_ARRAY, type_);
     }
@@ -436,9 +435,9 @@ class ParameterValue {
   }
 
   template <typename type>
-  constexpr typename std::enable_if<
-    std::is_same<type, std::nullptr_t>::value, const std::nullptr_t>::type
-  get() const {
+  constexpr typename std::
+    enable_if<std::is_same<type, std::nullptr_t>::value, const std::nullptr_t>::type
+    get() const {
     if (type_ != ParameterType::PARAMETER_NULL) {
       throw InvalidParameterValueTypeError(ParameterType::PARAMETER_NULL, type_);
     }
@@ -454,28 +453,31 @@ class ParameterValue {
 
   template <typename type>
   constexpr typename std::enable_if<
-    std::is_same<type, std::vector<Scalar>>::value, const std::vector<Scalar> &>::type
+    std::is_same<type, std::vector<Scalar>>::value,
+    const std::vector<Scalar> &>::type
   get() const {
     return get<ParameterType::PARAMETER_SCALAR_ARRAY>();
   }
 
   template <typename type>
   constexpr typename std::enable_if<
-    std::is_convertible<type, const NestedArray &>::value, const NestedArray &>::type
+    std::is_convertible<type, const NestedArray &>::value,
+    const NestedArray &>::type
   get() const {
     return get<ParameterType::PARAMETER_NESTED_ARRAY>();
   }
 
   template <typename type>
-  constexpr typename std::enable_if<
-    std::is_convertible<type, const Map &>::value, const Map &>::type
-  get() const {
+  constexpr typename std::
+    enable_if<std::is_convertible<type, const Map &>::value, const Map &>::type
+    get() const {
     return get<ParameterType::PARAMETER_MAP>();
   }
 
   template <typename type>
   constexpr typename std::enable_if<
-    std::is_convertible<type, const MapArray &>::value, const MapArray &>::type
+    std::is_convertible<type, const MapArray &>::value,
+    const MapArray &>::type
   get() const {
     return get<ParameterType::PARAMETER_MAP_ARRAY>();
   }
@@ -505,9 +507,21 @@ class ParameterValue {
 
   ParameterType type_;
   std::variant<
-    std::nullptr_t, bool, int64_t, double, std::string, Scalar, std::vector<uint8_t>,
-    std::vector<bool>, std::vector<int64_t>, std::vector<double>,
-    std::vector<std::string>, std::vector<Scalar>, NestedArray, Map, MapArray>
+    std::nullptr_t,
+    bool,
+    int64_t,
+    double,
+    std::string,
+    Scalar,
+    std::vector<uint8_t>,
+    std::vector<bool>,
+    std::vector<int64_t>,
+    std::vector<double>,
+    std::vector<std::string>,
+    std::vector<Scalar>,
+    NestedArray,
+    Map,
+    MapArray>
     value_;
 
   // cached array conversions for scalar arrays
@@ -529,8 +543,9 @@ std::string to_string(const ParameterValue &value);
 std::string to_string(const ParameterValue &value, const int indent);
 
 std::string param_value_array_to_string(
-  const std::vector<ParameterValue> &array, const int indent, const bool with_newlines
-);
+  const std::vector<ParameterValue> &array,
+  const int indent,
+  const bool with_newlines);
 
 std::string param_map_to_string(const miru::params::Map &map, const int indent);
 

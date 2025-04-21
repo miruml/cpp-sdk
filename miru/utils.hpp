@@ -60,27 +60,29 @@ std::string to_string(const std::vector<std::pair<std::string, T>> &values) {
 // ================================ NUMBER CASTING ================================= //
 template <typename type>
 constexpr typename std::enable_if<
-  std::is_integral<type>::value && !std::is_same<type, bool>::value, type>::type
+  std::is_integral<type>::value && !std::is_same<type, bool>::value,
+  type>::type
 int64_as(const int64_t &value) {
   // need to handle unsigned types separately
   if (std::is_unsigned<type>::value && value < 0) {
     THROW_INVALID_TYPE_CONVERSION(
-      std::to_string(value), "int64_t",
+      std::to_string(value),
+      "int64_t",
       "integer (type '" + std::string(typeid(type).name()) + "')",
-      "value is negative for unsigned type"
-    );
+      "value is negative for unsigned type");
   }
 
   // check for overflow with the target integer type
-  if (value > std::numeric_limits<type>::max() ||
-      value < std::numeric_limits<type>::lowest()) {
+  if (
+    value > std::numeric_limits<type>::max() ||
+    value < std::numeric_limits<type>::lowest()) {
     THROW_INVALID_TYPE_CONVERSION(
-      std::to_string(value), "int64_t",
+      std::to_string(value),
+      "int64_t",
       "integer (type '" + std::string(typeid(type).name()) + "')",
       "value outside target integer range [" +
         std::to_string(std::numeric_limits<type>::lowest()) + ", " +
-        std::to_string(std::numeric_limits<type>::max()) + "]"
-    );
+        std::to_string(std::numeric_limits<type>::max()) + "]");
   }
   return static_cast<type>(value);
 }
@@ -89,15 +91,16 @@ template <typename type>
 constexpr typename std::enable_if<std::is_floating_point<type>::value, type>::type
 double_as(const double &value) {
   // check for overflow with the target floating point type
-  if (value > std::numeric_limits<type>::max() ||
-      value < std::numeric_limits<type>::lowest()) {
+  if (
+    value > std::numeric_limits<type>::max() ||
+    value < std::numeric_limits<type>::lowest()) {
     THROW_INVALID_TYPE_CONVERSION(
-      std::to_string(value), "double",
+      std::to_string(value),
+      "double",
       "floating point (type '" + std::string(typeid(type).name()) + "')",
       "value outside target floating point range [" +
         std::to_string(std::numeric_limits<type>::lowest()) + ", " +
-        std::to_string(std::numeric_limits<type>::max()) + "]"
-    );
+        std::to_string(std::numeric_limits<type>::max()) + "]");
   }
   return static_cast<type>(value);
 }
@@ -116,7 +119,8 @@ string_as(const std::string &str) {
 
 template <typename type>
 constexpr typename std::enable_if<
-  std::is_integral<type>::value && !std::is_same<type, bool>::value, int64_t>::type
+  std::is_integral<type>::value && !std::is_same<type, bool>::value,
+  int64_t>::type
 string_as(const std::string &str) {
   return int64_as<type>(string_to_int64(str));
 }
@@ -128,9 +132,9 @@ string_as(const std::string &str) {
 }
 
 template <typename type>
-constexpr typename std::enable_if<
-  std::is_convertible<type, std::string>::value, const std::string &>::type
-string_as(const std::string &str) {
+constexpr typename std::
+  enable_if<std::is_convertible<type, std::string>::value, const std::string &>::type
+  string_as(const std::string &str) {
   return str;
 }
 
@@ -160,9 +164,9 @@ string_array_as(const std::vector<std::string> &strings) {
   std::vector<T> dest;
   dest.reserve(strings.size());
   std::transform(
-    strings.begin(), strings.end(), std::back_inserter(dest),
-    [](const std::string &s) { return string_as<T>(s); }
-  );
+    strings.begin(), strings.end(), std::back_inserter(dest), [](const std::string &s) {
+      return string_as<T>(s);
+    });
   return dest;
 }
 

@@ -24,8 +24,7 @@ nlohmann::json RefreshLatestConcreteConfigRequest::to_json() const {
 }
 
 RefreshLatestConcreteConfigRequest RefreshLatestConcreteConfigRequest::from_json(
-  const nlohmann::json& j
-) {
+  const nlohmann::json& j) {
   RefreshLatestConcreteConfigRequest o{};
   ::org::openapitools::server::model::from_json(j, o);
   return o;
@@ -43,8 +42,8 @@ bool RefreshLatestConcreteConfigRequest::validate(std::stringstream& msg) const 
 }
 
 bool RefreshLatestConcreteConfigRequest::validate(
-  std::stringstream& msg, const std::string& pathPrefix
-) const {
+  std::stringstream& msg,
+  const std::string& pathPrefix) const {
   bool success = true;
   const std::string _pathPrefix =
     pathPrefix.empty() ? "RefreshLatestConcreteConfigRequest" : pathPrefix;
@@ -53,8 +52,7 @@ bool RefreshLatestConcreteConfigRequest::validate(
 }
 
 bool RefreshLatestConcreteConfigRequest::operator==(
-  const RefreshLatestConcreteConfigRequest& other
-) const {
+  const RefreshLatestConcreteConfigRequest& other) const {
   return
 
     config_schema_digest == other.config_schema_digest &&
@@ -62,8 +60,7 @@ bool RefreshLatestConcreteConfigRequest::operator==(
 }
 
 bool RefreshLatestConcreteConfigRequest::operator!=(
-  const RefreshLatestConcreteConfigRequest& other
-) const {
+  const RefreshLatestConcreteConfigRequest& other) const {
   return !(*this == other);
 }
 
