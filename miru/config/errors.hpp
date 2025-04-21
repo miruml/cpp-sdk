@@ -11,7 +11,8 @@ class FromAgentOptionsError : public std::runtime_error {
  public:
   explicit FromAgentOptionsError(
     const std::string& message,
-    const errors::ErrorTrace& trace)
+    const errors::ErrorTrace& trace
+  )
     : std::runtime_error(message + errors::format_source_location(trace)) {}
 };
 
@@ -22,12 +23,14 @@ class ConfigSlugNotFound : public std::runtime_error {
  public:
   explicit ConfigSlugNotFound(
     const miru::filesys::File& schema_file,
-    const errors::ErrorTrace& trace)
+    const errors::ErrorTrace& trace
+  )
     : std::runtime_error(format_message(schema_file, trace)) {}
 
   static std::string format_message(
     const miru::filesys::File& schema_file,
-    const errors::ErrorTrace& trace) {
+    const errors::ErrorTrace& trace
+  ) {
     return "Unable to find config slug in schema file '" +
            schema_file.abs_path().string() + "'" +
            errors::format_source_location(trace);
@@ -41,12 +44,14 @@ class EmptyConfigSlug : public std::runtime_error {
  public:
   explicit EmptyConfigSlug(
     const miru::filesys::File& schema_file,
-    const errors::ErrorTrace& trace)
+    const errors::ErrorTrace& trace
+  )
     : std::runtime_error(format_message(schema_file, trace)) {}
 
   static std::string format_message(
     const miru::filesys::File& schema_file,
-    const errors::ErrorTrace& trace) {
+    const errors::ErrorTrace& trace
+  ) {
     return "Config slug is in schema file '" + schema_file.abs_path().string() +
            "' cannot be empty ('')" + errors::format_source_location(trace);
   }

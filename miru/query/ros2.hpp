@@ -122,7 +122,8 @@ class ROS2StyleQuery {
   bool get_parameter_or(
     const std::string& name,
     ParameterT& parameter,
-    const ParameterT& alternative_value) const {
+    const ParameterT& alternative_value
+  ) const {
     SearchParamFiltersBuilder builder;
     builder.with_param_name(name);
     SearchParamFilters filters = builder.build();
@@ -145,9 +146,8 @@ class ROS2StyleQuery {
    * set. \returns The value of the parameter.
    */
   template <typename ParameterT>
-  ParameterT get_parameter_or(
-    const std::string& name,
-    const ParameterT& alternative_value) const {
+  ParameterT
+  get_parameter_or(const std::string& name, const ParameterT& alternative_value) const {
     SearchParamFiltersBuilder builder;
     builder.with_param_name(name);
     SearchParamFilters filters = builder.build();
@@ -221,7 +221,8 @@ class ROS2StyleQuery {
   template <typename ParameterT>
   bool get_parameters(
     const std::string& prefix,
-    std::map<std::string, ParameterT>& values) const {
+    std::map<std::string, ParameterT>& values
+  ) const {
     SearchParamFiltersBuilder builder;
     builder.with_prefix(prefix);
     SearchParamFilters filters = builder.build();

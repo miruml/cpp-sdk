@@ -23,8 +23,7 @@ std::string to_string(const RequestDetails& details) {
 }
 
 RequestDetails SocketSession::details() {
-  return RequestDetails(
-    req_.method(), socket_path_, req_.target(), timeout_);
+  return RequestDetails(req_.method(), socket_path_, req_.target(), timeout_);
 }
 
 // Start the asynchronous operation
@@ -32,7 +31,8 @@ void SocketSession::execute() {
   // Make the connection on the IP address we get from a lookup
   stream_.async_connect(
     stream_protocol::endpoint(socket_path_),
-    beast::bind_front_handler(&SocketSession::on_connect, shared_from_this()));
+    beast::bind_front_handler(&SocketSession::on_connect, shared_from_this())
+  );
 }
 
 void SocketSession::on_connect(beast::error_code ec) {
@@ -43,7 +43,10 @@ void SocketSession::on_connect(beast::error_code ec) {
 
   // Send the HTTP request to the remote host
   http::async_write(
-    stream_, req_, beast::bind_front_handler(&SocketSession::on_write, shared_from_this()));
+    stream_,
+    req_,
+    beast::bind_front_handler(&SocketSession::on_write, shared_from_this())
+  );
 }
 
 void SocketSession::on_write(beast::error_code ec, std::size_t bytes_transferred) {
@@ -59,7 +62,8 @@ void SocketSession::on_write(beast::error_code ec, std::size_t bytes_transferred
     stream_,
     buffer_,
     res_,
-    beast::bind_front_handler(&SocketSession::on_read, shared_from_this()));
+    beast::bind_front_handler(&SocketSession::on_read, shared_from_this())
+  );
 }
 
 void SocketSession::on_read(beast::error_code ec, std::size_t bytes_transferred) {
@@ -71,10 +75,10 @@ void SocketSession::on_read(beast::error_code ec, std::size_t bytes_transferred)
   stream_.socket().shutdown(tcp::socket::shutdown_both, ec);
 
   // not_connected happens sometimes so don't bother reporting it.
-  if (ec && ec != beast::errc::not_connected) THROW_SHUTDOWN_ERROR(ec.what(), details());
+  if (ec && ec != beast::errc::not_connected)
+    THROW_SHUTDOWN_ERROR(ec.what(), details());
 
   // if we get here then the connection is closed gracefully
 }
 
 }  // namespace miru::http
-

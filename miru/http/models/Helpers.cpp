@@ -18,7 +18,8 @@ namespace org::openapitools::server::helpers {
 
 const std::regex regexRfc3339_date(R"(^(\d{4})\-(\d{2})\-(\d{2})$)");
 const std::regex regexRfc3339_date_time(
-  R"(^(\d{4})\-(\d{2})\-(\d{2})[Tt](\d{2}):(\d{2}):(\d{2})(\.\d+)?([Zz]|([\+\-])(\d{2}):(\d{2}))$)");
+  R"(^(\d{4})\-(\d{2})\-(\d{2})[Tt](\d{2}):(\d{2}):(\d{2})(\.\d+)?([Zz]|([\+\-])(\d{2}):(\d{2}))$)"
+);
 
 namespace {
 // Determine if given year is a leap year
@@ -31,13 +32,15 @@ bool validateDateValues(const uint16_t year, const uint16_t month, const uint16_
   return !(
     (month == 0 || month > 12) || (day == 0) ||
     (month == 2 && day > (28 + (isLeapYear(year) ? 1 : 0))) ||
-    (month <= 7 && day > (30 + month % 2)) || (month >= 8 && day > (31 - month % 2)));
+    (month <= 7 && day > (30 + month % 2)) || (month >= 8 && day > (31 - month % 2))
+  );
 }
 
 bool validateTimeValues(
   const uint16_t hours,
   const uint16_t minutes,
-  const uint16_t seconds) {
+  const uint16_t seconds
+) {
   return (hours <= 23) && (minutes <= 59) && (seconds <= 60);
 }
 }  // namespace
@@ -48,7 +51,8 @@ bool validateRfc3339_date(const std::string &str) {
   return found && validateDateValues(
                     static_cast<uint16_t>(std::stoi(match[1])),
                     static_cast<uint16_t>(std::stoi(match[2])),
-                    static_cast<uint16_t>(std::stoi(match[3])));
+                    static_cast<uint16_t>(std::stoi(match[3]))
+                  );
 }
 
 bool validateRfc3339_date_time(const std::string &str) {
@@ -58,11 +62,13 @@ bool validateRfc3339_date_time(const std::string &str) {
          validateDateValues(
            static_cast<uint16_t>(std::stoi(match[1])),
            static_cast<uint16_t>(std::stoi(match[2])),
-           static_cast<uint16_t>(std::stoi(match[3]))) &&
+           static_cast<uint16_t>(std::stoi(match[3]))
+         ) &&
          validateTimeValues(
            static_cast<uint16_t>(std::stoi(match[4])),
            static_cast<uint16_t>(std::stoi(match[5])),
-           static_cast<uint16_t>(std::stoi(match[6])));
+           static_cast<uint16_t>(std::stoi(match[6]))
+         );
 }
 
 std::string toStringValue(const std::string &value) { return std::string(value); }

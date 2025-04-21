@@ -1,10 +1,11 @@
 // std
 #include <unistd.h>
+
 #include <cstring>
 
 // internal
-#include <miru/http/utils.hpp>
 #include <miru/http/errors.hpp>
+#include <miru/http/utils.hpp>
 
 // external
 #include <boost/asio.hpp>
@@ -20,7 +21,8 @@ http::request<http::string_body> build_request(
   const http::verb& method,
   const std::string& host,
   const std::string& path,
-  const std::string& body) {
+  const std::string& body
+) {
   http::request<http::string_body> req;
   req.method(method);
   req.target(path);
@@ -37,22 +39,23 @@ http::request<http::string_body> build_request(
   return req;
 }
 
-http::request<http::string_body> build_get_request(
-  const std::string& host,
-  const std::string& path) {
+http::request<http::string_body>
+build_get_request(const std::string& host, const std::string& path) {
   return build_request(http::verb::get, host, path);
 }
 
 http::request<http::string_body> build_post_request(
   const std::string& host,
   const std::string& path,
-  const std::string& body) {
+  const std::string& body
+) {
   return build_request(http::verb::post, host, path, body);
 }
 
 nlohmann::json handle_json_response(
   const http::response<http::string_body>& res,
-  const RequestDetails& details) {
+  const RequestDetails& details
+) {
   // check the response body
   auto content_type = res.find(http::field::content_type);
   if (content_type == res.end() || content_type->value() != "application/json") {
@@ -65,7 +68,8 @@ nlohmann::json handle_json_response(
   if (res.result() != http::status::ok) {
     std::optional<openapi::ErrorResponse> error_response;
     try {
-      error_response = openapi::ErrorResponse::from_json(nlohmann::json::parse(res.body()));
+      error_response =
+        openapi::ErrorResponse::from_json(nlohmann::json::parse(res.body()));
     } catch (const std::exception& e) {
       error_response = std::nullopt;
     }

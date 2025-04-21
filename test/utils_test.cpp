@@ -97,7 +97,8 @@ TEST(AssertUniqueStrings, WhitespaceStrings) {
     "test",
     " test",  // different due to leading space
     "test ",  // different due to trailing space
-    "  "};
+    "  "
+  };
   EXPECT_NO_THROW(miru::utils::assert_unique_strings(whitespace));
 }
 
@@ -107,7 +108,8 @@ TEST(AssertUniqueStrings, MultipleEmptyStrings) {
     ""  // duplicate empty string
   };
   EXPECT_THROW(
-    miru::utils::assert_unique_strings(empty_strings), std::invalid_argument);
+    miru::utils::assert_unique_strings(empty_strings), std::invalid_argument
+  );
 }
 
 TEST(AssertUniqueStrings, MultipleDuplicates) {
@@ -117,9 +119,11 @@ TEST(AssertUniqueStrings, MultipleDuplicates) {
     "test1",  // duplicate
     "test3",
     "test2",  // duplicate
-    "test4"};
+    "test4"
+  };
   EXPECT_THROW(
-    miru::utils::assert_unique_strings(multiple_dupes), std::invalid_argument);
+    miru::utils::assert_unique_strings(multiple_dupes), std::invalid_argument
+  );
 }
 
 // =============================== NUMBER CASTING ================================== //
@@ -134,9 +138,11 @@ TEST_F(UtilsIntegerCasting, integer_type_casting_success) {
       [&](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
         EXPECT_EQ(
-          miru::utils::int64_as<T>(test_case.input), std::get<T>(test_case.expected));
+          miru::utils::int64_as<T>(test_case.input), std::get<T>(test_case.expected)
+        );
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 
@@ -150,9 +156,11 @@ TEST_F(UtilsIntegerCasting, integer_type_casting_failure) {
         using T = std::decay_t<decltype(arg)>;
         EXPECT_THROW(
           miru::utils::int64_as<T>(test_case.input),
-          miru::errors::InvalidTypeConversionError);
+          miru::errors::InvalidTypeConversionError
+        );
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 
@@ -170,9 +178,11 @@ TEST_F(UtilsDoubleCasting, double_type_casting_success) {
       [&](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
         EXPECT_EQ(
-          miru::utils::double_as<T>(test_case.input), std::get<T>(test_case.expected));
+          miru::utils::double_as<T>(test_case.input), std::get<T>(test_case.expected)
+        );
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 
@@ -186,9 +196,11 @@ TEST_F(UtilsDoubleCasting, double_type_casting_failure) {
         using T = std::decay_t<decltype(arg)>;
         EXPECT_THROW(
           miru::utils::double_as<T>(test_case.input),
-          miru::errors::InvalidTypeConversionError);
+          miru::errors::InvalidTypeConversionError
+        );
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 
@@ -214,10 +226,12 @@ TEST_F(UtilsStringConversion, bool_conversion_failure) {
       case test::utils::StringConversionException::InvalidTypeConversion:
         EXPECT_THROW(
           miru::utils::yaml_string_to_bool(test_case.str),
-          miru::errors::InvalidTypeConversionError);
+          miru::errors::InvalidTypeConversionError
+        );
         EXPECT_THROW(
           miru::utils::string_as<bool>(test_case.str),
-          miru::errors::InvalidTypeConversionError);
+          miru::errors::InvalidTypeConversionError
+        );
         break;
       default:
         FAIL() << "Unexpected exception type";
@@ -231,11 +245,12 @@ TEST_F(UtilsStringConversion, int_conversion_success) {
       continue;
     }
     EXPECT_EQ(
-      miru::utils::string_to_int64(test_case.str),
-      std::get<int64_t>(test_case.expected));
+      miru::utils::string_to_int64(test_case.str), std::get<int64_t>(test_case.expected)
+    );
     EXPECT_EQ(
       miru::utils::string_as<int64_t>(test_case.str),
-      std::get<int64_t>(test_case.expected));
+      std::get<int64_t>(test_case.expected)
+    );
   }
 }
 
@@ -251,14 +266,16 @@ TEST_F(UtilsStringConversion, int_conversion_failure) {
           case test::utils::StringConversionException::InvalidTypeConversion:
             EXPECT_THROW(
               miru::utils::string_as<T>(test_case.str),
-              miru::errors::InvalidTypeConversionError)
-              << "Exception not thrown for " << test_case.str;
+              miru::errors::InvalidTypeConversionError
+            ) << "Exception not thrown for "
+              << test_case.str;
             break;
           default:
             FAIL() << "Unexpected exception type";
         }
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 
@@ -268,11 +285,12 @@ TEST_F(UtilsStringConversion, double_conversion_success) {
       continue;
     }
     EXPECT_EQ(
-      miru::utils::string_to_double(test_case.str),
-      std::get<double>(test_case.expected));
+      miru::utils::string_to_double(test_case.str), std::get<double>(test_case.expected)
+    );
     EXPECT_EQ(
       miru::utils::string_as<double>(test_case.str),
-      std::get<double>(test_case.expected));
+      std::get<double>(test_case.expected)
+    );
   }
 }
 
@@ -288,13 +306,15 @@ TEST_F(UtilsStringConversion, double_conversion_failure) {
           case test::utils::StringConversionException::InvalidTypeConversion:
             EXPECT_THROW(
               miru::utils::string_as<T>(test_case.str),
-              miru::errors::InvalidTypeConversionError);
+              miru::errors::InvalidTypeConversionError
+            );
             break;
           default:
             FAIL() << "Unexpected exception type";
         }
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 
@@ -331,8 +351,8 @@ TEST_F(UtilsStringConversion, bool_array_conversion_failure) {
     std::vector<std::string> strs = {};
     strs.push_back(test_case.str);
     EXPECT_THROW(
-      miru::utils::string_array_as<bool>(strs),
-      miru::errors::InvalidTypeConversionError);
+      miru::utils::string_array_as<bool>(strs), miru::errors::InvalidTypeConversionError
+    );
   }
 }
 
@@ -364,13 +384,15 @@ TEST_F(UtilsStringConversion, int_array_conversion_failure) {
           case test::utils::StringConversionException::InvalidTypeConversion:
             EXPECT_THROW(
               miru::utils::string_array_as<T>(strs),
-              miru::errors::InvalidTypeConversionError);
+              miru::errors::InvalidTypeConversionError
+            );
             break;
           default:
             FAIL() << "Unexpected exception type";
         }
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 
@@ -402,13 +424,15 @@ TEST_F(UtilsStringConversion, double_array_conversion_failure) {
           case test::utils::StringConversionException::InvalidTypeConversion:
             EXPECT_THROW(
               miru::utils::string_array_as<T>(strs),
-              miru::errors::InvalidTypeConversionError);
+              miru::errors::InvalidTypeConversionError
+            );
             break;
           default:
             FAIL() << "Unexpected exception type";
         }
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 

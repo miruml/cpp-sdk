@@ -29,12 +29,7 @@ std::pair<http::response<http::string_body>, RequestDetails> UnixSocketClient::e
   const std::chrono::milliseconds& timeout
 ) {
   asio::io_context ioc;
-  auto session = std::make_shared<SocketSession>(
-    ioc,
-    socket_path_,
-    req,
-    timeout
-  );
+  auto session = std::make_shared<SocketSession>(ioc, socket_path_, req, timeout);
   RequestDetails details = session->details();
   session->execute();
   ioc.run();
@@ -51,7 +46,8 @@ nlohmann::json UnixSocketClient::test_route() {
 }
 
 std::string UnixSocketClient::hash_schema(
-  const openapi::HashSchemaRequest& config_schema) {
+  const openapi::HashSchemaRequest& config_schema
+) {
   std::string path = base_path() + "/config_schemas/hash";
   auto req = build_post_request(host(), path, config_schema.to_json().dump());
   std::chrono::milliseconds timeout = std::chrono::seconds(10);
@@ -61,24 +57,28 @@ std::string UnixSocketClient::hash_schema(
 
 openapi::BaseConcreteConfig UnixSocketClient::get_latest_concrete_config(
   const std::string& config_schema_digest,
-  const std::string& config_slug) {
+  const std::string& config_slug
+) {
   std::string path = base_path() + "/concrete_configs/latest?config_schema_digest=" +
                      config_schema_digest + "&config_slug=" + config_slug;
   auto req = build_get_request(host(), path);
   std::chrono::milliseconds timeout = std::chrono::seconds(10);
   auto res = execute(req, timeout);
   return openapi::BaseConcreteConfig::from_json(
-    handle_json_response(res.first, res.second));
+    handle_json_response(res.first, res.second)
+  );
 }
 
 openapi::BaseConcreteConfig UnixSocketClient::refresh_latest_concrete_config(
-  const openapi::RefreshLatestConcreteConfigRequest& request) {
+  const openapi::RefreshLatestConcreteConfigRequest& request
+) {
   std::string path = base_path() + "/concrete_configs/refresh_latest";
   auto req = build_post_request(host(), path, request.to_json().dump());
   std::chrono::milliseconds timeout = std::chrono::seconds(10);
   auto res = execute(req, timeout);
   return openapi::BaseConcreteConfig::from_json(
-    handle_json_response(res.first, res.second));
+    handle_json_response(res.first, res.second)
+  );
 }
 
 }  // namespace miru::http

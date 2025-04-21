@@ -44,7 +44,8 @@ class SearchParamFiltersBuilder {
 
   SearchParamFiltersBuilder& with_param_name(const std::string& param_name);
   SearchParamFiltersBuilder& with_param_names(
-    const std::vector<std::string>& param_names);
+    const std::vector<std::string>& param_names
+  );
   SearchParamFiltersBuilder& with_prefix(const std::string& prefix);
   SearchParamFiltersBuilder& with_prefixes(const std::vector<std::string>& prefixes);
   SearchParamFiltersBuilder& with_leaves_only(bool leaves_only);

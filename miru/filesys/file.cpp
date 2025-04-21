@@ -29,8 +29,8 @@ std::string file_type_to_string(FileType file_type) {
   return "unknown";
 }
 
-std::vector<std::string> file_types_to_strings(
-  const std::vector<FileType>& file_types) {
+std::vector<std::string> file_types_to_strings(const std::vector<FileType>& file_types
+) {
   std::vector<std::string> strings;
   for (const auto& file_type : file_types) {
     strings.push_back(file_type_to_string(file_type));
@@ -52,7 +52,8 @@ FileType File::file_type() const {
   if (extension() == ".yaml") return FileType::YAML;
   if (extension() == ".yml") return FileType::YAML;
   THROW_INVALID_FILE_TYPE(
-    path_.string(), file_types_to_strings(supported_file_types()));
+    path_.string(), file_types_to_strings(supported_file_types())
+  );
 }
 
 void File::assert_exists() const {
@@ -85,7 +86,8 @@ nlohmann::json File::read_json() const {
 
   if (file_type() != FileType::JSON) {
     THROW_INVALID_FILE_TYPE(
-      path_.string(), file_types_to_strings(supported_file_types()));
+      path_.string(), file_types_to_strings(supported_file_types())
+    );
   }
 
   std::ifstream file(path_);
@@ -100,7 +102,8 @@ YAML::Node File::read_yaml() const {
   // yaml parser
   if (file_type() != FileType::YAML && file_type() != FileType::JSON) {
     THROW_INVALID_FILE_TYPE(
-      path_.string(), file_types_to_strings(supported_file_types()));
+      path_.string(), file_types_to_strings(supported_file_types())
+    );
   }
 
   std::ifstream file(path_);
@@ -115,7 +118,8 @@ std::variant<nlohmann::json, YAML::Node> File::read_structured_data() const {
       return read_yaml();
   }
   THROW_INVALID_FILE_TYPE(
-    path_.string(), file_types_to_strings(supported_file_types()));
+    path_.string(), file_types_to_strings(supported_file_types())
+  );
 }
 
 }  // namespace miru::filesys

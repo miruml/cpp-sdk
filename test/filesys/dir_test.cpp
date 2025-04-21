@@ -51,8 +51,8 @@ TEST_P(Exists, Exists) {
   }
 }
 
-std::string ExistsTestNameGenerator(
-  const testing::TestParamInfo<ExistsTestCase>& info) {
+std::string ExistsTestNameGenerator(const testing::TestParamInfo<ExistsTestCase>& info
+) {
   return miru::test_utils::sanitize_test_name(info.param.test_name);
 }
 
@@ -63,16 +63,21 @@ INSTANTIATE_TEST_SUITE_P(
     ExistsTestCase{
       "directory exists",
       miru::test_utils::filesys_testdata_dir().path(),
-      DirExceptionType::None},
+      DirExceptionType::None
+    },
     ExistsTestCase{
       "directory does not exist",
       "doesnt/exist",
-      DirExceptionType::DirNotFound},
+      DirExceptionType::DirNotFound
+    },
     ExistsTestCase{
       "is a file",
       miru::test_utils::filesys_testdata_dir().path() / "text.txt",
-      DirExceptionType::NotADir}),
-  ExistsTestNameGenerator);
+      DirExceptionType::NotADir
+    }
+  ),
+  ExistsTestNameGenerator
+);
 
 // ================================== parent() ===================================== //
 struct ParentTestCase {
@@ -89,8 +94,8 @@ TEST_P(Parent, Parent) {
   EXPECT_EQ(dir.parent().path(), expected_parent);
 }
 
-std::string ParentTestNameGenerator(
-  const testing::TestParamInfo<ParentTestCase>& info) {
+std::string ParentTestNameGenerator(const testing::TestParamInfo<ParentTestCase>& info
+) {
   return miru::test_utils::sanitize_test_name(info.param.test_name);
 }
 
@@ -100,8 +105,10 @@ INSTANTIATE_TEST_SUITE_P(
   testing::Values(
     ParentTestCase{"absolute path", "/root/dir/with/subdir", "/root/dir/with"},
     ParentTestCase{"relative path", "/root/dir/with/subdir/../..", "/root"},
-    ParentTestCase{"root path", "/", "/"}),
-  ParentTestNameGenerator);
+    ParentTestCase{"root path", "/", "/"}
+  ),
+  ParentTestNameGenerator
+);
 
 // ================================== subdir() ===================================== //
 struct SubdirTestCase {
@@ -119,8 +126,8 @@ TEST_P(Subdir, Subdir) {
   EXPECT_EQ(dir.subdir(subdir_extension).path(), expected_subdir_path);
 }
 
-std::string SubdirTestNameGenerator(
-  const testing::TestParamInfo<SubdirTestCase>& info) {
+std::string SubdirTestNameGenerator(const testing::TestParamInfo<SubdirTestCase>& info
+) {
   return miru::test_utils::sanitize_test_name(info.param.test_name);
 }
 
@@ -132,18 +139,23 @@ INSTANTIATE_TEST_SUITE_P(
       "single extension",
       std::filesystem::path("lebron") / "the",
       std::filesystem::path("goat"),
-      std::filesystem::path("lebron") / "the" / "goat"},
+      std::filesystem::path("lebron") / "the" / "goat"
+    },
     SubdirTestCase{
       "multiple extensions",
       std::filesystem::path("like") / "he",
       std::filesystem::path("fr") / "fr" / "the" / "goat",
-      std::filesystem::path("like") / "he" / "fr" / "fr" / "the" / "goat"},
+      std::filesystem::path("like") / "he" / "fr" / "fr" / "the" / "goat"
+    },
     SubdirTestCase{
       "trailing slash",
       std::filesystem::path("but") / "like",
       std::filesystem::path("seriously") / "/",
-      std::filesystem::path("but") / "like" / "seriously" / "/"}),
-  SubdirTestNameGenerator);
+      std::filesystem::path("but") / "like" / "seriously" / "/"
+    }
+  ),
+  SubdirTestNameGenerator
+);
 
 // ==================================== file() ===================================== //
 struct FileTestCase {
@@ -173,18 +185,23 @@ INSTANTIATE_TEST_SUITE_P(
       "single extension",
       std::filesystem::path("lebron") / "the",
       std::filesystem::path("goat.txt"),
-      std::filesystem::path("lebron") / "the" / "goat.txt"},
+      std::filesystem::path("lebron") / "the" / "goat.txt"
+    },
     FileTestCase{
       "multiple extensions",
       std::filesystem::path("like") / "he",
       std::filesystem::path("fr") / "fr" / "the" / "goat.txt",
-      std::filesystem::path("like") / "he" / "fr" / "fr" / "the" / "goat.txt"},
+      std::filesystem::path("like") / "he" / "fr" / "fr" / "the" / "goat.txt"
+    },
     FileTestCase{
       "trailing slash",
       std::filesystem::path("but") / "like",
       std::filesystem::path("seriously") / "/",
-      std::filesystem::path("but") / "like" / "seriously" / "/"}),
-  FileTestNameGenerator);
+      std::filesystem::path("but") / "like" / "seriously" / "/"
+    }
+  ),
+  FileTestNameGenerator
+);
 
 // =============================== git_repo_root_dir() ============================= //
 struct GitRepoRootDirTestCase {
@@ -216,7 +233,8 @@ TEST_P(GitRepoRootDirs, GitRepoRootDir) {
 }
 
 std::string GitRepoRootDirTestNameGenerator(
-  const testing::TestParamInfo<GitRepoRootDirTestCase>& info) {
+  const testing::TestParamInfo<GitRepoRootDirTestCase>& info
+) {
   return miru::test_utils::sanitize_test_name(info.param.test_name);
 }
 
@@ -228,26 +246,34 @@ INSTANTIATE_TEST_SUITE_P(
       "git repo from filesystem data directory",
       miru::test_utils::filesys_testdata_dir().path(),
       miru::filesys::Dir(
-        miru::test_utils::filesys_testdata_dir().path() / ".." / ".." / "..")
+        miru::test_utils::filesys_testdata_dir().path() / ".." / ".." / ".."
+      )
         .abs_path(),
-      DirExceptionType::None},
+      DirExceptionType::None
+    },
     GitRepoRootDirTestCase{
       "git repo from current directory",
       miru::filesys::Dir::from_current_dir().path(),
       miru::filesys::Dir(
-        miru::test_utils::filesys_testdata_dir().path() / ".." / ".." / "..")
+        miru::test_utils::filesys_testdata_dir().path() / ".." / ".." / ".."
+      )
         .abs_path(),
-      DirExceptionType::None},
+      DirExceptionType::None
+    },
     GitRepoRootDirTestCase{
       "directory does not exist",
       std::filesystem::path("doesnt") / "exist",
       std::filesystem::path(),
-      DirExceptionType::DirNotFound},
+      DirExceptionType::DirNotFound
+    },
     GitRepoRootDirTestCase{
       "is not a git repo",
       miru::test_utils::filesys_testdata_dir().path() / ".." / ".." / ".." / "..",
       std::filesystem::path(),
-      DirExceptionType::UnableToFindGitRepo}),
-  GitRepoRootDirTestNameGenerator);
+      DirExceptionType::UnableToFindGitRepo
+    }
+  ),
+  GitRepoRootDirTestNameGenerator
+);
 
 }  // namespace test::filesys

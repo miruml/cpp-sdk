@@ -23,12 +23,11 @@ http::request<http::string_body> build_request(
   const http::verb& method,
   const std::string& host,
   const std::string& path,
-  const std::string& body = "");
-
-http::request<http::string_body> build_get_request(
-  const std::string& host,
-  const std::string& path
+  const std::string& body = ""
 );
+
+http::request<http::string_body>
+build_get_request(const std::string& host, const std::string& path);
 
 http::request<http::string_body> build_post_request(
   const std::string& host,
@@ -38,6 +37,7 @@ http::request<http::string_body> build_post_request(
 
 nlohmann::json handle_json_response(
   const http::response<http::string_body>& res,
-  const RequestDetails& details);
+  const RequestDetails& details
+);
 
 }  // namespace miru::http

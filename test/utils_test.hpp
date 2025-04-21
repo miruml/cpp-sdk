@@ -101,21 +101,29 @@ class IntegerCasting : public ::testing::Test {
   std::vector<IntCastTestCase> all_test_cases() {
     std::vector<IntCastTestCase> all_test_cases = {};
     all_test_cases.insert(
-      all_test_cases.end(), int8_test_cases.begin(), int8_test_cases.end());
+      all_test_cases.end(), int8_test_cases.begin(), int8_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), int16_test_cases.begin(), int16_test_cases.end());
+      all_test_cases.end(), int16_test_cases.begin(), int16_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), int32_test_cases.begin(), int32_test_cases.end());
+      all_test_cases.end(), int32_test_cases.begin(), int32_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), int64_test_cases.begin(), int64_test_cases.end());
+      all_test_cases.end(), int64_test_cases.begin(), int64_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), uint8_test_cases.begin(), uint8_test_cases.end());
+      all_test_cases.end(), uint8_test_cases.begin(), uint8_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), uint16_test_cases.begin(), uint16_test_cases.end());
+      all_test_cases.end(), uint16_test_cases.begin(), uint16_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), uint32_test_cases.begin(), uint32_test_cases.end());
+      all_test_cases.end(), uint32_test_cases.begin(), uint32_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), uint64_test_cases.begin(), uint64_test_cases.end());
+      all_test_cases.end(), uint64_test_cases.begin(), uint64_test_cases.end()
+    );
     return all_test_cases;
   }
 };
@@ -227,9 +235,8 @@ class StringConversion : public ::testing::Test {
     {"-123abc", int64_t(0), StringConversionException::InvalidTypeConversion},
 
     // int64 overflow
-    {"9223372036854775808",
-     int64_t(0),
-     StringConversionException::InvalidTypeConversion},
+    {"9223372036854775808", int64_t(0), StringConversionException::InvalidTypeConversion
+    },
     {"-9223372036854775809",
      int64_t(0),
      StringConversionException::InvalidTypeConversion},
@@ -282,21 +289,29 @@ class StringConversion : public ::testing::Test {
   std::vector<StringToIntTestCase> int_test_cases() {
     std::vector<StringToIntTestCase> all_test_cases = {};
     all_test_cases.insert(
-      all_test_cases.end(), int64_test_cases.begin(), int64_test_cases.end());
+      all_test_cases.end(), int64_test_cases.begin(), int64_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), int8_test_cases.begin(), int8_test_cases.end());
+      all_test_cases.end(), int8_test_cases.begin(), int8_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), int16_test_cases.begin(), int16_test_cases.end());
+      all_test_cases.end(), int16_test_cases.begin(), int16_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), int32_test_cases.begin(), int32_test_cases.end());
+      all_test_cases.end(), int32_test_cases.begin(), int32_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), uint8_test_cases.begin(), uint8_test_cases.end());
+      all_test_cases.end(), uint8_test_cases.begin(), uint8_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), uint16_test_cases.begin(), uint16_test_cases.end());
+      all_test_cases.end(), uint16_test_cases.begin(), uint16_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), uint32_test_cases.begin(), uint32_test_cases.end());
+      all_test_cases.end(), uint32_test_cases.begin(), uint32_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), uint64_test_cases.begin(), uint64_test_cases.end());
+      all_test_cases.end(), uint64_test_cases.begin(), uint64_test_cases.end()
+    );
     return all_test_cases;
   }
 
@@ -341,9 +356,11 @@ class StringConversion : public ::testing::Test {
   std::vector<StringToDoubleTestCase> float_test_cases() {
     std::vector<StringToDoubleTestCase> all_test_cases = {};
     all_test_cases.insert(
-      all_test_cases.end(), float64_test_cases.begin(), float64_test_cases.end());
+      all_test_cases.end(), float64_test_cases.begin(), float64_test_cases.end()
+    );
     all_test_cases.insert(
-      all_test_cases.end(), float32_test_cases.begin(), float32_test_cases.end());
+      all_test_cases.end(), float32_test_cases.begin(), float32_test_cases.end()
+    );
     return all_test_cases;
   }
 

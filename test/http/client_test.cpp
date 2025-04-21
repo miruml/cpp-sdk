@@ -1,9 +1,10 @@
 // internal
+#include <miru/http/models/HashSchemaRequest.h>
+
 #include <miru/filesys/file.hpp>
 #include <miru/http/socket_client.hpp>
 #include <miru/http/socket_session.hpp>
 #include <miru/http/utils.hpp>
-#include <miru/http/models/HashSchemaRequest.h>
 #include <test/test_utils/testdata.hpp>
 
 // external
@@ -19,10 +20,8 @@ namespace openapi = org::openapitools::server::model;
 
 // ============================== BUILD GET REQUEST ================================ //
 TEST(HTTPClient, BuildGetRequest) {
-  http::request<http::string_body> req = miru::http::build_get_request(
-    "localhost",
-    "/test"
-  );
+  http::request<http::string_body> req =
+    miru::http::build_get_request("localhost", "/test");
 
   // request
   EXPECT_EQ(req.method(), http::verb::get);
@@ -31,16 +30,14 @@ TEST(HTTPClient, BuildGetRequest) {
   EXPECT_EQ(req.body(), "");
   EXPECT_EQ(req.find(http::field::host)->value(), "localhost");
   EXPECT_EQ(
-    req.find(http::field::user_agent)->value(), "Miru Unix Client (BoostBeast)");
+    req.find(http::field::user_agent)->value(), "Miru Unix Client (BoostBeast)"
+  );
 }
 
 // ============================= BUILD POST REQUEST ================================ //
 TEST(HTTPClient, BuildPostRequest) {
-  http::request<http::string_body> req = miru::http::build_post_request(
-    "localhost",
-    "/test",
-    "{\"key\":\"value\"}"
-  );
+  http::request<http::string_body> req =
+    miru::http::build_post_request("localhost", "/test", "{\"key\":\"value\"}");
 
   // request
   EXPECT_EQ(req.method(), http::verb::post);
@@ -49,22 +46,23 @@ TEST(HTTPClient, BuildPostRequest) {
   EXPECT_EQ(req.body(), "{\"key\":\"value\"}");
   EXPECT_EQ(req.find(http::field::host)->value(), "localhost");
   EXPECT_EQ(
-    req.find(http::field::user_agent)->value(), "Miru Unix Client (BoostBeast)");
+    req.find(http::field::user_agent)->value(), "Miru Unix Client (BoostBeast)"
+  );
 }
 
-// =============================== SANDBOX TESTS =================================== // 
+// =============================== SANDBOX TESTS =================================== //
 TEST(HTTPClient, Sandbox) {
-
   // test route
   miru::http::UnixSocketClient client;
   auto res = client.test_route();
 
   // hash schema
   miru::filesys::File schema_file(
-    miru::test_utils::config_schemas_testdata_dir().file("motion-control.json"));
+    miru::test_utils::config_schemas_testdata_dir().file("motion-control.json")
+  );
 
   nlohmann::json schema = schema_file.read_json();
-  openapi::HashSchemaRequest request {schema};
+  openapi::HashSchemaRequest request{schema};
 
   res = client.hash_schema(request);
   std::cout << res << std::endl;

@@ -4,6 +4,8 @@
 #include <miru/http/models/BaseConcreteConfig.h>
 #include <miru/http/models/HashSchemaRequest.h>
 #include <miru/http/models/RefreshLatestConcreteConfigRequest.h>
+
+#include <miru/http/client.hpp>
 #include <miru/http/socket_session.hpp>
 
 // external
@@ -15,7 +17,7 @@ namespace miru::http {
 namespace openapi = org::openapitools::server::model;
 namespace http = boost::beast::http;
 
-class UnixSocketClient {
+class UnixSocketClient : public BackendClientI {
  public:
   UnixSocketClient(const std::string& socket_path = "/tmp/miru.sock")
     : socket_path_(socket_path), base_path_("/v1"), host_("localhost"), port_("80") {}
@@ -23,7 +25,8 @@ class UnixSocketClient {
 
   std::pair<http::response<http::string_body>, RequestDetails> execute(
     const http::request<http::string_body>& req,
-    const std::chrono::milliseconds& timeout);
+    const std::chrono::milliseconds& timeout
+  );
 
   const std::string& base_path() const { return base_path_; }
   const std::string& host() const { return host_; }

@@ -21,7 +21,8 @@ namespace openapi = org::openapitools::server::model;
 
 Config Config::from_file(
   const std::filesystem::path& schema_file_path,
-  const std::filesystem::path& config_file_path) {
+  const std::filesystem::path& config_file_path
+) {
   ConfigBuilder builder;
   builder.with_source(ConfigSource::FileSystem);
 
@@ -43,7 +44,8 @@ Config Config::from_file(
 
 nlohmann::json get_latest_concrete_config(
   const std::string& config_slug,
-  const nlohmann::json& schema_file_contents) {
+  const nlohmann::json& schema_file_contents
+) {
   miru::http::UnixSocketClient client;
   openapi::HashSchemaRequest config_schema{schema_file_contents};
   std::string config_schema_digest = client.hash_schema(config_schema);
@@ -52,7 +54,8 @@ nlohmann::json get_latest_concrete_config(
   try {
     // try to refresh the latest concrete config with the server
     openapi::RefreshLatestConcreteConfigRequest refresh_request{
-      config_schema_digest, config_slug};
+      config_schema_digest, config_slug
+    };
     config_data = client.refresh_latest_concrete_config(refresh_request);
   } catch (const std::exception& refresh_error) {
     // load from the local cache if the refresh fails
@@ -63,7 +66,8 @@ nlohmann::json get_latest_concrete_config(
 
 Config from_agent_internal(
   const std::filesystem::path& schema_file_path,
-  const FromAgentOptions& options) {
+  const FromAgentOptions& options
+) {
   ConfigBuilder builder;
   builder.with_source(ConfigSource::Agent);
 
@@ -84,7 +88,8 @@ Config from_agent_internal(
 
 Config Config::from_agent(
   const std::filesystem::path& schema_file_path,
-  const FromAgentOptions& options) {
+  const FromAgentOptions& options
+) {
   if (options.num_retries == 0) {
     THROW_FROM_AGENT_OPTIONS_ERROR("Number of retries must be greater than 0");
   }
@@ -214,15 +219,18 @@ Config ConfigBuilder::build() {
   }
   if (source_ == ConfigSource::Agent && !schema_digest_.has_value()) {
     throw std::runtime_error(
-      "Schema not set (must be set when retrieving the config from the agent)");
+      "Schema not set (must be set when retrieving the config from the agent)"
+    );
   }
   if (source_ == ConfigSource::FileSystem && !config_file_.has_value()) {
     throw std::runtime_error(
       "Config file not set (must be set when retrieving the config from the file "
-      "system)");
+      "system)"
+    );
   }
   return Config(
-    *schema_file_, *config_slug_, *source_, *data_, schema_digest_, config_file_);
+    *schema_file_, *config_slug_, *source_, *data_, schema_digest_, config_file_
+  );
 }
 
 }  // namespace miru::config

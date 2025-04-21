@@ -32,14 +32,17 @@ ParametersView get_children_view(const Parameter& parameter) {
       return ParametersView(parameter.as_map().begin(), parameter.as_map().end());
     case ParameterType::PARAMETER_MAP_ARRAY:
       return ParametersView(
-        parameter.as_map_array().begin(), parameter.as_map_array().end());
+        parameter.as_map_array().begin(), parameter.as_map_array().end()
+      );
     case ParameterType::PARAMETER_NESTED_ARRAY:
       return ParametersView(
-        parameter.as_nested_array().begin(), parameter.as_nested_array().end());
+        parameter.as_nested_array().begin(), parameter.as_nested_array().end()
+      );
     default:
       return ParametersView(
         std::vector<Parameter>::const_iterator(),
-        std::vector<Parameter>::const_iterator());
+        std::vector<Parameter>::const_iterator()
+      );
   }
 }
 

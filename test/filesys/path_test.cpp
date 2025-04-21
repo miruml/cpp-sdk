@@ -34,13 +34,17 @@ INSTANTIATE_TEST_SUITE_P(
   testing::Values(
     PathTestCase{
       "test/file_test/test.txt",
-      std::filesystem::path("test") / "file_test" / "test.txt"},
+      std::filesystem::path("test") / "file_test" / "test.txt"
+    },
     PathTestCase{"arglebargle.json", std::filesystem::path("arglebargle.json")},
     PathTestCase{"lebron.james.yaml", std::filesystem::path("lebron.james.yaml")},
     PathTestCase{
       "ske/de/pop/pop/pop.txt",
-      std::filesystem::path("ske") / "de" / "pop" / "pop" / "pop.txt"}),
-  PathTestNameGenerator);
+      std::filesystem::path("ske") / "de" / "pop" / "pop" / "pop.txt"
+    }
+  ),
+  PathTestNameGenerator
+);
 
 // =================================== abs_path() ================================== //
 struct AbsPathTestCase {
@@ -57,8 +61,8 @@ TEST_P(AbsPaths, AbsPath) {
   EXPECT_EQ(path.abs_path(), expected_abs_path);
 }
 
-std::string AbsPathTestNameGenerator(
-  const testing::TestParamInfo<AbsPathTestCase>& info) {
+std::string AbsPathTestNameGenerator(const testing::TestParamInfo<AbsPathTestCase>& info
+) {
   return miru::test_utils::sanitize_test_name(info.param.test_name);
 }
 
@@ -69,12 +73,14 @@ INSTANTIATE_TEST_SUITE_P(
     AbsPathTestCase{
       "already absolute path",
       std::filesystem::path("/already") / "absolute" / "path.txt",
-      std::filesystem::path("/already") / "absolute" / "path.txt"},
+      std::filesystem::path("/already") / "absolute" / "path.txt"
+    },
     AbsPathTestCase{
       "root path with ../../random/../removals/to/see/../../if/this/works",
       std::filesystem::path("/root") / "path" / "with" / ".." / ".." / "random" / ".." /
         "removals" / "to" / "see" / ".." / ".." / "if" / "this" / "works",
-      std::filesystem::path("/root") / "removals" / "if" / "this" / "works"},
+      std::filesystem::path("/root") / "removals" / "if" / "this" / "works"
+    },
     AbsPathTestCase{
       "extra tailing slashes",
       std::filesystem::path("////"),
@@ -254,8 +260,10 @@ INSTANTIATE_TEST_SUITE_P(
       "parent prefix with parent",
       std::filesystem::path("../test/.."),
       std::filesystem::current_path().parent_path(),
-    }),
-  AbsPathTestNameGenerator);
+    }
+  ),
+  AbsPathTestNameGenerator
+);
 
 // ===================================== name() ==================================== //
 struct NameTestCase {
@@ -284,20 +292,26 @@ INSTANTIATE_TEST_SUITE_P(
     NameTestCase{
       "json file",
       std::filesystem::path("arglebargle.json"),
-      std::filesystem::path("arglebargle.json")},
+      std::filesystem::path("arglebargle.json")
+    },
     NameTestCase{
       "text file",
       std::filesystem::path("ske") / "de" / "pop" / "pop" / "pop.txt",
-      std::filesystem::path("pop.txt")},
+      std::filesystem::path("pop.txt")
+    },
     // dirs
     NameTestCase{
       "test directory",
       std::filesystem::path("test") / "file_test" / "test",
-      std::filesystem::path("test")},
+      std::filesystem::path("test")
+    },
     NameTestCase{
       "arglebargle directory",
       std::filesystem::path("arglebargle"),
-      std::filesystem::path("arglebargle")}),
-  NameTestNameGenerator);
+      std::filesystem::path("arglebargle")
+    }
+  ),
+  NameTestNameGenerator
+);
 
 }  // namespace test::filesys

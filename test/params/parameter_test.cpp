@@ -78,7 +78,8 @@ TEST_F(ParameterConstructors, not_set_variant) {
 
   // get type
   EXPECT_EQ(
-    not_set_variant1.get_type(), miru::params::ParameterType::PARAMETER_NOT_SET);
+    not_set_variant1.get_type(), miru::params::ParameterType::PARAMETER_NOT_SET
+  );
 
   // get type name
   EXPECT_EQ(not_set_variant1.get_type_name(), "not set");
@@ -268,7 +269,8 @@ TEST_F(ParameterConstructors, bool_array_variant) {
 
   // get type
   EXPECT_EQ(
-    bool_array_variant1.get_type(), miru::params::ParameterType::PARAMETER_BOOL_ARRAY);
+    bool_array_variant1.get_type(), miru::params::ParameterType::PARAMETER_BOOL_ARRAY
+  );
 
   // get type name
   EXPECT_EQ(bool_array_variant1.get_type_name(), "bool array");
@@ -308,8 +310,8 @@ TEST_F(ParameterConstructors, int_array_variant) {
 
   // get type
   EXPECT_EQ(
-    int_array_variant1.get_type(),
-    miru::params::ParameterType::PARAMETER_INTEGER_ARRAY);
+    int_array_variant1.get_type(), miru::params::ParameterType::PARAMETER_INTEGER_ARRAY
+  );
 
   // get type name
   EXPECT_EQ(int_array_variant1.get_type_name(), "int array");
@@ -350,7 +352,8 @@ TEST_F(ParameterConstructors, double_array_variant) {
   // get type
   EXPECT_EQ(
     double_array_variant1.get_type(),
-    miru::params::ParameterType::PARAMETER_DOUBLE_ARRAY);
+    miru::params::ParameterType::PARAMETER_DOUBLE_ARRAY
+  );
 
   // get type name
   EXPECT_EQ(double_array_variant1.get_type_name(), "double array");
@@ -372,16 +375,19 @@ TEST_F(ParameterConstructors, double_array_variant) {
 
 TEST_F(ParameterConstructors, string_array_variant) {
   miru::params::ParameterValue string_array_value(
-    std::vector<std::string>{"test1", "test2", "test3"});
+    std::vector<std::string>{"test1", "test2", "test3"}
+  );
   miru::params::Parameter string_array_variant1 =
     miru::params::Parameter("string_array_param", string_array_value);
   miru::params::Parameter string_array_variant2 = miru::params::Parameter(
-    "string_array_param", std::vector<std::string>{"test1", "test2", "test3"});
+    "string_array_param", std::vector<std::string>{"test1", "test2", "test3"}
+  );
   EXPECT_EQ(string_array_variant1, string_array_variant2);
 
   // value not equal
   miru::params::Parameter diff_value = miru::params::Parameter(
-    "string_array_param", std::vector<std::string>{"test1", "test2", "test4"});
+    "string_array_param", std::vector<std::string>{"test1", "test2", "test4"}
+  );
   EXPECT_NE(string_array_variant1, diff_value);
 
   // name not equal
@@ -392,7 +398,8 @@ TEST_F(ParameterConstructors, string_array_variant) {
   // get type
   EXPECT_EQ(
     string_array_variant1.get_type(),
-    miru::params::ParameterType::PARAMETER_STRING_ARRAY);
+    miru::params::ParameterType::PARAMETER_STRING_ARRAY
+  );
 
   // get type name
   EXPECT_EQ(string_array_variant1.get_type_name(), "string array");
@@ -402,7 +409,8 @@ TEST_F(ParameterConstructors, string_array_variant) {
 
   // value to string
   EXPECT_EQ(
-    string_array_variant1.value_to_string(), "[\"test1\", \"test2\", \"test3\"]");
+    string_array_variant1.value_to_string(), "[\"test1\", \"test2\", \"test3\"]"
+  );
 
   EXPECT_FALSE(string_array_variant1.is_null());
   EXPECT_FALSE(string_array_variant1.is_scalar());
@@ -491,7 +499,8 @@ TEST_F(ParameterConstructors, scalar_array_variant) {
   miru::params::ParameterValue scalar_array_value(std::vector<miru::params::Scalar>{
     miru::params::Scalar("true"),
     miru::params::Scalar("false"),
-    miru::params::Scalar("true")});
+    miru::params::Scalar("true")
+  });
   miru::params::Parameter scalar_array_variant1 =
     miru::params::Parameter("scalar_array_param", scalar_array_value);
   miru::params::Parameter scalar_array_variant2 = miru::params::Parameter(
@@ -499,7 +508,9 @@ TEST_F(ParameterConstructors, scalar_array_variant) {
     std::vector<miru::params::Scalar>{
       miru::params::Scalar("true"),
       miru::params::Scalar("false"),
-      miru::params::Scalar("true")});
+      miru::params::Scalar("true")
+    }
+  );
   EXPECT_EQ(scalar_array_variant1, scalar_array_variant2);
 
   // value not equal
@@ -508,7 +519,9 @@ TEST_F(ParameterConstructors, scalar_array_variant) {
     std::vector<miru::params::Scalar>{
       miru::params::Scalar("true"),
       miru::params::Scalar("false"),
-      miru::params::Scalar("false")});
+      miru::params::Scalar("false")
+    }
+  );
   EXPECT_NE(scalar_array_variant1, diff_value);
 
   // name not equal
@@ -519,7 +532,8 @@ TEST_F(ParameterConstructors, scalar_array_variant) {
   // get type
   EXPECT_EQ(
     scalar_array_variant1.get_type(),
-    miru::params::ParameterType::PARAMETER_SCALAR_ARRAY);
+    miru::params::ParameterType::PARAMETER_SCALAR_ARRAY
+  );
 
   // get type name
   EXPECT_EQ(scalar_array_variant1.get_type_name(), "scalar array");
@@ -543,14 +557,18 @@ TEST_F(ParameterConstructors, nested_array_variant) {
   miru::params::ParameterValue nested_array_value(
     miru::params::NestedArray{std::vector<miru::params::Parameter>{
       miru::params::Parameter("nested_array.0", std::vector<int>{1, 2, 3}),
-      miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})}});
+      miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})
+    }}
+  );
   miru::params::Parameter nested_array_variant1 =
     miru::params::Parameter("nested_array", nested_array_value);
   miru::params::Parameter nested_array_variant2 = miru::params::Parameter(
     "nested_array",
     miru::params::NestedArray{std::vector<miru::params::Parameter>{
       miru::params::Parameter("nested_array.0", std::vector<int>{1, 2, 3}),
-      miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})}});
+      miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})
+    }}
+  );
   EXPECT_EQ(nested_array_variant1, nested_array_variant2);
 
   // value not equal
@@ -558,7 +576,9 @@ TEST_F(ParameterConstructors, nested_array_variant) {
     "nested_array",
     miru::params::NestedArray{std::vector<miru::params::Parameter>{
       miru::params::Parameter("nested_array.0", std::vector<int>{1, 2, 9}),
-      miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})}});
+      miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})
+    }}
+  );
   EXPECT_NE(nested_array_variant1, diff_value);
 
   // name not equal
@@ -566,13 +586,16 @@ TEST_F(ParameterConstructors, nested_array_variant) {
     "argle_bargle",
     miru::params::NestedArray{std::vector<miru::params::Parameter>{
       miru::params::Parameter("argle_bargle.0", std::vector<int>{1, 2, 9}),
-      miru::params::Parameter("argle_bargle.1", std::vector<int>{4, 5, 6})}});
+      miru::params::Parameter("argle_bargle.1", std::vector<int>{4, 5, 6})
+    }}
+  );
   EXPECT_NE(nested_array_variant1, diff_name);
 
   // get type
   EXPECT_EQ(
     nested_array_variant1.get_type(),
-    miru::params::ParameterType::PARAMETER_NESTED_ARRAY);
+    miru::params::ParameterType::PARAMETER_NESTED_ARRAY
+  );
 
   // get type name
   EXPECT_EQ(nested_array_variant1.get_type_name(), "nested array");
@@ -598,38 +621,60 @@ TEST_F(ParameterConstructors, nested_array_variant) {
         "nested_array.0.0",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter(
-            "nested_array.0.0.scalar1", miru::params::Scalar("test1")),
+            "nested_array.0.0.scalar1", miru::params::Scalar("test1")
+          ),
           miru::params::Parameter(
-            "nested_array.0.0.scalar2", miru::params::Scalar("test2"))}}),
+            "nested_array.0.0.scalar2", miru::params::Scalar("test2")
+          )
+        }}
+      ),
       miru::params::Parameter(
         "nested_array.0.1",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter(
-            "nested_array.0.1.scalar1", miru::params::Scalar("test3")),
+            "nested_array.0.1.scalar1", miru::params::Scalar("test3")
+          ),
           miru::params::Parameter(
-            "nested_array.0.1.scalar2", miru::params::Scalar("test4"))}})}});
+            "nested_array.0.1.scalar2", miru::params::Scalar("test4")
+          )
+        }}
+      )
+    }}
+  );
   miru::params::ParameterValue map_array_item2 = miru::params::ParameterValue(
     miru::params::MapArray{std::vector<miru::params::Parameter>{
       miru::params::Parameter(
         "nested_array.1.0",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter(
-            "nested_array.1.0.scalar1", miru::params::Scalar("test5")),
+            "nested_array.1.0.scalar1", miru::params::Scalar("test5")
+          ),
           miru::params::Parameter(
-            "nested_array.1.0.scalar2", miru::params::Scalar("test6"))}}),
+            "nested_array.1.0.scalar2", miru::params::Scalar("test6")
+          )
+        }}
+      ),
       miru::params::Parameter(
         "nested_array.1.1",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter(
-            "nested_array.1.1.scalar1", miru::params::Scalar("test7")),
+            "nested_array.1.1.scalar1", miru::params::Scalar("test7")
+          ),
           miru::params::Parameter(
-            "nested_array.1.1.scalar2", miru::params::Scalar("test8"))}})}});
+            "nested_array.1.1.scalar2", miru::params::Scalar("test8")
+          )
+        }}
+      )
+    }}
+  );
 
   miru::params::Parameter nested_array_not_a_leaf = miru::params::Parameter(
     "nested_array",
     miru::params::NestedArray{std::vector<miru::params::Parameter>{
       miru::params::Parameter("nested_array.0", map_array_item1),
-      miru::params::Parameter("nested_array.1", map_array_item2)}});
+      miru::params::Parameter("nested_array.1", map_array_item2)
+    }}
+  );
 
   EXPECT_FALSE(nested_array_not_a_leaf.is_null());
   EXPECT_FALSE(nested_array_not_a_leaf.is_scalar());
@@ -646,36 +691,48 @@ TEST_F(ParameterConstructors, nested_array_variant_parent_name_mismatch) {
       "arglebargle",
       miru::params::NestedArray{std::vector<miru::params::Parameter>{
         miru::params::Parameter("nested_array.0", std::vector<int>{1, 2, 9}),
-        miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})}}),
-    miru::params::ChildParentNameMismatchError);
+        miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})
+      }}
+    ),
+    miru::params::ChildParentNameMismatchError
+  );
   EXPECT_THROW(
     miru::params::Parameter(
       "too/deep/nested_array",
       miru::params::NestedArray{std::vector<miru::params::Parameter>{
         miru::params::Parameter("nested_array.0", std::vector<int>{1, 2, 9}),
-        miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})}}),
-    miru::params::ChildParentNameMismatchError);
+        miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})
+      }}
+    ),
+    miru::params::ChildParentNameMismatchError
+  );
   EXPECT_THROW(
     miru::params::Parameter(
       "nested_array",
       miru::params::NestedArray{std::vector<miru::params::Parameter>{
         miru::params::Parameter("too/deep/nested_array.0", std::vector<int>{1, 2, 9}),
-        miru::params::Parameter(
-          "too/deep/nested_array.1", std::vector<int>{4, 5, 6})}}),
-    miru::params::ChildParentNameMismatchError);
+        miru::params::Parameter("too/deep/nested_array.1", std::vector<int>{4, 5, 6})
+      }}
+    ),
+    miru::params::ChildParentNameMismatchError
+  );
 }
 
 TEST_F(ParameterConstructors, map_variant) {
   miru::params::ParameterValue map_value(
     miru::params::Map{std::vector<miru::params::Parameter>{
       miru::params::Parameter("map.param1", miru::params::Scalar("test1")),
-      miru::params::Parameter("map.param2", miru::params::Scalar("test2"))}});
+      miru::params::Parameter("map.param2", miru::params::Scalar("test2"))
+    }}
+  );
   miru::params::Parameter map_variant1 = miru::params::Parameter("map", map_value);
   miru::params::Parameter map_variant2 = miru::params::Parameter(
     "map",
     miru::params::Map{std::vector<miru::params::Parameter>{
       miru::params::Parameter("map.param1", miru::params::Scalar("test1")),
-      miru::params::Parameter("map.param2", miru::params::Scalar("test2"))}});
+      miru::params::Parameter("map.param2", miru::params::Scalar("test2"))
+    }}
+  );
   EXPECT_EQ(map_variant1, map_variant2);
 
   // value not equal
@@ -683,7 +740,9 @@ TEST_F(ParameterConstructors, map_variant) {
     "map",
     miru::params::Map{std::vector<miru::params::Parameter>{
       miru::params::Parameter("map.param1", miru::params::Scalar("test1")),
-      miru::params::Parameter("map.param2", miru::params::Scalar("test3"))}});
+      miru::params::Parameter("map.param2", miru::params::Scalar("test3"))
+    }}
+  );
   EXPECT_NE(map_variant1, diff_value);
 
   // name not equal
@@ -691,7 +750,9 @@ TEST_F(ParameterConstructors, map_variant) {
     "arglebargle",
     miru::params::Map{std::vector<miru::params::Parameter>{
       miru::params::Parameter("arglebargle.param1", miru::params::Scalar("test1")),
-      miru::params::Parameter("arglebargle.param2", miru::params::Scalar("test3"))}});
+      miru::params::Parameter("arglebargle.param2", miru::params::Scalar("test3"))
+    }}
+  );
   EXPECT_NE(map_variant1, diff_name);
 
   // get type
@@ -706,7 +767,8 @@ TEST_F(ParameterConstructors, map_variant) {
   // value to string
   EXPECT_EQ(
     map_variant1.value_to_string(),
-    "{\n  \"param1\": \"test1\",\n  \"param2\": \"test2\"\n}");
+    "{\n  \"param1\": \"test1\",\n  \"param2\": \"test2\"\n}"
+  );
 
   EXPECT_FALSE(map_variant1.is_null());
   EXPECT_FALSE(map_variant1.is_scalar());
@@ -723,23 +785,31 @@ TEST_F(ParameterConstructors, map_variant_parent_name_mismatch) {
       "pam",
       miru::params::Map{std::vector<miru::params::Parameter>{
         miru::params::Parameter("map.param1", miru::params::Scalar("test1")),
-        miru::params::Parameter("map.param2", miru::params::Scalar("test2"))}}),
-    miru::params::ChildParentNameMismatchError);
+        miru::params::Parameter("map.param2", miru::params::Scalar("test2"))
+      }}
+    ),
+    miru::params::ChildParentNameMismatchError
+  );
   EXPECT_THROW(
     miru::params::Parameter(
       "map",
       miru::params::Map{std::vector<miru::params::Parameter>{
         miru::params::Parameter("too.deep.map.param1", miru::params::Scalar("test1")),
-        miru::params::Parameter(
-          "too.deep.map.param2", miru::params::Scalar("test2"))}}),
-    miru::params::ChildParentNameMismatchError);
+        miru::params::Parameter("too.deep.map.param2", miru::params::Scalar("test2"))
+      }}
+    ),
+    miru::params::ChildParentNameMismatchError
+  );
   EXPECT_THROW(
     miru::params::Parameter(
       "too.deep.map",
       miru::params::Map{std::vector<miru::params::Parameter>{
         miru::params::Parameter("map.param1", miru::params::Scalar("test1")),
-        miru::params::Parameter("map.param2", miru::params::Scalar("test2"))}}),
-    miru::params::ChildParentNameMismatchError);
+        miru::params::Parameter("map.param2", miru::params::Scalar("test2"))
+      }}
+    ),
+    miru::params::ChildParentNameMismatchError
+  );
 }
 
 TEST_F(ParameterConstructors, map_array_variant) {
@@ -749,12 +819,18 @@ TEST_F(ParameterConstructors, map_array_variant) {
         "maps.0",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter("maps.0.param1", miru::params::Scalar("test1")),
-          miru::params::Parameter("maps.0.param2", miru::params::Scalar("test2"))}}),
+          miru::params::Parameter("maps.0.param2", miru::params::Scalar("test2"))
+        }}
+      ),
       miru::params::Parameter(
         "maps.1",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter("maps.1.param1", miru::params::Scalar("test3")),
-          miru::params::Parameter("maps.1.param2", miru::params::Scalar("test4"))}})}});
+          miru::params::Parameter("maps.1.param2", miru::params::Scalar("test4"))
+        }}
+      )
+    }}
+  );
   miru::params::Parameter map_array_variant1 =
     miru::params::Parameter("maps", map_array_value);
   miru::params::Parameter map_array_variant2 = miru::params::Parameter(
@@ -764,12 +840,18 @@ TEST_F(ParameterConstructors, map_array_variant) {
         "maps.0",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter("maps.0.param1", miru::params::Scalar("test1")),
-          miru::params::Parameter("maps.0.param2", miru::params::Scalar("test2"))}}),
+          miru::params::Parameter("maps.0.param2", miru::params::Scalar("test2"))
+        }}
+      ),
       miru::params::Parameter(
         "maps.1",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter("maps.1.param1", miru::params::Scalar("test3")),
-          miru::params::Parameter("maps.1.param2", miru::params::Scalar("test4"))}})}});
+          miru::params::Parameter("maps.1.param2", miru::params::Scalar("test4"))
+        }}
+      )
+    }}
+  );
   EXPECT_EQ(map_array_variant1, map_array_variant2);
 
   // value not equal
@@ -780,12 +862,18 @@ TEST_F(ParameterConstructors, map_array_variant) {
         "maps.0",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter("maps.0.param1", miru::params::Scalar("test1")),
-          miru::params::Parameter("maps.0.param2", miru::params::Scalar("test3"))}}),
+          miru::params::Parameter("maps.0.param2", miru::params::Scalar("test3"))
+        }}
+      ),
       miru::params::Parameter(
         "maps.1",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter("maps.1.param1", miru::params::Scalar("test3")),
-          miru::params::Parameter("maps.1.param2", miru::params::Scalar("test4"))}})}});
+          miru::params::Parameter("maps.1.param2", miru::params::Scalar("test4"))
+        }}
+      )
+    }}
+  );
   EXPECT_NE(map_array_variant1, diff_value);
 
   // name not equal
@@ -796,21 +884,28 @@ TEST_F(ParameterConstructors, map_array_variant) {
         "arglebargle.0",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter(
-            "arglebargle.0.param1", miru::params::Scalar("test1")),
-          miru::params::Parameter(
-            "arglebargle.0.param2", miru::params::Scalar("test3"))}}),
+            "arglebargle.0.param1", miru::params::Scalar("test1")
+          ),
+          miru::params::Parameter("arglebargle.0.param2", miru::params::Scalar("test3"))
+        }}
+      ),
       miru::params::Parameter(
         "arglebargle.1",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter(
-            "arglebargle.1.param1", miru::params::Scalar("test3")),
-          miru::params::Parameter(
-            "arglebargle.1.param2", miru::params::Scalar("test4"))}})}});
+            "arglebargle.1.param1", miru::params::Scalar("test3")
+          ),
+          miru::params::Parameter("arglebargle.1.param2", miru::params::Scalar("test4"))
+        }}
+      )
+    }}
+  );
   EXPECT_NE(map_array_variant1, diff_name);
 
   // get type
   EXPECT_EQ(
-    map_array_variant1.get_type(), miru::params::ParameterType::PARAMETER_MAP_ARRAY);
+    map_array_variant1.get_type(), miru::params::ParameterType::PARAMETER_MAP_ARRAY
+  );
 
   // get type name
   EXPECT_EQ(map_array_variant1.get_type_name(), "map array");
@@ -822,7 +917,8 @@ TEST_F(ParameterConstructors, map_array_variant) {
   EXPECT_EQ(
     map_array_variant1.value_to_string(),
     "[\n  {\n    \"param1\": \"test1\",\n    \"param2\": \"test2\"\n  },\n  "
-    "{\n    \"param1\": \"test3\",\n    \"param2\": \"test4\"\n  }\n]");
+    "{\n    \"param1\": \"test3\",\n    \"param2\": \"test4\"\n  }\n]"
+  );
 
   EXPECT_FALSE(map_array_variant1.is_null());
   EXPECT_FALSE(map_array_variant1.is_scalar());
@@ -842,17 +938,28 @@ TEST_F(ParameterConstructors, map_array_variant_parent_name_mismatch) {
           "arglebargle.0",
           miru::params::Map{std::vector<miru::params::Parameter>{
             miru::params::Parameter(
-              "arglebargle.0.param1", miru::params::Scalar("test1")),
+              "arglebargle.0.param1", miru::params::Scalar("test1")
+            ),
             miru::params::Parameter(
-              "arglebargle.0.param2", miru::params::Scalar("test3"))}}),
+              "arglebargle.0.param2", miru::params::Scalar("test3")
+            )
+          }}
+        ),
         miru::params::Parameter(
           "arglebargle.1",
           miru::params::Map{std::vector<miru::params::Parameter>{
             miru::params::Parameter(
-              "arglebargle.1.param1", miru::params::Scalar("test3")),
+              "arglebargle.1.param1", miru::params::Scalar("test3")
+            ),
             miru::params::Parameter(
-              "arglebargle.1.param2", miru::params::Scalar("test4"))}})}}),
-    miru::params::ChildParentNameMismatchError);
+              "arglebargle.1.param2", miru::params::Scalar("test4")
+            )
+          }}
+        )
+      }}
+    ),
+    miru::params::ChildParentNameMismatchError
+  );
   EXPECT_THROW(
     miru::params::Parameter(
       "map",
@@ -861,17 +968,28 @@ TEST_F(ParameterConstructors, map_array_variant_parent_name_mismatch) {
           "too.deep.map.0",
           miru::params::Map{std::vector<miru::params::Parameter>{
             miru::params::Parameter(
-              "too/deep/map.0.param1", miru::params::Scalar("test1")),
+              "too/deep/map.0.param1", miru::params::Scalar("test1")
+            ),
             miru::params::Parameter(
-              "too/deep/map.0.param2", miru::params::Scalar("test3"))}}),
+              "too/deep/map.0.param2", miru::params::Scalar("test3")
+            )
+          }}
+        ),
         miru::params::Parameter(
           "too.deep.map.1",
           miru::params::Map{std::vector<miru::params::Parameter>{
             miru::params::Parameter(
-              "too.deep.map.1.param1", miru::params::Scalar("test3")),
+              "too.deep.map.1.param1", miru::params::Scalar("test3")
+            ),
             miru::params::Parameter(
-              "too.deep.map.1.param2", miru::params::Scalar("test4"))}})}}),
-    miru::params::ChildParentNameMismatchError);
+              "too.deep.map.1.param2", miru::params::Scalar("test4")
+            )
+          }}
+        )
+      }}
+    ),
+    miru::params::ChildParentNameMismatchError
+  );
   EXPECT_THROW(
     miru::params::Parameter(
       "too.deep.map",
@@ -880,14 +998,20 @@ TEST_F(ParameterConstructors, map_array_variant_parent_name_mismatch) {
           "map.0",
           miru::params::Map{std::vector<miru::params::Parameter>{
             miru::params::Parameter("map.0.param1", miru::params::Scalar("test1")),
-            miru::params::Parameter("map.0.param2", miru::params::Scalar("test3"))}}),
+            miru::params::Parameter("map.0.param2", miru::params::Scalar("test3"))
+          }}
+        ),
         miru::params::Parameter(
           "too.deep.map.1",
           miru::params::Map{std::vector<miru::params::Parameter>{
             miru::params::Parameter("map.1.param1", miru::params::Scalar("test3")),
-            miru::params::Parameter(
-              "map.1.param2", miru::params::Scalar("test4"))}})}}),
-    miru::params::ChildParentNameMismatchError);
+            miru::params::Parameter("map.1.param2", miru::params::Scalar("test4"))
+          }}
+        )
+      }}
+    ),
+    miru::params::ChildParentNameMismatchError
+  );
 }
 
 // ================================= NAME + KEY ==================================== //
@@ -926,7 +1050,8 @@ TEST_F(ParameterKey, keys) {
 void test_conversion_funcs_throw_type_exceptions(
   const miru::params::Parameter &param,
   std::vector<std::function<void()>> conversion_funcs,
-  const miru::params::ParameterType target_type) {
+  const miru::params::ParameterType target_type
+) {
   for (const auto &conversion_func : conversion_funcs) {
     EXPECT_THROW(conversion_func(), miru::params::InvalidParameterTypeError)
       << "Failed to throw InvalidParameterTypeError for target parameter type '"
@@ -936,12 +1061,12 @@ void test_conversion_funcs_throw_type_exceptions(
 
 void test_conversion_type_exceptions(
   const miru::params::Parameter &param,
-  const std::vector<miru::params::ParameterType> &exclude) {
+  const std::vector<miru::params::ParameterType> &exclude
+) {
   // boolean
-  if (
-    std::find(
-      exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_BOOL) ==
-    exclude.end()) {
+  if (std::find(
+        exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_BOOL
+      ) == exclude.end()) {
     test_conversion_funcs_throw_type_exceptions(
       param,
       {
@@ -951,14 +1076,14 @@ void test_conversion_type_exceptions(
         [&]() { param.as<miru::params::ParameterType::PARAMETER_BOOL>(); },
         [&]() { param.as<bool>(); },
       },
-      miru::params::ParameterType::PARAMETER_BOOL);
+      miru::params::ParameterType::PARAMETER_BOOL
+    );
   }
 
   // integer
-  if (
-    std::find(
-      exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_INTEGER) ==
-    exclude.end()) {
+  if (std::find(
+        exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_INTEGER
+      ) == exclude.end()) {
     test_conversion_funcs_throw_type_exceptions(
       param,
       {
@@ -968,14 +1093,14 @@ void test_conversion_type_exceptions(
         [&]() { param.as<miru::params::ParameterType::PARAMETER_INTEGER>(); },
         [&]() { param.as<int>(); },
       },
-      miru::params::ParameterType::PARAMETER_INTEGER);
+      miru::params::ParameterType::PARAMETER_INTEGER
+    );
   }
 
   // double
-  if (
-    std::find(
-      exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_DOUBLE) ==
-    exclude.end()) {
+  if (std::find(
+        exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_DOUBLE
+      ) == exclude.end()) {
     test_conversion_funcs_throw_type_exceptions(
       param,
       {[&]() { param.as_double(); },
@@ -983,14 +1108,14 @@ void test_conversion_type_exceptions(
        [&]() { param.get_value<double>(); },
        [&]() { param.as<miru::params::ParameterType::PARAMETER_DOUBLE>(); },
        [&]() { param.as<double>(); }},
-      miru::params::ParameterType::PARAMETER_DOUBLE);
+      miru::params::ParameterType::PARAMETER_DOUBLE
+    );
   }
 
   // string
-  if (
-    std::find(
-      exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_STRING) ==
-    exclude.end()) {
+  if (std::find(
+        exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_STRING
+      ) == exclude.end()) {
     test_conversion_funcs_throw_type_exceptions(
       param,
       {[&]() { param.as_string(); },
@@ -998,15 +1123,16 @@ void test_conversion_type_exceptions(
        [&]() { param.get_value<std::string>(); },
        [&]() { param.as<miru::params::ParameterType::PARAMETER_STRING>(); },
        [&]() { param.as<std::string>(); }},
-      miru::params::ParameterType::PARAMETER_STRING);
+      miru::params::ParameterType::PARAMETER_STRING
+    );
   }
 
   // bool array
-  if (
-    std::find(
-      exclude.begin(),
-      exclude.end(),
-      miru::params::ParameterType::PARAMETER_BOOL_ARRAY) == exclude.end()) {
+  if (std::find(
+        exclude.begin(),
+        exclude.end(),
+        miru::params::ParameterType::PARAMETER_BOOL_ARRAY
+      ) == exclude.end()) {
     test_conversion_funcs_throw_type_exceptions(
       param,
       {[&]() { param.as_bool_array(); },
@@ -1014,15 +1140,16 @@ void test_conversion_type_exceptions(
        [&]() { param.get_value<std::vector<bool>>(); },
        [&]() { param.as<miru::params::ParameterType::PARAMETER_BOOL_ARRAY>(); },
        [&]() { param.as<std::vector<bool>>(); }},
-      miru::params::ParameterType::PARAMETER_BOOL_ARRAY);
+      miru::params::ParameterType::PARAMETER_BOOL_ARRAY
+    );
   }
 
   // integer array
-  if (
-    std::find(
-      exclude.begin(),
-      exclude.end(),
-      miru::params::ParameterType::PARAMETER_INTEGER_ARRAY) == exclude.end()) {
+  if (std::find(
+        exclude.begin(),
+        exclude.end(),
+        miru::params::ParameterType::PARAMETER_INTEGER_ARRAY
+      ) == exclude.end()) {
     test_conversion_funcs_throw_type_exceptions(
       param,
       {[&]() { param.as_integer_array(); },
@@ -1032,15 +1159,16 @@ void test_conversion_type_exceptions(
        [&]() { param.get_value<std::vector<int64_t>>(); },
        [&]() { param.as<miru::params::ParameterType::PARAMETER_INTEGER_ARRAY>(); },
        [&]() { param.as<std::vector<int64_t>>(); }},
-      miru::params::ParameterType::PARAMETER_INTEGER_ARRAY);
+      miru::params::ParameterType::PARAMETER_INTEGER_ARRAY
+    );
   }
 
   // double array
-  if (
-    std::find(
-      exclude.begin(),
-      exclude.end(),
-      miru::params::ParameterType::PARAMETER_DOUBLE_ARRAY) == exclude.end()) {
+  if (std::find(
+        exclude.begin(),
+        exclude.end(),
+        miru::params::ParameterType::PARAMETER_DOUBLE_ARRAY
+      ) == exclude.end()) {
     test_conversion_funcs_throw_type_exceptions(
       param,
       {[&]() { param.as_double_array(); },
@@ -1050,15 +1178,16 @@ void test_conversion_type_exceptions(
        [&]() { param.get_value<std::vector<double>>(); },
        [&]() { param.as<miru::params::ParameterType::PARAMETER_DOUBLE_ARRAY>(); },
        [&]() { param.as<std::vector<double>>(); }},
-      miru::params::ParameterType::PARAMETER_DOUBLE_ARRAY);
+      miru::params::ParameterType::PARAMETER_DOUBLE_ARRAY
+    );
   }
 
   // string array
-  if (
-    std::find(
-      exclude.begin(),
-      exclude.end(),
-      miru::params::ParameterType::PARAMETER_STRING_ARRAY) == exclude.end()) {
+  if (std::find(
+        exclude.begin(),
+        exclude.end(),
+        miru::params::ParameterType::PARAMETER_STRING_ARRAY
+      ) == exclude.end()) {
     test_conversion_funcs_throw_type_exceptions(
       param,
       {[&]() { param.as_string_array(); },
@@ -1068,27 +1197,27 @@ void test_conversion_type_exceptions(
        [&]() { param.get_value<std::vector<std::string>>(); },
        [&]() { param.as<miru::params::ParameterType::PARAMETER_STRING_ARRAY>(); },
        [&]() { param.as<std::vector<std::string>>(); }},
-      miru::params::ParameterType::PARAMETER_STRING_ARRAY);
+      miru::params::ParameterType::PARAMETER_STRING_ARRAY
+    );
   }
 
   // null
-  if (
-    std::find(
-      exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_NULL) ==
-    exclude.end()) {
+  if (std::find(
+        exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_NULL
+      ) == exclude.end()) {
     test_conversion_funcs_throw_type_exceptions(
       param,
       {[&]() { param.as_null(); },
        [&]() { param.get_value<miru::params::ParameterType::PARAMETER_NULL>(); },
        [&]() { param.as<miru::params::ParameterType::PARAMETER_NULL>(); }},
-      miru::params::ParameterType::PARAMETER_NULL);
+      miru::params::ParameterType::PARAMETER_NULL
+    );
   }
 
   // scalar
-  if (
-    std::find(
-      exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_SCALAR) ==
-    exclude.end()) {
+  if (std::find(
+        exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_SCALAR
+      ) == exclude.end()) {
     test_conversion_funcs_throw_type_exceptions(
       param,
       {[&]() { param.as_scalar(); },
@@ -1096,15 +1225,16 @@ void test_conversion_type_exceptions(
        [&]() { param.get_value<miru::params::Scalar>(); },
        [&]() { param.as<miru::params::ParameterType::PARAMETER_SCALAR>(); },
        [&]() { param.as<miru::params::Scalar>(); }},
-      miru::params::ParameterType::PARAMETER_SCALAR);
+      miru::params::ParameterType::PARAMETER_SCALAR
+    );
   }
 
   // scalar array
-  if (
-    std::find(
-      exclude.begin(),
-      exclude.end(),
-      miru::params::ParameterType::PARAMETER_SCALAR_ARRAY) == exclude.end()) {
+  if (std::find(
+        exclude.begin(),
+        exclude.end(),
+        miru::params::ParameterType::PARAMETER_SCALAR_ARRAY
+      ) == exclude.end()) {
     test_conversion_funcs_throw_type_exceptions(
       param,
       {[&]() { param.as_scalar_array(); },
@@ -1114,15 +1244,16 @@ void test_conversion_type_exceptions(
        [&]() { param.get_value<std::vector<miru::params::Scalar>>(); },
        [&]() { param.as<miru::params::ParameterType::PARAMETER_SCALAR_ARRAY>(); },
        [&]() { param.as<std::vector<miru::params::Scalar>>(); }},
-      miru::params::ParameterType::PARAMETER_SCALAR_ARRAY);
+      miru::params::ParameterType::PARAMETER_SCALAR_ARRAY
+    );
   }
 
   // nested array
-  if (
-    std::find(
-      exclude.begin(),
-      exclude.end(),
-      miru::params::ParameterType::PARAMETER_NESTED_ARRAY) == exclude.end()) {
+  if (std::find(
+        exclude.begin(),
+        exclude.end(),
+        miru::params::ParameterType::PARAMETER_NESTED_ARRAY
+      ) == exclude.end()) {
     test_conversion_funcs_throw_type_exceptions(
       param,
       {[&]() { param.as_nested_array(); },
@@ -1132,14 +1263,14 @@ void test_conversion_type_exceptions(
        [&]() { param.get_value<miru::params::NestedArray>(); },
        [&]() { param.as<miru::params::ParameterType::PARAMETER_NESTED_ARRAY>(); },
        [&]() { param.as<miru::params::NestedArray>(); }},
-      miru::params::ParameterType::PARAMETER_NESTED_ARRAY);
+      miru::params::ParameterType::PARAMETER_NESTED_ARRAY
+    );
   }
 
   // map
-  if (
-    std::find(
-      exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_MAP) ==
-    exclude.end()) {
+  if (std::find(
+        exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_MAP
+      ) == exclude.end()) {
     test_conversion_funcs_throw_type_exceptions(
       param,
       {[&]() { param.as_map(); },
@@ -1147,15 +1278,14 @@ void test_conversion_type_exceptions(
        [&]() { param.get_value<miru::params::Map>(); },
        [&]() { param.as<miru::params::ParameterType::PARAMETER_MAP>(); },
        [&]() { param.as<miru::params::Map>(); }},
-      miru::params::ParameterType::PARAMETER_MAP);
+      miru::params::ParameterType::PARAMETER_MAP
+    );
   }
 
   // map array
-  if (
-    std::find(
-      exclude.begin(),
-      exclude.end(),
-      miru::params::ParameterType::PARAMETER_MAP_ARRAY) == exclude.end()) {
+  if (std::find(
+        exclude.begin(), exclude.end(), miru::params::ParameterType::PARAMETER_MAP_ARRAY
+      ) == exclude.end()) {
     test_conversion_funcs_throw_type_exceptions(
       param,
       {[&]() { param.as_map_array(); },
@@ -1163,7 +1293,8 @@ void test_conversion_type_exceptions(
        [&]() { param.get_value<miru::params::MapArray>(); },
        [&]() { param.as<miru::params::ParameterType::PARAMETER_MAP_ARRAY>(); },
        [&]() { param.as<miru::params::MapArray>(); }},
-      miru::params::ParameterType::PARAMETER_MAP_ARRAY);
+      miru::params::ParameterType::PARAMETER_MAP_ARRAY
+    );
   }
 }
 
@@ -1238,7 +1369,8 @@ TEST_F(ParameterInvalidTypeConversions, double_array_variant) {
 
 TEST_F(ParameterInvalidTypeConversions, string_array_variant) {
   miru::params::Parameter string_array_variant = miru::params::Parameter(
-    "string_array_param", std::vector<std::string>{"test1", "test2", "test3"});
+    "string_array_param", std::vector<std::string>{"test1", "test2", "test3"}
+  );
   std::vector<miru::params::ParameterType> exclude = {
     miru::params::ParameterType::PARAMETER_STRING_ARRAY,
   };
@@ -1303,7 +1435,9 @@ TEST_F(ParameterInvalidTypeConversions, scalar_array_boolean_variant) {
     std::vector<miru::params::Scalar>{
       miru::params::Scalar("true"),
       miru::params::Scalar("false"),
-      miru::params::Scalar("true")});
+      miru::params::Scalar("true")
+    }
+  );
   std::vector<miru::params::ParameterType> exclude = {
     miru::params::ParameterType::PARAMETER_SCALAR_ARRAY,
     miru::params::ParameterType::PARAMETER_BOOL_ARRAY,
@@ -1316,7 +1450,9 @@ TEST_F(ParameterInvalidTypeConversions, scalar_array_integer_variant) {
   miru::params::Parameter scalar_array_variant = miru::params::Parameter(
     "scalar_array_param",
     std::vector<miru::params::Scalar>{
-      miru::params::Scalar("1"), miru::params::Scalar("2"), miru::params::Scalar("3")});
+      miru::params::Scalar("1"), miru::params::Scalar("2"), miru::params::Scalar("3")
+    }
+  );
   std::vector<miru::params::ParameterType> exclude = {
     miru::params::ParameterType::PARAMETER_SCALAR_ARRAY,
     miru::params::ParameterType::PARAMETER_INTEGER_ARRAY,
@@ -1332,7 +1468,9 @@ TEST_F(ParameterInvalidTypeConversions, scalar_array_double_variant) {
     std::vector<miru::params::Scalar>{
       miru::params::Scalar("1.1"),
       miru::params::Scalar("2.2"),
-      miru::params::Scalar("3.3")});
+      miru::params::Scalar("3.3")
+    }
+  );
   std::vector<miru::params::ParameterType> exclude = {
     miru::params::ParameterType::PARAMETER_SCALAR_ARRAY,
     miru::params::ParameterType::PARAMETER_DOUBLE_ARRAY,
@@ -1347,7 +1485,9 @@ TEST_F(ParameterInvalidTypeConversions, scalar_array_string_variant) {
     std::vector<miru::params::Scalar>{
       miru::params::Scalar("test1"),
       miru::params::Scalar("test2"),
-      miru::params::Scalar("test3")});
+      miru::params::Scalar("test3")
+    }
+  );
   std::vector<miru::params::ParameterType> exclude = {
     miru::params::ParameterType::PARAMETER_SCALAR_ARRAY,
     miru::params::ParameterType::PARAMETER_STRING_ARRAY,
@@ -1360,7 +1500,9 @@ TEST_F(ParameterInvalidTypeConversions, nested_array_variant) {
     "nested_array",
     miru::params::NestedArray{std::vector<miru::params::Parameter>{
       miru::params::Parameter("nested_array.0", std::vector<int>{1, 2, 3}),
-      miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})}});
+      miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})
+    }}
+  );
   std::vector<miru::params::ParameterType> exclude = {
     miru::params::ParameterType::PARAMETER_NESTED_ARRAY,
   };
@@ -1372,7 +1514,9 @@ TEST_F(ParameterInvalidTypeConversions, map_variant) {
     "map",
     miru::params::Map{std::vector<miru::params::Parameter>{
       miru::params::Parameter("map.param1", miru::params::Scalar("test1")),
-      miru::params::Parameter("map.param2", miru::params::Scalar("test2"))}});
+      miru::params::Parameter("map.param2", miru::params::Scalar("test2"))
+    }}
+  );
 
   std::vector<miru::params::ParameterType> exclude = {
     miru::params::ParameterType::PARAMETER_MAP,
@@ -1388,12 +1532,18 @@ TEST_F(ParameterInvalidTypeConversions, map_array_variant) {
         "maps.0",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter("maps.0.param1", miru::params::Scalar("test1")),
-          miru::params::Parameter("maps.0.param2", miru::params::Scalar("test2"))}}),
+          miru::params::Parameter("maps.0.param2", miru::params::Scalar("test2"))
+        }}
+      ),
       miru::params::Parameter(
         "maps.1",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter("maps.1.param1", miru::params::Scalar("test3")),
-          miru::params::Parameter("maps.1.param2", miru::params::Scalar("test4"))}})}});
+          miru::params::Parameter("maps.1.param2", miru::params::Scalar("test4"))
+        }}
+      )
+    }}
+  );
   std::vector<miru::params::ParameterType> exclude = {
     miru::params::ParameterType::PARAMETER_MAP_ARRAY,
   };
@@ -1415,7 +1565,8 @@ TEST_F(IntegerCasting, integer_type_casting_success) {
         using T = std::decay_t<decltype(arg)>;
         EXPECT_EQ(integer_variant.get_value<T>(), std::get<T>(test_case.expected));
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 
@@ -1430,9 +1581,11 @@ TEST_F(IntegerCasting, integer_type_casting_failure) {
       [&](auto &&arg) {
         using T = std::decay_t<decltype(arg)>;
         EXPECT_THROW(
-          integer_variant.get_value<T>(), miru::params::InvalidParameterTypeError);
+          integer_variant.get_value<T>(), miru::params::InvalidParameterTypeError
+        );
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 
@@ -1453,7 +1606,8 @@ TEST_F(DoubleCasting, double_type_casting_success) {
         using T = std::decay_t<decltype(arg)>;
         EXPECT_EQ(double_variant.get_value<T>(), std::get<T>(test_case.expected));
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 
@@ -1468,9 +1622,11 @@ TEST_F(DoubleCasting, double_type_casting_failure) {
       [&](auto &&arg) {
         using T = std::decay_t<decltype(arg)>;
         EXPECT_THROW(
-          double_variant.get_value<T>(), miru::params::InvalidParameterTypeError);
+          double_variant.get_value<T>(), miru::params::InvalidParameterTypeError
+        );
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 
@@ -1768,8 +1924,8 @@ TEST_F(ParameterValidTypeConversions, scalar_double_type_conversion_success) {
 }
 
 TEST_F(ParameterValidTypeConversions, string_type_conversion_success) {
-  std::function<std::vector<std::function<std::string()>>(
-    const miru::params::Parameter &)>
+  std::function<
+    std::vector<std::function<std::string()>>(const miru::params::Parameter &)>
     build_conversion_funcs = [](const miru::params::Parameter &param) {
       return std::vector<std::function<std::string()>>{
         [&]() { return param.as_string(); },
@@ -1791,8 +1947,8 @@ TEST_F(ParameterValidTypeConversions, string_type_conversion_success) {
 }
 
 TEST_F(ParameterValidTypeConversions, scalar_string_type_conversion_success) {
-  std::function<std::vector<std::function<std::string()>>(
-    const miru::params::Parameter &)>
+  std::function<
+    std::vector<std::function<std::string()>>(const miru::params::Parameter &)>
     build_conversion_funcs = [](const miru::params::Parameter &param) {
       return std::vector<std::function<std::string()>>{
         [&]() { return param.as_string(); },
@@ -1814,8 +1970,8 @@ TEST_F(ParameterValidTypeConversions, scalar_string_type_conversion_success) {
 }
 
 TEST_F(ParameterValidTypeConversions, bool_array_type_conversion_success) {
-  std::function<std::vector<std::function<std::vector<bool>()>>(
-    const miru::params::Parameter &)>
+  std::function<
+    std::vector<std::function<std::vector<bool>()>>(const miru::params::Parameter &)>
     build_conversion_funcs = [](const miru::params::Parameter &param) {
       return std::vector<std::function<std::vector<bool>()>>{
         [&]() { return param.as_bool_array(); },
@@ -1837,8 +1993,8 @@ TEST_F(ParameterValidTypeConversions, bool_array_type_conversion_success) {
 }
 
 TEST_F(ParameterValidTypeConversions, scalar_bool_array_type_conversion_success) {
-  std::function<std::vector<std::function<std::vector<bool>()>>(
-    const miru::params::Parameter &)>
+  std::function<
+    std::vector<std::function<std::vector<bool>()>>(const miru::params::Parameter &)>
     build_conversion_funcs = [](const miru::params::Parameter &param) {
       return std::vector<std::function<std::vector<bool>()>>{
         [&]() { return param.as_bool_array(); },
@@ -1854,7 +2010,9 @@ TEST_F(ParameterValidTypeConversions, scalar_bool_array_type_conversion_success)
     std::vector<miru::params::Scalar>{
       miru::params::Scalar("true"),
       miru::params::Scalar("false"),
-      miru::params::Scalar("true")});
+      miru::params::Scalar("true")
+    }
+  );
 
   for (const auto &variant : {bool_array_variant}) {
     for (const auto &conversion_func : build_conversion_funcs(variant)) {
@@ -1864,10 +2022,10 @@ TEST_F(ParameterValidTypeConversions, scalar_bool_array_type_conversion_success)
 }
 
 TEST_F(ParameterValidTypeConversions, int_array_type_conversion_success) {
-  std::function<std::vector<std::function<std::vector<int64_t>()>>(
-    const miru::params::Parameter &)>
-    build_conversion_funcs = [](const miru::params::Parameter &param)
-    -> std::vector<std::function<std::vector<int64_t>()>> {
+  std::function<
+    std::vector<std::function<std::vector<int64_t>()>>(const miru::params::Parameter &)>
+    build_conversion_funcs = [](const miru::params::Parameter &param
+                             ) -> std::vector<std::function<std::vector<int64_t>()>> {
     return std::vector<std::function<std::vector<int64_t>()>>{
       [&]() -> std::vector<int64_t> { return param.as_integer_array(); },
       [&]() -> std::vector<int64_t> {
@@ -1888,10 +2046,10 @@ TEST_F(ParameterValidTypeConversions, int_array_type_conversion_success) {
 }
 
 TEST_F(ParameterValidTypeConversions, scalar_int_array_type_conversion_success) {
-  std::function<std::vector<std::function<std::vector<int64_t>()>>(
-    const miru::params::Parameter &)>
-    build_conversion_funcs = [](const miru::params::Parameter &param)
-    -> std::vector<std::function<std::vector<int64_t>()>> {
+  std::function<
+    std::vector<std::function<std::vector<int64_t>()>>(const miru::params::Parameter &)>
+    build_conversion_funcs = [](const miru::params::Parameter &param
+                             ) -> std::vector<std::function<std::vector<int64_t>()>> {
     return std::vector<std::function<std::vector<int64_t>()>>{
       [&]() -> std::vector<int64_t> { return param.as_integer_array(); },
       [&]() -> std::vector<int64_t> {
@@ -1904,7 +2062,9 @@ TEST_F(ParameterValidTypeConversions, scalar_int_array_type_conversion_success) 
   miru::params::Parameter int_array_variant = miru::params::Parameter(
     "int_array_param",
     std::vector<miru::params::Scalar>{
-      miru::params::Scalar("1"), miru::params::Scalar("2"), miru::params::Scalar("3")});
+      miru::params::Scalar("1"), miru::params::Scalar("2"), miru::params::Scalar("3")
+    }
+  );
 
   for (const auto &variant : {int_array_variant}) {
     for (const auto &conversion_func : build_conversion_funcs(variant)) {
@@ -1914,8 +2074,8 @@ TEST_F(ParameterValidTypeConversions, scalar_int_array_type_conversion_success) 
 }
 
 TEST_F(ParameterValidTypeConversions, double_array_type_conversion_success) {
-  std::function<std::vector<std::function<std::vector<double>()>>(
-    const miru::params::Parameter &)>
+  std::function<
+    std::vector<std::function<std::vector<double>()>>(const miru::params::Parameter &)>
     build_conversion_funcs = [](const miru::params::Parameter &param) {
       return std::vector<std::function<std::vector<double>()>>{
         [&]() { return param.as_double_array(); },
@@ -1937,8 +2097,8 @@ TEST_F(ParameterValidTypeConversions, double_array_type_conversion_success) {
 }
 
 TEST_F(ParameterValidTypeConversions, scalar_double_array_type_conversion_success) {
-  std::function<std::vector<std::function<std::vector<double>()>>(
-    const miru::params::Parameter &)>
+  std::function<
+    std::vector<std::function<std::vector<double>()>>(const miru::params::Parameter &)>
     build_conversion_funcs = [](const miru::params::Parameter &param) {
       return std::vector<std::function<std::vector<double>()>>{
         [&]() { return param.as_double_array(); },
@@ -1954,7 +2114,9 @@ TEST_F(ParameterValidTypeConversions, scalar_double_array_type_conversion_succes
     std::vector<miru::params::Scalar>{
       miru::params::Scalar("1.0"),
       miru::params::Scalar("2.0"),
-      miru::params::Scalar("3.0")});
+      miru::params::Scalar("3.0")
+    }
+  );
 
   for (const auto &variant : {double_array_variant}) {
     for (const auto &conversion_func : build_conversion_funcs(variant)) {
@@ -1964,8 +2126,8 @@ TEST_F(ParameterValidTypeConversions, scalar_double_array_type_conversion_succes
 }
 
 TEST_F(ParameterValidTypeConversions, string_array_type_conversion_success) {
-  std::function<std::vector<std::function<std::vector<std::string>()>>(
-    const miru::params::Parameter &)>
+  std::function<std::vector<
+    std::function<std::vector<std::string>()>>(const miru::params::Parameter &)>
     build_conversion_funcs = [](const miru::params::Parameter &param) {
       return std::vector<std::function<std::vector<std::string>()>>{
         [&]() { return param.as_string_array(); },
@@ -1977,7 +2139,8 @@ TEST_F(ParameterValidTypeConversions, string_array_type_conversion_success) {
     };
 
   miru::params::Parameter string_array_variant = miru::params::Parameter(
-    "string_array_param", std::vector<std::string>{"test1", "test2", "test3"});
+    "string_array_param", std::vector<std::string>{"test1", "test2", "test3"}
+  );
 
   for (const auto &variant : {string_array_variant}) {
     for (const auto &conversion_func : build_conversion_funcs(variant)) {
@@ -1987,8 +2150,8 @@ TEST_F(ParameterValidTypeConversions, string_array_type_conversion_success) {
 }
 
 TEST_F(ParameterValidTypeConversions, scalar_string_array_type_conversion_success) {
-  std::function<std::vector<std::function<std::vector<std::string>()>>(
-    const miru::params::Parameter &)>
+  std::function<std::vector<
+    std::function<std::vector<std::string>()>>(const miru::params::Parameter &)>
     build_conversion_funcs = [](const miru::params::Parameter &param) {
       return std::vector<std::function<std::vector<std::string>()>>{
         [&]() { return param.as_string_array(); },
@@ -2004,7 +2167,9 @@ TEST_F(ParameterValidTypeConversions, scalar_string_array_type_conversion_succes
     std::vector<miru::params::Scalar>{
       miru::params::Scalar("test1"),
       miru::params::Scalar("test2"),
-      miru::params::Scalar("test3")});
+      miru::params::Scalar("test3")
+    }
+  );
 
   for (const auto &variant : {string_array_variant}) {
     for (const auto &conversion_func : build_conversion_funcs(variant)) {
@@ -2064,7 +2229,9 @@ TEST_F(ParameterValidTypeConversions, scalar_array_type_conversion_success) {
     std::vector<miru::params::Scalar>{
       miru::params::Scalar("test1"),
       miru::params::Scalar("test2"),
-      miru::params::Scalar("test3")});
+      miru::params::Scalar("test3")
+    }
+  );
 
   for (const auto &conversion_func : build_conversion_funcs(scalar_array_variant)) {
     EXPECT_NO_THROW(conversion_func());
@@ -2087,7 +2254,9 @@ TEST_F(ParameterValidTypeConversions, nested_array_type_conversion_success) {
     "nested_array",
     miru::params::NestedArray{std::vector<miru::params::Parameter>{
       miru::params::Parameter("nested_array.0", std::vector<int>{1, 2, 3}),
-      miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})}});
+      miru::params::Parameter("nested_array.1", std::vector<int>{4, 5, 6})
+    }}
+  );
 
   for (const auto &conversion_func : build_conversion_funcs(nested_array_variant)) {
     EXPECT_NO_THROW(conversion_func());
@@ -2108,7 +2277,9 @@ TEST_F(ParameterValidTypeConversions, map_type_conversion_success) {
     "map",
     miru::params::Map{std::vector<miru::params::Parameter>{
       miru::params::Parameter("map.param1", miru::params::Scalar("test1")),
-      miru::params::Parameter("map.param2", miru::params::Scalar("test2"))}});
+      miru::params::Parameter("map.param2", miru::params::Scalar("test2"))
+    }}
+  );
 
   for (const auto &conversion_func : build_conversion_funcs(map_variant)) {
     EXPECT_NO_THROW(conversion_func());
@@ -2132,12 +2303,18 @@ TEST_F(ParameterValidTypeConversions, map_array_type_conversion_success) {
         "maps.0",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter("maps.0.param1", miru::params::Scalar("test1")),
-          miru::params::Parameter("maps.0.param2", miru::params::Scalar("test2"))}}),
+          miru::params::Parameter("maps.0.param2", miru::params::Scalar("test2"))
+        }}
+      ),
       miru::params::Parameter(
         "maps.1",
         miru::params::Map{std::vector<miru::params::Parameter>{
           miru::params::Parameter("maps.1.param1", miru::params::Scalar("test3")),
-          miru::params::Parameter("maps.1.param2", miru::params::Scalar("test4"))}})}});
+          miru::params::Parameter("maps.1.param2", miru::params::Scalar("test4"))
+        }}
+      )
+    }}
+  );
 
   for (const auto &conversion_func : build_conversion_funcs(map_array_variant)) {
     EXPECT_NO_THROW(conversion_func());

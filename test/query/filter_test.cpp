@@ -179,7 +179,9 @@ TEST_F(SearchParamFiltersMatchingTest, MatchesLeavesOnly) {
   miru::params::Parameter map = miru::params::Parameter(
     "parent",
     miru::params::Map(
-      {miru::params::Parameter("parent.field", miru::params::Scalar("value"))}));
+      {miru::params::Parameter("parent.field", miru::params::Scalar("value"))}
+    )
+  );
   EXPECT_FALSE(filters.matches_leaves_only(map));
 }
 
@@ -198,7 +200,9 @@ TEST_F(SearchParamFiltersMatchingTest, MatchesComplex1) {
   miru::params::Parameter map = miru::params::Parameter(
     "prefix.test",
     miru::params::Map(
-      {miru::params::Parameter("prefix.test.hello", miru::params::Scalar("value"))}));
+      {miru::params::Parameter("prefix.test.hello", miru::params::Scalar("value"))}
+    )
+  );
   EXPECT_FALSE(filters.matches(map));
 }
 
@@ -217,7 +221,9 @@ TEST_F(SearchParamFiltersMatchingTest, MatchesComplex2) {
   miru::params::Parameter map = miru::params::Parameter(
     "prefix.test",
     miru::params::Map(
-      {miru::params::Parameter("prefix.test.hello", miru::params::Scalar("value"))}));
+      {miru::params::Parameter("prefix.test.hello", miru::params::Scalar("value"))}
+    )
+  );
   EXPECT_FALSE(filters.matches(map));
 }
 
@@ -234,7 +240,9 @@ TEST_F(SearchParamFiltersMatchingTest, MatchesComplex3) {
   miru::params::Parameter map = miru::params::Parameter(
     "prefix.test",
     miru::params::Map(
-      {miru::params::Parameter("prefix.test.hello", miru::params::Scalar("value"))}));
+      {miru::params::Parameter("prefix.test.hello", miru::params::Scalar("value"))}
+    )
+  );
   EXPECT_TRUE(filters.matches(map));
 }
 
@@ -290,7 +298,9 @@ TEST_F(SearchParamFiltersContinueSearchTest, ContinueSearchLeaves) {
   miru::params::Parameter map = miru::params::Parameter(
     "prefix.test",
     miru::params::Map(
-      {miru::params::Parameter("prefix.test.hello", miru::params::Scalar("value"))}));
+      {miru::params::Parameter("prefix.test.hello", miru::params::Scalar("value"))}
+    )
+  );
   EXPECT_TRUE(filters.continue_search(map));
 }
 
@@ -304,27 +314,35 @@ TEST_F(SearchParamFiltersContinueSearchTest, ContinueSearchComplex1) {
   miru::params::Parameter map1 = miru::params::Parameter(
     "prefix.test",
     miru::params::Map({miru::params::Parameter(
-      "prefix.test.doesnt_matter", miru::params::Scalar("value"))}));
+      "prefix.test.doesnt_matter", miru::params::Scalar("value")
+    )})
+  );
   EXPECT_TRUE(filters.continue_search(map1));
 
   miru::params::Parameter map2 = miru::params::Parameter(
     "prefix.test.hello",
     miru::params::Map({miru::params::Parameter(
-      "prefix.test.hello.doesnt_matter", miru::params::Scalar("value"))}));
+      "prefix.test.hello.doesnt_matter", miru::params::Scalar("value")
+    )})
+  );
   EXPECT_TRUE(filters.continue_search(map2));
 
   miru::params::Parameter map3 = miru::params::Parameter(
     "prefix",
-    miru::params::Map({miru::params::Parameter(
-      "prefix.doesnt_matter", miru::params::Scalar("value"))}));
+    miru::params::Map(
+      {miru::params::Parameter("prefix.doesnt_matter", miru::params::Scalar("value"))}
+    )
+  );
   EXPECT_TRUE(filters.continue_search(map3));
 
   // cannot have a match
   EXPECT_FALSE(filters.continue_search(miru::params::Parameter("prefix.test.hello.2")));
   miru::params::Parameter map4 = miru::params::Parameter(
     " prefix",
-    miru::params::Map({miru::params::Parameter(
-      " prefix.doesnt_matter", miru::params::Scalar("value"))}));
+    miru::params::Map(
+      {miru::params::Parameter(" prefix.doesnt_matter", miru::params::Scalar("value"))}
+    )
+  );
   EXPECT_FALSE(filters.continue_search(map4));
 }
 

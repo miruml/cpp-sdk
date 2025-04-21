@@ -10,13 +10,15 @@ namespace miru::query {
 bool SearchParamFilters::matches(const Parameter& parameter) const {
   return (
     matches_param_name(parameter.get_name()) && matches_prefix(parameter.get_name()) &&
-    matches_leaves_only(parameter));
+    matches_leaves_only(parameter)
+  );
 }
 
 bool SearchParamFilters::continue_search(const Parameter& parameter) const {
   return (
     !is_leaf(parameter) && child_might_match_param_name(parameter.get_name()) &&
-    child_might_match_prefix(parameter.get_name()));
+    child_might_match_prefix(parameter.get_name())
+  );
 }
 
 // matching operations
@@ -45,8 +47,8 @@ bool SearchParamFilters::matches_leaves_only(const Parameter& parameter) const {
 }
 
 // continue searching operations
-bool SearchParamFilters::child_might_match_param_name(
-  const std::string_view& param_name) const {
+bool SearchParamFilters::child_might_match_param_name(const std::string_view& param_name
+) const {
   if (!has_param_name_filter()) {
     return true;
   }
@@ -58,8 +60,8 @@ bool SearchParamFilters::child_might_match_param_name(
   return false;
 }
 
-bool SearchParamFilters::child_might_match_prefix(
-  const std::string_view& param_name) const {
+bool SearchParamFilters::child_might_match_prefix(const std::string_view& param_name
+) const {
   if (!has_prefix_filter()) {
     return true;
   }
@@ -87,32 +89,37 @@ std::string to_string(const SearchParamFilters& filters) {
 }
 
 SearchParamFiltersBuilder& SearchParamFiltersBuilder::with_param_name(
-  const std::string& param_name) {
+  const std::string& param_name
+) {
   filters.param_names.push_back(param_name);
   return *this;
 }
 
 SearchParamFiltersBuilder& SearchParamFiltersBuilder::with_param_names(
-  const std::vector<std::string>& param_names) {
+  const std::vector<std::string>& param_names
+) {
   filters.param_names.insert(
-    filters.param_names.end(), param_names.begin(), param_names.end());
+    filters.param_names.end(), param_names.begin(), param_names.end()
+  );
   return *this;
 }
 
 SearchParamFiltersBuilder& SearchParamFiltersBuilder::with_prefix(
-  const std::string& prefix) {
+  const std::string& prefix
+) {
   filters.prefixes.push_back(prefix);
   return *this;
 }
 
 SearchParamFiltersBuilder& SearchParamFiltersBuilder::with_prefixes(
-  const std::vector<std::string>& prefixes) {
+  const std::vector<std::string>& prefixes
+) {
   filters.prefixes.insert(filters.prefixes.end(), prefixes.begin(), prefixes.end());
   return *this;
 }
 
-SearchParamFiltersBuilder& SearchParamFiltersBuilder::with_leaves_only(
-  bool leaves_only) {
+SearchParamFiltersBuilder& SearchParamFiltersBuilder::with_leaves_only(bool leaves_only
+) {
   filters.leaves_only = leaves_only;
   return *this;
 }

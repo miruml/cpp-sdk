@@ -36,10 +36,9 @@ struct RequestDetails {
 std::string to_string(const RequestDetails& details);
 
 class SocketSession : public std::enable_shared_from_this<SocketSession> {
-  beast::basic_stream<
-    stream_protocol,
-    net::any_io_executor,
-    beast::unlimited_rate_policy> stream_;
+  beast::
+    basic_stream<stream_protocol, net::any_io_executor, beast::unlimited_rate_policy>
+      stream_;
   beast::flat_buffer buffer_;
   std::string socket_path_;
   http::request<http::string_body> req_;
@@ -53,7 +52,8 @@ class SocketSession : public std::enable_shared_from_this<SocketSession> {
     net::io_context& ioc,
     const std::string& socket_path,
     const http::request<http::string_body>& req,
-    const std::chrono::milliseconds& timeout)
+    const std::chrono::milliseconds& timeout
+  )
     : stream_(net::make_strand(ioc)),
       socket_path_(socket_path),
       req_(req),

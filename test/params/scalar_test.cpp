@@ -88,7 +88,8 @@ TEST_F(ScalarConversion, int_conversion_failure) {
             FAIL() << "Unexpected exception type";
         }
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 
@@ -120,7 +121,8 @@ TEST_F(ScalarConversion, double_conversion_failure) {
             FAIL() << "Unexpected exception type";
         }
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 
@@ -160,7 +162,8 @@ TEST_F(ScalarConversion, bool_array_conversion_failure) {
     scalars.push_back(miru::params::Scalar(test_case.str));
     EXPECT_THROW(
       miru::params::scalar_array_as<bool>(scalars),
-      miru::params::InvalidScalarConversionError);
+      miru::params::InvalidScalarConversionError
+    );
   }
 }
 
@@ -193,13 +196,15 @@ TEST_F(ScalarConversion, int_array_conversion_failure) {
           case test::utils::StringConversionException::InvalidTypeConversion:
             EXPECT_THROW(
               miru::params::scalar_array_as<T>(scalars),
-              miru::params::InvalidScalarConversionError);
+              miru::params::InvalidScalarConversionError
+            );
             break;
           default:
             FAIL() << "Unexpected exception type";
         }
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 
@@ -232,13 +237,15 @@ TEST_F(ScalarConversion, double_array_conversion_failure) {
           case test::utils::StringConversionException::InvalidTypeConversion:
             EXPECT_THROW(
               miru::params::scalar_array_as<T>(scalars),
-              miru::params::InvalidScalarConversionError);
+              miru::params::InvalidScalarConversionError
+            );
             break;
           default:
             FAIL() << "Unexpected exception type";
         }
       },
-      test_case.expected);
+      test_case.expected
+    );
   }
 }
 

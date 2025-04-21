@@ -50,6 +50,7 @@ add_library(miru
     miru/filesys/file.cpp
     miru/filesys/path.hpp
     miru/filesys/path.cpp
+    miru/http/client.hpp
     miru/http/errors.hpp
     miru/http/errors.cpp
     miru/http/socket_client.hpp

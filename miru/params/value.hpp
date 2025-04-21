@@ -188,7 +188,8 @@ class ParameterValue {
         return scalar_bool_array_;
       default:
         throw InvalidParameterValueTypeError(
-          ParameterType::PARAMETER_BOOL_ARRAY, type_);
+          ParameterType::PARAMETER_BOOL_ARRAY, type_
+        );
     }
   }
 
@@ -209,7 +210,8 @@ class ParameterValue {
         return scalar_int_array_;
       default:
         throw InvalidParameterValueTypeError(
-          ParameterType::PARAMETER_INTEGER_ARRAY, type_);
+          ParameterType::PARAMETER_INTEGER_ARRAY, type_
+        );
     }
   }
 
@@ -230,7 +232,8 @@ class ParameterValue {
         return scalar_double_array_;
       default:
         throw InvalidParameterValueTypeError(
-          ParameterType::PARAMETER_DOUBLE_ARRAY, type_);
+          ParameterType::PARAMETER_DOUBLE_ARRAY, type_
+        );
     }
   }
 
@@ -251,7 +254,8 @@ class ParameterValue {
         return scalar_string_array_;
       default:
         throw InvalidParameterValueTypeError(
-          ParameterType::PARAMETER_STRING_ARRAY, type_);
+          ParameterType::PARAMETER_STRING_ARRAY, type_
+        );
     }
   }
 
@@ -398,7 +402,8 @@ class ParameterValue {
   get() const {
     if (type_ != ParameterType::PARAMETER_SCALAR_ARRAY) {
       throw InvalidParameterValueTypeError(
-        ParameterType::PARAMETER_SCALAR_ARRAY, type_);
+        ParameterType::PARAMETER_SCALAR_ARRAY, type_
+      );
     }
     return std::get<std::vector<Scalar>>(value_);
   }
@@ -409,7 +414,8 @@ class ParameterValue {
     get() const {
     if (type_ != ParameterType::PARAMETER_NESTED_ARRAY) {
       throw InvalidParameterValueTypeError(
-        ParameterType::PARAMETER_NESTED_ARRAY, type_);
+        ParameterType::PARAMETER_NESTED_ARRAY, type_
+      );
     }
     return std::get<NestedArray>(value_);
   }
@@ -545,7 +551,8 @@ std::string to_string(const ParameterValue &value, const int indent);
 std::string param_value_array_to_string(
   const std::vector<ParameterValue> &array,
   const int indent,
-  const bool with_newlines);
+  const bool with_newlines
+);
 
 std::string param_map_to_string(const miru::params::Map &map, const int indent);
 

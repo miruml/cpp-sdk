@@ -69,20 +69,21 @@ int64_as(const int64_t &value) {
       std::to_string(value),
       "int64_t",
       "integer (type '" + std::string(typeid(type).name()) + "')",
-      "value is negative for unsigned type");
+      "value is negative for unsigned type"
+    );
   }
 
   // check for overflow with the target integer type
-  if (
-    value > std::numeric_limits<type>::max() ||
-    value < std::numeric_limits<type>::lowest()) {
+  if (value > std::numeric_limits<type>::max() ||
+      value < std::numeric_limits<type>::lowest()) {
     THROW_INVALID_TYPE_CONVERSION(
       std::to_string(value),
       "int64_t",
       "integer (type '" + std::string(typeid(type).name()) + "')",
       "value outside target integer range [" +
         std::to_string(std::numeric_limits<type>::lowest()) + ", " +
-        std::to_string(std::numeric_limits<type>::max()) + "]");
+        std::to_string(std::numeric_limits<type>::max()) + "]"
+    );
   }
   return static_cast<type>(value);
 }
@@ -91,16 +92,16 @@ template <typename type>
 constexpr typename std::enable_if<std::is_floating_point<type>::value, type>::type
 double_as(const double &value) {
   // check for overflow with the target floating point type
-  if (
-    value > std::numeric_limits<type>::max() ||
-    value < std::numeric_limits<type>::lowest()) {
+  if (value > std::numeric_limits<type>::max() ||
+      value < std::numeric_limits<type>::lowest()) {
     THROW_INVALID_TYPE_CONVERSION(
       std::to_string(value),
       "double",
       "floating point (type '" + std::string(typeid(type).name()) + "')",
       "value outside target floating point range [" +
         std::to_string(std::numeric_limits<type>::lowest()) + ", " +
-        std::to_string(std::numeric_limits<type>::max()) + "]");
+        std::to_string(std::numeric_limits<type>::max()) + "]"
+    );
   }
   return static_cast<type>(value);
 }
@@ -164,9 +165,11 @@ string_array_as(const std::vector<std::string> &strings) {
   std::vector<T> dest;
   dest.reserve(strings.size());
   std::transform(
-    strings.begin(), strings.end(), std::back_inserter(dest), [](const std::string &s) {
-      return string_as<T>(s);
-    });
+    strings.begin(),
+    strings.end(),
+    std::back_inserter(dest),
+    [](const std::string &s) { return string_as<T>(s); }
+  );
   return dest;
 }
 
