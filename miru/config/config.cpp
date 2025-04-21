@@ -44,7 +44,7 @@ Config Config::from_file(
 nlohmann::json get_latest_concrete_config(
   const std::string& config_slug,
   const nlohmann::json& schema_file_contents) {
-  miru::client::UnixSocketClient client;
+  miru::http::UnixSocketClient client;
   openapi::HashSchemaRequest config_schema{schema_file_contents};
   std::string config_schema_digest = client.hash_schema(config_schema);
 

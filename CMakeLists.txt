@@ -50,13 +50,14 @@ add_library(miru
     miru/filesys/file.cpp
     miru/filesys/path.hpp
     miru/filesys/path.cpp
-    miru/http/client_fwd.hpp
-    miru/http/client.hpp
-    miru/http/client.cpp
     miru/http/errors.hpp
     miru/http/errors.cpp
     miru/http/socket_client.hpp
     miru/http/socket_client.cpp
+    miru/http/socket_session.hpp
+    miru/http/socket_session.cpp
+    miru/http/utils.hpp
+    miru/http/utils.cpp
     miru/http/models/BaseConcreteConfig.h
     miru/http/models/BaseConcreteConfig.cpp
     miru/http/models/Error.h

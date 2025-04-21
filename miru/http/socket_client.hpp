@@ -4,14 +4,13 @@
 #include <miru/http/models/BaseConcreteConfig.h>
 #include <miru/http/models/HashSchemaRequest.h>
 #include <miru/http/models/RefreshLatestConcreteConfigRequest.h>
-
-#include <miru/http/client.hpp>
+#include <miru/http/socket_session.hpp>
 
 // external
 #include <boost/beast.hpp>
 #include <nlohmann/json.hpp>
 
-namespace miru::client {
+namespace miru::http {
 
 namespace openapi = org::openapitools::server::model;
 namespace http = boost::beast::http;
@@ -19,15 +18,16 @@ namespace http = boost::beast::http;
 class UnixSocketClient {
  public:
   UnixSocketClient(const std::string& socket_path = "/tmp/miru.sock")
-    : client_("localhost"), socket_path_(socket_path) {}
+    : socket_path_(socket_path), base_path_("/v1"), host_("localhost"), port_("80") {}
   ~UnixSocketClient() {}
 
-  void send(
+  std::pair<http::response<http::string_body>, RequestDetails> execute(
     const http::request<http::string_body>& req,
-    const RequestContext& error_context,
-    http::response<http::string_body>& res);
+    const std::chrono::milliseconds& timeout);
 
-  std::string base_path() const { return "/v1"; }
+  const std::string& base_path() const { return base_path_; }
+  const std::string& host() const { return host_; }
+  const std::string& port() const { return port_; }
 
   nlohmann::json test_route();
 
@@ -35,13 +35,17 @@ class UnixSocketClient {
   std::string hash_schema(const openapi::HashSchemaRequest& config_schema);
   openapi::BaseConcreteConfig get_latest_concrete_config(
     const std::string& config_schema_digest,
-    const std::string& config_slug);
+    const std::string& config_slug
+  );
   openapi::BaseConcreteConfig refresh_latest_concrete_config(
-    const openapi::RefreshLatestConcreteConfigRequest& request);
+    const openapi::RefreshLatestConcreteConfigRequest& request
+  );
 
  private:
-  HTTPClient client_;
   std::string socket_path_;
+  std::string base_path_;
+  std::string host_;
+  std::string port_;
 };
 
-}  // namespace miru::client
+}  // namespace miru::http
