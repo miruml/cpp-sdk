@@ -207,7 +207,9 @@ class ParameterValue {
         }
         return scalar_int_array_;
       default:
-        THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_INTEGER_ARRAY, type_);
+        THROW_INVALID_PARAMETER_VALUE_TYPE(
+          ParameterType::PARAMETER_INTEGER_ARRAY, type_
+        );
     }
   }
 
@@ -227,7 +229,9 @@ class ParameterValue {
         }
         return scalar_double_array_;
       default:
-        THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_DOUBLE_ARRAY, type_);
+        THROW_INVALID_PARAMETER_VALUE_TYPE(
+          ParameterType::PARAMETER_DOUBLE_ARRAY, type_
+        );
     }
   }
 
@@ -247,7 +251,9 @@ class ParameterValue {
         }
         return scalar_string_array_;
       default:
-        THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_STRING_ARRAY, type_);
+        THROW_INVALID_PARAMETER_VALUE_TYPE(
+          ParameterType::PARAMETER_STRING_ARRAY, type_
+        );
     }
   }
 

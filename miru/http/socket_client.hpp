@@ -35,8 +35,7 @@ class UnixSocketClient : public BackendClientI {
   nlohmann::json test_route();
 
   // route specific functions
-  std::string hash_schema(
-    const openapi::HashSchemaSerializedRequest& config_schema
+  std::string hash_schema(const openapi::HashSchemaSerializedRequest& config_schema
   ) const;
   openapi::BaseConcreteConfig get_latest_concrete_config(
     const std::string& config_schema_digest,

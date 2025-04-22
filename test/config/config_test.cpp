@@ -67,7 +67,6 @@ TEST(Config, ConfigSlugNotFoundYaml) {
 }
 
 // ================================ FROM FILE SYSTEM =============================== //
-
 TEST(Config, FromFileSystemJson) {
   miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.json")
@@ -135,31 +134,16 @@ TEST(Config, FromFileSystemYamlRos2) {
 TEST(Config, FromAgentRefreshSuccess) {
   // set the response from the mock client
   miru::http::MockBackendClient mock_client;
-  mock_client.hash_schema_func = []() {
-    return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2";
-  };
+  mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
   mock_client.refresh_latest_concrete_config_func = []() {
     nlohmann::json concrete_config = {
-        {"speed", 89},
-        {"features", {
-            {"spin", true},
-            {"jump", false},
-            {"backflip", false}
-        }},
-        {"accelerometer", {
-            {"id", "123"},
-            {"offsets", {
-                {"x", 0},
-                {"y", 0},
-                {"z", 0}
-            }},
-            {"scaling_factor", {
-                {"x", 1},
-                {"y", 1},
-                {"z", 1}
-            }}
-        }}
+      {"speed", 89},
+      {"features", {{"spin", true}, {"jump", false}, {"backflip", false}}},
+      {"accelerometer",
+       {{"id", "123"},
+        {"offsets", {{"x", 0}, {"y", 0}, {"z", 0}}},
+        {"scaling_factor", {{"x", 1}, {"y", 1}, {"z", 1}}}}}
     };
     return openapi::BaseConcreteConfig{
       "concrete_config",
@@ -190,40 +174,26 @@ TEST(Config, FromAgentRefreshSuccess) {
   EXPECT_EQ(speed.as<int>(), 89);
 }
 
-TEST(Config, FromAgentRefreshFailureGetSuccess) { 
-    // set the response from the mock client
+TEST(Config, FromAgentRefreshFailureGetSuccess) {
+  // set the response from the mock client
   miru::http::MockBackendClient mock_client;
-  mock_client.hash_schema_func = []() {
-    return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2";
-  };
+  mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
   // refresh latest concrete config will fail
-  mock_client.refresh_latest_concrete_config_func = []() -> openapi::BaseConcreteConfig {
+  mock_client.refresh_latest_concrete_config_func =
+    []() -> openapi::BaseConcreteConfig {
     throw std::runtime_error("refresh latest concrete config failed");
   };
 
   // read the latest concrete config will succeed
   mock_client.get_latest_concrete_config_func = []() {
     nlohmann::json concrete_config = {
-        {"speed", 74},
-        {"features", {
-            {"spin", true},
-            {"jump", false},
-            {"backflip", false}
-        }},
-        {"accelerometer", {
-            {"id", "123"},
-            {"offsets", {
-                {"x", 0},
-                {"y", 0},
-                {"z", 0}
-            }},
-            {"scaling_factor", {
-                {"x", 1},
-                {"y", 1},
-                {"z", 1}
-            }}
-        }}
+      {"speed", 74},
+      {"features", {{"spin", true}, {"jump", false}, {"backflip", false}}},
+      {"accelerometer",
+       {{"id", "123"},
+        {"offsets", {{"x", 0}, {"y", 0}, {"z", 0}}},
+        {"scaling_factor", {{"x", 1}, {"y", 1}, {"z", 1}}}}}
     };
     return openapi::BaseConcreteConfig{
       "concrete_config",
@@ -254,15 +224,14 @@ TEST(Config, FromAgentRefreshFailureGetSuccess) {
   EXPECT_EQ(speed.as<int>(), 74);
 }
 
-TEST(Config, FromAgentDefaultFile) { 
+TEST(Config, FromAgentDefaultFile) {
   // set the response from the mock client
   miru::http::MockBackendClient mock_client;
-  mock_client.hash_schema_func = []() {
-    return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2";
-  };
+  mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
   // refresh latest concrete config will fail
-  mock_client.refresh_latest_concrete_config_func = []() -> openapi::BaseConcreteConfig {
+  mock_client.refresh_latest_concrete_config_func =
+    []() -> openapi::BaseConcreteConfig {
     throw std::runtime_error("refresh latest concrete config failed");
   };
 

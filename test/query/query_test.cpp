@@ -145,9 +145,7 @@ TEST(GetParamsByNameTests, DoesntExist) {
   miru::params::Parameter parameter("root", 42.3);
 
   EXPECT_THROW(
-    miru::query::get_params(
-      parameter, {"root", "doesnt_exist"}
-    ),
+    miru::query::get_params(parameter, {"root", "doesnt_exist"}),
     miru::query::ParameterNotFoundError
   );
 }
@@ -484,8 +482,7 @@ TEST(GetParamTests, InvalidType) {
 
   // get parameter value or return default value
   EXPECT_THROW(
-    miru::query::get_param_or(root, filter, 42),
-    miru::params::InvalidParameterTypeError
+    miru::query::get_param_or(root, filter, 42), miru::params::InvalidParameterTypeError
   );
 
   // try get parameter value or return default value

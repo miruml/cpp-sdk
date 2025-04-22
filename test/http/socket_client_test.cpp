@@ -56,10 +56,7 @@ TEST(HTTPClient, DISABLED_Sandbox) {
   );
 
   std::string schema = schema_file.read_string();
-  openapi::HashSchemaSerializedRequest request{
-    "json",
-    schema
-  };
+  openapi::HashSchemaSerializedRequest request{"json", schema};
 
   res = client.hash_schema(request);
   std::cout << res << std::endl;

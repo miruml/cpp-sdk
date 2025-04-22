@@ -93,10 +93,11 @@ get_params(const rootT& root, const SearchParamFilters& filters) {
   return result;
 };
 
-template <typename rootT> 
+template <typename rootT>
 typename std::enable_if<is_parameter_root_v<rootT>, std::vector<Parameter>>::type
 get_params(const rootT& root, const std::vector<std::string>& param_names) {
-  SearchParamFilters filters = SearchParamFiltersBuilder().with_param_names(param_names).build();
+  SearchParamFilters filters =
+    SearchParamFiltersBuilder().with_param_names(param_names).build();
   std::vector<Parameter> result = get_params(root, filters);
   if (result.size() == param_names.size()) {
     return result;
@@ -104,10 +105,10 @@ get_params(const rootT& root, const std::vector<std::string>& param_names) {
 
   // throw an error for errors specified in param names but not returned
   for (const auto& param_name : param_names) {
-    if (std::find_if(result.begin(), result.end(),
-        [&param_name](const auto& param) { return param.get_name() == param_name; }
-    ) == result.end()) {
-        THROW_PARAMETER_NOT_FOUND(filters);
+    if (std::find_if(result.begin(), result.end(), [&param_name](const auto& param) {
+          return param.get_name() == param_name;
+        }) == result.end()) {
+      THROW_PARAMETER_NOT_FOUND(filters);
     }
   }
   return result;

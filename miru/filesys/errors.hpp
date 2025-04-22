@@ -20,7 +20,8 @@ class FileNotFoundError : public std::runtime_error {
   }
 };
 
-#define THROW_FILE_NOT_FOUND(path) throw miru::filesys::FileNotFoundError(path, ERROR_TRACE)
+#define THROW_FILE_NOT_FOUND(path) \
+  throw miru::filesys::FileNotFoundError(path, ERROR_TRACE)
 
 class NotAFileError : public std::runtime_error {
  public:
@@ -72,7 +73,8 @@ class DirNotFoundError : public std::runtime_error {
   }
 };
 
-#define THROW_DIR_NOT_FOUND(path) throw miru::filesys::DirNotFoundError(path, ERROR_TRACE)
+#define THROW_DIR_NOT_FOUND(path) \
+  throw miru::filesys::DirNotFoundError(path, ERROR_TRACE)
 
 class NotADirError : public std::runtime_error {
  public:

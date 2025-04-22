@@ -93,10 +93,7 @@ std::string hash_schema(
   }
 
   std::string schema_contents = schema_file.read_string();
-  openapi::HashSchemaSerializedRequest config_schema{
-    format,
-    schema_contents
-  };
+  openapi::HashSchemaSerializedRequest config_schema{format, schema_contents};
   return client.hash_schema(config_schema);
 }
 

@@ -65,8 +65,8 @@ add_library(miru
     miru/http/models/Error.cpp
     miru/http/models/ErrorResponse.h
     miru/http/models/ErrorResponse.cpp
-    miru/http/models/HashSchemaRequest.h
-    miru/http/models/HashSchemaRequest.cpp
+    miru/http/models/HashSchemaSerializedRequest.h
+    miru/http/models/HashSchemaSerializedRequest.cpp
     miru/http/models/Helpers.h
     miru/http/models/Helpers.cpp
     miru/http/models/RefreshLatestConcreteConfigRequest.h

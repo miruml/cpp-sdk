@@ -43,7 +43,8 @@ class TooManyResultsError : public std::runtime_error {
     const std::string& message,
     const miru::errors::ErrorTrace& error_trace
   ) {
-    return "Too many results: " + to_string(filters) + " " + message + errors::format_source_location(error_trace);
+    return "Too many results: " + to_string(filters) + " " + message +
+           errors::format_source_location(error_trace);
   }
 };
 

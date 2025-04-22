@@ -67,7 +67,8 @@ class InvalidConfigSchemaFileTypeError : public std::runtime_error {
     const miru::filesys::File& schema_file,
     const std::vector<std::string>& expected_file_types,
     const errors::ErrorTrace& trace
-  ) : std::runtime_error(format_message(schema_file, expected_file_types, trace)) {}
+  )
+    : std::runtime_error(format_message(schema_file, expected_file_types, trace)) {}
 
   static std::string format_message(
     const miru::filesys::File& schema_file,
@@ -88,13 +89,13 @@ class EmptyConcreteConfig : public std::runtime_error {
   explicit EmptyConcreteConfig(
     const std::string& config_slug,
     const errors::ErrorTrace& trace
-  ) : std::runtime_error(format_message(config_slug, trace)) {}
+  )
+    : std::runtime_error(format_message(config_slug, trace)) {}
 
-  static std::string format_message(
-    const std::string& config_slug,
-    const errors::ErrorTrace& trace
-  ) {
-    return "The concrete config loaded for config slug '" + config_slug + "' is empty" + errors::format_source_location(trace);
+  static std::string
+  format_message(const std::string& config_slug, const errors::ErrorTrace& trace) {
+    return "The concrete config loaded for config slug '" + config_slug + "' is empty" +
+           errors::format_source_location(trace);
   }
 };
 

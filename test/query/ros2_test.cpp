@@ -37,10 +37,7 @@ TEST(ROS2GetParamTests, Exists) {
 TEST(ROS2GetParamTests, DoesntExist) {
   miru::params::Parameter parameter;
   miru::query::ROS2StyleQuery ros2(parameter);
-  EXPECT_THROW(
-    ros2.get_parameter("doesnt_exist"),
-    miru::query::ParameterNotFoundError
-  );
+  EXPECT_THROW(ros2.get_parameter("doesnt_exist"), miru::query::ParameterNotFoundError);
 }
 
 // ====================== GET PARAMETER WITH DEFAULT PARAMETER ===================== //
@@ -78,8 +75,7 @@ TEST(ROS2GetParamWithDefaultValueTests, InvalidType) {
   miru::query::ROS2StyleQuery ros2(parameter);
 
   EXPECT_THROW(
-    ros2.get_parameter("exists", default_value),
-    miru::params::InvalidParameterTypeError
+    ros2.get_parameter("exists", default_value), miru::params::InvalidParameterTypeError
   );
 }
 
@@ -127,11 +123,7 @@ TEST(ROS2TryGetParamWithDefaultValueTests, Exists) {
   double default_value = 100.0;
   miru::query::ROS2StyleQuery ros2(parameter);
 
-  EXPECT_EQ(ros2.get_parameter_or(
-    "exists",
-    result_value,
-    default_value
-  ), true);
+  EXPECT_EQ(ros2.get_parameter_or("exists", result_value, default_value), true);
   EXPECT_EQ(result_value, 42.3);
 }
 
@@ -142,11 +134,7 @@ TEST(ROS2TryGetParamWithDefaultValueTests, InvalidType) {
   miru::query::ROS2StyleQuery ros2(parameter);
 
   EXPECT_THROW(
-    ros2.get_parameter_or(
-      "exists",
-      result_value,
-      default_value
-    ),
+    ros2.get_parameter_or("exists", result_value, default_value),
     miru::params::InvalidParameterTypeError
   );
 }
@@ -157,11 +145,7 @@ TEST(ROS2TryGetParamWithDefaultValueTests, DoesntExist) {
   double default_value = 100.0;
   miru::query::ROS2StyleQuery ros2(parameter);
 
-  EXPECT_EQ(ros2.get_parameter_or(
-    "doesnt_exist",
-    result_value,
-    default_value
-  ), false);
+  EXPECT_EQ(ros2.get_parameter_or("doesnt_exist", result_value, default_value), false);
   EXPECT_EQ(default_value, 100.0);
   EXPECT_EQ(result_value, 100.0);
 }
@@ -181,9 +165,8 @@ TEST(ROS2GetParamsTests, DoesntExist) {
   miru::params::Parameter parameter("root", 42.3);
   miru::query::ROS2StyleQuery ros2(parameter);
   EXPECT_THROW(
-    ros2.get_parameters({"root", "doesnt_exist"}),
-    miru::query::ParameterNotFoundError
+    ros2.get_parameters({"root", "doesnt_exist"}), miru::query::ParameterNotFoundError
   );
 }
 
-} // namespace test::query
+}  // namespace test::query
