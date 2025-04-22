@@ -70,11 +70,26 @@ class InvalidParameterValueTypeError : public std::runtime_error {
   /**
    * \param[in] expected the expected parameter type.
    * \param[in] actual the actual parameter type.
+   * \param[in] error_trace the error trace.
    */
-  InvalidParameterValueTypeError(ParameterType expected, ParameterType actual)
-    : std::runtime_error(
-        "expected [" + to_string(expected) + "] got [" + to_string(actual) + "]"
-      ) {}
+  InvalidParameterValueTypeError(
+    ParameterType expected,
+    ParameterType actual,
+    const miru::errors::ErrorTrace& error_trace
+  )
+    : std::runtime_error(format_message(expected, actual, error_trace)) {}
+
+  static std::string format_message(
+    ParameterType expected,
+    ParameterType actual,
+    const miru::errors::ErrorTrace& error_trace
+  ) {
+    return "expected [" + to_string(expected) + "] got [" + to_string(actual) +
+           "]" + errors::format_source_location(error_trace);
+  }
 };
+
+#define THROW_INVALID_PARAMETER_VALUE_TYPE(expected, actual) \
+  throw InvalidParameterValueTypeError(expected, actual, ERROR_TRACE)
 
 }  // namespace miru::params

@@ -67,9 +67,7 @@ typename std::enable_if<is_parameter_root<rootT>::value, ParameterPtr>::type fin
   ParameterPtrs result = find_all(root, filters);
   if (result.size() > 1) {
     if (allow_throw) {
-      throw TooManyResultsError(
-        "Multiple parameters found for filters: " + to_string(filters)
-      );
+      THROW_TOO_MANY_RESULTS(filters, "Multiple parameters found");
     } else {
       return nullptr;
     }
@@ -95,6 +93,24 @@ get_params(const rootT& root, const SearchParamFilters& filters) {
   return result;
 };
 
+template <typename rootT> 
+typename std::enable_if<is_parameter_root_v<rootT>, std::vector<Parameter>>::type
+get_params(const rootT& root, const std::vector<std::string>& param_names) {
+  SearchParamFilters filters = SearchParamFiltersBuilder().with_param_names(param_names).build();
+  std::vector<Parameter> result = get_params(root, filters);
+  if (result.size() == param_names.size()) {
+    return result;
+  }
+
+  // throw an error for errors specified in param names but not returned
+  for (const auto& param_name : param_names) {
+    if (std::find(result.begin(), result.end(), param_name) == result.end()) {
+      THROW_PARAMETER_NOT_FOUND(filters);
+    }
+  }
+  return result;
+};
+
 template <typename rootT>
 constexpr
   typename std::enable_if<is_parameter_root_v<rootT>, std::vector<Parameter>>::type
@@ -108,7 +124,7 @@ constexpr typename std::enable_if<is_parameter_root_v<rootT>, Parameter>::type
 get_param(const rootT& root, const SearchParamFilters& filters) {
   const Parameter* result = find_one(root, filters, true);
   if (result == nullptr) {
-    throw ParameterNotFoundError(filters, "Parameter not found");
+    THROW_PARAMETER_NOT_FOUND(filters);
   }
   return *result;
 }

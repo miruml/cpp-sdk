@@ -8,6 +8,7 @@
 #include <miru/params/type.hpp>
 #include <miru/query/errors.hpp>
 #include <miru/query/query.hpp>
+#include <test/query/query_test.hpp>
 #include <test/test_utils/query.hpp>
 #include <test/test_utils/testdata.hpp>
 #include <test/test_utils/utils.hpp>
@@ -19,38 +20,6 @@ namespace test::query {
 
 using SearchParamFilters = miru::query::SearchParamFilters;
 using SearchParamFiltersBuilder = miru::query::SearchParamFiltersBuilder;
-
-struct SingleQueryTest {
-  std::string description;
-  std::string config_slug;
-  miru::params::Parameter data;
-  test::test_utils::Filter filter;
-  std::vector<test::test_utils::Result> results;
-};
-
-class QueryTest : public ::testing::Test {
- public:
-  static std::vector<SingleQueryTest> get_tests() {
-    miru::filesys::Dir query_dir = miru::test_utils::query_testdata_dir();
-    nlohmann::json json = query_dir.file("query.json").read_json();
-    std::vector<SingleQueryTest> tests;
-    for (const auto& test_json : json) {
-      auto test_set = test::test_utils::QueryTestSet::from_json(test_json);
-      int i = 0;
-      for (const auto& query : test_set.queries) {
-        tests.push_back(
-          {test_set.description + "." + std::to_string(i),
-           test_set.config_slug,
-           test_set.data,
-           query.filter,
-           query.results}
-        );
-        i++;
-      }
-    }
-    return tests;
-  }
-};
 
 // ================================= HAS PARAM ==================================== //
 class HasParamTests : public testing::TestWithParam<SingleQueryTest> {};
@@ -67,7 +36,7 @@ void test_has_param(
   builder.with_leaves_only(test.filter.leaves_only);
   SearchParamFilters filter = builder.build();
 
-  // if the expected result is larger than 1, expect an exception
+  // test the default filters match all results
   EXPECT_EQ(miru::query::has_param(data, filter), !test.results.empty());
 
   // test reading each parameter by their name
@@ -475,10 +444,31 @@ TEST(GetParamTests, NotFound) {
 
 TEST(GetParamTests, InvalidType) {
   SearchParamFiltersBuilder builder;
-  builder.with_param_name("invalid_type");
+  builder.with_param_name("root");
   SearchParamFilters filter = builder.build();
-  miru::params::Parameter root = miru::params::Parameter("root", 42);
-  test_get_param_exception<miru::params::InvalidParameterTypeError>(root, filter);
+  miru::params::Parameter root = miru::params::Parameter("root", 42.3);
+
+  // get_param and the first try_get_param variant return the Parameter object so they
+  // can't return an invalid type
+
+  // try get parameter value
+  int int_result;
+  EXPECT_THROW(
+    miru::query::try_get_param(root, filter, int_result),
+    miru::params::InvalidParameterTypeError
+  );
+
+  // get parameter value or return default value
+  EXPECT_THROW(
+    miru::query::get_param_or(root, filter, 42),
+    miru::params::InvalidParameterTypeError
+  );
+
+  // try get parameter value or return default value
+  EXPECT_THROW(
+    miru::query::try_get_param_or(root, filter, int_result, 42),
+    miru::params::InvalidParameterTypeError
+  );
 }
 
 }  // namespace test::query

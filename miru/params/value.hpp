@@ -105,7 +105,7 @@ class ParameterValue {
       case ParameterType::PARAMETER_SCALAR:
         return std::get<Scalar>(value_).as_bool();
       default:
-        throw InvalidParameterValueTypeError(ParameterType::PARAMETER_BOOL, type_);
+        THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_BOOL, type_);
     }
   }
 
@@ -119,7 +119,7 @@ class ParameterValue {
       case ParameterType::PARAMETER_SCALAR:
         return std::get<Scalar>(value_).as_int();
       default:
-        throw InvalidParameterValueTypeError(ParameterType::PARAMETER_INTEGER, type_);
+        THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_INTEGER, type_);
     }
   }
 
@@ -133,7 +133,7 @@ class ParameterValue {
       case ParameterType::PARAMETER_SCALAR:
         return std::get<Scalar>(value_).as_double();
       default:
-        throw InvalidParameterValueTypeError(ParameterType::PARAMETER_DOUBLE, type_);
+        THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_DOUBLE, type_);
     }
   }
 
@@ -147,7 +147,7 @@ class ParameterValue {
       case ParameterType::PARAMETER_SCALAR:
         return std::get<Scalar>(value_).as_string();
       default:
-        throw InvalidParameterValueTypeError(ParameterType::PARAMETER_STRING, type_);
+        THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_STRING, type_);
     }
   }
 
@@ -187,9 +187,7 @@ class ParameterValue {
         }
         return scalar_bool_array_;
       default:
-        throw InvalidParameterValueTypeError(
-          ParameterType::PARAMETER_BOOL_ARRAY, type_
-        );
+        THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_BOOL_ARRAY, type_);
     }
   }
 
@@ -209,9 +207,7 @@ class ParameterValue {
         }
         return scalar_int_array_;
       default:
-        throw InvalidParameterValueTypeError(
-          ParameterType::PARAMETER_INTEGER_ARRAY, type_
-        );
+        THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_INTEGER_ARRAY, type_);
     }
   }
 
@@ -231,9 +227,7 @@ class ParameterValue {
         }
         return scalar_double_array_;
       default:
-        throw InvalidParameterValueTypeError(
-          ParameterType::PARAMETER_DOUBLE_ARRAY, type_
-        );
+        THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_DOUBLE_ARRAY, type_);
     }
   }
 
@@ -253,9 +247,7 @@ class ParameterValue {
         }
         return scalar_string_array_;
       default:
-        throw InvalidParameterValueTypeError(
-          ParameterType::PARAMETER_STRING_ARRAY, type_
-        );
+        THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_STRING_ARRAY, type_);
     }
   }
 
@@ -380,7 +372,7 @@ class ParameterValue {
     enable_if<type == ParameterType::PARAMETER_NULL, const std::nullptr_t>::type
     get() const {
     if (type_ != ParameterType::PARAMETER_NULL) {
-      throw InvalidParameterValueTypeError(ParameterType::PARAMETER_NULL, type_);
+      THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_NULL, type_);
     }
     return nullptr;
   }
@@ -390,7 +382,7 @@ class ParameterValue {
     enable_if<type == ParameterType::PARAMETER_SCALAR, const Scalar &>::type
     get() const {
     if (type_ != ParameterType::PARAMETER_SCALAR) {
-      throw InvalidParameterValueTypeError(ParameterType::PARAMETER_SCALAR, type_);
+      THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_SCALAR, type_);
     }
     return std::get<Scalar>(value_);
   }
@@ -401,9 +393,7 @@ class ParameterValue {
     const std::vector<Scalar> &>::type
   get() const {
     if (type_ != ParameterType::PARAMETER_SCALAR_ARRAY) {
-      throw InvalidParameterValueTypeError(
-        ParameterType::PARAMETER_SCALAR_ARRAY, type_
-      );
+      THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_SCALAR_ARRAY, type_);
     }
     return std::get<std::vector<Scalar>>(value_);
   }
@@ -413,9 +403,7 @@ class ParameterValue {
     enable_if<type == ParameterType::PARAMETER_NESTED_ARRAY, const NestedArray &>::type
     get() const {
     if (type_ != ParameterType::PARAMETER_NESTED_ARRAY) {
-      throw InvalidParameterValueTypeError(
-        ParameterType::PARAMETER_NESTED_ARRAY, type_
-      );
+      THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_NESTED_ARRAY, type_);
     }
     return std::get<NestedArray>(value_);
   }
@@ -425,7 +413,7 @@ class ParameterValue {
     typename std::enable_if<type == ParameterType::PARAMETER_MAP, const Map &>::type
     get() const {
     if (type_ != ParameterType::PARAMETER_MAP) {
-      throw InvalidParameterValueTypeError(ParameterType::PARAMETER_MAP, type_);
+      THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_MAP, type_);
     }
     return std::get<Map>(value_);
   }
@@ -435,7 +423,7 @@ class ParameterValue {
     enable_if<type == ParameterType::PARAMETER_MAP_ARRAY, const MapArray &>::type
     get() const {
     if (type_ != ParameterType::PARAMETER_MAP_ARRAY) {
-      throw InvalidParameterValueTypeError(ParameterType::PARAMETER_MAP_ARRAY, type_);
+      THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_MAP_ARRAY, type_);
     }
     return std::get<MapArray>(value_);
   }
@@ -445,7 +433,7 @@ class ParameterValue {
     enable_if<std::is_same<type, std::nullptr_t>::value, const std::nullptr_t>::type
     get() const {
     if (type_ != ParameterType::PARAMETER_NULL) {
-      throw InvalidParameterValueTypeError(ParameterType::PARAMETER_NULL, type_);
+      THROW_INVALID_PARAMETER_VALUE_TYPE(ParameterType::PARAMETER_NULL, type_);
     }
     return nullptr;
   }

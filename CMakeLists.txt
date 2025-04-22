@@ -133,7 +133,9 @@ if(BUILD_TESTING)
         test/params/parameter_test.cpp
         test/params/utils_test.cpp
         test/query/filter_test.cpp
+        test/query/query_test.hpp
         test/query/query_test.cpp
+        test/query/ros2_test.cpp
         test/test_utils/testdata.hpp
         test/test_utils/testdata.cpp
         test/test_utils/utils.hpp

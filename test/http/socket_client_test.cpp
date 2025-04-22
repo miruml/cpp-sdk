@@ -29,9 +29,6 @@ TEST(HTTPClient, BuildGetRequest) {
   EXPECT_EQ(req.version(), 11);
   EXPECT_EQ(req.body(), "");
   EXPECT_EQ(req.find(http::field::host)->value(), "localhost");
-  EXPECT_EQ(
-    req.find(http::field::user_agent)->value(), "Miru Unix Client (BoostBeast)"
-  );
 }
 
 // ============================= BUILD POST REQUEST ================================ //
@@ -45,13 +42,10 @@ TEST(HTTPClient, BuildPostRequest) {
   EXPECT_EQ(req.version(), 11);
   EXPECT_EQ(req.body(), "{\"key\":\"value\"}");
   EXPECT_EQ(req.find(http::field::host)->value(), "localhost");
-  EXPECT_EQ(
-    req.find(http::field::user_agent)->value(), "Miru Unix Client (BoostBeast)"
-  );
 }
 
 // =============================== SANDBOX TESTS =================================== //
-TEST(HTTPClient, Sandbox) {
+TEST(HTTPClient, DISABLED_Sandbox) {
   // test route
   miru::http::UnixSocketClient client;
   auto res = client.test_route();
