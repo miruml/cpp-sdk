@@ -2,7 +2,7 @@
 
 // internal
 #include <miru/http/models/BaseConcreteConfig.h>
-#include <miru/http/models/HashSchemaRequest.h>
+#include <miru/http/models/HashSchemaSerializedRequest.h>
 #include <miru/http/models/RefreshLatestConcreteConfigRequest.h>
 
 #include <miru/http/client.hpp>
@@ -23,7 +23,9 @@ class MockBackendClient : public BackendClientI {
   std::function<openapi::BaseConcreteConfig()> refresh_latest_concrete_config_func;
 
   // route specific functions
-  std::string hash_schema(const openapi::HashSchemaRequest& config_schema) const;
+  std::string hash_schema(
+    const openapi::HashSchemaSerializedRequest& config_schema
+  ) const;
   openapi::BaseConcreteConfig get_latest_concrete_config(
     const std::string& config_schema_digest,
     const std::string& config_slug

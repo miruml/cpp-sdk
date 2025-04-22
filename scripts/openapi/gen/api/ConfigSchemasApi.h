@@ -28,7 +28,7 @@
 #include <optional>
 #include <utility>
 
-#include "HashSchemaRequest.h"
+#include "HashSchemaSerializedRequest.h"
 #include "SchemaDigestResponse.h"
 
 namespace org::openapitools::server::api
@@ -45,7 +45,7 @@ public:
 private:
     void setupRoutes();
 
-    void hash_config_schema_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response);
+    void hash_config_schema_serialized_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response);
     void config_schemas_api_default_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response);
 
     /// <summary>
@@ -77,13 +77,13 @@ private:
     virtual std::pair<Pistache::Http::Code, std::string> handleOperationException(const std::exception& ex) const noexcept;
 
     /// <summary>
-    /// Hash a config schema
+    /// Hash a serialized config schema
     /// </summary>
     /// <remarks>
     /// 
     /// </remarks>
-    /// <param name="hashSchemaRequest"></param>
-    virtual void hash_config_schema(const org::openapitools::server::model::HashSchemaRequest &hashSchemaRequest, Pistache::Http::ResponseWriter &response) = 0;
+    /// <param name="hashSchemaSerializedRequest"></param>
+    virtual void hash_config_schema_serialized(const org::openapitools::server::model::HashSchemaSerializedRequest &hashSchemaSerializedRequest, Pistache::Http::ResponseWriter &response) = 0;
 
 };
 

@@ -33,7 +33,7 @@ void ConfigSchemasApi::init() {
 void ConfigSchemasApi::setupRoutes() {
     using namespace Pistache::Rest;
 
-    Routes::Post(*router, base + "/config_schemas/hash", Routes::bind(&ConfigSchemasApi::hash_config_schema_handler, this));
+    Routes::Post(*router, base + "/config_schemas/hash/serialized", Routes::bind(&ConfigSchemasApi::hash_config_schema_serialized_handler, this));
 
     // Default handler, called when a route is not found
     router->addCustomHandler(Routes::bind(&ConfigSchemasApi::config_schemas_api_default_handler, this));
@@ -69,24 +69,24 @@ std::pair<Pistache::Http::Code, std::string> ConfigSchemasApi::handleOperationEx
     return std::make_pair(Pistache::Http::Code::Internal_Server_Error, ex.what());
 }
 
-void ConfigSchemasApi::hash_config_schema_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response) {
+void ConfigSchemasApi::hash_config_schema_serialized_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response) {
     try {
 
 
     // Getting the body param
     
-    HashSchemaRequest hashSchemaRequest;
+    HashSchemaSerializedRequest hashSchemaSerializedRequest;
     
     try {
-        nlohmann::json::parse(request.body()).get_to(hashSchemaRequest);
-        hashSchemaRequest.validate();
+        nlohmann::json::parse(request.body()).get_to(hashSchemaSerializedRequest);
+        hashSchemaSerializedRequest.validate();
     } catch (std::exception &e) {
         this->handleParsingException(e, response);
         return;
     }
 
     try {
-        this->hash_config_schema(hashSchemaRequest, response);
+        this->hash_config_schema_serialized(hashSchemaSerializedRequest, response);
     } catch (Pistache::Http::HttpError &e) {
         response.send(static_cast<Pistache::Http::Code>(e.code()), e.what());
         return;

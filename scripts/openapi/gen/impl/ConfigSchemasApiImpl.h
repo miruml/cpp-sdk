@@ -29,7 +29,7 @@
 #include <ConfigSchemasApi.h>
 
 
-#include "HashSchemaRequest.h"
+#include "HashSchemaSerializedRequest.h"
 #include "SchemaDigestResponse.h"
 
 namespace org::openapitools::server::api
@@ -42,7 +42,7 @@ public:
     explicit ConfigSchemasApiImpl(const std::shared_ptr<Pistache::Rest::Router>& rtr);
     ~ConfigSchemasApiImpl() override = default;
 
-    void hash_config_schema(const HashSchemaRequest &hashSchemaRequest, Pistache::Http::ResponseWriter &response);
+    void hash_config_schema_serialized(const HashSchemaSerializedRequest &hashSchemaSerializedRequest, Pistache::Http::ResponseWriter &response);
 
 };
 

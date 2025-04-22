@@ -2,7 +2,7 @@
 #include "test/http/mock.hpp"
 
 #include <miru/http/models/BaseConcreteConfig.h>
-#include <miru/http/models/HashSchemaRequest.h>
+#include <miru/http/models/HashSchemaSerializedRequest.h>
 #include <miru/http/models/RefreshLatestConcreteConfigRequest.h>
 
 #include <miru/http/socket_session.hpp>
@@ -14,7 +14,7 @@
 namespace miru::http {
 
 std::string MockBackendClient::hash_schema(
-  const openapi::HashSchemaRequest& config_schema
+  const openapi::HashSchemaSerializedRequest& config_schema
 ) const {
   return hash_schema_func();
 }

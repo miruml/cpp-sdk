@@ -24,7 +24,7 @@ ConfigSchemasApiImpl::ConfigSchemasApiImpl(const std::shared_ptr<Pistache::Rest:
 {
 }
 
-void ConfigSchemasApiImpl::hash_config_schema(const HashSchemaRequest &hashSchemaRequest, Pistache::Http::ResponseWriter &response) {
+void ConfigSchemasApiImpl::hash_config_schema_serialized(const HashSchemaSerializedRequest &hashSchemaSerializedRequest, Pistache::Http::ResponseWriter &response) {
     response.send(Pistache::Http::Code::Ok, "Do some magic\n");
 }
 

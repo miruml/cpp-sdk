@@ -166,4 +166,24 @@ TEST(ROS2TryGetParamWithDefaultValueTests, DoesntExist) {
   EXPECT_EQ(result_value, 100.0);
 }
 
+// =============================== GET PARAMETERS ================================== //
+TEST(ROS2GetParamsTests, Simple) {
+  miru::params::Parameter parameter("root", 42.3);
+  miru::query::ROS2StyleQuery ros2(parameter);
+
+  auto params = ros2.get_parameters({"root"});
+  EXPECT_EQ(params.size(), 1);
+  EXPECT_EQ(params[0].get_name(), "root");
+  EXPECT_EQ(params[0].as<double>(), 42.3);
+}
+
+TEST(ROS2GetParamsTests, DoesntExist) {
+  miru::params::Parameter parameter("root", 42.3);
+  miru::query::ROS2StyleQuery ros2(parameter);
+  EXPECT_THROW(
+    ros2.get_parameters({"root", "doesnt_exist"}),
+    miru::query::ParameterNotFoundError
+  );
+}
+
 } // namespace test::query

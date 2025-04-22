@@ -179,61 +179,6 @@ class ROS2StyleQuery {
    */
   std::vector<Parameter> get_parameters(const std::vector<std::string>& names) const;
 
-  // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L909
-
-  /// Get the parameter values for all parameters that have a given prefix.
-  /**
-   * The "prefix" argument is used to list the parameters which are prefixed
-   * with that prefix, see also list_parameters().
-   *
-   * The resulting list of parameter names are used to get the values of the
-   * parameters.
-   *
-   * The names which are used as keys in the values map have the prefix removed.
-   * For example, if you use the prefix "foo" and the parameters "foo.ping" and
-   * "foo.pong" exist, then the returned map will have the keys "ping" and
-   * "pong".
-   *
-   * An empty string for the prefix will match all parameters.
-   *
-   * If no parameters with the prefix are found, then the output parameter
-   * "values" will be unchanged and false will be returned.
-   * Otherwise, the parameter names and values will be stored in the map and
-   * true will be returned to indicate "values" was mutated.
-   *
-   * This method will never throw the
-   * rclcpp::exceptions::ParameterNotDeclaredException exception because the
-   * action of listing the parameters is done atomically with getting the
-   * values, and therefore they are only listed if already declared and cannot
-   * be undeclared before being retrieved.
-   *
-   * Like the templated get_parameter() variant, this method will attempt to
-   * coerce the parameter values into the type requested by the given
-   * template argument, which may fail and throw an exception.
-   *
-   * \param[in] prefix The prefix of the parameters to get.
-   * \param[out] values The map used to store the parameter names and values,
-   *   respectively, with one entry per parameter matching prefix.
-   * \returns true if output "values" was changed, false otherwise.
-   * \throws rclcpp::ParameterTypeException if the requested type does not
-   *   match the value of the parameter which is stored.
-   */
-  template <typename ParameterT>
-  bool get_parameters(
-    const std::string& prefix,
-    std::map<std::string, ParameterT>& values
-  ) const {
-    SearchParamFiltersBuilder builder;
-    builder.with_prefix(prefix);
-    SearchParamFilters filters = builder.build();
-    std::vector<Parameter> parameters = miru::query::get_params(root_, filters);
-    for (const auto& parameter : parameters) {
-      std::string name_wo_prefix = parameter.get_name().substr(prefix.size());
-      values[name_wo_prefix] = parameter.get_value<ParameterT>();
-    }
-    return true;
-  }
-
  private:
   miru::params::Parameter root_;
 };

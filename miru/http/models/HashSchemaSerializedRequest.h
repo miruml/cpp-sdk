@@ -10,13 +10,13 @@
 * Do not edit the class manually.
 */
 /*
- * HashSchemaRequest.h
+ * HashSchemaSerializedRequest.h
  *
  * 
  */
 
-#ifndef HashSchemaRequest_H_
-#define HashSchemaRequest_H_
+#ifndef HashSchemaSerializedRequest_H_
+#define HashSchemaSerializedRequest_H_
 
 
 #include <string>
@@ -26,15 +26,16 @@
 namespace org::openapitools::server::model
 {
 
-struct  HashSchemaRequest
+struct  HashSchemaSerializedRequest
 {
     
 
+    std::string format;
     std::string schema;
     
 
-    bool operator==(const HashSchemaRequest& other) const;
-    bool operator!=(const HashSchemaRequest& other) const;
+    bool operator==(const HashSchemaSerializedRequest& other) const;
+    bool operator!=(const HashSchemaSerializedRequest& other) const;
 
     /// <summary>
     /// Validate the current data in the model. Throws a ValidationException on failure.
@@ -54,14 +55,14 @@ struct  HashSchemaRequest
     bool validate(std::stringstream& msg, const std::string& pathPrefix) const;
 
     nlohmann::json to_json() const;
-    static HashSchemaRequest from_json(const nlohmann::json& j);
+    static HashSchemaSerializedRequest from_json(const nlohmann::json& j);
 };
 
- void to_json(nlohmann::json& j, const HashSchemaRequest& o);
- void from_json(const nlohmann::json& j, HashSchemaRequest& o);
+ void to_json(nlohmann::json& j, const HashSchemaSerializedRequest& o);
+ void from_json(const nlohmann::json& j, HashSchemaSerializedRequest& o);
 
 
 } // namespace org::openapitools::server::model
 
 
-#endif /* HashSchemaRequest_H_ */
+#endif /* HashSchemaSerializedRequest_H_ */

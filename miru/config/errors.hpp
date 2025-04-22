@@ -4,6 +4,7 @@
 // internal
 #include <miru/errors.hpp>
 #include <miru/filesys/file.hpp>
+#include <miru/utils.hpp>
 
 namespace miru::config {
 
@@ -59,6 +60,28 @@ class EmptyConfigSlug : public std::runtime_error {
 
 #define THROW_EMPTY_CONFIG_SLUG(schema_file) \
   throw EmptyConfigSlug(schema_file, ERROR_TRACE)
+
+class InvalidConfigSchemaFileTypeError : public std::runtime_error {
+ public:
+  explicit InvalidConfigSchemaFileTypeError(
+    const miru::filesys::File& schema_file,
+    const std::vector<std::string>& expected_file_types,
+    const errors::ErrorTrace& trace
+  ) : std::runtime_error(format_message(schema_file, expected_file_types, trace)) {}
+
+  static std::string format_message(
+    const miru::filesys::File& schema_file,
+    const std::vector<std::string>& expected_file_types,
+    const errors::ErrorTrace& trace
+  ) {
+    return "Invalid config schema file type '" + schema_file.abs_path().string() +
+           "'. Expected one of: " + miru::utils::to_string(expected_file_types) +
+           errors::format_source_location(trace);
+  }
+};
+
+#define THROW_INVALID_CONFIG_SCHEMA_FILE_TYPE(schema_file, expected_file_types) \
+  throw InvalidConfigSchemaFileTypeError(schema_file, expected_file_types, ERROR_TRACE)
 
 class EmptyConcreteConfig : public std::runtime_error {
  public:

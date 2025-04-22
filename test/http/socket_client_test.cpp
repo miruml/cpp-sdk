@@ -1,5 +1,5 @@
 // internal
-#include <miru/http/models/HashSchemaRequest.h>
+#include <miru/http/models/HashSchemaSerializedRequest.h>
 
 #include <miru/filesys/file.hpp>
 #include <miru/http/socket_client.hpp>
@@ -55,8 +55,11 @@ TEST(HTTPClient, DISABLED_Sandbox) {
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.json")
   );
 
-  nlohmann::json schema = schema_file.read_json();
-  openapi::HashSchemaRequest request{schema};
+  std::string schema = schema_file.read_string();
+  openapi::HashSchemaSerializedRequest request{
+    "json",
+    schema
+  };
 
   res = client.hash_schema(request);
   std::cout << res << std::endl;

@@ -10,7 +10,7 @@
 
 // external
 #include <miru/http/models/BaseConcreteConfig.h>
-#include <miru/http/models/HashSchemaRequest.h>
+#include <miru/http/models/HashSchemaSerializedRequest.h>
 #include <miru/http/models/RefreshLatestConcreteConfigRequest.h>
 
 #include <boost/asio.hpp>
@@ -46,9 +46,9 @@ nlohmann::json UnixSocketClient::test_route() {
 }
 
 std::string UnixSocketClient::hash_schema(
-  const openapi::HashSchemaRequest& config_schema
+  const openapi::HashSchemaSerializedRequest& config_schema
 ) const {
-  std::string path = base_path() + "/config_schemas/hash";
+  std::string path = base_path() + "/config_schemas/hash/serialized";
   auto req = build_post_request(host(), path, config_schema.to_json().dump());
   std::chrono::milliseconds timeout = std::chrono::seconds(10);
   auto res = execute(req, timeout);

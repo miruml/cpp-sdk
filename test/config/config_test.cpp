@@ -183,7 +183,7 @@ TEST(Config, FromAgentRefreshSuccess) {
   miru::config::Config config = miru::config::Config::from_agent(
     mock_client, schema_file.abs_path().string(), options
   );
-  EXPECT_EQ(config.source(), miru::config::ConfigSource::Agent);
+  EXPECT_EQ(config.get_source(), miru::config::ConfigSource::Agent);
 
   auto speed = miru::query::get_param(config, "motion-control.speed");
 
@@ -247,7 +247,7 @@ TEST(Config, FromAgentRefreshFailureGetSuccess) {
   miru::config::Config config = miru::config::Config::from_agent(
     mock_client, schema_file.abs_path().string(), options
   );
-  EXPECT_EQ(config.source(), miru::config::ConfigSource::Agent);
+  EXPECT_EQ(config.get_source(), miru::config::ConfigSource::Agent);
 
   auto speed = miru::query::get_param(config, "motion-control.speed");
 
@@ -283,7 +283,7 @@ TEST(Config, FromAgentDefaultFile) {
   miru::config::Config config = miru::config::Config::from_agent(
     mock_client, schema_file.abs_path().string(), options
   );
-  EXPECT_EQ(config.source(), miru::config::ConfigSource::FileSystem);
+  EXPECT_EQ(config.get_source(), miru::config::ConfigSource::FileSystem);
 
   auto speed = miru::query::get_param(config, "motion-control.speed");
 

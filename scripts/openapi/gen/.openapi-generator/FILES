@@ -21,8 +21,8 @@ model/Error.cpp
 model/Error.h
 model/ErrorResponse.cpp
 model/ErrorResponse.h
-model/HashSchemaRequest.cpp
-model/HashSchemaRequest.h
+model/HashSchemaSerializedRequest.cpp
+model/HashSchemaSerializedRequest.h
 model/Helpers.cpp
 model/Helpers.h
 model/RefreshLatestConcreteConfigRequest.cpp

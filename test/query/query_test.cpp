@@ -128,6 +128,30 @@ INSTANTIATE_TEST_SUITE_P(
   GetParamsTestNameGenerator
 );
 
+// ============================= GET PARAMS BY NAME ================================ //
+// use simple test here since it's just a wrapper around get_params function using
+// filters
+
+TEST(GetParamsByNameTests, Simple) {
+  miru::params::Parameter parameter("root", 42.3);
+
+  auto params = miru::query::get_params(parameter, {"root"});
+  EXPECT_EQ(params.size(), 1);
+  EXPECT_EQ(params[0].get_name(), "root");
+  EXPECT_EQ(params[0].as<double>(), 42.3);
+}
+
+TEST(GetParamsByNameTests, DoesntExist) {
+  miru::params::Parameter parameter("root", 42.3);
+
+  EXPECT_THROW(
+    miru::query::get_params(
+      parameter, {"root", "doesnt_exist"}
+    ),
+    miru::query::ParameterNotFoundError
+  );
+}
+
 // =================================== GET PARAM ==================================== //
 enum class QueryException { None, ParameterNotFound, TooManyResults };
 

@@ -20,7 +20,7 @@ class FileNotFoundError : public std::runtime_error {
   }
 };
 
-#define THROW_FILE_NOT_FOUND(path) throw FileNotFoundError(path, ERROR_TRACE)
+#define THROW_FILE_NOT_FOUND(path) throw miru::filesys::FileNotFoundError(path, ERROR_TRACE)
 
 class NotAFileError : public std::runtime_error {
  public:
@@ -34,7 +34,7 @@ class NotAFileError : public std::runtime_error {
   }
 };
 
-#define THROW_NOT_A_FILE(path) throw NotAFileError(path, ERROR_TRACE)
+#define THROW_NOT_A_FILE(path) throw miru::filesys::NotAFileError(path, ERROR_TRACE)
 
 class InvalidFileTypeError : public std::runtime_error {
  public:
@@ -57,7 +57,7 @@ class InvalidFileTypeError : public std::runtime_error {
 };
 
 #define THROW_INVALID_FILE_TYPE(file_path, expected_file_types) \
-  throw InvalidFileTypeError(file_path, expected_file_types, ERROR_TRACE)
+  throw miru::filesys::InvalidFileTypeError(file_path, expected_file_types, ERROR_TRACE)
 
 // directory errors
 class DirNotFoundError : public std::runtime_error {
@@ -72,7 +72,7 @@ class DirNotFoundError : public std::runtime_error {
   }
 };
 
-#define THROW_DIR_NOT_FOUND(path) throw DirNotFoundError(path, ERROR_TRACE)
+#define THROW_DIR_NOT_FOUND(path) throw miru::filesys::DirNotFoundError(path, ERROR_TRACE)
 
 class NotADirError : public std::runtime_error {
  public:
@@ -86,7 +86,7 @@ class NotADirError : public std::runtime_error {
   }
 };
 
-#define THROW_NOT_A_DIR(path) throw NotADirError(path, ERROR_TRACE)
+#define THROW_NOT_A_DIR(path) throw miru::filesys::NotADirError(path, ERROR_TRACE)
 
 class UnableToFindGitRepoError : public std::runtime_error {
  public:
@@ -104,6 +104,6 @@ class UnableToFindGitRepoError : public std::runtime_error {
 };
 
 #define THROW_UNABLE_TO_FIND_GIT_REPO(path) \
-  throw UnableToFindGitRepoError(path, ERROR_TRACE)
+  throw miru::filesys::UnableToFindGitRepoError(path, ERROR_TRACE)
 
 }  // namespace miru::filesys

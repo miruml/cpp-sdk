@@ -2,7 +2,7 @@
 #include <thread>
 
 // internal
-#include <miru/http/models/HashSchemaRequest.h>
+#include <miru/http/models/HashSchemaSerializedRequest.h>
 
 #include <miru/config/config.hpp>
 #include <miru/config/errors.hpp>
@@ -70,6 +70,36 @@ Config Config::from_file(
   return config;
 }
 
+std::string hash_schema(
+  const miru::http::BackendClientI& client,
+  const miru::filesys::File& schema_file
+) {
+  // determine the schema file type
+  miru::filesys::FileType schema_file_type = schema_file.file_type();
+  std::string format;
+  switch (schema_file_type) {
+    case miru::filesys::FileType::JSON: {
+      format = "json";
+      break;
+    }
+    case miru::filesys::FileType::YAML: {
+      format = "yaml";
+      break;
+    }
+    default: {
+      std::vector<std::string> expected_file_types = {"json", "yaml"};
+      THROW_INVALID_CONFIG_SCHEMA_FILE_TYPE(schema_file, expected_file_types);
+    }
+  }
+
+  std::string schema_contents = schema_file.read_string();
+  openapi::HashSchemaSerializedRequest config_schema{
+    format,
+    schema_contents
+  };
+  return client.hash_schema(config_schema);
+}
+
 nlohmann::json get_latest_concrete_config(
   const miru::http::BackendClientI& client,
   const std::string& config_schema_digest,
@@ -107,9 +137,7 @@ Config from_agent_impl(
   builder.with_config_slug(config_slug);
 
   // hash the schema contents to retrieve the schema digest
-  nlohmann::json schema_contents = schema_file.read_string();
-  openapi::HashSchemaRequest config_schema{schema_contents};
-  std::string config_schema_digest = client.hash_schema(config_schema);
+  std::string config_schema_digest = hash_schema(client, schema_file);
   builder.with_schema_digest(config_schema_digest);
 
   // load the config from the agent

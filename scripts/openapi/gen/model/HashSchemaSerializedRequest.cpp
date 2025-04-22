@@ -11,27 +11,27 @@
 */
 
 
-#include "HashSchemaRequest.h"
+#include "HashSchemaSerializedRequest.h"
 #include "Helpers.h"
 
 namespace org::openapitools::server::model
 {
 
-nlohmann::json HashSchemaRequest::to_json() const
+nlohmann::json HashSchemaSerializedRequest::to_json() const
 {
     nlohmann::json j;
     ::org::openapitools::server::model::to_json(j, *this);
     return j;
 }
 
-HashSchemaRequest HashSchemaRequest::from_json(const nlohmann::json& j)
+HashSchemaSerializedRequest HashSchemaSerializedRequest::from_json(const nlohmann::json& j)
 {
-    HashSchemaRequest o{};
+    HashSchemaSerializedRequest o{};
     ::org::openapitools::server::model::from_json(j, o);
     return o;
 }
 
-void HashSchemaRequest::validate() const
+void HashSchemaSerializedRequest::validate() const
 {
     std::stringstream msg;
     if (!validate(msg))
@@ -40,41 +40,43 @@ void HashSchemaRequest::validate() const
     }
 }
 
-bool HashSchemaRequest::validate(std::stringstream& msg) const
+bool HashSchemaSerializedRequest::validate(std::stringstream& msg) const
 {
     return validate(msg, "");
 }
 
-bool HashSchemaRequest::validate(std::stringstream& msg, const std::string& pathPrefix) const
+bool HashSchemaSerializedRequest::validate(std::stringstream& msg, const std::string& pathPrefix) const
 {
     bool success = true;
-    const std::string _pathPrefix = pathPrefix.empty() ? "HashSchemaRequest" : pathPrefix;
+    const std::string _pathPrefix = pathPrefix.empty() ? "HashSchemaSerializedRequest" : pathPrefix;
 
-        
+            
     return success;
 }
 
-bool HashSchemaRequest::operator==(const HashSchemaRequest& other) const
+bool HashSchemaSerializedRequest::operator==(const HashSchemaSerializedRequest& other) const
 {
     return
     
-    schema == other.schema;
+    format == other.format && schema == other.schema;
 }
 
-bool HashSchemaRequest::operator!=(const HashSchemaRequest& other) const
+bool HashSchemaSerializedRequest::operator!=(const HashSchemaSerializedRequest& other) const
 {
     return !(*this == other);
 }
 
-void to_json(nlohmann::json& j, const HashSchemaRequest& o)
+void to_json(nlohmann::json& j, const HashSchemaSerializedRequest& o)
 {
     j = nlohmann::json::object();
+    j["format"] = o.format;
     j["schema"] = o.schema;
     
 }
 
-void from_json(const nlohmann::json& j, HashSchemaRequest& o)
+void from_json(const nlohmann::json& j, HashSchemaSerializedRequest& o)
 {
+    j.at("format").get_to(o.format);
     j.at("schema").get_to(o.schema);
     
 }

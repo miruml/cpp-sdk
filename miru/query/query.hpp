@@ -104,8 +104,10 @@ get_params(const rootT& root, const std::vector<std::string>& param_names) {
 
   // throw an error for errors specified in param names but not returned
   for (const auto& param_name : param_names) {
-    if (std::find(result.begin(), result.end(), param_name) == result.end()) {
-      THROW_PARAMETER_NOT_FOUND(filters);
+    if (std::find_if(result.begin(), result.end(),
+        [&param_name](const auto& param) { return param.get_name() == param_name; }
+    ) == result.end()) {
+        THROW_PARAMETER_NOT_FOUND(filters);
     }
   }
   return result;

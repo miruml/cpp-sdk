@@ -61,7 +61,7 @@ class Config {
     const FromAgentOptions& options = FromAgentOptions()
   );
 
-  const ConfigSource source() const { return source_; }
+  const ConfigSource get_source() const { return source_; }
   const miru::params::Parameter& root_parameter() const { return parameters_; }
 
   miru::query::ROS2StyleQuery ros2() const;

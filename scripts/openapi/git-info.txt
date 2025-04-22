@@ -1,4 +1,4 @@
 Repository Name: git@github.com:miruml/openapi.git
 Branch Name: configs
-Commit Hash: 11e3a3bdd7cbf7768681c1d476f75737e9cb306f
-Commit Message: refactor(config_schema): provide string arg instead of object for hashing schema
+Commit Hash: 6089d704e8680501d3cd48a54ad71e6a3c1f8981
+Commit Message: feat(config_schemas): add dedicated route for hashing serialized schemas
