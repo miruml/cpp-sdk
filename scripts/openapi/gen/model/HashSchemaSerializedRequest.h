@@ -20,6 +20,7 @@
 
 
 #include <string>
+#include "HashSerializedConfigSchemaFormat.h"
 #include <nlohmann/json.hpp>
 #include <optional>
 
@@ -30,7 +31,7 @@ struct  HashSchemaSerializedRequest
 {
     
 
-    std::string format;
+    org::openapitools::server::model::HashSerializedConfigSchemaFormat format;
     std::string schema;
     
 

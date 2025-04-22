@@ -10,33 +10,37 @@
 * Do not edit the class manually.
 */
 /*
- * HashSchemaSerializedRequest.h
+ * HashSerializedConfigSchemaFormat.h
  *
  * 
  */
 
-#ifndef HashSchemaSerializedRequest_H_
-#define HashSchemaSerializedRequest_H_
+#ifndef HashSerializedConfigSchemaFormat_H_
+#define HashSerializedConfigSchemaFormat_H_
 
 
-#include <string>
-#include "HashSerializedConfigSchemaFormat.h"
 #include <nlohmann/json.hpp>
 #include <optional>
 
 namespace org::openapitools::server::model
 {
 
-struct  HashSchemaSerializedRequest
+struct  HashSerializedConfigSchemaFormat
 {
     
+    enum eHashSerializedConfigSchemaFormat {
+        // To have a valid default value.
+        // Avoiding name clashes with user defined
+        // enum values
+        INVALID_VALUE_OPENAPI_GENERATED = 0,
+        HASH_SERIALIZED_CONFIG_SCHEMA_FORMAT_JSON, 
+        HASH_SERIALIZED_CONFIG_SCHEMA_FORMAT_YAML
+    };
 
-    org::openapitools::server::model::HashSerializedConfigSchemaFormat format;
-    std::string schema;
-    
+    HashSerializedConfigSchemaFormat::eHashSerializedConfigSchemaFormat value = HashSerializedConfigSchemaFormat::eHashSerializedConfigSchemaFormat::INVALID_VALUE_OPENAPI_GENERATED;
 
-    bool operator==(const HashSchemaSerializedRequest& other) const;
-    bool operator!=(const HashSchemaSerializedRequest& other) const;
+    bool operator==(const HashSerializedConfigSchemaFormat& other) const;
+    bool operator!=(const HashSerializedConfigSchemaFormat& other) const;
 
     /// <summary>
     /// Validate the current data in the model. Throws a ValidationException on failure.
@@ -56,14 +60,14 @@ struct  HashSchemaSerializedRequest
     bool validate(std::stringstream& msg, const std::string& pathPrefix) const;
 
     nlohmann::json to_json() const;
-    static HashSchemaSerializedRequest from_json(const nlohmann::json& j);
+    static HashSerializedConfigSchemaFormat from_json(const nlohmann::json& j);
 };
 
- void to_json(nlohmann::json& j, const HashSchemaSerializedRequest& o);
- void from_json(const nlohmann::json& j, HashSchemaSerializedRequest& o);
+ void to_json(nlohmann::json& j, const HashSerializedConfigSchemaFormat& o);
+ void from_json(const nlohmann::json& j, HashSerializedConfigSchemaFormat& o);
 
 
 } // namespace org::openapitools::server::model
 
 
-#endif /* HashSchemaSerializedRequest_H_ */
+#endif /* HashSerializedConfigSchemaFormat_H_ */

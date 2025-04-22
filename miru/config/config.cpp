@@ -3,6 +3,7 @@
 
 // internal
 #include <miru/http/models/HashSchemaSerializedRequest.h>
+#include <miru/http/models/HashSerializedConfigSchemaFormat.h>
 
 #include <miru/config/config.hpp>
 #include <miru/config/errors.hpp>
@@ -76,14 +77,14 @@ std::string hash_schema(
 ) {
   // determine the schema file type
   miru::filesys::FileType schema_file_type = schema_file.file_type();
-  std::string format;
+  openapi::HashSerializedConfigSchemaFormat format;
   switch (schema_file_type) {
     case miru::filesys::FileType::JSON: {
-      format = "json";
+      format.value = openapi::HashSerializedConfigSchemaFormat::eHashSerializedConfigSchemaFormat::HASH_SERIALIZED_CONFIG_SCHEMA_FORMAT_JSON;
       break;
     }
     case miru::filesys::FileType::YAML: {
-      format = "yaml";
+      format.value = openapi::HashSerializedConfigSchemaFormat::eHashSerializedConfigSchemaFormat::HASH_SERIALIZED_CONFIG_SCHEMA_FORMAT_YAML;
       break;
     }
     default: {

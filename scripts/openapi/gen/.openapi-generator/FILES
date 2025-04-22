@@ -23,6 +23,8 @@ model/ErrorResponse.cpp
 model/ErrorResponse.h
 model/HashSchemaSerializedRequest.cpp
 model/HashSchemaSerializedRequest.h
+model/HashSerializedConfigSchemaFormat.cpp
+model/HashSerializedConfigSchemaFormat.h
 model/Helpers.cpp
 model/Helpers.h
 model/RefreshLatestConcreteConfigRequest.cpp
