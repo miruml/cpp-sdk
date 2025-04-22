@@ -60,4 +60,22 @@ class EmptyConfigSlug : public std::runtime_error {
 #define THROW_EMPTY_CONFIG_SLUG(schema_file) \
   throw EmptyConfigSlug(schema_file, ERROR_TRACE)
 
+class EmptyConcreteConfig : public std::runtime_error {
+ public:
+  explicit EmptyConcreteConfig(
+    const std::string& config_slug,
+    const errors::ErrorTrace& trace
+  ) : std::runtime_error(format_message(config_slug, trace)) {}
+
+  static std::string format_message(
+    const std::string& config_slug,
+    const errors::ErrorTrace& trace
+  ) {
+    return "The concrete config loaded for config slug '" + config_slug + "' is empty" + errors::format_source_location(trace);
+  }
+};
+
+#define THROW_EMPTY_CONCRETE_CONFIG(config_slug) \
+  throw EmptyConcreteConfig(config_slug, ERROR_TRACE)
+
 }  // namespace miru::config

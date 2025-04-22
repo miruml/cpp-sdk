@@ -6,6 +6,8 @@
 
 // internal
 #include <miru/filesys/file.hpp>
+#include <miru/http/client.hpp>
+#include <miru/http/socket_client.hpp>
 #include <miru/params/parameter.hpp>
 #include <miru/query/ros2_fwd.hpp>
 
@@ -46,6 +48,12 @@ class Config {
     const std::filesystem::path& config_file_path
   );
 
+  static Config from_agent(
+    const miru::http::BackendClientI& client,
+    const std::filesystem::path& schema_file_path,
+    const FromAgentOptions& options = FromAgentOptions()
+  );
+
   // Initialize the config from an agent source. The config will read its configuration
   // and schema file from the on-device agent.
   static Config from_agent(
@@ -53,6 +61,7 @@ class Config {
     const FromAgentOptions& options = FromAgentOptions()
   );
 
+  const ConfigSource source() const { return source_; }
   const miru::params::Parameter& root_parameter() const { return parameters_; }
 
   miru::query::ROS2StyleQuery ros2() const;

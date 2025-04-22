@@ -19,7 +19,7 @@
 #define HashSchemaRequest_H_
 
 
-#include <nlohmann/json.hpp>
+#include <string>
 #include <nlohmann/json.hpp>
 #include <optional>
 
@@ -30,7 +30,7 @@ struct  HashSchemaRequest
 {
     
 
-    nlohmann::json schema;
+    std::string schema;
     
 
     bool operator==(const HashSchemaRequest& other) const;

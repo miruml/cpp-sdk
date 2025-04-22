@@ -20,14 +20,15 @@ class BackendClientI {
   virtual ~BackendClientI() = default;
 
   // route specific functions
-  virtual std::string hash_schema(const openapi::HashSchemaRequest& config_schema) = 0;
+  virtual std::string hash_schema(const openapi::HashSchemaRequest& config_schema
+  ) const = 0;
   virtual openapi::BaseConcreteConfig get_latest_concrete_config(
     const std::string& config_schema_digest,
     const std::string& config_slug
-  ) = 0;
+  ) const = 0;
   virtual openapi::BaseConcreteConfig refresh_latest_concrete_config(
     const openapi::RefreshLatestConcreteConfigRequest& request
-  ) = 0;
+  ) const = 0;
 };
 
 }  // namespace miru::http

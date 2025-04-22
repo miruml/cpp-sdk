@@ -1,4 +1,4 @@
 Repository Name: git@github.com:miruml/openapi.git
 Branch Name: configs
-Commit Hash: e6419eab8c5f178944319b52919a9c00d5d7de10
-Commit Message: fix(concrete_configs): fix config schema digest being optional in request
+Commit Hash: 11e3a3bdd7cbf7768681c1d476f75737e9cb306f
+Commit Message: refactor(config_schema): provide string arg instead of object for hashing schema

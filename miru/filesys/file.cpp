@@ -85,9 +85,7 @@ nlohmann::json File::read_json() const {
   assert_exists();
 
   if (file_type() != FileType::JSON) {
-    THROW_INVALID_FILE_TYPE(
-      path_.string(), file_types_to_strings(supported_file_types())
-    );
+    THROW_INVALID_FILE_TYPE(path_.string(), file_types_to_strings({FileType::JSON}));
   }
 
   std::ifstream file(path_);
@@ -101,9 +99,7 @@ YAML::Node File::read_yaml() const {
   // of yaml) however if we want to read strict yaml then we should use the dedicated
   // yaml parser
   if (file_type() != FileType::YAML && file_type() != FileType::JSON) {
-    THROW_INVALID_FILE_TYPE(
-      path_.string(), file_types_to_strings(supported_file_types())
-    );
+    THROW_INVALID_FILE_TYPE(path_.string(), file_types_to_strings({FileType::YAML}));
   }
 
   std::ifstream file(path_);

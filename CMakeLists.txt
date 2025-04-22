@@ -69,6 +69,8 @@ add_library(miru
     miru/http/models/HashSchemaRequest.cpp
     miru/http/models/Helpers.h
     miru/http/models/Helpers.cpp
+    miru/http/models/RefreshLatestConcreteConfigRequest.h
+    miru/http/models/RefreshLatestConcreteConfigRequest.cpp
     miru/http/models/SchemaDigestResponse.h
     miru/http/models/SchemaDigestResponse.cpp
     miru/params/composite.hpp
@@ -122,11 +124,9 @@ if(BUILD_TESTING)
         test/filesys/dir_test.cpp
         test/filesys/file_test.cpp
         test/filesys/path_test.cpp
-        test/http/client_test.cpp
-        test/test_utils/testdata.hpp
-        test/test_utils/testdata.cpp
-        test/test_utils/utils.hpp
-        test/test_utils/utils.cpp
+        test/http/socket_client_test.cpp
+        test/http/mock.hpp
+        test/http/mock.cpp
         test/params/composite_test.cpp
         test/params/parse_test.cpp
         test/params/scalar_test.cpp
@@ -134,6 +134,10 @@ if(BUILD_TESTING)
         test/params/utils_test.cpp
         test/query/filter_test.cpp
         test/query/query_test.cpp
+        test/test_utils/testdata.hpp
+        test/test_utils/testdata.cpp
+        test/test_utils/utils.hpp
+        test/test_utils/utils.cpp
         test/utils_test.cpp
     )
 

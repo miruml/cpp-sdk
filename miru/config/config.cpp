@@ -19,110 +19,6 @@ namespace miru::config {
 
 namespace openapi = org::openapitools::server::model;
 
-Config Config::from_file(
-  const std::filesystem::path& schema_file_path,
-  const std::filesystem::path& config_file_path
-) {
-  ConfigBuilder builder;
-  builder.with_source(ConfigSource::FileSystem);
-
-  // read the config slug from the schema file
-  miru::filesys::File schema_file(schema_file_path);
-  builder.with_schema_file(schema_file);
-  std::string config_slug = read_schema_config_slug(schema_file);
-  builder.with_config_slug(config_slug);
-
-  // read the config file
-  miru::filesys::File config_file(config_file_path);
-  builder.with_config_file(config_file);
-  builder.with_data(miru::params::parse_file(config_slug, config_file));
-
-  // build the config
-  Config config = builder.build();
-  return config;
-}
-
-nlohmann::json get_latest_concrete_config(
-  const std::string& config_slug,
-  const nlohmann::json& schema_file_contents
-) {
-  miru::http::UnixSocketClient client;
-  openapi::HashSchemaRequest config_schema{schema_file_contents};
-  std::string config_schema_digest = client.hash_schema(config_schema);
-
-  nlohmann::json config_data;
-  try {
-    // try to refresh the latest concrete config with the server
-    openapi::RefreshLatestConcreteConfigRequest refresh_request{
-      config_schema_digest, config_slug
-    };
-    config_data = client.refresh_latest_concrete_config(refresh_request);
-  } catch (const std::exception& refresh_error) {
-    // load from the local cache if the refresh fails
-    config_data = client.get_latest_concrete_config(config_schema_digest, config_slug);
-  }
-  return config_data;
-}
-
-Config from_agent_internal(
-  const std::filesystem::path& schema_file_path,
-  const FromAgentOptions& options
-) {
-  ConfigBuilder builder;
-  builder.with_source(ConfigSource::Agent);
-
-  // read the config slug
-  miru::filesys::File schema_file(schema_file_path);
-  std::string config_slug = read_schema_config_slug(schema_file);
-  builder.with_config_slug(config_slug);
-
-  // load the config from the agent
-  nlohmann::json config_data =
-    get_latest_concrete_config(config_slug, schema_file.read_json());
-  builder.with_data(miru::params::parse_json_node(config_slug, config_data));
-
-  // build the config
-  Config config = builder.build();
-  return config;
-}
-
-Config Config::from_agent(
-  const std::filesystem::path& schema_file_path,
-  const FromAgentOptions& options
-) {
-  if (options.num_retries == 0) {
-    THROW_FROM_AGENT_OPTIONS_ERROR("Number of retries must be greater than 0");
-  }
-
-  // attempt to load the config from the agent for the number of retries
-  std::exception_ptr last_from_agent_error;
-  for (uint32_t attempt = 1; attempt <= options.num_retries; attempt++) {
-    try {
-      return from_agent_internal(schema_file_path, options);
-    } catch (const std::exception& from_agent_error) {
-      last_from_agent_error = std::current_exception();
-    }
-    // sleep between retries
-    if (attempt < options.num_retries) {
-      std::this_thread::sleep_for(options.retry_delay);
-    }
-  }
-
-  // loading from the agent failed, try loading the default config from the file system
-  if (options.default_config_path.has_value()) {
-    try {
-      return from_file(schema_file_path, options.default_config_path.value());
-    } catch (const std::exception& from_default_config_error) {
-      // do nothing
-    }
-  }
-
-  // if we've made it here, we've tried to load the config from the agent
-  // for the number of retries and failed each time
-  // so we need to throw the last error
-  std::rethrow_exception(last_from_agent_error);
-}
-
 std::string read_schema_config_slug(const miru::filesys::File& schema_file) {
   std::string config_slug;
   switch (schema_file.file_type()) {
@@ -149,6 +45,127 @@ std::string read_schema_config_slug(const miru::filesys::File& schema_file) {
     THROW_EMPTY_CONFIG_SLUG(schema_file);
   }
   return config_slug;
+}
+
+Config Config::from_file(
+  const std::filesystem::path& schema_file_path,
+  const std::filesystem::path& config_file_path
+) {
+  ConfigBuilder builder;
+  builder.with_source(ConfigSource::FileSystem);
+
+  // read the config slug from the schema file
+  miru::filesys::File schema_file(schema_file_path);
+  builder.with_schema_file(schema_file);
+  std::string config_slug = read_schema_config_slug(schema_file);
+  builder.with_config_slug(config_slug);
+
+  // read the config file
+  miru::filesys::File config_file(config_file_path);
+  builder.with_config_file(config_file);
+  builder.with_data(miru::params::parse_file(config_slug, config_file));
+
+  // build the config
+  Config config = builder.build();
+  return config;
+}
+
+nlohmann::json get_latest_concrete_config(
+  const miru::http::BackendClientI& client,
+  const std::string& config_schema_digest,
+  const std::string& config_slug
+) {
+  openapi::BaseConcreteConfig config;
+  try {
+    // try to refresh the latest concrete config with the server
+    openapi::RefreshLatestConcreteConfigRequest refresh_request{
+      config_schema_digest, config_slug
+    };
+    config = client.refresh_latest_concrete_config(refresh_request);
+  } catch (const std::exception& refresh_error) {
+    // load from the local cache if the refresh fails
+    config = client.get_latest_concrete_config(config_schema_digest, config_slug);
+  }
+  if (!config.concrete_config.has_value()) {
+    THROW_EMPTY_CONCRETE_CONFIG(config_slug);
+  }
+  return config.concrete_config.value();
+}
+
+Config from_agent_impl(
+  const miru::http::BackendClientI& client,
+  const std::filesystem::path& schema_file_path,
+  const FromAgentOptions& options
+) {
+  ConfigBuilder builder;
+  builder.with_source(ConfigSource::Agent);
+
+  // read the config slug
+  miru::filesys::File schema_file(schema_file_path);
+  builder.with_schema_file(schema_file);
+  std::string config_slug = read_schema_config_slug(schema_file);
+  builder.with_config_slug(config_slug);
+
+  // hash the schema contents to retrieve the schema digest
+  nlohmann::json schema_contents = schema_file.read_string();
+  openapi::HashSchemaRequest config_schema{schema_contents};
+  std::string config_schema_digest = client.hash_schema(config_schema);
+  builder.with_schema_digest(config_schema_digest);
+
+  // load the config from the agent
+  nlohmann::json concrete_config_data =
+    get_latest_concrete_config(client, config_schema_digest, config_slug);
+  builder.with_data(miru::params::parse_json_node(config_slug, concrete_config_data));
+
+  // build the config
+  Config config = builder.build();
+  return config;
+}
+
+Config Config::from_agent(
+  const miru::http::BackendClientI& client,
+  const std::filesystem::path& schema_file_path,
+  const FromAgentOptions& options
+) {
+  if (options.num_retries == 0) {
+    THROW_FROM_AGENT_OPTIONS_ERROR("Number of retries must be greater than 0");
+  }
+
+  // attempt to load the config from the agent for the number of retries
+  std::exception_ptr last_from_agent_error;
+  for (uint32_t attempt = 1; attempt <= options.num_retries; attempt++) {
+    try {
+      return from_agent_impl(client, schema_file_path, options);
+    } catch (const std::exception& from_agent_error) {
+      last_from_agent_error = std::current_exception();
+    }
+    // sleep between retries
+    if (attempt < options.num_retries) {
+      std::this_thread::sleep_for(options.retry_delay);
+    }
+  }
+
+  // loading from the agent failed, try loading the default config from the file system
+  if (options.default_config_path.has_value()) {
+    try {
+      return from_file(schema_file_path, options.default_config_path.value());
+    } catch (const std::exception& from_default_config_error) {
+      // do nothing
+    }
+  }
+
+  // if we've made it here, we've tried to load the config from the agent
+  // for the number of retries and failed each time
+  // so we need to throw the last error
+  std::rethrow_exception(last_from_agent_error);
+}
+
+Config Config::from_agent(
+  const std::filesystem::path& schema_file_path,
+  const FromAgentOptions& options
+) {
+  miru::http::UnixSocketClient client;
+  return from_agent_impl(client, schema_file_path, options);
 }
 
 miru::query::ROS2StyleQuery Config::ros2() const {
@@ -219,7 +236,7 @@ Config ConfigBuilder::build() {
   }
   if (source_ == ConfigSource::Agent && !schema_digest_.has_value()) {
     throw std::runtime_error(
-      "Schema not set (must be set when retrieving the config from the agent)"
+      "Schema digest not set (must be set when retrieving the config from the agent)"
     );
   }
   if (source_ == ConfigSource::FileSystem && !config_file_.has_value()) {

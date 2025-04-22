@@ -108,7 +108,7 @@ constexpr typename std::enable_if<is_parameter_root_v<rootT>, Parameter>::type
 get_param(const rootT& root, const SearchParamFilters& filters) {
   const Parameter* result = find_one(root, filters, true);
   if (result == nullptr) {
-    throw ParameterNotFoundError("Parameter not found");
+    throw ParameterNotFoundError(filters, "Parameter not found");
   }
   return *result;
 }

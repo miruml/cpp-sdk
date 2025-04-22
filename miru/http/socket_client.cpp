@@ -27,7 +27,7 @@ namespace openapi = org::openapitools::server::model;
 std::pair<http::response<http::string_body>, RequestDetails> UnixSocketClient::execute(
   const http::request<http::string_body>& req,
   const std::chrono::milliseconds& timeout
-) {
+) const {
   asio::io_context ioc;
   auto session = std::make_shared<SocketSession>(ioc, socket_path_, req, timeout);
   RequestDetails details = session->details();
@@ -47,7 +47,7 @@ nlohmann::json UnixSocketClient::test_route() {
 
 std::string UnixSocketClient::hash_schema(
   const openapi::HashSchemaRequest& config_schema
-) {
+) const {
   std::string path = base_path() + "/config_schemas/hash";
   auto req = build_post_request(host(), path, config_schema.to_json().dump());
   std::chrono::milliseconds timeout = std::chrono::seconds(10);
@@ -58,7 +58,7 @@ std::string UnixSocketClient::hash_schema(
 openapi::BaseConcreteConfig UnixSocketClient::get_latest_concrete_config(
   const std::string& config_schema_digest,
   const std::string& config_slug
-) {
+) const {
   std::string path = base_path() + "/concrete_configs/latest?config_schema_digest=" +
                      config_schema_digest + "&config_slug=" + config_slug;
   auto req = build_get_request(host(), path);
@@ -71,7 +71,7 @@ openapi::BaseConcreteConfig UnixSocketClient::get_latest_concrete_config(
 
 openapi::BaseConcreteConfig UnixSocketClient::refresh_latest_concrete_config(
   const openapi::RefreshLatestConcreteConfigRequest& request
-) {
+) const {
   std::string path = base_path() + "/concrete_configs/refresh_latest";
   auto req = build_post_request(host(), path, request.to_json().dump());
   std::chrono::milliseconds timeout = std::chrono::seconds(10);

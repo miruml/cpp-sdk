@@ -132,11 +132,11 @@ std::string to_string(const std::vector<Parameter>& parameters) {
   };
 
   std::stringstream ss;
-  ss << "{";
+  ss << "{\n";
   bool first = true;
   for (const auto& pv : parameters) {
     if (first == false) {
-      ss << ", ";
+      ss << ",\n";
     } else {
       first = false;
     }

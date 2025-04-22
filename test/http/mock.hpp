@@ -15,24 +15,12 @@
 namespace miru::http {
 
 namespace openapi = org::openapitools::server::model;
-namespace http = boost::beast::http;
 
-class UnixSocketClient : public BackendClientI {
+class MockBackendClient : public BackendClientI {
  public:
-  UnixSocketClient(const std::string& socket_path = "/tmp/miru.sock")
-    : socket_path_(socket_path), base_path_("/v1"), host_("localhost"), port_("80") {}
-  ~UnixSocketClient() {}
-
-  std::pair<http::response<http::string_body>, RequestDetails> execute(
-    const http::request<http::string_body>& req,
-    const std::chrono::milliseconds& timeout
-  ) const;
-
-  const std::string& base_path() const { return base_path_; }
-  const std::string& host() const { return host_; }
-  const std::string& port() const { return port_; }
-
-  nlohmann::json test_route();
+  std::function<std::string()> hash_schema_func;
+  std::function<openapi::BaseConcreteConfig()> get_latest_concrete_config_func;
+  std::function<openapi::BaseConcreteConfig()> refresh_latest_concrete_config_func;
 
   // route specific functions
   std::string hash_schema(const openapi::HashSchemaRequest& config_schema) const;
@@ -43,12 +31,6 @@ class UnixSocketClient : public BackendClientI {
   openapi::BaseConcreteConfig refresh_latest_concrete_config(
     const openapi::RefreshLatestConcreteConfigRequest& request
   ) const;
-
- private:
-  std::string socket_path_;
-  std::string base_path_;
-  std::string host_;
-  std::string port_;
 };
 
 }  // namespace miru::http
