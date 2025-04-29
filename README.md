@@ -4,8 +4,8 @@
 
 | Directory | Description |
 |-----------|-------------|
+| cmake     | cmake files for configuring and building with cmake |
 | examples  | simple examples using the miru sdk. |
-| cmake     | cmake files for importing and configuring external libraries. |
 | miru      | miru sdk implementation. |
 | scripts   | scripts used in the development and release process. |
 | tests     | tests for the miru sdk |
@@ -26,7 +26,8 @@ Various CMake options are available to customize the builds.
 
 | Option | Description | Default | Requires |
 |--------|-------------|---------|----------|
-| `BUILD_TESTING` | turn off to disable all testing and only build the SDK targets. | On | N/A  |
+| `MIRU_BUILD_TESTS` | turn off to disable all testing and only build the SDK targets. | On | N/A  |
+| `MIRU_BUILD_EXAMPLES` | turn off to disable all examples and only build the SDK targets. | On | N/A  |
 
 ## Build from Source
 
@@ -35,7 +36,7 @@ Navigate to the root of the git repository. Configure CMake with
 ```bash
 # use fetch content to compile with boost instead of the system boost dependency
 # don't build the tests
-cmake -B build -S . -DMIRU_USE_SYSTEM_BOOST=Off -DBUILD_TESTING=Off 
+cmake -B build -S .
 ```
 
 Then build with
