@@ -1,5 +1,13 @@
-cmake_minimum_required(VERSION 3.12)
-set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+cmake_minimum_required(VERSION 3.15)
+
+# cmake policies
+cmake_policy(SET CMP0135 NEW)
+cmake_policy(SET CMP0069 NEW)
+
+# supress deprecation warnings from dependencies
+set(CMAKE_WARN_DEPRECATED OFF CACHE BOOL "" FORCE)
+set(CMAKE_WARN_DEPRECATED_BEFORE "3.15" CACHE STRING "" FORCE)
+
 project(miru_sdk VERSION 0.1.0 LANGUAGES CXX)
 
 # Set build type if not specified
@@ -34,10 +42,35 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Find required packages
-find_package(Boost REQUIRED COMPONENTS asio beast)
-find_package(nlohmann_json 3.11 REQUIRED)
-find_package(yaml-cpp 0.8 REQUIRED)
+
+# Use FetchContent for most dependencies
+include(FetchContent)
+
+# https://github.com/nlohmann/json?tab=readme-ov-file#embedded-fetchcontent
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
+FetchContent_MakeAvailable(json)
+
+# https://github.com/jbeder/yaml-cpp?tab=readme-ov-file#how-to-integrate-it-within-your-project-using-cmake
+FetchContent_Declare(
+yaml-cpp
+GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+GIT_TAG 0.8.0
+)
+FetchContent_MakeAvailable(yaml-cpp)
+
+# fetch boost from system by default but allow FetchContent use if desire
+option(MIRU_USE_SYSTEM_BOOST "Use system-installed Boost instead of FetchContent" ON)
+if(MIRU_USE_SYSTEM_BOOST)
+    find_package(Boost REQUIRED COMPONENTS asio beast)
+else()
+    FetchContent_Declare(
+        boost
+        URL https://github.com/boostorg/boost/releases/download/boost-1.83.0/boost-1.83.0.tar.gz
+    )
+    set(BOOST_INCLUDE_LIBRARIES asio beast)
+    set(BOOST_ENABLE_CMAKE ON)
+    FetchContent_MakeAvailable(boost)
+endif()
 
 add_library(miru
     miru/config/config.hpp
@@ -160,27 +193,7 @@ if(BUILD_TESTING)
 endif()
 
 # Optional: Create example executable
-if (BUILD_EXAMPLES OR BUILD_FILESYS_EXAMPLE)
-    add_executable(filesys_example.out examples/filesys/main.cpp)
-    target_link_libraries(filesys_example.out PRIVATE miru)
-endif()
-
-if (BUILD_EXAMPLES OR BUILD_SOCKET_EXAMPLE)
-    add_executable(socket_example.out examples/socket/main.cpp)
-    target_link_libraries(
-        socket_example.out PRIVATE
-        miru
-        Boost::asio
-    )
-endif()
-
-option(BUILD_HTTP_EXAMPLE "Build HTTP example" ON)
-if (BUILD_EXAMPLES OR BUILD_HTTP_EXAMPLE)
-    add_executable(http_example.out examples/http/main.cpp)
-    target_link_libraries(
-        http_example.out PRIVATE
-        miru
-        Boost::asio
-        Boost::beast
-    )
-endif()
+# if (BUILD_EXAMPLES OR BUILD_FILESYS_EXAMPLE)
+#     add_executable(filesys_example.out examples/filesys/main.cpp)
+#     target_link_libraries(filesys_example.out PRIVATE miru)
+# endif()
