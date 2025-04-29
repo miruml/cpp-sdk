@@ -1,4 +1,5 @@
-# Building from Source
+# Miru C++ SDK
+This repository contains the [miru](https://www.miruml.com/) C++ SDK for retrieving configs from the miru agent on your device.
 
 ## Organization
 
@@ -22,12 +23,12 @@ GoogleTest is used for testing.
 
 ## CMake Options
 
-Various CMake options are available to customize the builds.
+CMake options are available to customize the builds.
 
-| Option | Description | Default | Requires |
-|--------|-------------|---------|----------|
-| `MIRU_BUILD_TESTS` | turn off to disable all testing and only build the SDK targets. | On | N/A  |
-| `MIRU_BUILD_EXAMPLES` | turn off to disable all examples and only build the SDK targets. | On | N/A  |
+| Option | Description | Default |
+|--------|-------------|---------|
+| `MIRU_BUILD_TESTS` | turn off to disable all testing and only build the SDK targets. | On |
+| `MIRU_BUILD_EXAMPLES` | turn off to disable all examples and only build the SDK targets. | On |
 
 ## Build from Source
 
@@ -44,23 +45,32 @@ Then build with
 cmake --build build
 ```
 
-## Installing
+## Install
 
-To install the built project:
+To install the built project (from the repository root):
 
 ```bash
-cmake --build . --target install
+cmake --build build --target install
 ```
 
-Note: On Linux/macOS, you might need to use `sudo` for installation to system directories.
+> [!NOTE]
+> Note: You might need to use `sudo` for installation to system directories.
 
-## Troubleshooting
+## Include via `add_subdirectory`
 
-- If CMake can't find dependencies, ensure they are installed and their paths are properly set in CMAKE_PREFIX_PATH
-- Check that all required development packages are installed on your system
+```cmake
+# Set SDK build options, for example:
+set(MIRU_BUILD_SHARED_LIBS On)
 
-## Additional Notes
+add_subdirectory(path-to-miru-sdk-repo)
+target_link_libraries(your-app PRIVATE miru::miru)
+```
 
-- The build artifacts will be located in the `build` directory
-- Debug builds will have additional debugging symbols and reduced optimization
-- Release builds will have optimizations enabled and debugging symbols stripped
+## Include via `find_package`
+
+First install the SDK on the build system via `cmake --install`
+
+```cmake
+find_package(miru REQUIRED)
+target_link_libraries(your-app PRIVATE miru::miru)
+```
