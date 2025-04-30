@@ -17,21 +17,21 @@ namespace openapi = org::openapitools::server::model;
 
 // ============================== READ CONFIG SLUG ================================= //
 TEST(Config, ConfigSlugFoundJson) {
-  miru::filesys::File schema_file(
+  miru::filesys::details::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.json")
   );
   EXPECT_EQ(miru::config::read_schema_config_slug(schema_file), "motion-control");
 }
 
 TEST(Config, ConfigSlugFoundYaml) {
-  miru::filesys::File schema_file(
+  miru::filesys::details::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.yaml")
   );
   EXPECT_EQ(miru::config::read_schema_config_slug(schema_file), "motion-control");
 }
 
 TEST(Config, EmptyConfigSlugJson) {
-  miru::filesys::File schema_file(
+  miru::filesys::details::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("empty-config-slug.json")
   );
   EXPECT_THROW(
@@ -40,7 +40,7 @@ TEST(Config, EmptyConfigSlugJson) {
 }
 
 TEST(Config, EmptyConfigSlugYaml) {
-  miru::filesys::File schema_file(
+  miru::filesys::details::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("empty-config-slug.yaml")
   );
   EXPECT_THROW(
@@ -49,7 +49,7 @@ TEST(Config, EmptyConfigSlugYaml) {
 }
 
 TEST(Config, ConfigSlugNotFoundJson) {
-  miru::filesys::File schema_file(
+  miru::filesys::details::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("missing-config-slug.json")
   );
   EXPECT_THROW(
@@ -58,7 +58,7 @@ TEST(Config, ConfigSlugNotFoundJson) {
 }
 
 TEST(Config, ConfigSlugNotFoundYaml) {
-  miru::filesys::File schema_file(
+  miru::filesys::details::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("missing-config-slug.yaml")
   );
   EXPECT_THROW(
@@ -68,10 +68,10 @@ TEST(Config, ConfigSlugNotFoundYaml) {
 
 // ================================ FROM FILE SYSTEM =============================== //
 TEST(Config, FromFileSystemJson) {
-  miru::filesys::File schema_file(
+  miru::filesys::details::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.json")
   );
-  miru::filesys::File config_file(
+  miru::filesys::details::File config_file(
     miru::test_utils::config_data_testdata_dir().file("motion-control.json")
   );
   miru::config::Config config = miru::config::Config::from_file(
@@ -84,10 +84,10 @@ TEST(Config, FromFileSystemJson) {
 }
 
 TEST(Config, FromFileSystemYaml) {
-  miru::filesys::File schema_file(
+  miru::filesys::details::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.yaml")
   );
-  miru::filesys::File config_file(
+  miru::filesys::details::File config_file(
     miru::test_utils::config_data_testdata_dir().file("motion-control.yaml")
   );
   miru::config::Config config = miru::config::Config::from_file(
@@ -100,10 +100,10 @@ TEST(Config, FromFileSystemYaml) {
 }
 
 TEST(Config, FromFileSystemJsonRos2) {
-  miru::filesys::File schema_file(
+  miru::filesys::details::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.json")
   );
-  miru::filesys::File config_file(
+  miru::filesys::details::File config_file(
     miru::test_utils::config_data_testdata_dir().file("motion-control.json")
   );
   miru::config::Config config = miru::config::Config::from_file(
@@ -116,10 +116,10 @@ TEST(Config, FromFileSystemJsonRos2) {
 }
 
 TEST(Config, FromFileSystemYamlRos2) {
-  miru::filesys::File schema_file(
+  miru::filesys::details::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.yaml")
   );
-  miru::filesys::File config_file(
+  miru::filesys::details::File config_file(
     miru::test_utils::config_data_testdata_dir().file("motion-control.yaml")
   );
   miru::config::Config config = miru::config::Config::from_file(
@@ -156,10 +156,10 @@ TEST(Config, FromAgentRefreshSuccess) {
   };
 
   // set the schema file and default config file
-  miru::filesys::File schema_file(
+  miru::filesys::details::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.yaml")
   );
-  miru::filesys::File default_config_file(
+  miru::filesys::details::File default_config_file(
     miru::test_utils::config_data_testdata_dir().file("motion-control.yaml")
   );
   miru::config::FromAgentOptions options;
@@ -206,10 +206,10 @@ TEST(Config, FromAgentRefreshFailureGetSuccess) {
   };
 
   // set the schema file and default config file
-  miru::filesys::File schema_file(
+  miru::filesys::details::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.yaml")
   );
-  miru::filesys::File default_config_file(
+  miru::filesys::details::File default_config_file(
     miru::test_utils::config_data_testdata_dir().file("motion-control.yaml")
   );
   miru::config::FromAgentOptions options;
@@ -241,10 +241,10 @@ TEST(Config, FromAgentDefaultFile) {
   };
 
   // set the schema file and default config file
-  miru::filesys::File schema_file(
+  miru::filesys::details::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.yaml")
   );
-  miru::filesys::File default_config_file(
+  miru::filesys::details::File default_config_file(
     miru::test_utils::config_data_testdata_dir().file("motion-control.yaml")
   );
   miru::config::FromAgentOptions options;

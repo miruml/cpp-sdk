@@ -3,7 +3,7 @@
 // std
 #include <filesystem>
 
-namespace miru::filesys {
+namespace miru::filesys::details {
 
 class Path {
  public:
@@ -16,4 +16,4 @@ class Path {
   std::filesystem::path path_;
 };
 
-}  // namespace miru::filesys
+}  // namespace miru::filesys::details

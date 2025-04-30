@@ -24,7 +24,7 @@ using Scalar = miru::params::Scalar;
 // ================================ parse_json_node ================================ //
 class ParseJsonNode : public ::testing::Test {
  protected:
-  miru::filesys::File json_file =
+  miru::filesys::details::File json_file =
     miru::test_utils::params_testdata_dir().file("load.json");
 };
 
@@ -231,7 +231,7 @@ TEST_F(ParseJsonNode, ValidMapArray) {
 // ================================== load_yaml ==================================== //
 class ParseYamlNode : public ::testing::Test {
  protected:
-  miru::filesys::File yaml_file =
+  miru::filesys::details::File yaml_file =
     miru::test_utils::params_testdata_dir().file("load.yaml");
 };
 

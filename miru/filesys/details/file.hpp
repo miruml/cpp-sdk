@@ -14,7 +14,7 @@
 
 #include <nlohmann/json.hpp>
 
-namespace miru::filesys {
+namespace miru::filesys::details {
 
 // file types
 enum class FileType {
@@ -41,4 +41,4 @@ class File : public Path {
   std::string read_string() const;
 };
 
-}  // namespace miru::filesys
+}  // namespace miru::filesys::details

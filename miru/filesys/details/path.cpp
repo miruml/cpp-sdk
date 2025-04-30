@@ -1,7 +1,7 @@
 // internal
 #include <miru/filesys/details/path.hpp>
 
-namespace miru::filesys {
+namespace miru::filesys::details {
 
 // returns the lexically normalized absolute path ("../" would be removed)
 std::filesystem::path Path::abs_path() const {
@@ -13,4 +13,4 @@ std::filesystem::path Path::abs_path() const {
   return abs_path;
 }
 
-}  // namespace miru::filesys
+}  // namespace miru::filesys::details

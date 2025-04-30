@@ -23,13 +23,13 @@ class FromAgentOptionsError : public std::runtime_error {
 class ConfigSlugNotFound : public std::runtime_error {
  public:
   explicit ConfigSlugNotFound(
-    const miru::filesys::File& schema_file,
+    const miru::filesys::details::File& schema_file,
     const errors::ErrorTrace& trace
   )
     : std::runtime_error(format_message(schema_file, trace)) {}
 
   static std::string format_message(
-    const miru::filesys::File& schema_file,
+    const miru::filesys::details::File& schema_file,
     const errors::ErrorTrace& trace
   ) {
     return "Unable to find config slug in schema file '" +
@@ -44,13 +44,13 @@ class ConfigSlugNotFound : public std::runtime_error {
 class EmptyConfigSlug : public std::runtime_error {
  public:
   explicit EmptyConfigSlug(
-    const miru::filesys::File& schema_file,
+    const miru::filesys::details::File& schema_file,
     const errors::ErrorTrace& trace
   )
     : std::runtime_error(format_message(schema_file, trace)) {}
 
   static std::string format_message(
-    const miru::filesys::File& schema_file,
+    const miru::filesys::details::File& schema_file,
     const errors::ErrorTrace& trace
   ) {
     return "Config slug is in schema file '" + schema_file.abs_path().string() +
@@ -64,14 +64,14 @@ class EmptyConfigSlug : public std::runtime_error {
 class InvalidConfigSchemaFileTypeError : public std::runtime_error {
  public:
   explicit InvalidConfigSchemaFileTypeError(
-    const miru::filesys::File& schema_file,
+    const miru::filesys::details::File& schema_file,
     const std::vector<std::string>& expected_file_types,
     const errors::ErrorTrace& trace
   )
     : std::runtime_error(format_message(schema_file, expected_file_types, trace)) {}
 
   static std::string format_message(
-    const miru::filesys::File& schema_file,
+    const miru::filesys::details::File& schema_file,
     const std::vector<std::string>& expected_file_types,
     const errors::ErrorTrace& trace
   ) {

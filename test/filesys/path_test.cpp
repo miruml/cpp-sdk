@@ -20,7 +20,7 @@ class Paths : public testing::TestWithParam<PathTestCase> {};
 
 TEST_P(Paths, Path) {
   const auto& [test_name, expected_path] = GetParam();
-  miru::filesys::Path path(expected_path);
+  miru::filesys::details::Path path(expected_path);
   EXPECT_EQ(path.path(), expected_path);
 }
 
@@ -57,7 +57,7 @@ class AbsPaths : public testing::TestWithParam<AbsPathTestCase> {};
 
 TEST_P(AbsPaths, AbsPath) {
   const auto& [test_name, path_arg, expected_abs_path] = GetParam();
-  miru::filesys::Path path(path_arg);
+  miru::filesys::details::Path path(path_arg);
   EXPECT_EQ(path.abs_path(), expected_abs_path);
 }
 
@@ -276,7 +276,7 @@ class Names : public testing::TestWithParam<NameTestCase> {};
 
 TEST_P(Names, Name) {
   const auto& [test_name, path_arg, expected_name] = GetParam();
-  miru::filesys::Path path(path_arg);
+  miru::filesys::details::Path path(path_arg);
   EXPECT_EQ(path.name(), expected_name);
 }
 

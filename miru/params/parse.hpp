@@ -28,6 +28,6 @@ miru::params::Parameter parse_structured_data(
 );
 
 miru::params::Parameter
-parse_file(const std::string& name, const miru::filesys::File& file);
+parse_file(const std::string& name, const miru::filesys::details::File& file);
 
 }  // namespace miru::params

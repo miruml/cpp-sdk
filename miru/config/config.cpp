@@ -20,10 +20,10 @@ namespace miru::config {
 
 namespace openapi = org::openapitools::server::model;
 
-std::string read_schema_config_slug(const miru::filesys::File& schema_file) {
+std::string read_schema_config_slug(const miru::filesys::details::File& schema_file) {
   std::string config_slug;
   switch (schema_file.file_type()) {
-    case miru::filesys::FileType::JSON: {
+    case miru::filesys::details::FileType::JSON: {
       nlohmann::json json_schema_content = schema_file.read_json();
       if (!json_schema_content.contains(MIRU_CONFIG_SLUG_FIELD)) {
         THROW_CONFIG_SLUG_NOT_FOUND(schema_file);
@@ -31,7 +31,7 @@ std::string read_schema_config_slug(const miru::filesys::File& schema_file) {
       config_slug = json_schema_content[MIRU_CONFIG_SLUG_FIELD];
       break;
     }
-    case miru::filesys::FileType::YAML: {
+    case miru::filesys::details::FileType::YAML: {
       YAML::Node yaml_schema_content = schema_file.read_yaml();
       if (!yaml_schema_content[MIRU_CONFIG_SLUG_FIELD]) {
         THROW_CONFIG_SLUG_NOT_FOUND(schema_file);
@@ -56,13 +56,13 @@ Config Config::from_file(
   builder.with_source(ConfigSource::FileSystem);
 
   // read the config slug from the schema file
-  miru::filesys::File schema_file(schema_file_path);
+  miru::filesys::details::File schema_file(schema_file_path);
   builder.with_schema_file(schema_file);
   std::string config_slug = read_schema_config_slug(schema_file);
   builder.with_config_slug(config_slug);
 
   // read the config file
-  miru::filesys::File config_file(config_file_path);
+  miru::filesys::details::File config_file(config_file_path);
   builder.with_config_file(config_file);
   builder.with_data(miru::params::parse_file(config_slug, config_file));
 
@@ -73,17 +73,17 @@ Config Config::from_file(
 
 std::string hash_schema(
   const miru::http::BackendClientI& client,
-  const miru::filesys::File& schema_file
+  const miru::filesys::details::File& schema_file
 ) {
   // determine the schema file type
-  miru::filesys::FileType schema_file_type = schema_file.file_type();
+  miru::filesys::details::FileType schema_file_type = schema_file.file_type();
   openapi::HashSerializedConfigSchemaFormat format;
   switch (schema_file_type) {
-    case miru::filesys::FileType::JSON: {
+    case miru::filesys::details::FileType::JSON: {
       format.value = openapi::HashSerializedConfigSchemaFormat::eHashSerializedConfigSchemaFormat::HASH_SERIALIZED_CONFIG_SCHEMA_FORMAT_JSON;
       break;
     }
-    case miru::filesys::FileType::YAML: {
+    case miru::filesys::details::FileType::YAML: {
       format.value = openapi::HashSerializedConfigSchemaFormat::eHashSerializedConfigSchemaFormat::HASH_SERIALIZED_CONFIG_SCHEMA_FORMAT_YAML;
       break;
     }
@@ -129,7 +129,7 @@ Config from_agent_impl(
   builder.with_source(ConfigSource::Agent);
 
   // read the config slug
-  miru::filesys::File schema_file(schema_file_path);
+  miru::filesys::details::File schema_file(schema_file_path);
   builder.with_schema_file(schema_file);
   std::string config_slug = read_schema_config_slug(schema_file);
   builder.with_config_slug(config_slug);
@@ -199,7 +199,7 @@ miru::query::ROS2StyleQuery Config::ros2() const {
 }
 
 // ================================ CONFIG BUILDER ================================ //
-ConfigBuilder& ConfigBuilder::with_schema_file(const miru::filesys::File& schema_file) {
+ConfigBuilder& ConfigBuilder::with_schema_file(const miru::filesys::details::File& schema_file) {
   if (schema_file_.has_value()) {
     throw std::runtime_error("Schema file already set");
   }
@@ -239,7 +239,7 @@ ConfigBuilder& ConfigBuilder::with_schema_digest(const std::string& schema_diges
   return *this;
 }
 
-ConfigBuilder& ConfigBuilder::with_config_file(const miru::filesys::File& config_file) {
+ConfigBuilder& ConfigBuilder::with_config_file(const miru::filesys::details::File& config_file) {
   if (config_file_.has_value()) {
     throw std::runtime_error("Config file already set");
   }

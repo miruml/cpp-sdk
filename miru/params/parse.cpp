@@ -241,7 +241,7 @@ miru::params::Parameter parse_structured_data(
 }
 
 miru::params::Parameter
-parse_file(const std::string& name, const miru::filesys::File& file) {
+parse_file(const std::string& name, const miru::filesys::details::File& file) {
   std::variant<nlohmann::json, YAML::Node> data = file.read_structured_data();
   return parse_structured_data(name, data);
 }

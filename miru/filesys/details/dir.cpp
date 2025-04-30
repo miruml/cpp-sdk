@@ -2,7 +2,7 @@
 #include <miru/filesys/details/dir.hpp>
 #include <miru/filesys/errors.hpp>
 
-namespace miru::filesys {
+namespace miru::filesys::details {
 
 Dir Dir::parent() const { return Dir(abs_path().parent_path()); }
 
@@ -34,4 +34,4 @@ bool Dir::exists() const {
   return std::filesystem::exists(path_) && std::filesystem::is_directory(path_);
 }
 
-}  // namespace miru::filesys
+}  // namespace miru::filesys::details

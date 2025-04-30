@@ -7,7 +7,7 @@
 #include <miru/filesys/details/file.hpp>
 #include <miru/filesys/details/path.hpp>
 
-namespace miru::filesys {
+namespace miru::filesys::details {
 
 class Dir : public Path {
  public:
@@ -20,11 +20,11 @@ class Dir : public Path {
 
   Dir parent() const;
   Dir subdir(const std::filesystem::path& path) const { return Dir(path_ / path); }
-  miru::filesys::File file(const std::filesystem::path& path) const {
-    return miru::filesys::File(path_ / path);
+  miru::filesys::details::File file(const std::filesystem::path& path) const {
+    return miru::filesys::details::File(path_ / path);
   }
 
   Dir git_root() const;
 };
 
-}  // namespace miru::filesys
+}  // namespace miru::filesys::details

@@ -23,7 +23,7 @@ enum class FileExceptionType {
 // ============================ file_type:string conversion ======================== //
 struct FileTypeStringConversionTestCase {
   std::string test_name;
-  std::optional<miru::filesys::FileType> file_type;
+  std::optional<miru::filesys::details::FileType> file_type;
   std::string file_type_string;
   FileExceptionType expected_exception;
 };
@@ -33,16 +33,16 @@ class FileTypeStringConversion
 
 TEST_P(FileTypeStringConversion, FileTypeStringConversion) {
   const auto& [_, opt_file_type, file_type_string, expected_exception] = GetParam();
-  miru::filesys::FileType file_type;
+  miru::filesys::details::FileType file_type;
   switch (expected_exception) {
     case FileExceptionType::None:
       file_type = opt_file_type.value();
-      EXPECT_EQ(miru::filesys::file_type_to_string(file_type), file_type_string);
-      EXPECT_EQ(miru::filesys::string_to_file_type(file_type_string), file_type);
+      EXPECT_EQ(miru::filesys::details::file_type_to_string(file_type), file_type_string);
+      EXPECT_EQ(miru::filesys::details::string_to_file_type(file_type_string), file_type);
       break;
     case FileExceptionType::InvalidFileType:
       EXPECT_THROW(
-        miru::filesys::string_to_file_type(file_type_string),
+        miru::filesys::details::string_to_file_type(file_type_string),
         miru::filesys::InvalidFileTypeError
       );
       break;
@@ -63,19 +63,19 @@ INSTANTIATE_TEST_SUITE_P(
   testing::Values(
     FileTypeStringConversionTestCase{
       "JSON",
-      miru::filesys::FileType::JSON,
+      miru::filesys::details::FileType::JSON,
       "JSON",
       FileExceptionType::None
     },
     FileTypeStringConversionTestCase{
       "YAML",
-      miru::filesys::FileType::YAML,
+      miru::filesys::details::FileType::YAML,
       "YAML",
       FileExceptionType::None
     },
     FileTypeStringConversionTestCase{
       "YML",
-      miru::filesys::FileType::YAML,
+      miru::filesys::details::FileType::YAML,
       "YAML",
       FileExceptionType::None
     },
@@ -100,7 +100,7 @@ class Extensions : public testing::TestWithParam<ExtensionTestCase> {};
 
 TEST_P(Extensions, Extension) {
   const auto& [test_name, path, extension] = GetParam();
-  miru::filesys::File file(path);
+  miru::filesys::details::File file(path);
   EXPECT_EQ(file.extension(), extension);
 }
 
@@ -135,7 +135,7 @@ INSTANTIATE_TEST_SUITE_P(
 struct FileTypeTestCase {
   std::string test_name;
   std::filesystem::path path;
-  std::optional<miru::filesys::FileType> file_type;
+  std::optional<miru::filesys::details::FileType> file_type;
   FileExceptionType expected_exception;
 };
 
@@ -143,7 +143,7 @@ class FileTypes : public testing::TestWithParam<FileTypeTestCase> {};
 
 TEST_P(FileTypes, FileType) {
   const auto& [test_name, path, file_type, expected_exception] = GetParam();
-  miru::filesys::File file(path);
+  miru::filesys::details::File file(path);
   switch (expected_exception) {
     case FileExceptionType::None:
       EXPECT_EQ(file.file_type(), file_type);
@@ -168,13 +168,13 @@ INSTANTIATE_TEST_SUITE_P(
     FileTypeTestCase{
       "json file",
       std::filesystem::path("arglebargle.json"),
-      std::optional<miru::filesys::FileType>(miru::filesys::FileType::JSON),
+      std::optional<miru::filesys::details::FileType>(miru::filesys::details::FileType::JSON),
       FileExceptionType::None
     },
     FileTypeTestCase{
       "yaml file",
       std::filesystem::path("lebron.james.yaml"),
-      std::optional<miru::filesys::FileType>(miru::filesys::FileType::YAML),
+      std::optional<miru::filesys::details::FileType>(miru::filesys::details::FileType::YAML),
       FileExceptionType::None
     },
     FileTypeTestCase{
@@ -210,7 +210,7 @@ class AssertExistsTest : public testing::TestWithParam<AssertExistsTestCase> {};
 
 TEST_P(AssertExistsTest, AssertExists) {
   const AssertExistsTestCase& test_case = GetParam();
-  miru::filesys::File file(test_case.path);
+  miru::filesys::details::File file(test_case.path);
   switch (test_case.expected_exception) {
     case FileExceptionType::None:
       EXPECT_NO_THROW(file.assert_exists());
@@ -285,8 +285,8 @@ INSTANTIATE_TEST_SUITE_P(
 // //
 class ReadString : public ::testing::Test {
  protected:
-  miru::filesys::File doesnt_exist{"doesnt/exist.json"};
-  miru::filesys::File text_file =
+  miru::filesys::details::File doesnt_exist{"doesnt/exist.json"};
+  miru::filesys::details::File text_file =
     miru::test_utils::filesys_testdata_dir().file("text.txt");
 };
 
@@ -302,12 +302,12 @@ TEST_F(ReadString, ValidString) {
 // ================================= read_json() =================================== //
 class ReadJson : public ::testing::Test {
  protected:
-  miru::filesys::File doesnt_exist{"doesnt/exist.json"};
-  miru::filesys::File invalid_file_type =
+  miru::filesys::details::File doesnt_exist{"doesnt/exist.json"};
+  miru::filesys::details::File invalid_file_type =
     miru::test_utils::filesys_testdata_dir().file("text.txt");
-  miru::filesys::File invalid_json_file =
+  miru::filesys::details::File invalid_json_file =
     miru::test_utils::filesys_testdata_dir().file("invalid.json");
-  miru::filesys::File json_file =
+  miru::filesys::details::File json_file =
     miru::test_utils::filesys_testdata_dir().file("valid.json");
 };
 
@@ -340,16 +340,16 @@ TEST_F(ReadJson, ValidJson) {
 // ================================= read_yaml() =================================== //
 class ReadYaml : public ::testing::Test {
  protected:
-  miru::filesys::File doesnt_exist{"doesnt/exist.yaml"};
-  miru::filesys::File invalid_file_type =
+  miru::filesys::details::File doesnt_exist{"doesnt/exist.yaml"};
+  miru::filesys::details::File invalid_file_type =
     miru::test_utils::filesys_testdata_dir().file("text.txt");
-  miru::filesys::File invalid_yaml_file =
+  miru::filesys::details::File invalid_yaml_file =
     miru::test_utils::filesys_testdata_dir().file("invalid.yaml");
-  miru::filesys::File json_file =
+  miru::filesys::details::File json_file =
     miru::test_utils::filesys_testdata_dir().file("valid.json");
-  miru::filesys::File yaml_file =
+  miru::filesys::details::File yaml_file =
     miru::test_utils::filesys_testdata_dir().file("valid.yaml");
-  miru::filesys::File yml_file =
+  miru::filesys::details::File yml_file =
     miru::test_utils::filesys_testdata_dir().file("valid.yml");
 };
 

@@ -51,7 +51,7 @@ TEST(HTTPClient, DISABLED_Sandbox) {
   auto res = client.test_route();
 
   // hash schema
-  miru::filesys::File schema_file(
+  miru::filesys::details::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.json")
   );
 

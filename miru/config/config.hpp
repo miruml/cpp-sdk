@@ -68,12 +68,12 @@ class Config {
 
  private:
   Config(
-    const miru::filesys::File& schema_file,
+    const miru::filesys::details::File& schema_file,
     const std::string& config_slug,
     ConfigSource source,
     const miru::params::Parameter& parameters,
     const std::optional<std::string>& schema_digest,
-    const std::optional<miru::filesys::File>& config_file
+    const std::optional<miru::filesys::details::File>& config_file
   )
     : schema_file_(schema_file),
       config_slug_(config_slug),
@@ -83,7 +83,7 @@ class Config {
       config_file_(config_file) {}
 
   // required
-  miru::filesys::File schema_file_;
+  miru::filesys::details::File schema_file_;
   std::string config_slug_;
   ConfigSource source_;
   miru::params::Parameter parameters_;
@@ -92,28 +92,28 @@ class Config {
   std::optional<std::string> schema_digest_;
 
   // only needed if sourcing from the file system
-  std::optional<miru::filesys::File> config_file_;
+  std::optional<miru::filesys::details::File> config_file_;
 
   // friends
   friend class ConfigBuilder;
 };
 
-std::string read_schema_config_slug(const miru::filesys::File& schema_file);
+std::string read_schema_config_slug(const miru::filesys::details::File& schema_file);
 
 class ConfigBuilder {
  public:
   ConfigBuilder() {}
-  ConfigBuilder& with_schema_file(const miru::filesys::File& schema_file);
+  ConfigBuilder& with_schema_file(const miru::filesys::details::File& schema_file);
   ConfigBuilder& with_config_slug(const std::string& config_slug);
   ConfigBuilder& with_source(ConfigSource source);
   ConfigBuilder& with_data(const miru::params::Parameter& data);
   ConfigBuilder& with_schema_digest(const std::string& schema_digest);
-  ConfigBuilder& with_config_file(const miru::filesys::File& config_file);
+  ConfigBuilder& with_config_file(const miru::filesys::details::File& config_file);
   Config build();
 
  private:
   // required
-  std::optional<miru::filesys::File> schema_file_;
+  std::optional<miru::filesys::details::File> schema_file_;
   std::optional<std::string> config_slug_;
   std::optional<ConfigSource> source_;
   std::optional<miru::params::Parameter> data_;
@@ -122,7 +122,7 @@ class ConfigBuilder {
   std::optional<std::string> schema_digest_;
 
   // only needed if sourcing from the file system
-  std::optional<miru::filesys::File> config_file_;
+  std::optional<miru::filesys::details::File> config_file_;
 };
 
 }  // namespace miru::config

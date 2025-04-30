@@ -9,7 +9,7 @@
 #include <yaml-cpp/yaml.h>
 #include <nlohmann/json.hpp>
 
-namespace miru::filesys {
+namespace miru::filesys::details {
 
 std::vector<FileType> supported_file_types() {
   return {
@@ -117,4 +117,4 @@ std::variant<nlohmann::json, YAML::Node> File::read_structured_data() const {
   );
 }
 
-}  // namespace miru::filesys
+}  // namespace miru::filesys::details

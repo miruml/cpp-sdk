@@ -31,7 +31,7 @@ class Exists : public testing::TestWithParam<ExistsTestCase> {};
 
 TEST_P(Exists, Exists) {
   const auto& [test_name, path, expected_exception] = GetParam();
-  miru::filesys::Dir dir(path);
+  miru::filesys::details::Dir dir(path);
 
   switch (expected_exception) {
     case DirExceptionType::None:
@@ -90,7 +90,7 @@ class Parent : public testing::TestWithParam<ParentTestCase> {};
 
 TEST_P(Parent, Parent) {
   const auto& [test_name, path, expected_parent] = GetParam();
-  miru::filesys::Dir dir(path);
+  miru::filesys::details::Dir dir(path);
   EXPECT_EQ(dir.parent().path(), expected_parent);
 }
 
@@ -122,7 +122,7 @@ class Subdir : public testing::TestWithParam<SubdirTestCase> {};
 
 TEST_P(Subdir, Subdir) {
   const auto& [test_name, path, subdir_extension, expected_subdir_path] = GetParam();
-  miru::filesys::Dir dir(path);
+  miru::filesys::details::Dir dir(path);
   EXPECT_EQ(dir.subdir(subdir_extension).path(), expected_subdir_path);
 }
 
@@ -169,7 +169,7 @@ class File : public testing::TestWithParam<FileTestCase> {};
 
 TEST_P(File, File) {
   const auto& [test_name, path, file_extension, expected_file_path] = GetParam();
-  miru::filesys::Dir dir(path);
+  miru::filesys::details::Dir dir(path);
   EXPECT_EQ(dir.file(file_extension).path(), expected_file_path);
 }
 
@@ -216,7 +216,7 @@ class GitRepoRootDirs : public testing::TestWithParam<GitRepoRootDirTestCase> {}
 TEST_P(GitRepoRootDirs, GitRepoRootDir) {
   const auto& [test_name, path, expected_git_repo_root_dir, expected_exception] =
     GetParam();
-  miru::filesys::Dir dir(path);
+  miru::filesys::details::Dir dir(path);
   switch (expected_exception) {
     case DirExceptionType::None:
       EXPECT_EQ(dir.git_root().path(), expected_git_repo_root_dir);
@@ -245,7 +245,7 @@ INSTANTIATE_TEST_SUITE_P(
     GitRepoRootDirTestCase{
       "git repo from filesystem data directory",
       miru::test_utils::filesys_testdata_dir().path(),
-      miru::filesys::Dir(
+      miru::filesys::details::Dir(
         miru::test_utils::filesys_testdata_dir().path() / ".." / ".." / ".."
       )
         .abs_path(),
@@ -253,8 +253,8 @@ INSTANTIATE_TEST_SUITE_P(
     },
     GitRepoRootDirTestCase{
       "git repo from current directory",
-      miru::filesys::Dir::from_current_dir().path(),
-      miru::filesys::Dir(
+      miru::filesys::details::Dir::from_current_dir().path(),
+      miru::filesys::details::Dir(
         miru::test_utils::filesys_testdata_dir().path() / ".." / ".." / ".."
       )
         .abs_path(),

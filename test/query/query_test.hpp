@@ -23,7 +23,7 @@ struct SingleQueryTest {
 class QueryTest : public ::testing::Test {
  public:
   static std::vector<SingleQueryTest> get_tests() {
-    miru::filesys::Dir query_dir = miru::test_utils::query_testdata_dir();
+    miru::filesys::details::Dir query_dir = miru::test_utils::query_testdata_dir();
     nlohmann::json json = query_dir.file("query.json").read_json();
     std::vector<SingleQueryTest> tests;
     for (const auto& test_json : json) {
