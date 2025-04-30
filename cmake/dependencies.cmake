@@ -14,10 +14,9 @@ GIT_TAG 0.8.0
 FetchContent_MakeAvailable(yaml-cpp)
 
 # fetch boost from system by default but allow FetchContent use if desire
-option(MIRU_USE_SYSTEM_BOOST "Use system-installed Boost instead of FetchContent" ON)
-if(MIRU_USE_SYSTEM_BOOST)
-    find_package(Boost REQUIRED COMPONENTS asio beast)
-else()
+option(MIRU_FETCH_BOOST "fetch Boost packages with FetchContent as opposed to using the Boost package located on the build system" OFF)
+if(MIRU_FETCH_BOOST)
+    message(STATUS "Fetching Boost with FetchContent")
     FetchContent_Declare(
         boost
         URL https://github.com/boostorg/boost/releases/download/boost-1.83.0/boost-1.83.0.tar.gz
@@ -25,4 +24,7 @@ else()
     set(BOOST_INCLUDE_LIBRARIES asio beast)
     set(BOOST_ENABLE_CMAKE ON)
     FetchContent_MakeAvailable(boost)
+else ()
+    message(STATUS "Using system-installed Boost")
+    find_package(Boost REQUIRED COMPONENTS asio beast)
 endif()

@@ -29,6 +29,7 @@ CMake options are available to customize the builds.
 |--------|-------------|---------|
 | `MIRU_BUILD_TESTS` | turn off to disable all testing and only build the SDK targets. | On |
 | `MIRU_BUILD_EXAMPLES` | turn off to disable all examples and only build the SDK targets. | On |
+| `MIRU_FETCH_BOOST` | fetch Boost packages with FetchContent as opposed to using the Boost package located on the build system | Off |
 
 ## Build from Source
 
