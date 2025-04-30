@@ -11,7 +11,6 @@
 #include <miru/config/errors.hpp>
 #include <miru/http/details/socket_client.hpp>
 #include <miru/params/details/parse.hpp>
-#include <miru/query/ros2.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>
@@ -167,10 +166,6 @@ Config Config::from_agent(
 ) {
   miru::http::details::UnixSocketClient client;
   return from_agent_impl(client, schema_file_path, options);
-}
-
-miru::query::ROS2StyleQuery Config::ros2() const {
-  return miru::query::ROS2StyleQuery(parameters_);
 }
 
 }  // namespace miru::config

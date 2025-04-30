@@ -30,7 +30,7 @@ include(cmake/dependencies.cmake)
 
 # SOURCE CODE #
 # =========== #
-include(cmake/sources.cmake)
+include(cmake/source.cmake)
 
 add_library(miru ${MIRU_SOURCES})
 add_library(miru::miru ALIAS miru)

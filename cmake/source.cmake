@@ -95,7 +95,6 @@ set(QUERY_SOURCES
     miru/query/filter.hpp
     miru/query/filter.cpp
     miru/query/query.hpp
-    miru/query/ros2_fwd.hpp
     miru/query/ros2.hpp
     miru/query/ros2.cpp
 )

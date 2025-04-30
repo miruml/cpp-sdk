@@ -4,6 +4,7 @@
 #include <string>
 
 // internal
+#include <miru/config/config.hpp>
 #include <miru/params/parameter.hpp>
 #include <miru/query/query.hpp>
 
@@ -17,9 +18,11 @@ namespace miru::query {
 using Parameter = miru::params::Parameter;
 
 // Config class
-class ROS2StyleQuery {
+class ROS2 {
  public:
-  ROS2StyleQuery(const miru::params::Parameter& root) : root_(root) {}
+  ROS2(const miru::params::Parameter& root) : root_(root) {}
+
+  ROS2(const miru::config::Config& config) : root_(config.root_parameter()) {}
 
   // ============================== ROS2 INTERFACES ============================== //
 

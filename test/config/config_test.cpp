@@ -56,7 +56,7 @@ TEST(Config, FromFileSystemJsonRos2) {
     schema_file.abs_path().string(), config_file.abs_path().string()
   );
 
-  auto ros2 = config.ros2();
+  auto ros2 = miru::query::ROS2(config);
   auto speed = ros2.get_parameter("motion-control.speed");
   EXPECT_EQ(speed.as<int>(), 15);
 }
@@ -72,7 +72,8 @@ TEST(Config, FromFileSystemYamlRos2) {
     schema_file.abs_path().string(), config_file.abs_path().string()
   );
 
-  auto speed = config.ros2().get_parameter("motion-control.speed");
+  auto ros2 = miru::query::ROS2(config);
+  auto speed = ros2.get_parameter("motion-control.speed");
   EXPECT_EQ(speed.as<int>(), 15);
 }
 

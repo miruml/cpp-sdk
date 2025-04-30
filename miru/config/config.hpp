@@ -10,7 +10,6 @@
 #include <miru/http/details/client.hpp>
 #include <miru/http/details/socket_client.hpp>
 #include <miru/params/parameter.hpp>
-#include <miru/query/ros2_fwd.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>
@@ -62,8 +61,6 @@ class Config {
 
   const ConfigSource get_source() const { return source_; }
   const miru::params::Parameter& root_parameter() const { return parameters_; }
-
-  miru::query::ROS2StyleQuery ros2() const;
 
  private:
   Config(
