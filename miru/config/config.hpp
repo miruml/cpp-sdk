@@ -5,6 +5,7 @@
 #include <string>
 
 // internal
+#include <miru/config/details/config_fwd.hpp>
 #include <miru/filesys/details/file.hpp>
 #include <miru/http/details/client.hpp>
 #include <miru/http/details/socket_client.hpp>
@@ -93,7 +94,7 @@ class Config {
   std::optional<miru::filesys::details::File> config_file_;
 
   // friends
-  friend class ConfigBuilder;
+  friend class details::ConfigBuilder;
 };
 
 }  // namespace miru::config

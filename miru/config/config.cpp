@@ -22,17 +22,18 @@ namespace miru::config {
 
 namespace openapi = org::openapitools::server::model;
 
+// ================================= FROM FILE ===================================== //
 Config Config::from_file(
   const std::filesystem::path& schema_file_path,
   const std::filesystem::path& config_file_path
 ) {
-  ConfigBuilder builder;
+  details::ConfigBuilder builder;
   builder.with_source(ConfigSource::FileSystem);
 
   // read the config slug from the schema file
   miru::filesys::details::File schema_file(schema_file_path);
   builder.with_schema_file(schema_file);
-  std::string config_slug = read_schema_config_slug(schema_file);
+  std::string config_slug = details::read_schema_config_slug(schema_file);
   builder.with_config_slug(config_slug);
 
   // read the config file
@@ -99,13 +100,13 @@ Config from_agent_impl(
   const std::filesystem::path& schema_file_path,
   const FromAgentOptions& options
 ) {
-  ConfigBuilder builder;
+  details::ConfigBuilder builder;
   builder.with_source(ConfigSource::Agent);
 
   // read the config slug
   miru::filesys::details::File schema_file(schema_file_path);
   builder.with_schema_file(schema_file);
-  std::string config_slug = read_schema_config_slug(schema_file);
+  std::string config_slug = details::read_schema_config_slug(schema_file);
   builder.with_config_slug(config_slug);
 
   // hash the schema contents to retrieve the schema digest

@@ -1,4 +1,5 @@
 // internal
+#include <miru/config/config.hpp>
 #include <miru/config/details/builder.hpp>
 
 // external
@@ -6,7 +7,7 @@
 
 #include <nlohmann/json.hpp>
 
-namespace miru::config {
+namespace miru::config::details {
 
 ConfigBuilder& ConfigBuilder::with_schema_file(const miru::filesys::details::File& schema_file) {
   if (schema_file_.has_value()) {
@@ -80,9 +81,9 @@ Config ConfigBuilder::build() {
       "system)"
     );
   }
-  return Config(
+  return miru::config::Config(
     *schema_file_, *config_slug_, *source_, *data_, schema_digest_, config_file_
   );
 }
 
-}  // namespace miru::config
+}  // namespace miru::config::details

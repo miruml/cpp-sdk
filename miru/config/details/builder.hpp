@@ -5,13 +5,16 @@
 #include <string>
 
 // internal
-#include <miru/config/config.hpp>
+#include <miru/config/details/config_fwd.hpp>
+#include <miru/filesys/details/file.hpp>
+#include <miru/params/parameter.hpp>
+
 // external
 #include <yaml-cpp/yaml.h>
 
 #include <nlohmann/json.hpp>
 
-namespace miru::config {
+namespace miru::config::details {
 
 class ConfigBuilder {
  public:

@@ -7,7 +7,7 @@
 
 #include <nlohmann/json.hpp>
 
-namespace miru::config {
+namespace miru::config::details {
 
 std::string read_schema_config_slug(const miru::filesys::details::File& schema_file) {
   std::string config_slug;
@@ -37,4 +37,4 @@ std::string read_schema_config_slug(const miru::filesys::details::File& schema_f
   return config_slug;
 }
 
-}  // namespace miru::config
+}  // namespace miru::config::details
