@@ -5,16 +5,16 @@ This repository contains the [miru](https://www.miruml.com/) C++ SDK for retriev
 
 | Directory | Description |
 |-----------|-------------|
-| cmake     | cmake files for configuring and building with cmake |
+| cmake     | files for configuring and building with cmake |
 | examples  | simple examples using the miru sdk. |
 | miru      | miru sdk implementation. |
-| scripts   | scripts used in the development and release process. |
-| tests     | tests for the miru sdk |
+| scripts   | scripts for the development and release process. |
+| tests     | test cases |
 
 ## Build Requirements
 
 1. C++17 and above
-2. CMake 3.15 or higher
+2. CMake 3.19 or higher
 3. `Boost` version 1.83 or higher
 
 Additional dependencies are fetched via CMake (`nlohmann_json` and `yaml-cpp`).
@@ -36,9 +36,9 @@ CMake options are available to customize the builds.
 Navigate to the root of the git repository. Configure CMake with
 
 ```bash
-# use fetch content to compile with boost instead of the system boost dependency
+# use fetch content to compile with boost instead of the system boost dependency and
 # don't build the tests
-cmake -B build -S .
+cmake -B build -S . -DMIRU_FETCH_BOOST=On -DMIRU_BUILD_TESTS=Off
 ```
 
 Then build with
@@ -46,32 +46,59 @@ Then build with
 cmake --build build
 ```
 
-## Install
+## Integrate via `FetchContent`
 
-To install the built project (from the repository root):
+This is the simplest method to begin using the SDK.
+
+```cmake
+# this should be somewhere in your cmake file
+include(FetchContent)
+
+...
+
+# set the desired miru options (feel free to change these)
+set(MIRU_FETCH_BOOST ON)
+set(MIRU_BUILD_TESTS OFF)
+set(MIRU_BUILD_EXAMPLES ON)
+
+FetchContent_Declare(
+    miru
+    GIT_REPOSITORY https://github.com/miruml/cpp-sdk.git  # Replace with actual repo URL
+    GIT_TAG v0.1.0 # replace with desired tag/branch/commit
+)
+
+FetchContent_MakeAvailable(miru)
+
+...
+
+# link the miru sdk to your executable
+target_link_libraries(miru.out PRIVATE miru::miru)
+```
+
+## Integrate via `add_subdirectory`
+
+Alternatively, you can clone the repository locally and add it as a subdirectory
 
 ```bash
-cmake --build build --target install
+# replace with desired tag
+git clone -b v0.1.0 https://github.com/miruml/cpp-sdk.git
 ```
 
-> [!NOTE]
-> Note: You might need to use `sudo` for installation to system directories.
-
-## Include via `add_subdirectory`
-
 ```cmake
-# Set SDK build options, for example:
-set(MIRU_BUILD_SHARED_LIBS On)
+# set the desired miru options (feel free to change these)
+set(MIRU_FETCH_BOOST ON)
+set(MIRU_BUILD_TESTS OFF)
+set(MIRU_BUILD_EXAMPLES ON)
 
 add_subdirectory(path-to-miru-sdk-repo)
+
+...
+
+# link the miru sdk to your executable
 target_link_libraries(your-app PRIVATE miru::miru)
 ```
 
-## Include via `find_package`
+## Other Integration Methods
 
-First install the SDK on the build system via `cmake --install`
+We are working to support more integration methods and package managers, such as using `vcpkg`. Please reach out to ben@miruml.com for adding support for a particular integration method or package manager.
 
-```cmake
-find_package(miru REQUIRED)
-target_link_libraries(your-app PRIVATE miru::miru)
-```
