@@ -1,5 +1,5 @@
 // internal
-#include <miru/filesys/file.hpp>
+#include <miru/filesys/details/file.hpp>
 #include <miru/params/parameter.hpp>
 #include <miru/params/parse.hpp>
 

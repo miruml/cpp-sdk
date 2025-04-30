@@ -3,7 +3,7 @@
 #include <string>
 
 // internal
-#include <miru/filesys/dir.hpp>
+#include <miru/filesys/details/dir.hpp>
 #include <miru/filesys/errors.hpp>
 #include <test/test_utils/testdata.hpp>
 #include <test/test_utils/utils.hpp>

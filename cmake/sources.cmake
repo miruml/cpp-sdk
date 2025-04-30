@@ -5,13 +5,16 @@ set(CONFIG_SOURCES
 )
 
 set(FILESYS_SOURCES
-    miru/filesys/dir.hpp
-    miru/filesys/dir.cpp
+    # private
+    miru/filesys/details/dir.hpp
+    miru/filesys/details/dir.cpp
+    miru/filesys/details/file.hpp
+    miru/filesys/details/file.cpp
+    miru/filesys/details/path.hpp
+    miru/filesys/details/path.cpp
+
+    # public
     miru/filesys/errors.hpp
-    miru/filesys/file.hpp
-    miru/filesys/file.cpp
-    miru/filesys/path.hpp
-    miru/filesys/path.cpp
 )
 
 set(HTTP_SOURCES

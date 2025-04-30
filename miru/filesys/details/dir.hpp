@@ -4,8 +4,8 @@
 #include <filesystem>
 
 // internal
-#include <miru/filesys/file.hpp>
-#include <miru/filesys/path.hpp>
+#include <miru/filesys/details/file.hpp>
+#include <miru/filesys/details/path.hpp>
 
 namespace miru::filesys {
 

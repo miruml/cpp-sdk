@@ -1,7 +1,7 @@
 // internal
 #include <miru/http/models/HashSchemaSerializedRequest.h>
 
-#include <miru/filesys/file.hpp>
+#include <miru/filesys/details/file.hpp>
 #include <miru/http/socket_client.hpp>
 #include <miru/http/socket_session.hpp>
 #include <miru/http/utils.hpp>

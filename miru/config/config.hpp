@@ -5,7 +5,7 @@
 #include <string>
 
 // internal
-#include <miru/filesys/file.hpp>
+#include <miru/filesys/details/file.hpp>
 #include <miru/http/client.hpp>
 #include <miru/http/socket_client.hpp>
 #include <miru/params/parameter.hpp>

@@ -1,9 +1,11 @@
 #pragma once
 
+// std
+#include <string>
+#include <vector>
+
 // internal
 #include <miru/errors.hpp>
-#include <miru/filesys/file.hpp>
-#include <miru/filesys/path.hpp>
 #include <miru/utils.hpp>
 
 namespace miru::filesys {
@@ -11,17 +13,22 @@ namespace miru::filesys {
 // file errors
 class FileNotFoundError : public std::runtime_error {
  public:
-  explicit FileNotFoundError(const std::string& path, const errors::ErrorTrace& trace)
-    : std::runtime_error(format_message(path, trace)) {}
+  explicit FileNotFoundError(
+    const std::string& path,
+    const std::string& abs_path,
+    const errors::ErrorTrace& trace
+  )
+    : std::runtime_error(format_message(path, abs_path, trace)) {}
 
   static std::string
-  format_message(const std::string& path, const errors::ErrorTrace& trace) {
-    return "File '" + path + "' not found" + errors::format_source_location(trace);
+  format_message(const std::string& path, const std::string& abs_path, const errors::ErrorTrace& trace) {
+    return "File '" + path + "' (absolute path: '" + abs_path + "') not found" +
+           errors::format_source_location(trace);
   }
 };
 
-#define THROW_FILE_NOT_FOUND(path) \
-  throw miru::filesys::FileNotFoundError(path, ERROR_TRACE)
+#define THROW_FILE_NOT_FOUND(path, abs_path) \
+  throw miru::filesys::FileNotFoundError(path, abs_path, ERROR_TRACE)
 
 class NotAFileError : public std::runtime_error {
  public:
@@ -63,18 +70,22 @@ class InvalidFileTypeError : public std::runtime_error {
 // directory errors
 class DirNotFoundError : public std::runtime_error {
  public:
-  explicit DirNotFoundError(const std::string& path, const errors::ErrorTrace& trace)
-    : std::runtime_error(format_message(path, trace)) {}
+  explicit DirNotFoundError(
+    const std::string& path,
+    const std::string& abs_path,
+    const errors::ErrorTrace& trace
+  )
+    : std::runtime_error(format_message(path, abs_path, trace)) {}
 
   static std::string
-  format_message(const std::string& path, const errors::ErrorTrace& trace) {
-    return "Directory '" + path + "' does not exist" +
+  format_message(const std::string& path, const std::string& abs_path, const errors::ErrorTrace& trace) {
+    return "Directory '" + path + "' (absolute path: '" + abs_path + "') does not exist" +
            errors::format_source_location(trace);
   }
 };
 
-#define THROW_DIR_NOT_FOUND(path) \
-  throw miru::filesys::DirNotFoundError(path, ERROR_TRACE)
+#define THROW_DIR_NOT_FOUND(path, abs_path) \
+  throw miru::filesys::DirNotFoundError(path, abs_path, ERROR_TRACE)
 
 class NotADirError : public std::runtime_error {
  public:

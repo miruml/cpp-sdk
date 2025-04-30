@@ -2,7 +2,7 @@
 #include <filesystem>
 
 // internal
-#include <miru/filesys/path.hpp>
+#include <miru/filesys/details/path.hpp>
 #include <test/test_utils/utils.hpp>
 
 // external

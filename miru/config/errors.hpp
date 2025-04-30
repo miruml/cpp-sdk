@@ -3,7 +3,7 @@
 
 // internal
 #include <miru/errors.hpp>
-#include <miru/filesys/file.hpp>
+#include <miru/filesys/details/file.hpp>
 #include <miru/utils.hpp>
 
 namespace miru::config {

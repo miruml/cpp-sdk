@@ -3,11 +3,10 @@
 
 // internal
 #include <miru/filesys/errors.hpp>
-#include <miru/filesys/file.hpp>
+#include <miru/filesys/details/file.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>
-
 #include <nlohmann/json.hpp>
 
 namespace miru::filesys {
@@ -58,7 +57,7 @@ FileType File::file_type() const {
 
 void File::assert_exists() const {
   if (!std::filesystem::exists(path_)) {
-    THROW_FILE_NOT_FOUND(path_.string());
+    THROW_FILE_NOT_FOUND(path_.string(), abs_path().string());
   }
   if (!std::filesystem::is_regular_file(path_)) {
     THROW_NOT_A_FILE(path_.string());

@@ -1,5 +1,5 @@
 // internal
-#include <miru/filesys/dir.hpp>
+#include <miru/filesys/details/dir.hpp>
 
 namespace miru::test_utils {
 

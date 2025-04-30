@@ -1,5 +1,5 @@
 // internal
-#include <miru/filesys/path.hpp>
+#include <miru/filesys/details/path.hpp>
 
 namespace miru::filesys {
 

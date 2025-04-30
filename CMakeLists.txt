@@ -18,7 +18,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 # OPTIONS #
-# ======== #
+# ======= #
 option(MIRU_BUILD_TESTS "Build tests" ON)
 option(MIRU_BUILD_EXAMPLES "Build examples" ON)
 
@@ -33,6 +33,7 @@ include(cmake/dependencies.cmake)
 include(cmake/sources.cmake)
 
 add_library(miru ${MIRU_SOURCES})
+add_library(miru::miru ALIAS miru)
 
 target_include_directories(miru PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -60,48 +61,48 @@ if (MIRU_BUILD_EXAMPLES)
     build_miru_examples()
 endif()
 
-# INSTALLATION #
-# ============ #
-include(GNUInstallDirs)
+# # INSTALLATION #
+# # ============ #
+# include(GNUInstallDirs)
 
-# Install the library
-install(TARGETS miru
-    EXPORT miru-targets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
+# # Install the library
+# install(TARGETS miru
+#     EXPORT miru-targets
+#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+#     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+# )
 
-# Install the headers
-install(DIRECTORY miru
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    FILES_MATCHING PATTERN "*.hpp"
-    PATTERN "*.h"
-)
+# # Install the headers
+# install(DIRECTORY miru
+#     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+#     FILES_MATCHING PATTERN "*.hpp"
+#     PATTERN "*.h"
+# )
 
-# Generate and install CMake config files
-install(EXPORT miru-targets
-    FILE miru-targets.cmake
-    NAMESPACE miru::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/miru
-)
+# # Generate and install CMake config files
+# install(EXPORT miru-targets
+#     FILE miru-targets.cmake
+#     NAMESPACE miru::
+#     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/miru
+# )
 
-include(CMakePackageConfigHelpers)
-configure_package_config_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/miru-config.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/miru-config.cmake
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/miru
-)
+# include(CMakePackageConfigHelpers)
+# configure_package_config_file(
+#     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/miru-config.cmake.in
+#     ${CMAKE_CURRENT_BINARY_DIR}/miru-config.cmake
+#     INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/miru
+# )
 
-write_basic_package_version_file(
-    ${CMAKE_CURRENT_BINARY_DIR}/miru-config-version.cmake
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion
-)
+# write_basic_package_version_file(
+#     ${CMAKE_CURRENT_BINARY_DIR}/miru-config-version.cmake
+#     VERSION ${PROJECT_VERSION}
+#     COMPATIBILITY SameMajorVersion
+# )
 
-install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/miru-config.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/miru-config-version.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/miru
-)
+# install(FILES
+#     ${CMAKE_CURRENT_BINARY_DIR}/miru-config.cmake
+#     ${CMAKE_CURRENT_BINARY_DIR}/miru-config-version.cmake
+#     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/miru
+# )

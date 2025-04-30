@@ -2,8 +2,8 @@
 #include <filesystem>
 
 // internal
+#include <miru/filesys/details/file.hpp>
 #include <miru/filesys/errors.hpp>
-#include <miru/filesys/file.hpp>
 #include <test/test_utils/testdata.hpp>
 #include <test/test_utils/utils.hpp>
 

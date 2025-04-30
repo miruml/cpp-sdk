@@ -7,7 +7,7 @@
 #include <vector>
 
 // internal
-#include <miru/filesys/path.hpp>
+#include <miru/filesys/details/path.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>

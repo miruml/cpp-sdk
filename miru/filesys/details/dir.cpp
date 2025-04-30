@@ -1,6 +1,7 @@
 // internal
-#include <miru/filesys/dir.hpp>
+#include <miru/filesys/details/dir.hpp>
 #include <miru/filesys/errors.hpp>
+
 namespace miru::filesys {
 
 Dir Dir::parent() const { return Dir(abs_path().parent_path()); }
@@ -22,7 +23,7 @@ Dir Dir::git_root() const {
 
 void Dir::assert_exists() const {
   if (!std::filesystem::exists(path_)) {
-    THROW_DIR_NOT_FOUND(path_.string());
+    THROW_DIR_NOT_FOUND(path_.string(), abs_path().string());
   }
   if (!std::filesystem::is_directory(path_)) {
     THROW_NOT_A_DIR(path_.string());
