@@ -1,0 +1,41 @@
+#pragma once
+
+// std
+#include <optional>
+#include <string>
+
+// internal
+#include <miru/config/config.hpp>
+// external
+#include <yaml-cpp/yaml.h>
+
+#include <nlohmann/json.hpp>
+
+namespace miru::config {
+
+class ConfigBuilder {
+ public:
+  ConfigBuilder() {}
+  ConfigBuilder& with_schema_file(const miru::filesys::details::File& schema_file);
+  ConfigBuilder& with_config_slug(const std::string& config_slug);
+  ConfigBuilder& with_source(ConfigSource source);
+  ConfigBuilder& with_data(const miru::params::Parameter& data);
+  ConfigBuilder& with_schema_digest(const std::string& schema_digest);
+  ConfigBuilder& with_config_file(const miru::filesys::details::File& config_file);
+  Config build();
+
+ private:
+  // required
+  std::optional<miru::filesys::details::File> schema_file_;
+  std::optional<std::string> config_slug_;
+  std::optional<ConfigSource> source_;
+  std::optional<miru::params::Parameter> data_;
+
+  // only needed if sourcing from the agent
+  std::optional<std::string> schema_digest_;
+
+  // only needed if sourcing from the file system
+  std::optional<miru::filesys::details::File> config_file_;
+};
+
+}  // namespace miru::config

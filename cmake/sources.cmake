@@ -1,6 +1,13 @@
 set(CONFIG_SOURCES
-    miru/config/config.hpp
+    # private
+    miru/config/details/builder.hpp
+    miru/config/details/builder.cpp
+    miru/config/details/utils.hpp
+    miru/config/details/utils.cpp
+
+    # public
     miru/config/config.cpp
+    miru/config/config.hpp
     miru/config/errors.hpp
 )
 

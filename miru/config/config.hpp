@@ -18,8 +18,6 @@
 
 namespace miru::config {
 
-const std::string MIRU_CONFIG_SLUG_FIELD = "$miru_config_slug";
-
 // used to determine where to source the config from
 enum class ConfigSource {
   Agent,
@@ -96,33 +94,6 @@ class Config {
 
   // friends
   friend class ConfigBuilder;
-};
-
-std::string read_schema_config_slug(const miru::filesys::details::File& schema_file);
-
-class ConfigBuilder {
- public:
-  ConfigBuilder() {}
-  ConfigBuilder& with_schema_file(const miru::filesys::details::File& schema_file);
-  ConfigBuilder& with_config_slug(const std::string& config_slug);
-  ConfigBuilder& with_source(ConfigSource source);
-  ConfigBuilder& with_data(const miru::params::Parameter& data);
-  ConfigBuilder& with_schema_digest(const std::string& schema_digest);
-  ConfigBuilder& with_config_file(const miru::filesys::details::File& config_file);
-  Config build();
-
- private:
-  // required
-  std::optional<miru::filesys::details::File> schema_file_;
-  std::optional<std::string> config_slug_;
-  std::optional<ConfigSource> source_;
-  std::optional<miru::params::Parameter> data_;
-
-  // only needed if sourcing from the agent
-  std::optional<std::string> schema_digest_;
-
-  // only needed if sourcing from the file system
-  std::optional<miru::filesys::details::File> config_file_;
 };
 
 }  // namespace miru::config

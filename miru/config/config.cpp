@@ -6,6 +6,8 @@
 #include <miru/http/details/models/HashSerializedConfigSchemaFormat.h>
 
 #include <miru/config/config.hpp>
+#include <miru/config/details/builder.hpp>
+#include <miru/config/details/utils.hpp>
 #include <miru/config/errors.hpp>
 #include <miru/http/details/socket_client.hpp>
 #include <miru/params/details/parse.hpp>
@@ -19,34 +21,6 @@
 namespace miru::config {
 
 namespace openapi = org::openapitools::server::model;
-
-std::string read_schema_config_slug(const miru::filesys::details::File& schema_file) {
-  std::string config_slug;
-  switch (schema_file.file_type()) {
-    case miru::filesys::details::FileType::JSON: {
-      nlohmann::json json_schema_content = schema_file.read_json();
-      if (!json_schema_content.contains(MIRU_CONFIG_SLUG_FIELD)) {
-        THROW_CONFIG_SLUG_NOT_FOUND(schema_file);
-      }
-      config_slug = json_schema_content[MIRU_CONFIG_SLUG_FIELD];
-      break;
-    }
-    case miru::filesys::details::FileType::YAML: {
-      YAML::Node yaml_schema_content = schema_file.read_yaml();
-      if (!yaml_schema_content[MIRU_CONFIG_SLUG_FIELD]) {
-        THROW_CONFIG_SLUG_NOT_FOUND(schema_file);
-      }
-      config_slug = yaml_schema_content[MIRU_CONFIG_SLUG_FIELD].as<std::string>();
-      break;
-    }
-    default:
-      throw std::runtime_error("Unsupported schema file type");
-  }
-  if (config_slug.empty()) {
-    THROW_EMPTY_CONFIG_SLUG(schema_file);
-  }
-  return config_slug;
-}
 
 Config Config::from_file(
   const std::filesystem::path& schema_file_path,
@@ -196,84 +170,6 @@ Config Config::from_agent(
 
 miru::query::ROS2StyleQuery Config::ros2() const {
   return miru::query::ROS2StyleQuery(parameters_);
-}
-
-// ================================ CONFIG BUILDER ================================ //
-ConfigBuilder& ConfigBuilder::with_schema_file(const miru::filesys::details::File& schema_file) {
-  if (schema_file_.has_value()) {
-    throw std::runtime_error("Schema file already set");
-  }
-  schema_file_ = schema_file;
-  return *this;
-}
-
-ConfigBuilder& ConfigBuilder::with_config_slug(const std::string& config_slug) {
-  if (config_slug_.has_value()) {
-    throw std::runtime_error("Config slug already set");
-  }
-  config_slug_ = config_slug;
-  return *this;
-}
-
-ConfigBuilder& ConfigBuilder::with_source(ConfigSource source) {
-  if (source_.has_value()) {
-    throw std::runtime_error("Source already set");
-  }
-  source_ = source;
-  return *this;
-}
-
-ConfigBuilder& ConfigBuilder::with_data(const miru::params::Parameter& data) {
-  if (data_.has_value()) {
-    throw std::runtime_error("Data already set");
-  }
-  data_ = data;
-  return *this;
-}
-
-ConfigBuilder& ConfigBuilder::with_schema_digest(const std::string& schema_digest) {
-  if (schema_digest_.has_value()) {
-    throw std::runtime_error("Schema digest already set");
-  }
-  schema_digest_ = schema_digest;
-  return *this;
-}
-
-ConfigBuilder& ConfigBuilder::with_config_file(const miru::filesys::details::File& config_file) {
-  if (config_file_.has_value()) {
-    throw std::runtime_error("Config file already set");
-  }
-  config_file_ = config_file;
-  return *this;
-}
-
-Config ConfigBuilder::build() {
-  if (!schema_file_.has_value()) {
-    throw std::runtime_error("Schema file not set");
-  }
-  if (!config_slug_.has_value()) {
-    throw std::runtime_error("Config slug not set");
-  }
-  if (!source_.has_value()) {
-    throw std::runtime_error("Source not set");
-  }
-  if (!data_.has_value()) {
-    throw std::runtime_error("Data not set");
-  }
-  if (source_ == ConfigSource::Agent && !schema_digest_.has_value()) {
-    throw std::runtime_error(
-      "Schema digest not set (must be set when retrieving the config from the agent)"
-    );
-  }
-  if (source_ == ConfigSource::FileSystem && !config_file_.has_value()) {
-    throw std::runtime_error(
-      "Config file not set (must be set when retrieving the config from the file "
-      "system)"
-    );
-  }
-  return Config(
-    *schema_file_, *config_slug_, *source_, *data_, schema_digest_, config_file_
-  );
 }
 
 }  // namespace miru::config

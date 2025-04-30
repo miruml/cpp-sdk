@@ -1,8 +1,8 @@
 // internal
 #include <miru/http/details/models/RefreshLatestConcreteConfigRequest.h>
 
-#include <miru/config/config.hpp>
 #include <miru/config/errors.hpp>
+#include <miru/config/details/utils.hpp>
 #include <miru/query/query.hpp>
 #include <miru/query/ros2.hpp>
 #include <test/http/mock.hpp>
