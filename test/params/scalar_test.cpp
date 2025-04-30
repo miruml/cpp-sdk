@@ -5,7 +5,7 @@
 #include <miru/params/details/scalar.hpp>
 #include <miru/params/errors.hpp>
 #include <miru/params/scalar.hpp>
-#include <test/utils_test.hpp>
+#include <test/details/utils_test.hpp>
 
 // external
 #include <gtest/gtest.h>

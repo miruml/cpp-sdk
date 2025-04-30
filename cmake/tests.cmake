@@ -1,25 +1,36 @@
 set(CONFIG_TEST_SOURCES
+    # private
+    test/config/details/utils_test.cpp
+
+    # public
     test/config/config_test.cpp
 )
 
 set(FILESYS_TEST_SOURCES
-    test/filesys/dir_test.cpp
-    test/filesys/file_test.cpp
-    test/filesys/path_test.cpp
+    # private
+    test/filesys/details/dir_test.cpp
+    test/filesys/details/file_test.cpp
+    test/filesys/details/path_test.cpp
 )
 
 set(HTTP_TEST_SOURCES
+    # private
+    test/http/details/socket_client_test.cpp
+
+    # mock
     test/http/mock.hpp
     test/http/mock.cpp
-    test/http/socket_client_test.cpp
 )
 
 set(PARAMS_TEST_SOURCES
+    # private
+    test/params/details/parse_test.cpp
+    test/params/details/utils_test.cpp
+
+    # public
     test/params/composite_test.cpp
     test/params/parameter_test.cpp
-    test/params/parse_test.cpp
     test/params/scalar_test.cpp
-    test/params/utils_test.cpp
 )
 
 set(QUERY_TEST_SOURCES
@@ -38,8 +49,9 @@ set(TEST_UTILS_SOURCES
 )
 
 set(MISC_TEST_SOURCES
-    test/utils_test.cpp
-    test/utils_test.hpp
+    # private
+    test/details/utils_test.cpp
+    test/details/utils_test.hpp
 )
 
 set(ALL_TEST_SOURCES

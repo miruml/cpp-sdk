@@ -5,7 +5,7 @@
 #include <miru/details/utils.hpp>
 #include <test/test_utils/testdata.hpp>
 #include <test/test_utils/utils.hpp>
-#include <test/utils_test.hpp>
+#include <test/details/utils_test.hpp>
 
 // external
 #include <gtest/gtest.h>
