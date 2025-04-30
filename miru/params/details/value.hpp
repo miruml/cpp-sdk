@@ -8,7 +8,6 @@
 #include <miru/params/errors.hpp>
 #include <miru/params/scalar.hpp>
 #include <miru/params/type.hpp>
-#include <miru/utils.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>

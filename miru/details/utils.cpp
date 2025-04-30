@@ -6,9 +6,10 @@
 #include <vector>
 
 // miru
+#include <miru/details/errors.hpp>
 #include <miru/errors.hpp>
 
-namespace miru::utils {
+namespace miru::utils::details {
 
 bool has_prefix(const std::string_view& str, const std::string_view& prefix) {
   return str.size() >= prefix.size() &&

@@ -2,7 +2,7 @@
 #include <execinfo.h>
 
 // internal
-#include <miru/utils.hpp>
+#include <miru/details/utils.hpp>
 #include <test/test_utils/testdata.hpp>
 #include <test/test_utils/utils.hpp>
 #include <test/utils_test.hpp>
@@ -14,57 +14,57 @@ namespace test::utils {
 
 // ================================ HAS PREFIX ===================================== //
 TEST(HasPrefix, True) {
-  EXPECT_TRUE(miru::utils::has_prefix("hello", "hel"));
-  EXPECT_TRUE(miru::utils::has_prefix("hello", "hello"));
-  EXPECT_TRUE(miru::utils::has_prefix("hello world", "hello"));
-  EXPECT_TRUE(miru::utils::has_prefix("a", "a"));
-  EXPECT_TRUE(miru::utils::has_prefix("  spaces", "  "));
+  EXPECT_TRUE(miru::utils::details::has_prefix("hello", "hel"));
+  EXPECT_TRUE(miru::utils::details::has_prefix("hello", "hello"));
+  EXPECT_TRUE(miru::utils::details::has_prefix("hello world", "hello"));
+  EXPECT_TRUE(miru::utils::details::has_prefix("a", "a"));
+  EXPECT_TRUE(miru::utils::details::has_prefix("  spaces", "  "));
 }
 
 TEST(HasPrefix, False) {
-  EXPECT_FALSE(miru::utils::has_prefix("hello", "world"));
-  EXPECT_FALSE(miru::utils::has_prefix("hello", "hello!"));
-  EXPECT_FALSE(miru::utils::has_prefix("", "a"));
-  EXPECT_FALSE(miru::utils::has_prefix("hello", "HELLO"));  // case sensitive
-  EXPECT_FALSE(miru::utils::has_prefix("a", "ab"));
+  EXPECT_FALSE(miru::utils::details::has_prefix("hello", "world"));
+  EXPECT_FALSE(miru::utils::details::has_prefix("hello", "hello!"));
+  EXPECT_FALSE(miru::utils::details::has_prefix("", "a"));
+  EXPECT_FALSE(miru::utils::details::has_prefix("hello", "HELLO"));  // case sensitive
+  EXPECT_FALSE(miru::utils::details::has_prefix("a", "ab"));
 }
 
 TEST(HasPrefix, EmptyStrings) {
-  EXPECT_TRUE(miru::utils::has_prefix("hello", ""));  // empty prefix
-  EXPECT_TRUE(miru::utils::has_prefix("", ""));       // both empty
+  EXPECT_TRUE(miru::utils::details::has_prefix("hello", ""));  // empty prefix
+  EXPECT_TRUE(miru::utils::details::has_prefix("", ""));       // both empty
 }
 
 // ================================ HAS SUFFIX ===================================== //
 TEST(HasSuffix, True) {
-  EXPECT_TRUE(miru::utils::has_suffix("hello", "llo"));
-  EXPECT_TRUE(miru::utils::has_suffix("hello", "hello"));
-  EXPECT_TRUE(miru::utils::has_suffix("world hello", "hello"));
-  EXPECT_TRUE(miru::utils::has_suffix("a", "a"));
-  EXPECT_TRUE(miru::utils::has_suffix("spaces  ", "  "));
+  EXPECT_TRUE(miru::utils::details::has_suffix("hello", "llo"));
+  EXPECT_TRUE(miru::utils::details::has_suffix("hello", "hello"));
+  EXPECT_TRUE(miru::utils::details::has_suffix("world hello", "hello"));
+  EXPECT_TRUE(miru::utils::details::has_suffix("a", "a"));
+  EXPECT_TRUE(miru::utils::details::has_suffix("spaces  ", "  "));
 }
 
 TEST(HasSuffix, False) {
-  EXPECT_FALSE(miru::utils::has_suffix("hello", "world"));
-  EXPECT_FALSE(miru::utils::has_suffix("hello", "!hello"));
-  EXPECT_FALSE(miru::utils::has_suffix("", "a"));
-  EXPECT_FALSE(miru::utils::has_suffix("hello", "HELLO"));  // case sensitive
-  EXPECT_FALSE(miru::utils::has_suffix("a", "ba"));
+  EXPECT_FALSE(miru::utils::details::has_suffix("hello", "world"));
+  EXPECT_FALSE(miru::utils::details::has_suffix("hello", "!hello"));
+  EXPECT_FALSE(miru::utils::details::has_suffix("", "a"));
+  EXPECT_FALSE(miru::utils::details::has_suffix("hello", "HELLO"));  // case sensitive
+  EXPECT_FALSE(miru::utils::details::has_suffix("a", "ba"));
 }
 
 TEST(HasSuffix, EmptyStrings) {
-  EXPECT_TRUE(miru::utils::has_suffix("hello", ""));  // empty suffix
-  EXPECT_TRUE(miru::utils::has_suffix("", ""));       // both empty
+  EXPECT_TRUE(miru::utils::details::has_suffix("hello", ""));  // empty suffix
+  EXPECT_TRUE(miru::utils::details::has_suffix("", ""));       // both empty
 }
 
 // ============================ ASSERT UNIQUE STRINGS ============================== //
 TEST(AssertUniqueStrings, EmptyVector) {
   std::vector<std::string> empty;
-  EXPECT_NO_THROW(miru::utils::assert_unique_strings(empty));
+  EXPECT_NO_THROW(miru::utils::details::assert_unique_strings(empty));
 }
 
 TEST(AssertUniqueStrings, SingleString) {
   std::vector<std::string> single{"test"};
-  EXPECT_NO_THROW(miru::utils::assert_unique_strings(single));
+  EXPECT_NO_THROW(miru::utils::details::assert_unique_strings(single));
 }
 
 TEST(AssertUniqueStrings, UniqueStrings) {
@@ -75,7 +75,7 @@ TEST(AssertUniqueStrings, UniqueStrings) {
     "world",
     ""  // empty string
   };
-  EXPECT_NO_THROW(miru::utils::assert_unique_strings(unique));
+  EXPECT_NO_THROW(miru::utils::details::assert_unique_strings(unique));
 }
 
 TEST(AssertUniqueStrings, DuplicateStrings) {
@@ -84,12 +84,12 @@ TEST(AssertUniqueStrings, DuplicateStrings) {
     "test2",
     "test1"  // duplicate
   };
-  EXPECT_THROW(miru::utils::assert_unique_strings(duplicates), std::invalid_argument);
+  EXPECT_THROW(miru::utils::details::assert_unique_strings(duplicates), std::invalid_argument);
 }
 
 TEST(AssertUniqueStrings, CaseSensitive) {
   std::vector<std::string> cases{"Test", "test", "TEST"};
-  EXPECT_NO_THROW(miru::utils::assert_unique_strings(cases));
+  EXPECT_NO_THROW(miru::utils::details::assert_unique_strings(cases));
 }
 
 TEST(AssertUniqueStrings, WhitespaceStrings) {
@@ -99,7 +99,7 @@ TEST(AssertUniqueStrings, WhitespaceStrings) {
     "test ",  // different due to trailing space
     "  "
   };
-  EXPECT_NO_THROW(miru::utils::assert_unique_strings(whitespace));
+  EXPECT_NO_THROW(miru::utils::details::assert_unique_strings(whitespace));
 }
 
 TEST(AssertUniqueStrings, MultipleEmptyStrings) {
@@ -108,7 +108,7 @@ TEST(AssertUniqueStrings, MultipleEmptyStrings) {
     ""  // duplicate empty string
   };
   EXPECT_THROW(
-    miru::utils::assert_unique_strings(empty_strings), std::invalid_argument
+    miru::utils::details::assert_unique_strings(empty_strings), std::invalid_argument
   );
 }
 
@@ -122,7 +122,7 @@ TEST(AssertUniqueStrings, MultipleDuplicates) {
     "test4"
   };
   EXPECT_THROW(
-    miru::utils::assert_unique_strings(multiple_dupes), std::invalid_argument
+    miru::utils::details::assert_unique_strings(multiple_dupes), std::invalid_argument
   );
 }
 
@@ -138,7 +138,7 @@ TEST_F(UtilsIntegerCasting, integer_type_casting_success) {
       [&](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
         EXPECT_EQ(
-          miru::utils::int64_as<T>(test_case.input), std::get<T>(test_case.expected)
+          miru::utils::details::int64_as<T>(test_case.input), std::get<T>(test_case.expected)
         );
       },
       test_case.expected
@@ -155,7 +155,7 @@ TEST_F(UtilsIntegerCasting, integer_type_casting_failure) {
       [&](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
         EXPECT_THROW(
-          miru::utils::int64_as<T>(test_case.input),
+          miru::utils::details::int64_as<T>(test_case.input),
           miru::errors::InvalidTypeConversionError
         );
       },
@@ -178,7 +178,7 @@ TEST_F(UtilsDoubleCasting, double_type_casting_success) {
       [&](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
         EXPECT_EQ(
-          miru::utils::double_as<T>(test_case.input), std::get<T>(test_case.expected)
+          miru::utils::details::double_as<T>(test_case.input), std::get<T>(test_case.expected)
         );
       },
       test_case.expected
@@ -195,7 +195,7 @@ TEST_F(UtilsDoubleCasting, double_type_casting_failure) {
       [&](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
         EXPECT_THROW(
-          miru::utils::double_as<T>(test_case.input),
+          miru::utils::details::double_as<T>(test_case.input),
           miru::errors::InvalidTypeConversionError
         );
       },
@@ -212,8 +212,8 @@ TEST_F(UtilsStringConversion, bool_conversion_success) {
     if (test_case.expected_exception != test::utils::StringConversionException::None) {
       continue;
     }
-    EXPECT_EQ(miru::utils::yaml_string_to_bool(test_case.str), test_case.expected);
-    EXPECT_EQ(miru::utils::string_as<bool>(test_case.str), test_case.expected);
+    EXPECT_EQ(miru::utils::details::yaml_string_to_bool(test_case.str), test_case.expected);
+    EXPECT_EQ(miru::utils::details::string_as<bool>(test_case.str), test_case.expected);
   }
 }
 
@@ -225,11 +225,11 @@ TEST_F(UtilsStringConversion, bool_conversion_failure) {
     switch (test_case.expected_exception) {
       case test::utils::StringConversionException::InvalidTypeConversion:
         EXPECT_THROW(
-          miru::utils::yaml_string_to_bool(test_case.str),
+          miru::utils::details::yaml_string_to_bool(test_case.str),
           miru::errors::InvalidTypeConversionError
         );
         EXPECT_THROW(
-          miru::utils::string_as<bool>(test_case.str),
+          miru::utils::details::string_as<bool>(test_case.str),
           miru::errors::InvalidTypeConversionError
         );
         break;
@@ -245,10 +245,10 @@ TEST_F(UtilsStringConversion, int_conversion_success) {
       continue;
     }
     EXPECT_EQ(
-      miru::utils::string_to_int64(test_case.str), std::get<int64_t>(test_case.expected)
+      miru::utils::details::string_to_int64(test_case.str), std::get<int64_t>(test_case.expected)
     );
     EXPECT_EQ(
-      miru::utils::string_as<int64_t>(test_case.str),
+      miru::utils::details::string_as<int64_t>(test_case.str),
       std::get<int64_t>(test_case.expected)
     );
   }
@@ -265,7 +265,7 @@ TEST_F(UtilsStringConversion, int_conversion_failure) {
         switch (test_case.expected_exception) {
           case test::utils::StringConversionException::InvalidTypeConversion:
             EXPECT_THROW(
-              miru::utils::string_as<T>(test_case.str),
+              miru::utils::details::string_as<T>(test_case.str),
               miru::errors::InvalidTypeConversionError
             ) << "Exception not thrown for "
               << test_case.str;
@@ -285,10 +285,10 @@ TEST_F(UtilsStringConversion, double_conversion_success) {
       continue;
     }
     EXPECT_EQ(
-      miru::utils::string_to_double(test_case.str), std::get<double>(test_case.expected)
+      miru::utils::details::string_to_double(test_case.str), std::get<double>(test_case.expected)
     );
     EXPECT_EQ(
-      miru::utils::string_as<double>(test_case.str),
+      miru::utils::details::string_as<double>(test_case.str),
       std::get<double>(test_case.expected)
     );
   }
@@ -305,7 +305,7 @@ TEST_F(UtilsStringConversion, double_conversion_failure) {
         switch (test_case.expected_exception) {
           case test::utils::StringConversionException::InvalidTypeConversion:
             EXPECT_THROW(
-              miru::utils::string_as<T>(test_case.str),
+              miru::utils::details::string_as<T>(test_case.str),
               miru::errors::InvalidTypeConversionError
             );
             break;
@@ -323,7 +323,7 @@ TEST_F(UtilsStringConversion, string_conversion_success) {
     if (test_case.expected_exception != test::utils::StringConversionException::None) {
       continue;
     }
-    EXPECT_EQ(miru::utils::string_as<std::string>(test_case.str), test_case.expected);
+    EXPECT_EQ(miru::utils::details::string_as<std::string>(test_case.str), test_case.expected);
   }
 }
 
@@ -339,7 +339,7 @@ TEST_F(UtilsStringConversion, bool_array_conversion_success) {
     strs.push_back(test_case.str);
     expected.push_back(test_case.expected);
   }
-  std::vector<bool> result = miru::utils::string_array_as<bool>(strs);
+  std::vector<bool> result = miru::utils::details::string_array_as<bool>(strs);
   EXPECT_EQ(result, expected);
 }
 
@@ -351,7 +351,7 @@ TEST_F(UtilsStringConversion, bool_array_conversion_failure) {
     std::vector<std::string> strs = {};
     strs.push_back(test_case.str);
     EXPECT_THROW(
-      miru::utils::string_array_as<bool>(strs), miru::errors::InvalidTypeConversionError
+      miru::utils::details::string_array_as<bool>(strs), miru::errors::InvalidTypeConversionError
     );
   }
 }
@@ -366,7 +366,7 @@ TEST_F(UtilsStringConversion, int_array_conversion_success) {
     strs.push_back(test_case.str);
     expected.push_back(std::get<int64_t>(test_case.expected));
   }
-  std::vector<int64_t> result = miru::utils::string_array_as<int64_t>(strs);
+  std::vector<int64_t> result = miru::utils::details::string_array_as<int64_t>(strs);
   EXPECT_EQ(result, expected);
 }
 
@@ -383,7 +383,7 @@ TEST_F(UtilsStringConversion, int_array_conversion_failure) {
         switch (test_case.expected_exception) {
           case test::utils::StringConversionException::InvalidTypeConversion:
             EXPECT_THROW(
-              miru::utils::string_array_as<T>(strs),
+              miru::utils::details::string_array_as<T>(strs),
               miru::errors::InvalidTypeConversionError
             );
             break;
@@ -406,7 +406,7 @@ TEST_F(UtilsStringConversion, double_array_conversion_success) {
     strs.push_back(test_case.str);
     expected.push_back(std::get<double>(test_case.expected));
   }
-  std::vector<double> result = miru::utils::string_array_as<double>(strs);
+  std::vector<double> result = miru::utils::details::string_array_as<double>(strs);
   EXPECT_EQ(result, expected);
 }
 
@@ -423,7 +423,7 @@ TEST_F(UtilsStringConversion, double_array_conversion_failure) {
         switch (test_case.expected_exception) {
           case test::utils::StringConversionException::InvalidTypeConversion:
             EXPECT_THROW(
-              miru::utils::string_array_as<T>(strs),
+              miru::utils::details::string_array_as<T>(strs),
               miru::errors::InvalidTypeConversionError
             );
             break;
@@ -446,7 +446,7 @@ TEST_F(UtilsStringConversion, string_array_conversion_success) {
     strs.push_back(test_case.str);
     expected.push_back(test_case.expected);
   }
-  std::vector<std::string> result = miru::utils::string_array_as<std::string>(strs);
+  std::vector<std::string> result = miru::utils::details::string_array_as<std::string>(strs);
   EXPECT_EQ(result, expected);
 }
 

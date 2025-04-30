@@ -5,7 +5,7 @@
 // miru
 #include <miru/params/parameter.hpp>
 #include <miru/params/type.hpp>
-#include <miru/utils.hpp>
+#include <miru/details/utils.hpp>
 
 namespace miru::params {
 
@@ -37,7 +37,7 @@ void assert_unique_field_names(
     field_names.push_back(field.get_name());
   }
   try {
-    utils::assert_unique_strings(field_names);
+    miru::utils::details::assert_unique_strings(field_names);
   } catch (const std::exception& e) {
     THROW_DUPLICATE_FIELD_NAMES(object_to_initialize, std::string(e.what()));
   }

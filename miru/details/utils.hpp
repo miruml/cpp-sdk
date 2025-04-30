@@ -8,9 +8,10 @@
 #include <vector>
 
 // internal
+#include <miru/details/errors.hpp>
 #include <miru/errors.hpp>
 
-namespace miru::utils {
+namespace miru::utils::details {
 
 // ================================ STRING UTILITIES =================================
 

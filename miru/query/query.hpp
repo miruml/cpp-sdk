@@ -3,6 +3,7 @@
 // internal
 #include <miru/config/config.hpp>
 #include <miru/params/composite.hpp>
+#include <miru/details/errors.hpp>
 #include <miru/query/details/query.hpp>
 #include <miru/params/details/iterator.hpp>
 #include <miru/params/parameter.hpp>

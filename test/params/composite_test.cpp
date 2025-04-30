@@ -3,7 +3,6 @@
 #include <miru/params/errors.hpp>
 #include <miru/params/parameter.hpp>
 #include <miru/params/scalar.hpp>
-#include <miru/utils.hpp>
 #include <test/utils_test.hpp>
 
 // external

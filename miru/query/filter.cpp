@@ -2,7 +2,7 @@
 #include <miru/params/details/utils.hpp>
 #include <miru/params/parameter.hpp>
 #include <miru/query/filter.hpp>
-#include <miru/utils.hpp>
+#include <miru/details/utils.hpp>
 
 namespace miru::query {
 
@@ -35,7 +35,7 @@ bool SearchParamFilters::matches_prefix(const std::string_view& param_name) cons
     return true;
   }
   for (const auto& prefix : prefixes) {
-    if (utils::has_prefix(param_name, prefix)) {
+    if (miru::utils::details::has_prefix(param_name, prefix)) {
       return true;
     }
   }
@@ -53,7 +53,7 @@ bool SearchParamFilters::child_might_match_param_name(const std::string_view& pa
     return true;
   }
   for (const auto& name : param_names) {
-    if (utils::has_prefix(name, param_name)) {
+    if (miru::utils::details::has_prefix(name, param_name)) {
       return true;
     }
   }
@@ -66,10 +66,10 @@ bool SearchParamFilters::child_might_match_prefix(const std::string_view& param_
     return true;
   }
   for (const auto& prefix : prefixes) {
-    if (utils::has_prefix(param_name, prefix)) {
+    if (miru::utils::details::has_prefix(param_name, prefix)) {
       return true;
     }
-    if (utils::has_prefix(prefix, param_name)) {
+    if (miru::utils::details::has_prefix(prefix, param_name)) {
       return true;
     }
   }
@@ -80,10 +80,10 @@ std::string to_string(const SearchParamFilters& filters) {
   std::stringstream ss;
   ss << "SearchParamFilters(";
   if (filters.has_param_name_filter()) {
-    ss << "param_names: " << utils::to_string(filters.param_names) << ", ";
+    ss << "param_names: " << miru::utils::details::to_string(filters.param_names) << ", ";
   }
   if (filters.has_prefix_filter()) {
-    ss << "prefixes: " << utils::to_string(filters.prefixes) << ", ";
+    ss << "prefixes: " << miru::utils::details::to_string(filters.prefixes) << ", ";
   }
   return ss.str();
 }

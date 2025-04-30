@@ -1,6 +1,6 @@
 // internal
 #include <miru/params/parameter.hpp>
-#include <miru/utils.hpp>
+#include <miru/details/utils.hpp>
 
 namespace miru::params {
 
@@ -12,7 +12,7 @@ Parameter::Parameter() : name_("") {}
 
 Parameter::Parameter(const std::string& name) : name_(name) {
   // remove any trailing slashes from the name
-  name_ = utils::remove_trailing(name_, DELIMITER);
+  name_ = miru::utils::details::remove_trailing(name_, DELIMITER);
 }
 
 void validate_child_parent_name_consistency(
@@ -30,7 +30,7 @@ void validate_child_parent_name_consistency(
 Parameter::Parameter(const std::string& name, const ParameterValue& value)
   : name_(name), value_(value) {
   // remove any trailing slashes from the name
-  name_ = utils::remove_trailing(name_, DELIMITER);
+  name_ = miru::utils::details::remove_trailing(name_, DELIMITER);
 
   // check that the key doesn't have any slashes
   std::vector<std::string> child_names;
@@ -153,7 +153,7 @@ std::string Parameter::get_key() const {
 }
 
 std::string Parameter::get_parent_name() const {
-  return utils::remove_trailing(
+  return miru::utils::details::remove_trailing(
     name_.substr(0, name_.length() - get_key().length()), DELIMITER
   );
 }

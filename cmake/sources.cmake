@@ -94,10 +94,14 @@ set(QUERY_SOURCES
 )
 
 set(CORE_SOURCES
+    # private
+    miru/details/errors.hpp
+    miru/details/errors.cpp
+    miru/details/utils.hpp
+    miru/details/utils.cpp
+
+    # public
     miru/errors.hpp
-    miru/errors.cpp
-    miru/utils.hpp
-    miru/utils.cpp
 )
 
 set(MIRU_SOURCES

@@ -4,7 +4,7 @@
 // internal
 #include <miru/errors.hpp>
 #include <miru/filesys/details/file.hpp>
-#include <miru/utils.hpp>
+#include <miru/details/utils.hpp>
 
 namespace miru::config {
 
@@ -12,9 +12,9 @@ class FromAgentOptionsError : public std::runtime_error {
  public:
   explicit FromAgentOptionsError(
     const std::string& message,
-    const errors::ErrorTrace& trace
+    const miru::errors::details::ErrorTrace& trace
   )
-    : std::runtime_error(message + errors::format_source_location(trace)) {}
+    : std::runtime_error(message + miru::errors::details::format_source_location(trace)) {}
 };
 
 #define THROW_FROM_AGENT_OPTIONS_ERROR(message) \
@@ -24,17 +24,17 @@ class ConfigSlugNotFound : public std::runtime_error {
  public:
   explicit ConfigSlugNotFound(
     const miru::filesys::details::File& schema_file,
-    const errors::ErrorTrace& trace
+    const miru::errors::details::ErrorTrace& trace
   )
     : std::runtime_error(format_message(schema_file, trace)) {}
 
   static std::string format_message(
     const miru::filesys::details::File& schema_file,
-    const errors::ErrorTrace& trace
+    const miru::errors::details::ErrorTrace& trace
   ) {
     return "Unable to find config slug in schema file '" +
            schema_file.abs_path().string() + "'" +
-           errors::format_source_location(trace);
+           miru::errors::details::format_source_location(trace);
   }
 };
 
@@ -45,16 +45,16 @@ class EmptyConfigSlug : public std::runtime_error {
  public:
   explicit EmptyConfigSlug(
     const miru::filesys::details::File& schema_file,
-    const errors::ErrorTrace& trace
+    const miru::errors::details::ErrorTrace& trace
   )
     : std::runtime_error(format_message(schema_file, trace)) {}
 
   static std::string format_message(
     const miru::filesys::details::File& schema_file,
-    const errors::ErrorTrace& trace
+    const miru::errors::details::ErrorTrace& trace
   ) {
     return "Config slug is in schema file '" + schema_file.abs_path().string() +
-           "' cannot be empty ('')" + errors::format_source_location(trace);
+           "' cannot be empty ('')" + miru::errors::details::format_source_location(trace);
   }
 };
 
@@ -66,18 +66,18 @@ class InvalidConfigSchemaFileTypeError : public std::runtime_error {
   explicit InvalidConfigSchemaFileTypeError(
     const miru::filesys::details::File& schema_file,
     const std::vector<std::string>& expected_file_types,
-    const errors::ErrorTrace& trace
+    const miru::errors::details::ErrorTrace& trace
   )
     : std::runtime_error(format_message(schema_file, expected_file_types, trace)) {}
 
   static std::string format_message(
     const miru::filesys::details::File& schema_file,
     const std::vector<std::string>& expected_file_types,
-    const errors::ErrorTrace& trace
+    const miru::errors::details::ErrorTrace& trace
   ) {
     return "Invalid config schema file type '" + schema_file.abs_path().string() +
-           "'. Expected one of: " + miru::utils::to_string(expected_file_types) +
-           errors::format_source_location(trace);
+           "'. Expected one of: " + miru::utils::details::to_string(expected_file_types) +
+           miru::errors::details::format_source_location(trace);
   }
 };
 
@@ -88,14 +88,14 @@ class EmptyConcreteConfig : public std::runtime_error {
  public:
   explicit EmptyConcreteConfig(
     const std::string& config_slug,
-    const errors::ErrorTrace& trace
+    const miru::errors::details::ErrorTrace& trace
   )
     : std::runtime_error(format_message(config_slug, trace)) {}
 
   static std::string
-  format_message(const std::string& config_slug, const errors::ErrorTrace& trace) {
+  format_message(const std::string& config_slug, const miru::errors::details::ErrorTrace& trace) {
     return "The concrete config loaded for config slug '" + config_slug + "' is empty" +
-           errors::format_source_location(trace);
+           miru::errors::details::format_source_location(trace);
   }
 };
 

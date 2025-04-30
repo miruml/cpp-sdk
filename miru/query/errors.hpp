@@ -13,16 +13,16 @@ class ParameterNotFoundError : public std::runtime_error {
  public:
   ParameterNotFoundError(
     const miru::query::SearchParamFilters& filters,
-    const miru::errors::ErrorTrace& trace
+    const miru::errors::details::ErrorTrace& trace
   )
     : std::runtime_error(format_message(filters, trace)) {}
 
   static std::string format_message(
     const miru::query::SearchParamFilters& filters,
-    const miru::errors::ErrorTrace& trace
+    const miru::errors::details::ErrorTrace& trace
   ) {
     return "Unable to find parameter with filters: " + to_string(filters) +
-           errors::format_source_location(trace);
+           miru::errors::details::format_source_location(trace);
   }
 };
 
@@ -34,17 +34,17 @@ class TooManyResultsError : public std::runtime_error {
   TooManyResultsError(
     const miru::query::SearchParamFilters& filters,
     const std::string& message,
-    const miru::errors::ErrorTrace& error_trace
+    const miru::errors::details::ErrorTrace& error_trace
   )
     : std::runtime_error(format_message(filters, message, error_trace)) {}
 
   static std::string format_message(
     const miru::query::SearchParamFilters& filters,
     const std::string& message,
-    const miru::errors::ErrorTrace& error_trace
+    const miru::errors::details::ErrorTrace& error_trace
   ) {
     return "Too many results: " + to_string(filters) + " " + message +
-           errors::format_source_location(error_trace);
+           miru::errors::details::format_source_location(error_trace);
   }
 };
 

@@ -8,7 +8,7 @@
 // internal
 #include <miru/params/errors.hpp>
 #include <miru/params/type.hpp>
-#include <miru/utils.hpp>
+#include <miru/details/utils.hpp>
 
 namespace miru::params {
 
@@ -70,7 +70,7 @@ class Scalar {
     // function which conducts additional checks for converting int64 to the target
     // type
     try {
-      return miru::utils::string_as<type>(value_);
+      return miru::utils::details::string_as<type>(value_);
     } catch (const std::exception &e) {
       THROW_INVALID_SCALAR_CONVERSION(
         value_, to_string(ParameterType::PARAMETER_INTEGER), e.what()
@@ -84,7 +84,7 @@ class Scalar {
     // for types returning doubles we'll use the string conversion function which
     // conducts additional checks for converting double to the target type
     try {
-      return miru::utils::string_as<type>(value_);
+      return miru::utils::details::string_as<type>(value_);
     } catch (const std::exception &e) {
       THROW_INVALID_SCALAR_CONVERSION(
         value_, to_string(ParameterType::PARAMETER_DOUBLE), e.what()

@@ -75,17 +75,17 @@ class InvalidParameterValueTypeError : public std::runtime_error {
   InvalidParameterValueTypeError(
     ParameterType expected,
     ParameterType actual,
-    const miru::errors::ErrorTrace &error_trace
+    const miru::errors::details::ErrorTrace &error_trace
   )
     : std::runtime_error(format_message(expected, actual, error_trace)) {}
 
   static std::string format_message(
     ParameterType expected,
     ParameterType actual,
-    const miru::errors::ErrorTrace &error_trace
+    const miru::errors::details::ErrorTrace &error_trace
   ) {
     return "expected [" + to_string(expected) + "] got [" + to_string(actual) + "]" +
-           errors::format_source_location(error_trace);
+           miru::errors::details::format_source_location(error_trace);
   }
 };
 

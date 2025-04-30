@@ -2,9 +2,9 @@
 #include <string>
 
 // internal
-#include <miru/errors.hpp>
+#include <miru/details/errors.hpp>
 
-namespace miru::errors {
+namespace miru::errors::details {
 
 std::string format_source_location(const ErrorTrace& trace) {
   return "\n at " + std::string(trace.file) + ":" + std::to_string(trace.line) +

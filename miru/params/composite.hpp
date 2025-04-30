@@ -8,7 +8,6 @@
 #include <miru/params/errors.hpp>
 #include <miru/params/iterator.hpp>
 #include <miru/params/parameter_fwd.hpp>
-#include <miru/utils.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>

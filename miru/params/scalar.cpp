@@ -1,7 +1,7 @@
 // internal
 #include <miru/params/errors.hpp>
 #include <miru/params/parameter.hpp>
-#include <miru/utils.hpp>
+#include <miru/details/utils.hpp>
 
 namespace miru::params {
 
@@ -17,7 +17,7 @@ std::ostream& operator<<(std::ostream& os, const Scalar& scalar) {
 // https://yaml.org/type/bool.html
 bool Scalar::as_bool() const {
   try {
-    return miru::utils::yaml_string_to_bool(value_);
+    return miru::utils::details::yaml_string_to_bool(value_);
   } catch (const std::exception& e) {
     THROW_INVALID_SCALAR_CONVERSION(
       value_, to_string(ParameterType::PARAMETER_BOOL), e.what()
@@ -27,7 +27,7 @@ bool Scalar::as_bool() const {
 
 int64_t Scalar::as_int() const {
   try {
-    return miru::utils::string_to_int64(value_);
+    return miru::utils::details::string_to_int64(value_);
   } catch (const std::exception& e) {
     THROW_INVALID_SCALAR_CONVERSION(
       value_, to_string(ParameterType::PARAMETER_INTEGER), e.what()
@@ -37,7 +37,7 @@ int64_t Scalar::as_int() const {
 
 double Scalar::as_double() const {
   try {
-    return miru::utils::string_to_double(value_);
+    return miru::utils::details::string_to_double(value_);
   } catch (const std::exception& e) {
     THROW_INVALID_SCALAR_CONVERSION(
       value_, to_string(ParameterType::PARAMETER_DOUBLE), e.what()

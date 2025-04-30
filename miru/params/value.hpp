@@ -12,7 +12,6 @@
 #include <miru/params/errors.hpp>
 #include <miru/params/scalar.hpp>
 #include <miru/params/type.hpp>
-#include <miru/utils.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>
@@ -274,7 +273,7 @@ class ParameterValue {
   get() const {
     // use the integer conversion function which conducts additional checks
     // for converting int64 to the target type
-    return miru::utils::int64_as<type>(get<ParameterType::PARAMETER_INTEGER>());
+    return miru::utils::details::int64_as<type>(get<ParameterType::PARAMETER_INTEGER>());
   }
 
   template <typename type>
@@ -283,7 +282,7 @@ class ParameterValue {
     get() const {
     // use the double conversion function which conducts additional checks
     // for converting double to the target type
-    return miru::utils::double_as<type>(get<ParameterType::PARAMETER_DOUBLE>());
+    return miru::utils::details::double_as<type>(get<ParameterType::PARAMETER_DOUBLE>());
   }
 
   template <typename type>
