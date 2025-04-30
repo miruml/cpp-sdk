@@ -2,6 +2,7 @@
 #include <string>
 
 // internal
+#include <miru/params/details/scalar.hpp>
 #include <miru/params/errors.hpp>
 #include <miru/params/scalar.hpp>
 #include <miru/utils.hpp>
@@ -149,7 +150,7 @@ TEST_F(ScalarConversion, bool_array_conversion_success) {
     scalars.push_back(miru::params::Scalar(test_case.str));
     expected.push_back(test_case.expected);
   }
-  std::vector<bool> result = miru::params::scalar_array_as<bool>(scalars);
+  std::vector<bool> result = miru::params::details::scalar_array_as<bool>(scalars);
   EXPECT_EQ(result, expected);
 }
 
@@ -161,7 +162,7 @@ TEST_F(ScalarConversion, bool_array_conversion_failure) {
     std::vector<miru::params::Scalar> scalars = {};
     scalars.push_back(miru::params::Scalar(test_case.str));
     EXPECT_THROW(
-      miru::params::scalar_array_as<bool>(scalars),
+      miru::params::details::scalar_array_as<bool>(scalars),
       miru::params::InvalidScalarConversionError
     );
   }
@@ -177,7 +178,7 @@ TEST_F(ScalarConversion, int_array_conversion_success) {
     scalars.push_back(miru::params::Scalar(test_case.str));
     expected.push_back(std::get<int64_t>(test_case.expected));
   }
-  std::vector<int64_t> result = miru::params::scalar_array_as<int64_t>(scalars);
+  std::vector<int64_t> result = miru::params::details::scalar_array_as<int64_t>(scalars);
   EXPECT_EQ(result, expected);
 }
 
@@ -195,7 +196,7 @@ TEST_F(ScalarConversion, int_array_conversion_failure) {
         switch (test_case.expected_exception) {
           case test::utils::StringConversionException::InvalidTypeConversion:
             EXPECT_THROW(
-              miru::params::scalar_array_as<T>(scalars),
+              miru::params::details::scalar_array_as<T>(scalars),
               miru::params::InvalidScalarConversionError
             );
             break;
@@ -218,7 +219,7 @@ TEST_F(ScalarConversion, double_array_conversion_success) {
     scalars.push_back(miru::params::Scalar(test_case.str));
     expected.push_back(std::get<double>(test_case.expected));
   }
-  std::vector<double> result = miru::params::scalar_array_as<double>(scalars);
+  std::vector<double> result = miru::params::details::scalar_array_as<double>(scalars);
   EXPECT_EQ(result, expected);
 }
 
@@ -236,7 +237,7 @@ TEST_F(ScalarConversion, double_array_conversion_failure) {
         switch (test_case.expected_exception) {
           case test::utils::StringConversionException::InvalidTypeConversion:
             EXPECT_THROW(
-              miru::params::scalar_array_as<T>(scalars),
+              miru::params::details::scalar_array_as<T>(scalars),
               miru::params::InvalidScalarConversionError
             );
             break;
@@ -259,7 +260,8 @@ TEST_F(ScalarConversion, string_array_conversion_success) {
     scalars.push_back(miru::params::Scalar(test_case.str));
     expected.push_back(test_case.expected);
   }
-  std::vector<std::string> result = miru::params::scalar_array_as<std::string>(scalars);
+  std::vector<std::string> result =
+    miru::params::details::scalar_array_as<std::string>(scalars);
   EXPECT_EQ(result, expected);
 }
 

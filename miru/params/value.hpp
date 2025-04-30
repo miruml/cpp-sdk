@@ -8,6 +8,7 @@
 
 // internal
 #include <miru/params/composite.hpp>
+#include <miru/params/details/scalar.hpp>
 #include <miru/params/errors.hpp>
 #include <miru/params/scalar.hpp>
 #include <miru/params/type.hpp>
@@ -182,7 +183,7 @@ class ParameterValue {
       case ParameterType::PARAMETER_SCALAR_ARRAY:
         if (!(cache_flags_ & BOOL_ARRAY_CACHED)) {
           scalar_bool_array_ =
-            scalar_array_as<bool>(std::get<std::vector<Scalar>>(value_));
+            details::scalar_array_as<bool>(std::get<std::vector<Scalar>>(value_));
           cache_flags_ |= BOOL_ARRAY_CACHED;
         }
         return scalar_bool_array_;
@@ -202,7 +203,7 @@ class ParameterValue {
       case ParameterType::PARAMETER_SCALAR_ARRAY:
         if (!(cache_flags_ & INT_ARRAY_CACHED)) {
           scalar_int_array_ =
-            scalar_array_as<int64_t>(std::get<std::vector<Scalar>>(value_));
+            details::scalar_array_as<int64_t>(std::get<std::vector<Scalar>>(value_));
           cache_flags_ |= INT_ARRAY_CACHED;
         }
         return scalar_int_array_;
@@ -224,7 +225,7 @@ class ParameterValue {
       case ParameterType::PARAMETER_SCALAR_ARRAY:
         if (!(cache_flags_ & DOUBLE_ARRAY_CACHED)) {
           scalar_double_array_ =
-            scalar_array_as<double>(std::get<std::vector<Scalar>>(value_));
+            details::scalar_array_as<double>(std::get<std::vector<Scalar>>(value_));
           cache_flags_ |= DOUBLE_ARRAY_CACHED;
         }
         return scalar_double_array_;
@@ -246,7 +247,7 @@ class ParameterValue {
       case ParameterType::PARAMETER_SCALAR_ARRAY:
         if (!(cache_flags_ & STRING_ARRAY_CACHED)) {
           scalar_string_array_ =
-            scalar_array_as<std::string>(std::get<std::vector<Scalar>>(value_));
+            details::scalar_array_as<std::string>(std::get<std::vector<Scalar>>(value_));
           cache_flags_ |= STRING_ARRAY_CACHED;
         }
         return scalar_string_array_;
@@ -539,16 +540,6 @@ class ParameterValue {
 
 /// Return the value of a parameter as a string
 std::string to_string(const ParameterValue &value);
-
-std::string to_string(const ParameterValue &value, const int indent);
-
-std::string param_value_array_to_string(
-  const std::vector<ParameterValue> &array,
-  const int indent,
-  const bool with_newlines
-);
-
-std::string param_map_to_string(const miru::params::Map &map, const int indent);
 
 std::ostream &operator<<(std::ostream &os, const ParameterValue &value);
 

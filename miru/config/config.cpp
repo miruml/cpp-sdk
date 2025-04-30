@@ -8,7 +8,7 @@
 #include <miru/config/config.hpp>
 #include <miru/config/errors.hpp>
 #include <miru/http/details/socket_client.hpp>
-#include <miru/params/parse.hpp>
+#include <miru/params/details/parse.hpp>
 #include <miru/query/ros2.hpp>
 
 // external

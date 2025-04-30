@@ -1,6 +1,6 @@
 // internal
+#include <miru/params/details/utils.hpp>
 #include <miru/params/parameter.hpp>
-#include <miru/params/utils.hpp>
 #include <miru/query/filter.hpp>
 #include <miru/utils.hpp>
 

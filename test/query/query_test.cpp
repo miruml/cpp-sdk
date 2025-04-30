@@ -3,8 +3,8 @@
 
 // internal
 #include <miru/params/composite.hpp>
+#include <miru/params/details/parse.hpp>
 #include <miru/params/errors.hpp>
-#include <miru/params/parse.hpp>
 #include <miru/params/type.hpp>
 #include <miru/query/errors.hpp>
 #include <miru/query/query.hpp>
