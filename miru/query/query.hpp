@@ -2,7 +2,7 @@
 
 // internal
 #include <miru/config/config.hpp>
-#include <miru/params/composite.hpp>
+#include <miru/params/details/composite.hpp>
 #include <miru/params/parameter.hpp>
 #include <miru/query/errors.hpp>
 #include <miru/query/filter.hpp>

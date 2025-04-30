@@ -7,9 +7,9 @@
 #include <variant>
 
 // internal
-#include <miru/params/composite.hpp>
+#include <miru/params/details/composite.hpp>
 #include <miru/params/errors.hpp>
-#include <miru/params/scalar.hpp>
+#include <miru/params/details/scalar.hpp>
 #include <miru/params/type.hpp>
 #include <miru/utils.hpp>
 
@@ -67,13 +67,6 @@ class ParameterValue {
   explicit ParameterValue(const std::vector<double> &double_array_value);
   /// Construct a parameter value with type PARAMETER_STRING_ARRAY.
   explicit ParameterValue(const std::vector<std::string> &string_array_value);
-
-  // we are not going to support type information in the public interface right now
-  // since yaml does not support strongly typed information ("4" vs 4) and we have no
-  // quick way of doing so ourself. ROS2 rolled their own parser to grab type
-  // information. We will be storing a SCALAR type and I don't want to expose this
-  // to users since it will likely confuse them when an integer is parsed as a scalar
-  // and not an integer when using yaml.
 
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L124
 
@@ -152,24 +145,6 @@ class ParameterValue {
   }
 
   // byte arrays are not supported
-
-  // template<ParameterType type>
-  // constexpr
-  // typename std::enable_if<
-  //     type == ParameterType::PARAMETER_BYTE_ARRAY, const std::vector<uint8_t>
-  //     &>::type
-  // get() const
-  // {
-  //     switch (type_) {
-  //         case ParameterType::PARAMETER_BYTE_ARRAY:
-  //             return std::get<std::vector<uint8_t>>(value_);
-  //         case ParameterType::PARAMETER_SCALAR:
-  //             return std::get<Scalar>(value_).as_byte_array();
-  //         default:
-  //             throw ParameterTypeException(ParameterType::PARAMETER_BYTE_ARRAY,
-  //             type_);
-  //     }
-  // }
 
   template <ParameterType type>
   constexpr typename std::enable_if<

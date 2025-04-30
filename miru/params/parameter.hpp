@@ -7,10 +7,10 @@
 
 // internal
 #include <miru/params/errors.hpp>
-#include <miru/params/parameter_fwd.hpp>
-#include <miru/params/scalar.hpp>
+#include <miru/params/details/parameter_fwd.hpp>
+#include <miru/params/details/scalar.hpp>
+#include <miru/params/details/value.hpp>
 #include <miru/params/type.hpp>
-#include <miru/params/value.hpp>
 #include <miru/utils.hpp>
 
 // external

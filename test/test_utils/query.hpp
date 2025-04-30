@@ -6,7 +6,7 @@
 
 // internal
 #include <miru/params/parameter.hpp>
-#include <miru/params/parse.hpp>
+#include <miru/params/details/parse.hpp>
 #include <miru/query/filter.hpp>
 
 namespace test::test_utils {
