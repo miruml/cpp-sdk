@@ -5,7 +5,7 @@
 
 // internal
 #include <miru/http/errors.hpp>
-#include <miru/http/utils.hpp>
+#include <miru/http/details/utils.hpp>
 
 // external
 #include <boost/asio.hpp>

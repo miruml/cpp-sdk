@@ -4,10 +4,9 @@
 #include <string>
 
 // internal
-#include <miru/http/models/ErrorResponse.h>
-
 #include <miru/errors.hpp>
-#include <miru/http/socket_session.hpp>
+#include <miru/http/details/models/ErrorResponse.h>
+#include <miru/http/details/socket_session.hpp>
 
 // ================================== ERRORS ======================================= //
 namespace miru::http::errors {

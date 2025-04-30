@@ -1,5 +1,5 @@
 // internal
-#include <miru/http/models/RefreshLatestConcreteConfigRequest.h>
+#include <miru/http/details/models/RefreshLatestConcreteConfigRequest.h>
 
 #include <miru/config/config.hpp>
 #include <miru/config/errors.hpp>

@@ -5,7 +5,7 @@
 
 // internal
 #include <miru/errors.hpp>
-#include <miru/http/socket_session.hpp>
+#include <miru/http/details/socket_session.hpp>
 
 namespace miru::http::errors {
 

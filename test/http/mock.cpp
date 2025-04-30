@@ -1,11 +1,11 @@
 // internal
 #include "test/http/mock.hpp"
 
-#include <miru/http/models/BaseConcreteConfig.h>
-#include <miru/http/models/HashSchemaSerializedRequest.h>
-#include <miru/http/models/RefreshLatestConcreteConfigRequest.h>
+#include <miru/http/details/models/BaseConcreteConfig.h>
+#include <miru/http/details/models/HashSchemaSerializedRequest.h>
+#include <miru/http/details/models/RefreshLatestConcreteConfigRequest.h>
 
-#include <miru/http/socket_session.hpp>
+#include <miru/http/details/socket_session.hpp>
 
 // external
 #include <boost/beast.hpp>

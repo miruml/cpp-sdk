@@ -2,12 +2,12 @@
 #include <thread>
 
 // internal
-#include <miru/http/models/HashSchemaSerializedRequest.h>
-#include <miru/http/models/HashSerializedConfigSchemaFormat.h>
+#include <miru/http/details/models/HashSchemaSerializedRequest.h>
+#include <miru/http/details/models/HashSerializedConfigSchemaFormat.h>
 
 #include <miru/config/config.hpp>
 #include <miru/config/errors.hpp>
-#include <miru/http/socket_client.hpp>
+#include <miru/http/details/socket_client.hpp>
 #include <miru/params/parse.hpp>
 #include <miru/query/ros2.hpp>
 

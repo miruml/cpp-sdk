@@ -3,7 +3,7 @@
 
 // internal
 #include <miru/http/errors.hpp>
-#include <miru/http/socket_session.hpp>
+#include <miru/http/details/socket_session.hpp>
 
 // external
 #include <boost/asio.hpp>

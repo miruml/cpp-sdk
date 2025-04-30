@@ -6,8 +6,8 @@
 
 // internal
 #include <miru/filesys/details/file.hpp>
-#include <miru/http/client.hpp>
-#include <miru/http/socket_client.hpp>
+#include <miru/http/details/client.hpp>
+#include <miru/http/details/socket_client.hpp>
 #include <miru/params/parameter.hpp>
 #include <miru/query/ros2_fwd.hpp>
 

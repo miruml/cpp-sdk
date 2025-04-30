@@ -4,15 +4,15 @@
 #include <cstring>
 
 // internal
-#include <miru/http/socket_client.hpp>
-#include <miru/http/socket_session.hpp>
-#include <miru/http/utils.hpp>
+#include <miru/http/details/socket_client.hpp>
+#include <miru/http/details/socket_session.hpp>
+#include <miru/http/details/utils.hpp>
+
+#include <miru/http/details/models/BaseConcreteConfig.h>
+#include <miru/http/details/models/HashSchemaSerializedRequest.h>
+#include <miru/http/details/models/RefreshLatestConcreteConfigRequest.h>
 
 // external
-#include <miru/http/models/BaseConcreteConfig.h>
-#include <miru/http/models/HashSchemaSerializedRequest.h>
-#include <miru/http/models/RefreshLatestConcreteConfigRequest.h>
-
 #include <boost/asio.hpp>
 #include <boost/asio/local/stream_protocol.hpp>
 #include <boost/beast.hpp>

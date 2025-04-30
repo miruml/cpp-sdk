@@ -1,10 +1,10 @@
 // internal
-#include <miru/http/models/HashSchemaSerializedRequest.h>
+#include <miru/http/details/models/HashSchemaSerializedRequest.h>
 
 #include <miru/filesys/details/file.hpp>
-#include <miru/http/socket_client.hpp>
-#include <miru/http/socket_session.hpp>
-#include <miru/http/utils.hpp>
+#include <miru/http/details/socket_client.hpp>
+#include <miru/http/details/socket_session.hpp>
+#include <miru/http/details/utils.hpp>
 #include <test/test_utils/testdata.hpp>
 
 // external

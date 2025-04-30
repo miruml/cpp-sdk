@@ -18,34 +18,38 @@ set(FILESYS_SOURCES
 )
 
 set(HTTP_SOURCES
-    miru/http/client.hpp
+    # private
+    miru/http/details/client.hpp
+    miru/http/details/socket_client.hpp
+    miru/http/details/socket_client.cpp
+    miru/http/details/socket_session.hpp
+    miru/http/details/socket_session.cpp
+    miru/http/details/utils.hpp
+    miru/http/details/utils.cpp
+
+    # public
     miru/http/errors.hpp
     miru/http/errors.cpp
-    miru/http/socket_client.hpp
-    miru/http/socket_client.cpp
-    miru/http/socket_session.hpp
-    miru/http/socket_session.cpp
-    miru/http/utils.hpp
-    miru/http/utils.cpp
 )
 
 set(HTTP_MODELS_SOURCES
-    miru/http/models/BaseConcreteConfig.h
-    miru/http/models/BaseConcreteConfig.cpp
-    miru/http/models/Error.h
-    miru/http/models/Error.cpp
-    miru/http/models/ErrorResponse.h
-    miru/http/models/ErrorResponse.cpp
-    miru/http/models/HashSchemaSerializedRequest.h
-    miru/http/models/HashSchemaSerializedRequest.cpp
-    miru/http/models/HashSerializedConfigSchemaFormat.h
-    miru/http/models/HashSerializedConfigSchemaFormat.cpp
-    miru/http/models/Helpers.h
-    miru/http/models/Helpers.cpp
-    miru/http/models/RefreshLatestConcreteConfigRequest.h
-    miru/http/models/RefreshLatestConcreteConfigRequest.cpp
-    miru/http/models/SchemaDigestResponse.h
-    miru/http/models/SchemaDigestResponse.cpp
+    # private
+    miru/http/details/models/BaseConcreteConfig.h
+    miru/http/details/models/BaseConcreteConfig.cpp
+    miru/http/details/models/Error.h
+    miru/http/details/models/Error.cpp
+    miru/http/details/models/ErrorResponse.h
+    miru/http/details/models/ErrorResponse.cpp
+    miru/http/details/models/HashSchemaSerializedRequest.h
+    miru/http/details/models/HashSchemaSerializedRequest.cpp
+    miru/http/details/models/HashSerializedConfigSchemaFormat.h
+    miru/http/details/models/HashSerializedConfigSchemaFormat.cpp
+    miru/http/details/models/Helpers.h
+    miru/http/details/models/Helpers.cpp
+    miru/http/details/models/RefreshLatestConcreteConfigRequest.h
+    miru/http/details/models/RefreshLatestConcreteConfigRequest.cpp
+    miru/http/details/models/SchemaDigestResponse.h
+    miru/http/details/models/SchemaDigestResponse.cpp
 )
 
 set(PARAMS_SOURCES
