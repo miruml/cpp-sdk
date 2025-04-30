@@ -6,7 +6,7 @@
 #include <miru/params/details/utils.hpp>
 #include <miru/query/query.hpp>
 
-namespace miru::query {
+namespace miru::query::details {
 
 void find_all_recursive_helper(
   const Parameter& parameter,
@@ -71,4 +71,5 @@ std::vector<const Parameter*>
 find_all(const miru::config::Config& config, const SearchParamFilters& filters) {
   return find_all(config.root_parameter(), filters);
 }
-}  // namespace miru::query
+
+}  // namespace miru::query::details

@@ -79,11 +79,15 @@ set(PARAMS_SOURCES
 )
 
 set(QUERY_SOURCES
+    # private
+    miru/query/details/query.hpp
+    miru/query/details/query.cpp
+
+    # public
     miru/query/errors.hpp
     miru/query/filter.hpp
     miru/query/filter.cpp
     miru/query/query.hpp
-    miru/query/query.cpp
     miru/query/ros2_fwd.hpp
     miru/query/ros2.hpp
     miru/query/ros2.cpp
