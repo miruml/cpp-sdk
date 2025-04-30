@@ -133,7 +133,7 @@ TEST(Config, FromFileSystemYamlRos2) {
 // =================================== FROM AGENT ================================== //
 TEST(Config, FromAgentRefreshSuccess) {
   // set the response from the mock client
-  miru::http::MockBackendClient mock_client;
+  miru::http::details::MockBackendClient mock_client;
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
   mock_client.refresh_latest_concrete_config_func = []() {
@@ -176,7 +176,7 @@ TEST(Config, FromAgentRefreshSuccess) {
 
 TEST(Config, FromAgentRefreshFailureGetSuccess) {
   // set the response from the mock client
-  miru::http::MockBackendClient mock_client;
+  miru::http::details::MockBackendClient mock_client;
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
   // refresh latest concrete config will fail
@@ -226,7 +226,7 @@ TEST(Config, FromAgentRefreshFailureGetSuccess) {
 
 TEST(Config, FromAgentDefaultFile) {
   // set the response from the mock client
-  miru::http::MockBackendClient mock_client;
+  miru::http::details::MockBackendClient mock_client;
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
   // refresh latest concrete config will fail

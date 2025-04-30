@@ -12,7 +12,7 @@
 #include <boost/beast.hpp>
 #include <nlohmann/json.hpp>
 
-namespace miru::http {
+namespace miru::http::details {
 
 namespace openapi = org::openapitools::server::model;
 
@@ -34,4 +34,4 @@ class MockBackendClient : public BackendClientI {
   ) const;
 };
 
-}  // namespace miru::http
+}  // namespace miru::http::details

@@ -72,7 +72,7 @@ Config Config::from_file(
 }
 
 std::string hash_schema(
-  const miru::http::BackendClientI& client,
+  const miru::http::details::BackendClientI& client,
   const miru::filesys::details::File& schema_file
 ) {
   // determine the schema file type
@@ -99,7 +99,7 @@ std::string hash_schema(
 }
 
 nlohmann::json get_latest_concrete_config(
-  const miru::http::BackendClientI& client,
+  const miru::http::details::BackendClientI& client,
   const std::string& config_schema_digest,
   const std::string& config_slug
 ) {
@@ -121,7 +121,7 @@ nlohmann::json get_latest_concrete_config(
 }
 
 Config from_agent_impl(
-  const miru::http::BackendClientI& client,
+  const miru::http::details::BackendClientI& client,
   const std::filesystem::path& schema_file_path,
   const FromAgentOptions& options
 ) {
@@ -149,7 +149,7 @@ Config from_agent_impl(
 }
 
 Config Config::from_agent(
-  const miru::http::BackendClientI& client,
+  const miru::http::details::BackendClientI& client,
   const std::filesystem::path& schema_file_path,
   const FromAgentOptions& options
 ) {
@@ -190,7 +190,7 @@ Config Config::from_agent(
   const std::filesystem::path& schema_file_path,
   const FromAgentOptions& options
 ) {
-  miru::http::UnixSocketClient client;
+  miru::http::details::UnixSocketClient client;
   return from_agent_impl(client, schema_file_path, options);
 }
 

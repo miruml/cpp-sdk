@@ -12,7 +12,7 @@
 #include <boost/beast.hpp>
 #include <nlohmann/json.hpp>
 
-namespace miru::http {
+namespace miru::http::details {
 
 namespace openapi = org::openapitools::server::model;
 namespace http = boost::beast::http;
@@ -52,4 +52,4 @@ class UnixSocketClient : public BackendClientI {
   std::string port_;
 };
 
-}  // namespace miru::http
+}  // namespace miru::http::details

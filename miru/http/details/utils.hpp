@@ -13,7 +13,7 @@
 #include <nlohmann/json.hpp>
 
 // ================================== CLIENT ======================================= //
-namespace miru::http {
+namespace miru::http::details {
 
 namespace beast = boost::beast;
 namespace http = beast::http;
@@ -40,4 +40,4 @@ nlohmann::json handle_json_response(
   const RequestDetails& details
 );
 
-}  // namespace miru::http
+}  // namespace miru::http::details

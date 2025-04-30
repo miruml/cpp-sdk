@@ -18,7 +18,7 @@
 #include <boost/beast.hpp>
 #include <nlohmann/json.hpp>
 
-namespace miru::http {
+namespace miru::http::details {
 
 namespace asio = boost::asio;
 namespace http = boost::beast::http;
@@ -81,4 +81,4 @@ openapi::BaseConcreteConfig UnixSocketClient::refresh_latest_concrete_config(
   );
 }
 
-}  // namespace miru::http
+}  // namespace miru::http::details

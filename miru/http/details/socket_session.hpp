@@ -10,7 +10,7 @@
 #include <nlohmann/json.hpp>
 
 // ================================== CLIENT ======================================= //
-namespace miru::http {
+namespace miru::http::details {
 
 namespace beast = boost::beast;
 namespace http = beast::http;
@@ -68,4 +68,4 @@ class SocketSession : public std::enable_shared_from_this<SocketSession> {
   void on_read(beast::error_code ec, std::size_t bytes_transferred);
 };
 
-}  // namespace miru::http
+}  // namespace miru::http::details

@@ -12,7 +12,7 @@
 #include <boost/asio/local/stream_protocol.hpp>
 #include <boost/beast.hpp>
 
-namespace miru::http {
+namespace miru::http::details {
 
 namespace http = boost::beast::http;
 namespace openapi = org::openapitools::server::model;
@@ -79,4 +79,4 @@ nlohmann::json handle_json_response(
   return nlohmann::json::parse(res.body());
 }
 
-}  // namespace miru::http
+}  // namespace miru::http::details

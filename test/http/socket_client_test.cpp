@@ -21,7 +21,7 @@ namespace openapi = org::openapitools::server::model;
 // ============================== BUILD GET REQUEST ================================ //
 TEST(HTTPClient, BuildGetRequest) {
   http::request<http::string_body> req =
-    miru::http::build_get_request("localhost", "/test");
+    miru::http::details::build_get_request("localhost", "/test");
 
   // request
   EXPECT_EQ(req.method(), http::verb::get);
@@ -34,7 +34,7 @@ TEST(HTTPClient, BuildGetRequest) {
 // ============================= BUILD POST REQUEST ================================ //
 TEST(HTTPClient, BuildPostRequest) {
   http::request<http::string_body> req =
-    miru::http::build_post_request("localhost", "/test", "{\"key\":\"value\"}");
+    miru::http::details::build_post_request("localhost", "/test", "{\"key\":\"value\"}");
 
   // request
   EXPECT_EQ(req.method(), http::verb::post);
@@ -47,7 +47,7 @@ TEST(HTTPClient, BuildPostRequest) {
 // =============================== SANDBOX TESTS =================================== //
 TEST(HTTPClient, DISABLED_Sandbox) {
   // test route
-  miru::http::UnixSocketClient client;
+  miru::http::details::UnixSocketClient client;
   auto res = client.test_route();
 
   // hash schema

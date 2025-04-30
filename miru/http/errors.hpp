@@ -20,7 +20,7 @@ class InvalidContentTypeError : public std::runtime_error {
   InvalidContentTypeError(
     const std::string& actual_content_type,
     const std::string& expected_content_type,
-    const miru::http::RequestDetails& details,
+    const miru::http::details::RequestDetails& details,
     const miru::errors::ErrorTrace& trace
   )
     : std::runtime_error(
@@ -30,7 +30,7 @@ class InvalidContentTypeError : public std::runtime_error {
   static std::string format_message(
     const std::string& actual_content_type,
     const std::string& expected_content_type,
-    const miru::http::RequestDetails& details,
+    const miru::http::details::RequestDetails& details,
     const miru::errors::ErrorTrace& trace
   );
 };
@@ -46,14 +46,14 @@ class ConnectionError : public std::runtime_error {
  public:
   ConnectionError(
     const std::string& error_message,
-    const miru::http::RequestDetails& details,
+    const miru::http::details::RequestDetails& details,
     const miru::errors::ErrorTrace& trace
   )
     : std::runtime_error(format_message(error_message, details, trace)) {}
 
   static std::string format_message(
     const std::string& error_message,
-    const miru::http::RequestDetails& details,
+    const miru::http::details::RequestDetails& details,
     const miru::errors::ErrorTrace& trace
   );
 };
@@ -65,14 +65,14 @@ class WriteError : public std::runtime_error {
  public:
   WriteError(
     const std::string& error_message,
-    const miru::http::RequestDetails& details,
+    const miru::http::details::RequestDetails& details,
     const miru::errors::ErrorTrace& trace
   )
     : std::runtime_error(format_message(error_message, details, trace)) {}
 
   static std::string format_message(
     const std::string& error_message,
-    const miru::http::RequestDetails& details,
+    const miru::http::details::RequestDetails& details,
     const miru::errors::ErrorTrace& trace
   );
 };
@@ -84,14 +84,14 @@ class ReadError : public std::runtime_error {
  public:
   ReadError(
     const std::string& error_message,
-    const miru::http::RequestDetails& details,
+    const miru::http::details::RequestDetails& details,
     const miru::errors::ErrorTrace& trace
   )
     : std::runtime_error(format_message(error_message, details, trace)) {}
 
   static std::string format_message(
     const std::string& error_message,
-    const miru::http::RequestDetails& details,
+    const miru::http::details::RequestDetails& details,
     const miru::errors::ErrorTrace& trace
   );
 };
@@ -103,14 +103,14 @@ class ShutdownError : public std::runtime_error {
  public:
   ShutdownError(
     const std::string& error_message,
-    const miru::http::RequestDetails& details,
+    const miru::http::details::RequestDetails& details,
     const miru::errors::ErrorTrace& trace
   )
     : std::runtime_error(format_message(error_message, details, trace)) {}
 
   static std::string format_message(
     const std::string& error_message,
-    const miru::http::RequestDetails& details,
+    const miru::http::details::RequestDetails& details,
     const miru::errors::ErrorTrace& trace
   );
 };
@@ -122,7 +122,7 @@ class RequestFailedError : public std::runtime_error {
  public:
   RequestFailedError(
     uint status,
-    const miru::http::RequestDetails& details,
+    const miru::http::details::RequestDetails& details,
     const std::optional<openapi::ErrorResponse>& error_response,
     const miru::errors::ErrorTrace& trace
   )
@@ -130,7 +130,7 @@ class RequestFailedError : public std::runtime_error {
 
   static std::string format_message(
     uint status,
-    const miru::http::RequestDetails& details,
+    const miru::http::details::RequestDetails& details,
     const std::optional<openapi::ErrorResponse>& error_response,
     const miru::errors::ErrorTrace& trace
   );
@@ -145,14 +145,14 @@ class RequestTimeoutError : public std::runtime_error {
  public:
   RequestTimeoutError(
     const std::string& error_message,
-    const miru::http::RequestDetails& details,
+    const miru::http::details::RequestDetails& details,
     const miru::errors::ErrorTrace& trace
   )
     : std::runtime_error(format_message(error_message, details, trace)) {}
 
   static std::string format_message(
     const std::string& error_message,
-    const miru::http::RequestDetails& details,
+    const miru::http::details::RequestDetails& details,
     const miru::errors::ErrorTrace& trace
   );
 };

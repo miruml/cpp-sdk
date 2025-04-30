@@ -10,7 +10,7 @@
 #include <boost/asio/spawn.hpp>
 #include <boost/beast.hpp>
 
-namespace miru::http {
+namespace miru::http::details {
 
 namespace beast = boost::beast;
 namespace http = beast::http;
@@ -81,4 +81,4 @@ void SocketSession::on_read(beast::error_code ec, std::size_t bytes_transferred)
   // if we get here then the connection is closed gracefully
 }
 
-}  // namespace miru::http
+}  // namespace miru::http::details

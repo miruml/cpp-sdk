@@ -49,7 +49,7 @@ class Config {
   );
 
   static Config from_agent(
-    const miru::http::BackendClientI& client,
+    const miru::http::details::BackendClientI& client,
     const std::filesystem::path& schema_file_path,
     const FromAgentOptions& options = FromAgentOptions()
   );

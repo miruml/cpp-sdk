@@ -11,7 +11,7 @@
 #include <boost/beast.hpp>
 #include <nlohmann/json.hpp>
 
-namespace miru::http {
+namespace miru::http::details {
 
 std::string MockBackendClient::hash_schema(
   const openapi::HashSchemaSerializedRequest& config_schema
@@ -32,4 +32,4 @@ openapi::BaseConcreteConfig MockBackendClient::refresh_latest_concrete_config(
   return refresh_latest_concrete_config_func();
 }
 
-}  // namespace miru::http
+}  // namespace miru::http::details
