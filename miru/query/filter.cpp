@@ -16,7 +16,7 @@ bool SearchParamFilters::matches(const Parameter& parameter) const {
 
 bool SearchParamFilters::continue_search(const Parameter& parameter) const {
   return (
-    !is_leaf(parameter) && child_might_match_param_name(parameter.get_name()) &&
+    !miru::params::details::is_leaf(parameter) && child_might_match_param_name(parameter.get_name()) &&
     child_might_match_prefix(parameter.get_name())
   );
 }
@@ -43,7 +43,7 @@ bool SearchParamFilters::matches_prefix(const std::string_view& param_name) cons
 }
 
 bool SearchParamFilters::matches_leaves_only(const Parameter& parameter) const {
-  return !leaves_only || miru::params::is_leaf(parameter);
+  return !leaves_only || miru::params::details::is_leaf(parameter);
 }
 
 // continue searching operations

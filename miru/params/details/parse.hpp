@@ -9,7 +9,7 @@
 
 #include <nlohmann/json.hpp>
 
-namespace miru::params {
+namespace miru::params::details {
 
 miru::params::Parameter
 parse_yaml_node(const std::string& name, const YAML::Node& node);
@@ -30,4 +30,4 @@ miru::params::Parameter parse_structured_data(
 miru::params::Parameter
 parse_file(const std::string& name, const miru::filesys::details::File& file);
 
-}  // namespace miru::params
+}  // namespace miru::params::details

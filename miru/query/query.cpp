@@ -24,7 +24,7 @@ void find_all_recursive_helper(
   }
 
   // find recursively
-  for (const auto& item : get_children_view(parameter)) {
+  for (const auto& item : miru::params::details::get_children_view(parameter)) {
     find_all_recursive_helper(item, result, filters);
   }
 }

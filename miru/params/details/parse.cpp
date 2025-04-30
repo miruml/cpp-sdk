@@ -8,7 +8,7 @@
 
 #include <nlohmann/json.hpp>
 
-namespace miru::params {
+namespace miru::params::details {
 
 miru::params::Parameter
 parse_json_node(const std::string& name, const nlohmann::json& node) {
@@ -246,4 +246,4 @@ parse_file(const std::string& name, const miru::filesys::details::File& file) {
   return parse_structured_data(name, data);
 }
 
-}  // namespace miru::params
+}  // namespace miru::params::details

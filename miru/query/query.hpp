@@ -15,7 +15,7 @@ using ParameterType = miru::params::ParameterType;
 using Map = miru::params::Map;
 using NestedArray = miru::params::NestedArray;
 using MapArray = miru::params::MapArray;
-using ParametersView = miru::params::ParametersView;
+using ParametersView = miru::params::details::ParametersView;
 
 using ParameterPtr = const Parameter*;
 using ParameterPtrs = std::vector<ParameterPtr>;

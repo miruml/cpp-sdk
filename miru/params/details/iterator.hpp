@@ -7,7 +7,7 @@
 #include <miru/params/parameter_fwd.hpp>
 #include <miru/params/iterator.hpp>
 
-namespace miru::params {
+namespace miru::params::details {
 
 class ParametersView {
  public:
@@ -25,4 +25,4 @@ class ParametersView {
   ParameterIterator end_;
 };
 
-}  // namespace miru::params
+}  // namespace miru::params::details

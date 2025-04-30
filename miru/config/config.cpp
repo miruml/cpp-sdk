@@ -64,7 +64,7 @@ Config Config::from_file(
   // read the config file
   miru::filesys::details::File config_file(config_file_path);
   builder.with_config_file(config_file);
-  builder.with_data(miru::params::parse_file(config_slug, config_file));
+  builder.with_data(miru::params::details::parse_file(config_slug, config_file));
 
   // build the config
   Config config = builder.build();
@@ -141,7 +141,7 @@ Config from_agent_impl(
   // load the config from the agent
   nlohmann::json concrete_config_data =
     get_latest_concrete_config(client, config_schema_digest, config_slug);
-  builder.with_data(miru::params::parse_json_node(config_slug, concrete_config_data));
+  builder.with_data(miru::params::details::parse_json_node(config_slug, concrete_config_data));
 
   // build the config
   Config config = builder.build();

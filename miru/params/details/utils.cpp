@@ -4,7 +4,7 @@
 #include <miru/params/parameter.hpp>
 #include <miru/params/value.hpp>
 
-namespace miru::params {
+namespace miru::params::details {
 
 bool is_leaf(const ParameterValue& value) {
   if (value.is_nested_array()) {
@@ -47,4 +47,4 @@ bool has_children(const Parameter& parameter) {
   return parameter.is_map() || parameter.is_map_array() || parameter.is_nested_array();
 }
 
-}  // namespace miru::params
+}  // namespace miru::params::details
