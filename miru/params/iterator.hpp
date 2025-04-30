@@ -6,7 +6,7 @@
 #include <vector>
 
 // internal
-#include <miru/params/details/parameter_fwd.hpp>
+#include <miru/params/parameter_fwd.hpp>
 
 namespace miru::params {
 

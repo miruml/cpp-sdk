@@ -1,8 +1,8 @@
 // internal
-#include <miru/params/details/composite.hpp>
+#include <miru/params/composite.hpp>
 #include <miru/params/errors.hpp>
 #include <miru/params/parameter.hpp>
-#include <miru/params/details/scalar.hpp>
+#include <miru/params/scalar.hpp>
 #include <miru/utils.hpp>
 #include <test/utils_test.hpp>
 

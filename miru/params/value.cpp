@@ -1,7 +1,7 @@
 // internal
 #include <miru/params/parameter.hpp>
 #include <miru/params/type.hpp>
-#include <miru/params/details/utils.hpp>
+#include <miru/params/utils.hpp>
 
 namespace miru::params {
 

@@ -1,7 +1,7 @@
 // internal
 #include <miru/filesys/details/file.hpp>
 #include <miru/params/parameter.hpp>
-#include <miru/params/details/parse.hpp>
+#include <miru/params/parse.hpp>
 
 // external
 #include <yaml-cpp/yaml.h>

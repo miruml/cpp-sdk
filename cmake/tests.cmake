@@ -15,13 +15,10 @@ set(HTTP_TEST_SOURCES
 )
 
 set(PARAMS_TEST_SOURCES
-    # private
-    test/params/details/composite_test.cpp
-    test/params/details/parse_test.cpp
-    test/params/details/scalar_test.cpp
-
-    # public
+    test/params/composite_test.cpp
     test/params/parameter_test.cpp
+    test/params/parse_test.cpp
+    test/params/scalar_test.cpp
     test/params/utils_test.cpp
 )
 

@@ -53,27 +53,22 @@ set(HTTP_MODELS_SOURCES
 )
 
 set(PARAMS_SOURCES
-    # private
-    miru/params/details/composite.hpp
-    miru/params/details/composite.cpp
-    miru/params/details/iterator.hpp
-    miru/params/details/parameter_fwd.hpp
-    miru/params/details/parse.hpp
-    miru/params/details/parse.cpp
-    miru/params/details/scalar.hpp
-    miru/params/details/scalar.cpp
-    miru/params/details/utils.hpp
-    miru/params/details/utils.cpp
-    miru/params/details/value.hpp
-    miru/params/details/value.cpp
-
-    # public
+    miru/params/composite.hpp
+    miru/params/composite.cpp
     miru/params/errors.hpp
+    miru/params/iterator.hpp
+    miru/params/parameter_fwd.hpp
     miru/params/parameter.hpp
     miru/params/parameter.cpp
+    miru/params/parse.hpp
+    miru/params/parse.cpp
+    miru/params/scalar.hpp
+    miru/params/scalar.cpp
     miru/params/type.hpp
     miru/params/utils.hpp
     miru/params/utils.cpp
+    miru/params/value.hpp
+    miru/params/value.cpp
 )
 
 set(QUERY_SOURCES

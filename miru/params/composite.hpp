@@ -6,8 +6,8 @@
 
 // internal
 #include <miru/params/errors.hpp>
-#include <miru/params/details/iterator.hpp>
-#include <miru/params/details/parameter_fwd.hpp>
+#include <miru/params/iterator.hpp>
+#include <miru/params/parameter_fwd.hpp>
 #include <miru/utils.hpp>
 
 // external

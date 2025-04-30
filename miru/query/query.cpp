@@ -2,8 +2,8 @@
 #include <vector>
 
 // internal
-#include <miru/params/details/iterator.hpp>
-#include <miru/params/details/utils.hpp>
+#include <miru/params/iterator.hpp>
+#include <miru/params/utils.hpp>
 #include <miru/query/query.hpp>
 
 namespace miru::query {

@@ -3,7 +3,6 @@
 #include <vector>
 
 // miru
-#include <miru/params/details/composite.hpp>
 #include <miru/params/parameter.hpp>
 #include <miru/params/type.hpp>
 #include <miru/utils.hpp>
