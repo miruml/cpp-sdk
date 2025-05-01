@@ -13,8 +13,7 @@ namespace openapi = org::openapitools::server::model;
 
 std::string to_string(const openapi::ErrorResponse& error_response) {
   std::stringstream ss;
-  ss << "[" << error_response.error.code << "] " << error_response.error.message
-     << " (debug: " << error_response.error.debug_message << ")";
+  ss << "[" << error_response.error.code << "] " << error_response.error.message;
   return ss.str();
 }
 
