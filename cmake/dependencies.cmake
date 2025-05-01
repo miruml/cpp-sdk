@@ -13,6 +13,8 @@ GIT_TAG 0.8.0
 )
 FetchContent_MakeAvailable(yaml-cpp)
 
+find_package(Threads REQUIRED)
+
 # fetch boost from system by default but allow FetchContent use if desire
 option(MIRU_FETCH_BOOST "fetch Boost packages with FetchContent as opposed to using the Boost package located on the build system" OFF)
 if(MIRU_FETCH_BOOST)

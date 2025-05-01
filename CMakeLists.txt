@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.16)
 # ==================== #
 # policies
 cmake_policy(SET CMP0069 NEW)
+cmake_policy(SET CMP0135 NEW)
 
 # supress deprecation warnings from dependencies
 set(CMAKE_WARN_DEPRECATED OFF CACHE BOOL "" FORCE)
@@ -44,6 +45,7 @@ target_link_libraries(miru PUBLIC
     yaml-cpp::yaml-cpp
     Boost::asio
     Boost::beast
+    Threads::Threads # make public for dependencies
 )
 
 
