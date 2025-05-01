@@ -70,7 +70,8 @@ ParameterValue::ParameterValue(const bool bool_value) {
 }
 
 ParameterValue::ParameterValue(const int int_value) {
-  value_ = int_value;
+  // use a static case here for older compilers that don't support this auto conversion
+  value_ = static_cast<int64_t>(int_value);
   type_ = ParameterType::PARAMETER_INTEGER;
 }
 

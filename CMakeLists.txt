@@ -1,10 +1,9 @@
-# 3.19+ is required for Apple Silicon
-cmake_minimum_required(VERSION 3.19)
+# Ubuntu 20.04 ships with CMake 3.16 by default
+cmake_minimum_required(VERSION 3.16)
 
 # CMAKE CONFIGURATIONS #
 # ==================== #
 # policies
-cmake_policy(SET CMP0135 NEW)
 cmake_policy(SET CMP0069 NEW)
 
 # supress deprecation warnings from dependencies
@@ -40,7 +39,7 @@ add_library(miru::miru ALIAS miru)
 target_include_directories(miru PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
-target_link_libraries(miru PRIVATE
+target_link_libraries(miru PUBLIC
     nlohmann_json::nlohmann_json
     yaml-cpp::yaml-cpp
     Boost::asio
