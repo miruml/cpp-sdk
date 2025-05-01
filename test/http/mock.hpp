@@ -1,22 +1,22 @@
 #pragma once
 
 // internal
-#include <miru/http/details/models/BaseConcreteConfig.h>
-#include <miru/http/details/models/HashSchemaSerializedRequest.h>
-#include <miru/http/details/models/RefreshLatestConcreteConfigRequest.h>
+#include <http/models/BaseConcreteConfig.h>
+#include <http/models/HashSchemaSerializedRequest.h>
+#include <http/models/RefreshLatestConcreteConfigRequest.h>
 
-#include <miru/http/details/client.hpp>
-#include <miru/http/details/socket_session.hpp>
+#include <http/client.hpp>
+#include <http/socket_session.hpp>
 
 // external
 #include <boost/beast.hpp>
 #include <nlohmann/json.hpp>
 
-namespace miru::http::details {
+namespace test::http {
 
 namespace openapi = org::openapitools::server::model;
 
-class MockBackendClient : public BackendClientI {
+class MockBackendClient : public miru::http::BackendClientI {
  public:
   std::function<std::string()> hash_schema_func;
   std::function<openapi::BaseConcreteConfig()> get_latest_concrete_config_func;
@@ -34,4 +34,4 @@ class MockBackendClient : public BackendClientI {
   ) const;
 };
 
-}  // namespace miru::http::details
+}  // namespace test::http

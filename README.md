@@ -3,21 +3,24 @@ This repository contains the [miru](https://www.miruml.com/) C++ SDK for retriev
 
 ## Organization
 
+This repository aims to follow the organization recommended by [Modern CMake](https://cliutils.gitlab.io/modern-cmake/chapters/basics/structure.html)
+
 | Directory | Description |
 |-----------|-------------|
 | cmake     | files for configuring and building with cmake |
-| examples  | simple examples using the miru sdk. |
-| miru      | miru sdk implementation. |
-| scripts   | scripts for the development and release process. |
-| tests     | test cases |
+| examples  | simple examples using the miru sdk |
+| include   | public header files for the sdk |
+| scripts   | scripts for the development and release process |
+| src       | miru sdk implementation |
+| test      | test cases |
 
 ## Build Requirements
 
 1. C++17 and above
-2. CMake 3.19 or higher
-3. `Boost` version 1.83 or higher
+2. CMake 3.16 or higher
+3. POSIX Threads (should be provided by your system)
 
-Additional dependencies are fetched via CMake (`nlohmann_json` and `yaml-cpp`).
+All other dependencies are fetched via CMake (`Boost::asio`, `Boost::beast`, `nlohmann_json` and `yaml-cpp`). You can optionally be set to use the system `Boost` installation but fetching with CMake is more convenient since `Boost::asio` and `Boost::beast` are both header-only libraries.
 
 GoogleTest is used for testing.
 
@@ -29,16 +32,15 @@ CMake options are available to customize the builds.
 |--------|-------------|---------|
 | `MIRU_BUILD_TESTS` | turn off to disable all testing and only build the SDK targets. | On |
 | `MIRU_BUILD_EXAMPLES` | turn off to disable all examples and only build the SDK targets. | On |
-| `MIRU_FETCH_BOOST` | fetch Boost packages with FetchContent as opposed to using the Boost package located on the build system | Off |
+| `MIRU_FETCH_BOOST` | fetch Boost packages with FetchContent as opposed to using the Boost package located on the build system | On |
 
 ## Build from Source
 
 Navigate to the root of the git repository. Configure CMake with
 
 ```bash
-# use fetch content to compile with boost instead of the system boost dependency and
 # don't build the tests
-cmake -B build -S . -DMIRU_FETCH_BOOST=On -DMIRU_BUILD_TESTS=Off
+cmake -B build -S . -DMIRU_BUILD_TESTS=Off
 ```
 
 Then build with
@@ -100,5 +102,5 @@ target_link_libraries(your-app PRIVATE miru::miru)
 
 ## Other Integration Methods
 
-We are working to support more integration methods and package managers, such as using `vcpkg`. Please reach out to ben@miruml.com for adding support for a particular integration method or package manager.
+We are working to support more integration methods and package managers. Please reach out to ben@miruml.com for adding support for a particular integration method or package manager.
 

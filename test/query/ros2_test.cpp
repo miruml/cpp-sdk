@@ -2,6 +2,8 @@
 #include <execinfo.h>
 
 // internal
+#include <config/config_impl.hpp>
+#include <miru/query/details/errors.hpp>
 #include <miru/query/ros2.hpp>
 #include <test/query/query_test.hpp>
 #include <test/test_utils/query.hpp>
@@ -37,7 +39,9 @@ TEST(ROS2GetParamTests, Exists) {
 TEST(ROS2GetParamTests, DoesntExist) {
   miru::params::Parameter parameter;
   miru::query::ROS2 ros2(parameter);
-  EXPECT_THROW(ros2.get_parameter("doesnt_exist"), miru::query::ParameterNotFoundError);
+  EXPECT_THROW(
+    ros2.get_parameter("doesnt_exist"), miru::query::details::ParameterNotFoundError
+  );
 }
 
 // ====================== GET PARAMETER WITH DEFAULT PARAMETER ===================== //
@@ -75,7 +79,8 @@ TEST(ROS2GetParamWithDefaultValueTests, InvalidType) {
   miru::query::ROS2 ros2(parameter);
 
   EXPECT_THROW(
-    ros2.get_parameter("exists", default_value), miru::params::InvalidParameterTypeError
+    ros2.get_parameter("exists", default_value),
+    miru::params::details::InvalidParameterTypeError
   );
 }
 
@@ -104,7 +109,7 @@ TEST(ROS2TryGetParamTests, InvalidType) {
 
   EXPECT_THROW(
     ros2.get_parameter_or("exists", default_value),
-    miru::params::InvalidParameterTypeError
+    miru::params::details::InvalidParameterTypeError
   );
 }
 
@@ -135,7 +140,7 @@ TEST(ROS2TryGetParamWithDefaultValueTests, InvalidType) {
 
   EXPECT_THROW(
     ros2.get_parameter_or("exists", result_value, default_value),
-    miru::params::InvalidParameterTypeError
+    miru::params::details::InvalidParameterTypeError
   );
 }
 
@@ -165,7 +170,8 @@ TEST(ROS2GetParamsTests, DoesntExist) {
   miru::params::Parameter parameter("root", 42.3);
   miru::query::ROS2 ros2(parameter);
   EXPECT_THROW(
-    ros2.get_parameters({"root", "doesnt_exist"}), miru::query::ParameterNotFoundError
+    ros2.get_parameters({"root", "doesnt_exist"}),
+    miru::query::details::ParameterNotFoundError
   );
 }
 

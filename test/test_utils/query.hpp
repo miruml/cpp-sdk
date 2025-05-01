@@ -6,8 +6,8 @@
 
 // internal
 #include <miru/params/parameter.hpp>
-#include <miru/params/details/parse.hpp>
 #include <miru/query/filter.hpp>
+#include <params/parse.hpp>
 
 namespace test::test_utils {
 
@@ -32,7 +32,7 @@ struct Result {
   static Result from_json(const nlohmann::json& json) {
     Result result;
     result.param_name = json.at("param_name").get<std::string>();
-    result.value = miru::params::details::parse_json_node(result.param_name, json.at("value"))
+    result.value = miru::params::parse_json_node(result.param_name, json.at("value"))
                      .get_parameter_value();
     return result;
   }
@@ -62,7 +62,7 @@ struct QueryTestSet {
     QueryTestSet test;
     test.description = json.at("description").get<std::string>();
     test.config_slug = json.at("config-slug").get<std::string>();
-    test.data = miru::params::details::parse_json_node(test.config_slug, json.at("data"));
+    test.data = miru::params::parse_json_node(test.config_slug, json.at("data"));
 
     std::vector<Query> queries;
     for (const auto& query_json : json.at("queries")) {

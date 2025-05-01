@@ -2,9 +2,9 @@
 #include <execinfo.h>
 
 // internal
-#include <miru/params/composite.hpp>
-#include <miru/params/details/parse.hpp>
+#include <config/config_impl.hpp>
 #include <miru/query/query.hpp>
+#include <params/parse.hpp>
 #include <test/test_utils/testdata.hpp>
 #include <test/test_utils/utils.hpp>
 

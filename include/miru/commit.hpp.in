@@ -1,0 +1,4 @@
+#pragma once
+
+// this is populated by the build system
+#define MIRU_COMMIT "@GIT_COMMIT_HASH@"

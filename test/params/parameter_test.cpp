@@ -2,9 +2,10 @@
 #include <string>
 
 // internal
-#include <miru/params/errors.hpp>
+#include <miru/params/details/errors.hpp>
 #include <miru/params/parameter.hpp>
-#include <test/details/utils_test.hpp>
+#include <params/errors.hpp>
+#include <test/details/type_conversion_test.hpp>
 
 // external
 #include <gtest/gtest.h>
@@ -1053,7 +1054,7 @@ void test_conversion_funcs_throw_type_exceptions(
   const miru::params::ParameterType target_type
 ) {
   for (const auto &conversion_func : conversion_funcs) {
-    EXPECT_THROW(conversion_func(), miru::params::InvalidParameterTypeError)
+    EXPECT_THROW(conversion_func(), miru::params::details::InvalidParameterTypeError)
       << "Failed to throw InvalidParameterTypeError for target parameter type '"
       << target_type << "'";
   }
@@ -1551,7 +1552,7 @@ TEST_F(ParameterInvalidTypeConversions, map_array_variant) {
 }
 
 // ================================= TYPE CASTING ================================== //
-class IntegerCasting : public test::utils::IntegerCasting {};
+class IntegerCasting : public test::details::type_conversion::IntegerCasting {};
 
 TEST_F(IntegerCasting, integer_type_casting_success) {
   for (const auto &test_case : all_test_cases()) {
@@ -1581,7 +1582,8 @@ TEST_F(IntegerCasting, integer_type_casting_failure) {
       [&](auto &&arg) {
         using T = std::decay_t<decltype(arg)>;
         EXPECT_THROW(
-          integer_variant.get_value<T>(), miru::params::InvalidParameterTypeError
+          integer_variant.get_value<T>(),
+          miru::params::details::InvalidParameterTypeError
         );
       },
       test_case.expected
@@ -1592,7 +1594,7 @@ TEST_F(IntegerCasting, integer_type_casting_failure) {
 // casting integer arrays to different types is not currently supported (only
 // std::vector<int64_t> is supported)
 
-class DoubleCasting : public test::utils::DoubleCasting {};
+class DoubleCasting : public test::details::type_conversion::DoubleCasting {};
 
 TEST_F(DoubleCasting, double_type_casting_success) {
   for (const auto &test_case : double_test_cases) {
@@ -1622,7 +1624,8 @@ TEST_F(DoubleCasting, double_type_casting_failure) {
       [&](auto &&arg) {
         using T = std::decay_t<decltype(arg)>;
         EXPECT_THROW(
-          double_variant.get_value<T>(), miru::params::InvalidParameterTypeError
+          double_variant.get_value<T>(),
+          miru::params::details::InvalidParameterTypeError
         );
       },
       test_case.expected

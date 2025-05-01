@@ -1,17 +1,17 @@
 // internal
 #include "test/http/mock.hpp"
 
-#include <miru/http/details/models/BaseConcreteConfig.h>
-#include <miru/http/details/models/HashSchemaSerializedRequest.h>
-#include <miru/http/details/models/RefreshLatestConcreteConfigRequest.h>
+#include <http/models/BaseConcreteConfig.h>
+#include <http/models/HashSchemaSerializedRequest.h>
+#include <http/models/RefreshLatestConcreteConfigRequest.h>
 
-#include <miru/http/details/socket_session.hpp>
+#include <http/socket_session.hpp>
 
 // external
 #include <boost/beast.hpp>
 #include <nlohmann/json.hpp>
 
-namespace miru::http::details {
+namespace test::http {
 
 std::string MockBackendClient::hash_schema(
   const openapi::HashSchemaSerializedRequest& config_schema
@@ -32,4 +32,4 @@ openapi::BaseConcreteConfig MockBackendClient::refresh_latest_concrete_config(
   return refresh_latest_concrete_config_func();
 }
 
-}  // namespace miru::http::details
+}  // namespace test::http

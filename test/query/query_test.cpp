@@ -2,14 +2,13 @@
 #include <execinfo.h>
 
 // internal
-#include <miru/params/composite.hpp>
-#include <miru/params/details/parse.hpp>
-#include <miru/params/errors.hpp>
+#include <config/config_impl.hpp>
+#include <miru/params/details/errors.hpp>
 #include <miru/params/type.hpp>
-#include <miru/query/errors.hpp>
+#include <miru/query/details/errors.hpp>
 #include <miru/query/query.hpp>
+#include <params/parse.hpp>
 #include <test/query/query_test.hpp>
-#include <test/test_utils/query.hpp>
 #include <test/test_utils/testdata.hpp>
 #include <test/test_utils/utils.hpp>
 
@@ -146,7 +145,7 @@ TEST(GetParamsByNameTests, DoesntExist) {
 
   EXPECT_THROW(
     miru::query::get_params(parameter, {"root", "doesnt_exist"}),
-    miru::query::ParameterNotFoundError
+    miru::query::details::ParameterNotFoundError
   );
 }
 
@@ -421,7 +420,7 @@ void test_get_param(
 
   // if the expected result is larger than 1, expect an exception
   if (test.results.size() > 1) {
-    test_get_param_exception<miru::query::TooManyResultsError>(data, filter);
+    test_get_param_exception<miru::query::details::TooManyResultsError>(data, filter);
   }
 
   // test reading each parameter by their name
@@ -461,7 +460,7 @@ TEST(GetParamTests, NotFound) {
   builder.with_param_name("not_found");
   SearchParamFilters filter = builder.build();
   miru::params::Parameter root = miru::params::Parameter("root");
-  test_get_param_exception<miru::query::ParameterNotFoundError>(root, filter);
+  test_get_param_exception<miru::query::details::ParameterNotFoundError>(root, filter);
 }
 
 TEST(GetParamTests, InvalidType) {
@@ -477,18 +476,19 @@ TEST(GetParamTests, InvalidType) {
   int int_result;
   EXPECT_THROW(
     miru::query::try_get_param(root, filter, int_result),
-    miru::params::InvalidParameterTypeError
+    miru::params::details::InvalidParameterTypeError
   );
 
   // get parameter value or return default value
   EXPECT_THROW(
-    miru::query::get_param_or(root, filter, 42), miru::params::InvalidParameterTypeError
+    miru::query::get_param_or(root, filter, 42),
+    miru::params::details::InvalidParameterTypeError
   );
 
   // try get parameter value or return default value
   EXPECT_THROW(
     miru::query::try_get_param_or(root, filter, int_result, 42),
-    miru::params::InvalidParameterTypeError
+    miru::params::details::InvalidParameterTypeError
   );
 }
 

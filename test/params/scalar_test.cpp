@@ -2,15 +2,18 @@
 #include <string>
 
 // internal
-#include <miru/params/details/scalar.hpp>
-#include <miru/params/errors.hpp>
+#include <miru/params/details/errors.hpp>
+#include <miru/params/parameter.hpp>
 #include <miru/params/scalar.hpp>
-#include <test/details/utils_test.hpp>
+#include <test/details/type_conversion_test.hpp>
 
 // external
 #include <gtest/gtest.h>
 
 namespace test::params {
+
+using StringConversionException =
+  test::details::type_conversion::StringConversionException;
 
 // ================================== EQUALITY ===================================== //
 class ScalarEquality : public ::testing::Test {
@@ -30,11 +33,11 @@ TEST_F(ScalarEquality, inequality) {
 }
 
 // =============================== SCALAR CONVERSION =============================== //
-class ScalarConversion : public test::utils::StringConversion {};
+class ScalarConversion : public test::details::type_conversion::StringConversion {};
 
 TEST_F(ScalarConversion, bool_conversion_success) {
   for (const auto& test_case : bool_test_cases) {
-    if (test_case.expected_exception != test::utils::StringConversionException::None) {
+    if (test_case.expected_exception != StringConversionException::None) {
       continue;
     }
     miru::params::Scalar scalar(test_case.str);
@@ -45,14 +48,18 @@ TEST_F(ScalarConversion, bool_conversion_success) {
 
 TEST_F(ScalarConversion, bool_conversion_failure) {
   for (const auto& test_case : bool_test_cases) {
-    if (test_case.expected_exception == test::utils::StringConversionException::None) {
+    if (test_case.expected_exception == StringConversionException::None) {
       continue;
     }
     miru::params::Scalar scalar(test_case.str);
     switch (test_case.expected_exception) {
-      case test::utils::StringConversionException::InvalidTypeConversion:
-        EXPECT_THROW(scalar.as_bool(), miru::params::InvalidScalarConversionError);
-        EXPECT_THROW(scalar.as<bool>(), miru::params::InvalidScalarConversionError);
+      case StringConversionException::InvalidTypeConversion:
+        EXPECT_THROW(
+          scalar.as_bool(), miru::params::details::InvalidScalarConversionError
+        );
+        EXPECT_THROW(
+          scalar.as<bool>(), miru::params::details::InvalidScalarConversionError
+        );
         break;
       default:
         FAIL() << "Unexpected exception type";
@@ -62,7 +69,7 @@ TEST_F(ScalarConversion, bool_conversion_failure) {
 
 TEST_F(ScalarConversion, int_conversion_success) {
   for (const auto& test_case : int_test_cases()) {
-    if (test_case.expected_exception != test::utils::StringConversionException::None) {
+    if (test_case.expected_exception != StringConversionException::None) {
       continue;
     }
     miru::params::Scalar scalar(test_case.str);
@@ -73,7 +80,7 @@ TEST_F(ScalarConversion, int_conversion_success) {
 
 TEST_F(ScalarConversion, int_conversion_failure) {
   for (const auto& test_case : int_test_cases()) {
-    if (test_case.expected_exception == test::utils::StringConversionException::None) {
+    if (test_case.expected_exception == StringConversionException::None) {
       continue;
     }
     miru::params::Scalar scalar(test_case.str);
@@ -81,8 +88,10 @@ TEST_F(ScalarConversion, int_conversion_failure) {
       [&](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
         switch (test_case.expected_exception) {
-          case test::utils::StringConversionException::InvalidTypeConversion:
-            EXPECT_THROW(scalar.as<T>(), miru::params::InvalidScalarConversionError);
+          case StringConversionException::InvalidTypeConversion:
+            EXPECT_THROW(
+              scalar.as<T>(), miru::params::details::InvalidScalarConversionError
+            );
             break;
           default:
             FAIL() << "Unexpected exception type";
@@ -95,7 +104,8 @@ TEST_F(ScalarConversion, int_conversion_failure) {
 
 TEST_F(ScalarConversion, double_conversion_success) {
   for (const auto& test_case : float_test_cases()) {
-    if (test_case.expected_exception != test::utils::StringConversionException::None) {
+    if (test_case.expected_exception !=
+        test::details::type_conversion::StringConversionException::None) {
       continue;
     }
     miru::params::Scalar scalar(test_case.str);
@@ -106,7 +116,7 @@ TEST_F(ScalarConversion, double_conversion_success) {
 
 TEST_F(ScalarConversion, double_conversion_failure) {
   for (const auto& test_case : float_test_cases()) {
-    if (test_case.expected_exception == test::utils::StringConversionException::None) {
+    if (test_case.expected_exception == StringConversionException::None) {
       continue;
     }
     miru::params::Scalar scalar(test_case.str);
@@ -114,8 +124,10 @@ TEST_F(ScalarConversion, double_conversion_failure) {
       [&](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
         switch (test_case.expected_exception) {
-          case test::utils::StringConversionException::InvalidTypeConversion:
-            EXPECT_THROW(scalar.as<T>(), miru::params::InvalidScalarConversionError);
+          case StringConversionException::InvalidTypeConversion:
+            EXPECT_THROW(
+              scalar.as<T>(), miru::params::details::InvalidScalarConversionError
+            );
             break;
           default:
             FAIL() << "Unexpected exception type";
@@ -128,7 +140,7 @@ TEST_F(ScalarConversion, double_conversion_failure) {
 
 TEST_F(ScalarConversion, string_conversion_success) {
   for (const auto& test_case : string_test_cases) {
-    if (test_case.expected_exception != test::utils::StringConversionException::None) {
+    if (test_case.expected_exception != StringConversionException::None) {
       continue;
     }
     miru::params::Scalar scalar(test_case.str);
@@ -143,7 +155,7 @@ TEST_F(ScalarConversion, bool_array_conversion_success) {
   std::vector<miru::params::Scalar> scalars = {};
   std::vector<bool> expected = {};
   for (const auto& test_case : bool_test_cases) {
-    if (test_case.expected_exception != test::utils::StringConversionException::None) {
+    if (test_case.expected_exception != StringConversionException::None) {
       continue;
     }
     scalars.push_back(miru::params::Scalar(test_case.str));
@@ -155,14 +167,14 @@ TEST_F(ScalarConversion, bool_array_conversion_success) {
 
 TEST_F(ScalarConversion, bool_array_conversion_failure) {
   for (const auto& test_case : bool_test_cases) {
-    if (test_case.expected_exception == test::utils::StringConversionException::None) {
+    if (test_case.expected_exception == StringConversionException::None) {
       continue;
     }
     std::vector<miru::params::Scalar> scalars = {};
     scalars.push_back(miru::params::Scalar(test_case.str));
     EXPECT_THROW(
       miru::params::details::scalar_array_as<bool>(scalars),
-      miru::params::InvalidScalarConversionError
+      miru::params::details::InvalidScalarConversionError
     );
   }
 }
@@ -171,19 +183,20 @@ TEST_F(ScalarConversion, int_array_conversion_success) {
   std::vector<miru::params::Scalar> scalars = {};
   std::vector<int64_t> expected = {};
   for (const auto& test_case : int_test_cases()) {
-    if (test_case.expected_exception != test::utils::StringConversionException::None) {
+    if (test_case.expected_exception != StringConversionException::None) {
       continue;
     }
     scalars.push_back(miru::params::Scalar(test_case.str));
     expected.push_back(std::get<int64_t>(test_case.expected));
   }
-  std::vector<int64_t> result = miru::params::details::scalar_array_as<int64_t>(scalars);
+  std::vector<int64_t> result =
+    miru::params::details::scalar_array_as<int64_t>(scalars);
   EXPECT_EQ(result, expected);
 }
 
 TEST_F(ScalarConversion, int_array_conversion_failure) {
   for (const auto& test_case : int_test_cases()) {
-    if (test_case.expected_exception == test::utils::StringConversionException::None) {
+    if (test_case.expected_exception == StringConversionException::None) {
       continue;
     }
     miru::params::Scalar scalar(test_case.str);
@@ -193,10 +206,10 @@ TEST_F(ScalarConversion, int_array_conversion_failure) {
         std::vector<miru::params::Scalar> scalars = {};
         scalars.push_back(scalar);
         switch (test_case.expected_exception) {
-          case test::utils::StringConversionException::InvalidTypeConversion:
+          case StringConversionException::InvalidTypeConversion:
             EXPECT_THROW(
               miru::params::details::scalar_array_as<T>(scalars),
-              miru::params::InvalidScalarConversionError
+              miru::params::details::InvalidScalarConversionError
             );
             break;
           default:
@@ -212,7 +225,7 @@ TEST_F(ScalarConversion, double_array_conversion_success) {
   std::vector<miru::params::Scalar> scalars = {};
   std::vector<double> expected = {};
   for (const auto& test_case : float_test_cases()) {
-    if (test_case.expected_exception != test::utils::StringConversionException::None) {
+    if (test_case.expected_exception != StringConversionException::None) {
       continue;
     }
     scalars.push_back(miru::params::Scalar(test_case.str));
@@ -224,7 +237,7 @@ TEST_F(ScalarConversion, double_array_conversion_success) {
 
 TEST_F(ScalarConversion, double_array_conversion_failure) {
   for (const auto& test_case : float_test_cases()) {
-    if (test_case.expected_exception == test::utils::StringConversionException::None) {
+    if (test_case.expected_exception == StringConversionException::None) {
       continue;
     }
     miru::params::Scalar scalar(test_case.str);
@@ -234,10 +247,10 @@ TEST_F(ScalarConversion, double_array_conversion_failure) {
         std::vector<miru::params::Scalar> scalars = {};
         scalars.push_back(scalar);
         switch (test_case.expected_exception) {
-          case test::utils::StringConversionException::InvalidTypeConversion:
+          case StringConversionException::InvalidTypeConversion:
             EXPECT_THROW(
               miru::params::details::scalar_array_as<T>(scalars),
-              miru::params::InvalidScalarConversionError
+              miru::params::details::InvalidScalarConversionError
             );
             break;
           default:
@@ -253,7 +266,7 @@ TEST_F(ScalarConversion, string_array_conversion_success) {
   std::vector<miru::params::Scalar> scalars = {};
   std::vector<std::string> expected = {};
   for (const auto& test_case : string_test_cases) {
-    if (test_case.expected_exception != test::utils::StringConversionException::None) {
+    if (test_case.expected_exception != StringConversionException::None) {
       continue;
     }
     scalars.push_back(miru::params::Scalar(test_case.str));

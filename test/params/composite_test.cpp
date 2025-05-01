@@ -1,9 +1,9 @@
 // internal
 #include <miru/params/composite.hpp>
-#include <miru/params/errors.hpp>
+#include <miru/params/details/errors.hpp>
 #include <miru/params/parameter.hpp>
 #include <miru/params/scalar.hpp>
-#include <test/details/utils_test.hpp>
+#include <params/errors.hpp>
 
 // external
 #include <gtest/gtest.h>
@@ -133,7 +133,7 @@ TEST_F(MapArrayConstructor, non_map_parameters) {
   miru::params::Parameter param2("field1", miru::params::Scalar("value2"));
   EXPECT_THROW(
     miru::params::MapArray(std::vector<miru::params::Parameter>({param1, param2})),
-    miru::params::InvalidParameterTypeError
+    miru::params::details::InvalidParameterTypeError
   );
 }
 
@@ -289,7 +289,7 @@ TEST_F(NestedArrayConstructor, non_array_parameters) {
   );
   EXPECT_THROW(
     miru::params::NestedArray(std::vector<miru::params::Parameter>({param1, param2})),
-    miru::params::InvalidParameterTypeError
+    miru::params::details::InvalidParameterTypeError
   );
 }
 

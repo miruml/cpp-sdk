@@ -1,5 +1,7 @@
 // internal
-#include <miru/http/details/models/RefreshLatestConcreteConfigRequest.h>
+#include <http/models/RefreshLatestConcreteConfigRequest.h>
+
+#include <config/config_impl.hpp>
 #include <miru/query/query.hpp>
 #include <miru/query/ros2.hpp>
 #include <test/http/mock.hpp>
@@ -14,10 +16,10 @@ namespace openapi = org::openapitools::server::model;
 
 // ================================ FROM FILE SYSTEM =============================== //
 TEST(Config, FromFileSystemJson) {
-  miru::filesys::details::File schema_file(
+  miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.json")
   );
-  miru::filesys::details::File config_file(
+  miru::filesys::File config_file(
     miru::test_utils::config_data_testdata_dir().file("motion-control.json")
   );
   miru::config::Config config = miru::config::Config::from_file(
@@ -30,10 +32,10 @@ TEST(Config, FromFileSystemJson) {
 }
 
 TEST(Config, FromFileSystemYaml) {
-  miru::filesys::details::File schema_file(
+  miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.yaml")
   );
-  miru::filesys::details::File config_file(
+  miru::filesys::File config_file(
     miru::test_utils::config_data_testdata_dir().file("motion-control.yaml")
   );
   miru::config::Config config = miru::config::Config::from_file(
@@ -46,10 +48,10 @@ TEST(Config, FromFileSystemYaml) {
 }
 
 TEST(Config, FromFileSystemJsonRos2) {
-  miru::filesys::details::File schema_file(
+  miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.json")
   );
-  miru::filesys::details::File config_file(
+  miru::filesys::File config_file(
     miru::test_utils::config_data_testdata_dir().file("motion-control.json")
   );
   miru::config::Config config = miru::config::Config::from_file(
@@ -62,10 +64,10 @@ TEST(Config, FromFileSystemJsonRos2) {
 }
 
 TEST(Config, FromFileSystemYamlRos2) {
-  miru::filesys::details::File schema_file(
+  miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.yaml")
   );
-  miru::filesys::details::File config_file(
+  miru::filesys::File config_file(
     miru::test_utils::config_data_testdata_dir().file("motion-control.yaml")
   );
   miru::config::Config config = miru::config::Config::from_file(
@@ -80,7 +82,7 @@ TEST(Config, FromFileSystemYamlRos2) {
 // =================================== FROM AGENT ================================== //
 TEST(Config, FromAgentRefreshSuccess) {
   // set the response from the mock client
-  miru::http::details::MockBackendClient mock_client;
+  test::http::MockBackendClient mock_client;
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
   mock_client.refresh_latest_concrete_config_func = []() {
@@ -103,19 +105,21 @@ TEST(Config, FromAgentRefreshSuccess) {
   };
 
   // set the schema file and default config file
-  miru::filesys::details::File schema_file(
+  miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.yaml")
   );
-  miru::filesys::details::File default_config_file(
+  miru::filesys::File default_config_file(
     miru::test_utils::config_data_testdata_dir().file("motion-control.yaml")
   );
   miru::config::FromAgentOptions options;
   options.default_config_path = default_config_file.abs_path().string();
-  miru::config::Config config = miru::config::Config::from_agent(
+  miru::config::ConfigImpl config_impl = miru::config::ConfigImpl::from_agent(
     mock_client, schema_file.abs_path().string(), options
   );
-  EXPECT_EQ(config.get_source(), miru::config::ConfigSource::Agent);
+  miru::config::Config config =
+    miru::config::Config(std::make_unique<miru::config::ConfigImpl>(config_impl));
 
+  EXPECT_EQ(config.get_source(), miru::config::ConfigSource::Agent);
   auto speed = miru::query::get_param(config, "motion-control.speed");
 
   EXPECT_EQ(speed.as<int>(), 89);
@@ -123,7 +127,7 @@ TEST(Config, FromAgentRefreshSuccess) {
 
 TEST(Config, FromAgentRefreshFailureGetSuccess) {
   // set the response from the mock client
-  miru::http::details::MockBackendClient mock_client;
+  test::http::MockBackendClient mock_client;
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
   // refresh latest concrete config will fail
@@ -153,17 +157,19 @@ TEST(Config, FromAgentRefreshFailureGetSuccess) {
   };
 
   // set the schema file and default config file
-  miru::filesys::details::File schema_file(
+  miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.yaml")
   );
-  miru::filesys::details::File default_config_file(
+  miru::filesys::File default_config_file(
     miru::test_utils::config_data_testdata_dir().file("motion-control.yaml")
   );
   miru::config::FromAgentOptions options;
   options.default_config_path = default_config_file.abs_path().string();
-  miru::config::Config config = miru::config::Config::from_agent(
+  miru::config::ConfigImpl config_impl = miru::config::ConfigImpl::from_agent(
     mock_client, schema_file.abs_path().string(), options
   );
+  miru::config::Config config =
+    miru::config::Config(std::make_unique<miru::config::ConfigImpl>(config_impl));
   EXPECT_EQ(config.get_source(), miru::config::ConfigSource::Agent);
 
   auto speed = miru::query::get_param(config, "motion-control.speed");
@@ -173,7 +179,7 @@ TEST(Config, FromAgentRefreshFailureGetSuccess) {
 
 TEST(Config, FromAgentDefaultFile) {
   // set the response from the mock client
-  miru::http::details::MockBackendClient mock_client;
+  test::http::MockBackendClient mock_client;
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
   // refresh latest concrete config will fail
@@ -188,17 +194,19 @@ TEST(Config, FromAgentDefaultFile) {
   };
 
   // set the schema file and default config file
-  miru::filesys::details::File schema_file(
+  miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.yaml")
   );
-  miru::filesys::details::File default_config_file(
+  miru::filesys::File default_config_file(
     miru::test_utils::config_data_testdata_dir().file("motion-control.yaml")
   );
   miru::config::FromAgentOptions options;
   options.default_config_path = default_config_file.abs_path().string();
-  miru::config::Config config = miru::config::Config::from_agent(
+  miru::config::ConfigImpl config_impl = miru::config::ConfigImpl::from_agent(
     mock_client, schema_file.abs_path().string(), options
   );
+  miru::config::Config config =
+    miru::config::Config(std::make_unique<miru::config::ConfigImpl>(config_impl));
   EXPECT_EQ(config.get_source(), miru::config::ConfigSource::FileSystem);
 
   auto speed = miru::query::get_param(config, "motion-control.speed");
