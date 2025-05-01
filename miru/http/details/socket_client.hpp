@@ -19,7 +19,7 @@ namespace http = boost::beast::http;
 
 class UnixSocketClient : public BackendClientI {
  public:
-  UnixSocketClient(const std::string& socket_path = "/tmp/miru.sock")
+  UnixSocketClient(const std::string& socket_path = "/run/miru/miru.sock")
     : socket_path_(socket_path), base_path_("/v1"), host_("localhost"), port_("80") {}
   ~UnixSocketClient() {}
 

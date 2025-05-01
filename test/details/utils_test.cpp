@@ -450,4 +450,40 @@ TEST_F(UtilsStringConversion, string_array_conversion_success) {
   EXPECT_EQ(result, expected);
 }
 
+// ================================ BASE64 ENCODING ================================== //
+TEST(Base64Encoding, EmptyVector) {
+  std::vector<uint8_t> empty;
+  EXPECT_EQ(miru::utils::details::base64_encode(empty), "");
+}
+
+TEST(Base64Encoding, SingleByte) {
+  std::vector<uint8_t> single_byte{0x4d};
+  EXPECT_EQ(miru::utils::details::base64_encode(single_byte), "TQ==");
+}
+
+TEST(Base64Encoding, MultipleBytes) {
+  std::vector<uint8_t> multiple_bytes{0x4d, 0x61, 0x6e};
+  EXPECT_EQ(miru::utils::details::base64_encode(multiple_bytes), "TWFu");
+}
+
+TEST(Base64Encoding, MultipleBytesWithPadding) {
+  std::vector<uint8_t> multiple_bytes_with_padding{0x4d, 0x61};
+  EXPECT_EQ(miru::utils::details::base64_encode(multiple_bytes_with_padding), "TWE=");
+}
+
+TEST(Base64Encoding, MultipleBytesWithPaddingAndNewline) {
+  std::vector<uint8_t> multiple_bytes_with_padding_and_newline{0x4d, 0x61, 0x0a};
+  EXPECT_EQ(miru::utils::details::base64_encode(multiple_bytes_with_padding_and_newline), "TWEK");
+}
+
+TEST(Base64Encoding, MultipleBytesWithPaddingAndNewlineAndWhitespace) {
+  std::vector<uint8_t> multiple_bytes_with_padding_and_newline_and_whitespace{0x4d, 0x61, 0x0a, 0x20};
+  EXPECT_EQ(miru::utils::details::base64_encode(multiple_bytes_with_padding_and_newline_and_whitespace), "TWEKIA==");
+}
+
+TEST(Base64Encoding, MultipleBytesWithPaddingAndNewlineAndWhitespaceAndEquals) {
+  std::vector<uint8_t> multiple_bytes_with_padding_and_newline_and_whitespace_and_equals{0x4d, 0x61, 0x0a, 0x20, 0x3d};
+  EXPECT_EQ(miru::utils::details::base64_encode(multiple_bytes_with_padding_and_newline_and_whitespace_and_equals), "TWEKID0=");
+}
+
 }  // namespace test::utils

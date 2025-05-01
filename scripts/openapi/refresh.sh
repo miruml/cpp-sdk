@@ -11,7 +11,7 @@ gen_dir=./gen
 cd $openapi_configs_dir
 pwd
 
-make bundle-agent
+make bundle-all
 
 echo ""
 echo "Checking for any changes (staged, unstaged, or untracked)"

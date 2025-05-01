@@ -72,7 +72,7 @@ FetchContent_MakeAvailable(miru)
 ...
 
 # link the miru sdk to your executable
-target_link_libraries(miru.out PRIVATE miru::miru)
+target_link_libraries(your-app PRIVATE miru::miru)
 ```
 
 ## Integrate via `add_subdirectory`
@@ -90,7 +90,7 @@ set(MIRU_FETCH_BOOST ON)
 set(MIRU_BUILD_TESTS OFF)
 set(MIRU_BUILD_EXAMPLES ON)
 
-add_subdirectory(path-to-miru-sdk-repo)
+add_subdirectory("path/to/miru/sdk/repo", "${CMAKE_BINARY_DIR}/miru")
 
 ...
 

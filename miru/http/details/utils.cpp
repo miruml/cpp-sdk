@@ -56,14 +56,6 @@ nlohmann::json handle_json_response(
   const http::response<http::string_body>& res,
   const RequestDetails& details
 ) {
-  // check the response body
-  auto content_type = res.find(http::field::content_type);
-  if (content_type == res.end() || content_type->value() != "application/json") {
-    std::string actual_content_type =
-      (content_type != res.end() ? std::string(content_type->value()) : "not set");
-    THROW_INVALID_CONTENT_TYPE(actual_content_type, "application/json", details);
-  }
-
   // check the response status for errors
   if (res.result() != http::status::ok) {
     std::optional<openapi::ErrorResponse> error_response;

@@ -281,6 +281,26 @@ INSTANTIATE_TEST_SUITE_P(
   AssertExistsTestNameGenerator
 );
 
+// ================================= read_bytes() ===================================
+// //
+class ReadBytes : public ::testing::Test {
+ protected:
+  miru::filesys::details::File doesnt_exist{"doesnt/exist.json"};
+  miru::filesys::details::File text_file =
+    miru::test_utils::filesys_testdata_dir().file("text.txt");
+};
+
+TEST_F(ReadBytes, FileNotFound) {
+  EXPECT_THROW(doesnt_exist.read_bytes(), miru::filesys::FileNotFoundError);
+}
+
+TEST_F(ReadBytes, ValidBytes) {
+  auto bytes = text_file.read_bytes();
+  std::string actual_bytes(bytes.begin(), bytes.end());
+  std::string expected = "some random text that came from ben's brain at 7pm on a Wednesday";
+  EXPECT_EQ(actual_bytes, expected);
+}
+
 // ================================= read_string() ===================================
 // //
 class ReadString : public ::testing::Test {

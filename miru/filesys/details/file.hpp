@@ -35,10 +35,11 @@ class File : public Path {
   FileType file_type() const;
   void assert_exists() const;
 
+  std::vector<std::uint8_t> read_bytes() const;
+  std::string read_string() const;
   nlohmann::json read_json() const;
   YAML::Node read_yaml() const;
   std::variant<nlohmann::json, YAML::Node> read_structured_data() const;
-  std::string read_string() const;
 };
 
 }  // namespace miru::filesys::details

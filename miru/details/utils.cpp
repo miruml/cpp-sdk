@@ -5,9 +5,12 @@
 #include <unordered_map>
 #include <vector>
 
-// miru
+// internal
 #include <miru/details/errors.hpp>
 #include <miru/errors.hpp>
+
+// external
+#include <boost/beast/core/detail/base64.hpp>
 
 namespace miru::utils::details {
 
@@ -125,6 +128,18 @@ double string_to_double(const std::string& str) {
       "cannot interpret value as a double: " + std::string(e.what())
     );
   }
+}
+
+std::string base64_encode(const std::vector<uint8_t>& bytes) {
+
+  // while this is technically a private implementation detail of boost, it is commonly
+  // used in practice, stable, and avoids importing a new dependency
+  std::size_t encoded_size = boost::beast::detail::base64::encoded_size(bytes.size());
+  std::string result;
+  result.resize(encoded_size);
+  boost::beast::detail::base64::encode(&result[0], bytes.data(), bytes.size());
+  
+  return result;
 }
 
 }  // namespace miru::utils

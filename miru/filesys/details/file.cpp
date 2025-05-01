@@ -65,6 +65,21 @@ void File::assert_exists() const {
 }
 
 // ================================= READING FILES ================================= //
+std::vector<std::uint8_t> File::read_bytes() const {
+  assert_exists();
+  std::ifstream file(path_, std::ios::binary | std::ios::ate);
+  if (!file) {
+    throw std::runtime_error("Failed to open file: " + path_.string());
+  }
+
+  auto size = file.tellg();
+  std::vector<std::uint8_t> bytes(size);
+  file.seekg(0);
+  file.read(reinterpret_cast<char*>(bytes.data()), size);
+
+  return bytes;
+}
+
 std::string File::read_string() const {
   assert_exists();
   std::ifstream file(path_, std::ios::binary | std::ios::ate);

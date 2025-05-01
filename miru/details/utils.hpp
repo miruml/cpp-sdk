@@ -1,6 +1,7 @@
 #pragma once
 
 // std
+#include <cstdint>
 #include <algorithm>
 #include <limits>
 #include <string>
@@ -173,5 +174,8 @@ string_array_as(const std::vector<std::string> &strings) {
   );
   return dest;
 }
+
+// ================================ BASE64 ENCODING ================================== //
+std::string base64_encode(const std::vector<uint8_t>& bytes);
 
 }  // namespace miru::utils
