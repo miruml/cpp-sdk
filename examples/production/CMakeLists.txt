@@ -10,5 +10,5 @@ project(
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-add_executable(production_example main.cpp)
-target_link_libraries(production_example PRIVATE miru)
+add_executable(production-example main.cpp)
+target_link_libraries(production-example PRIVATE miru)
