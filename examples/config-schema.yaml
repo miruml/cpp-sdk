@@ -1,0 +1,66 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+# this doesn't actually need to exist for the development example to work
+$miru_config_slug: "example-config-slug" 
+type: object
+properties:
+  a_boolean:
+    type: boolean
+  an_integer:
+    type: integer
+  a_double:
+    type: number
+  a_string:
+    type: string
+  a_boolean_array:
+    type: array
+    items:
+      type: boolean
+  an_integer_array:
+    type: array
+    items:
+      type: integer
+  a_double_array:
+    type: array
+    items:
+      type: number
+  a_string_array:
+    type: array
+    items:
+      type: string
+  a_null_value:
+    type: "null"
+  a_nested_array:
+    type: array
+    items:
+      type: array
+      items:
+        type: integer
+  a_deep_nested_array:
+    type: array
+    items:
+      type: array
+      items:
+        type: array
+        items:
+          type: array
+          items:
+            type: integer
+  a_map_array:
+    type: array
+    items:
+      type: object
+      additionalProperties:
+        type: string
+required:
+  - a_boolean
+  - an_integer
+  - a_double
+  - a_string
+  - a_boolean_array
+  - an_integer_array
+  - a_double_array
+  - a_string_array
+  - a_null_value
+  - a_nested_array
+  - a_deep_nested_array
+  - a_map_array

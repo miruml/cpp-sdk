@@ -1,0 +1,20 @@
+a_boolean: true
+an_integer: 42
+a_double: 3.14
+a_string: "Hello, world!"
+a_boolean_array: [true, false, true]
+an_integer_array: [1, 2, 3]
+a_double_array: [1.1, 2.2, 3.3]
+a_string_array: ["foo", "bar", "baz"]
+a_null_value: null
+a_nested_array:
+  - [1, 2, 3]
+  - [4, 5, 6]
+  - [7, 8, 9]
+a_map_array:
+  - key1: "value1"
+    key2: "value2"
+  - key3: "value3"
+    key4: "value4"
+  - key5: "value5"
+    key6: "value6"

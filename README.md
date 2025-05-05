@@ -1,8 +1,6 @@
 # Miru C++ SDK
 This repository contains the [miru](https://www.miruml.com/) C++ SDK for retrieving configs from the miru agent on your device.
 
-
-
 ## Organization
 
 This repository aims to follow the organization recommended by [Modern CMake](https://cliutils.gitlab.io/modern-cmake/chapters/basics/structure.html)
@@ -25,8 +23,6 @@ This repository aims to follow the organization recommended by [Modern CMake](ht
 All other dependencies are fetched via CMake (`Boost::asio`, `Boost::beast`, `nlohmann_json` and `yaml-cpp`). You can optionally be set to use the system `Boost` installation but fetching with CMake is more convenient since `Boost::asio` and `Boost::beast` are both header-only libraries.
 
 GoogleTest is used for testing.
-
-
 
 ## CMake Options
 
@@ -108,6 +104,22 @@ target_link_libraries(your-app PRIVATE miru::miru)
 
 We are working to support more integration methods and package managers. Please reach out to ben@miruml.com for adding support for a particular integration method or package manager.
 
+## Examples
+
+Examples should be executed from the root of the repository so that the file system paths evaluate correctly. After you've built the examples with CMake, execute them with
+
+```bash
+./build/examples/<examples-directory-name>/<example-binary-name>
+```
+
+For instance, the `from_file` example is executed by invoking
+
+```bash
+./build/examples/from_file/from-file
+```
+
+from the root of the repository. The binary name is simply the example directory name with the underscores (`_`) replaced with hyphens (`-`)
+
 ## Supported Platforms
 
 The Miru C++ SDK has been tested and verified to work on the following operating systems:
@@ -117,6 +129,7 @@ The Miru C++ SDK has been tested and verified to work on the following operating
 - Ubuntu 24.04 LTS
 - NVIDIA Jetson (JetPack 5.1)
 - NVIDIA Jetson (JetPack 6.1)
+- Raspberry Pi OS (64-bit)
 
 Other Linux distributions and versions should also work, but have not been explicitly tested.  
 If you encounter issues on a different platform, please email ben@miruml.com.

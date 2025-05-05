@@ -46,7 +46,7 @@ std::string read_schema_config_slug(const miru::filesys::File& schema_file) {
 // ================================= FROM FILE ===================================== //
 ConfigImpl ConfigImpl::from_file(
   const std::filesystem::path& schema_file_path,
-  const std::filesystem::path& config_file_path
+  const std::filesystem::path& concrete_config_file_path
 ) {
   ConfigBuilder builder;
   builder.with_source(miru::config::ConfigSource::FileSystem);
@@ -58,9 +58,9 @@ ConfigImpl ConfigImpl::from_file(
   builder.with_config_slug(config_slug);
 
   // read the config file
-  miru::filesys::File config_file(config_file_path);
-  builder.with_config_file(config_file);
-  builder.with_data(miru::params::parse_file(config_slug, config_file));
+  miru::filesys::File concrete_config_file(concrete_config_file_path);
+  builder.with_concrete_config_file(concrete_config_file);
+  builder.with_data(miru::params::parse_file(config_slug, concrete_config_file));
 
   // build the config
   ConfigImpl config = builder.build();
