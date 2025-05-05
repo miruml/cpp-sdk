@@ -42,7 +42,7 @@ class Config {
   // configuration and schema file from the file system.
   static Config from_file(
     const std::filesystem::path& schema_file_path,
-    const std::filesystem::path& config_file_path
+    const std::filesystem::path& concrete_config_file_path
   );
 
   // Initialize the config from an agent source. The config will read its configuration

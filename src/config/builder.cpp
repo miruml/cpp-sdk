@@ -77,7 +77,7 @@ ConfigImpl ConfigBuilder::build() {
     );
   }
   return ConfigImpl(
-    *schema_file_, *config_slug_, *source_, *data_, schema_digest_, *concrete_config_file_
+    *schema_file_, *config_slug_, *source_, *data_, schema_digest_, concrete_config_file_
   );
 }
 
