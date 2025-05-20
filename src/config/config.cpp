@@ -10,9 +10,9 @@ Config::Config(std::unique_ptr<ConfigImpl> impl) : impl_(std::move(impl)) {}
 
 Config Config::from_file(
   const std::filesystem::path& schema_file_path,
-  const std::filesystem::path& concrete_config_file_path
+  const std::filesystem::path& config_instance_file_path
 ) {
-  ConfigImpl impl = ConfigImpl::from_file(schema_file_path, concrete_config_file_path);
+  ConfigImpl impl = ConfigImpl::from_file(schema_file_path, config_instance_file_path);
   return Config(std::make_unique<ConfigImpl>(std::move(impl)));
 }
 

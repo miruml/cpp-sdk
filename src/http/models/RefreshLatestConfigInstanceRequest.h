@@ -10,13 +10,13 @@
 * Do not edit the class manually.
 */
 /*
- * RefreshLatestConcreteConfigRequest.h
+ * RefreshLatestConfigInstanceRequest.h
  *
  * 
  */
 
-#ifndef RefreshLatestConcreteConfigRequest_H_
-#define RefreshLatestConcreteConfigRequest_H_
+#ifndef RefreshLatestConfigInstanceRequest_H_
+#define RefreshLatestConfigInstanceRequest_H_
 
 
 #include <string>
@@ -26,7 +26,7 @@
 namespace org::openapitools::server::model
 {
 
-struct  RefreshLatestConcreteConfigRequest
+struct  RefreshLatestConfigInstanceRequest
 {
     
 
@@ -34,8 +34,8 @@ struct  RefreshLatestConcreteConfigRequest
     std::string config_slug;
     
 
-    bool operator==(const RefreshLatestConcreteConfigRequest& other) const;
-    bool operator!=(const RefreshLatestConcreteConfigRequest& other) const;
+    bool operator==(const RefreshLatestConfigInstanceRequest& other) const;
+    bool operator!=(const RefreshLatestConfigInstanceRequest& other) const;
 
     /// <summary>
     /// Validate the current data in the model. Throws a ValidationException on failure.
@@ -55,14 +55,14 @@ struct  RefreshLatestConcreteConfigRequest
     bool validate(std::stringstream& msg, const std::string& pathPrefix) const;
 
     nlohmann::json to_json() const;
-    static RefreshLatestConcreteConfigRequest from_json(const nlohmann::json& j);
+    static RefreshLatestConfigInstanceRequest from_json(const nlohmann::json& j);
 };
 
- void to_json(nlohmann::json& j, const RefreshLatestConcreteConfigRequest& o);
- void from_json(const nlohmann::json& j, RefreshLatestConcreteConfigRequest& o);
+ void to_json(nlohmann::json& j, const RefreshLatestConfigInstanceRequest& o);
+ void from_json(const nlohmann::json& j, RefreshLatestConfigInstanceRequest& o);
 
 
 } // namespace org::openapitools::server::model
 
 
-#endif /* RefreshLatestConcreteConfigRequest_H_ */
+#endif /* RefreshLatestConfigInstanceRequest_H_ */

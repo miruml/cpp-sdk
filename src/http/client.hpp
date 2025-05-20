@@ -1,9 +1,9 @@
 #pragma once
 
 // internal
-#include <http/models/BaseConcreteConfig.h>
+#include <http/models/BaseConfigInstance.h>
 #include <http/models/HashSchemaSerializedRequest.h>
-#include <http/models/RefreshLatestConcreteConfigRequest.h>
+#include <http/models/RefreshLatestConfigInstanceRequest.h>
 
 #include <http/socket_session.hpp>
 
@@ -19,12 +19,12 @@ class BackendClientI {
   virtual std::string hash_schema(
     const openapi::HashSchemaSerializedRequest& config_schema
   ) const = 0;
-  virtual openapi::BaseConcreteConfig get_latest_concrete_config(
+  virtual openapi::BaseConfigInstance get_latest_config_instance(
     const std::string& config_schema_digest,
     const std::string& config_slug
   ) const = 0;
-  virtual openapi::BaseConcreteConfig refresh_latest_concrete_config(
-    const openapi::RefreshLatestConcreteConfigRequest& request
+  virtual openapi::BaseConfigInstance refresh_latest_config_instance(
+    const openapi::RefreshLatestConfigInstanceRequest& request
   ) const = 0;
 };
 

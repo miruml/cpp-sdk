@@ -10,7 +10,7 @@
 * Do not edit the class manually.
 */
 
-#include "ConcreteConfigsApi.h"
+#include "ConfigInstancesApi.h"
 #include "Helpers.h"
 
 namespace org::openapitools::server::api
@@ -19,34 +19,34 @@ namespace org::openapitools::server::api
 using namespace org::openapitools::server::helpers;
 using namespace org::openapitools::server::model;
 
-const std::string ConcreteConfigsApi::base = "/internal/v1";
+const std::string ConfigInstancesApi::base = "/agent/v1";
 
-ConcreteConfigsApi::ConcreteConfigsApi(const std::shared_ptr<Pistache::Rest::Router>& rtr)
+ConfigInstancesApi::ConfigInstancesApi(const std::shared_ptr<Pistache::Rest::Router>& rtr)
     : ApiBase(rtr)
 {
 }
 
-void ConcreteConfigsApi::init() {
+void ConfigInstancesApi::init() {
     setupRoutes();
 }
 
-void ConcreteConfigsApi::setupRoutes() {
+void ConfigInstancesApi::setupRoutes() {
     using namespace Pistache::Rest;
 
-    Routes::Get(*router, base + "/concrete_configs/latest", Routes::bind(&ConcreteConfigsApi::get_latest_concrete_config_handler, this));
-    Routes::Post(*router, base + "/concrete_configs/refresh_latest", Routes::bind(&ConcreteConfigsApi::refresh_latest_concrete_config_handler, this));
+    Routes::Get(*router, base + "/config_instances/latest", Routes::bind(&ConfigInstancesApi::get_latest_config_instance_handler, this));
+    Routes::Post(*router, base + "/config_instances/refresh_latest", Routes::bind(&ConfigInstancesApi::refresh_latest_config_instance_handler, this));
 
     // Default handler, called when a route is not found
-    router->addCustomHandler(Routes::bind(&ConcreteConfigsApi::concrete_configs_api_default_handler, this));
+    router->addCustomHandler(Routes::bind(&ConfigInstancesApi::config_instances_api_default_handler, this));
 }
 
-void ConcreteConfigsApi::handleParsingException(const std::exception& ex, Pistache::Http::ResponseWriter &response) const noexcept
+void ConfigInstancesApi::handleParsingException(const std::exception& ex, Pistache::Http::ResponseWriter &response) const noexcept
 {
     std::pair<Pistache::Http::Code, std::string> codeAndError = handleParsingException(ex);
     response.send(codeAndError.first, codeAndError.second);
 }
 
-std::pair<Pistache::Http::Code, std::string> ConcreteConfigsApi::handleParsingException(const std::exception& ex) const noexcept
+std::pair<Pistache::Http::Code, std::string> ConfigInstancesApi::handleParsingException(const std::exception& ex) const noexcept
 {
     try {
         throw;
@@ -59,22 +59,22 @@ std::pair<Pistache::Http::Code, std::string> ConcreteConfigsApi::handleParsingEx
     }
 }
 
-void ConcreteConfigsApi::handleOperationException(const std::exception& ex, Pistache::Http::ResponseWriter &response) const noexcept
+void ConfigInstancesApi::handleOperationException(const std::exception& ex, Pistache::Http::ResponseWriter &response) const noexcept
 {
     std::pair<Pistache::Http::Code, std::string> codeAndError = handleOperationException(ex);
     response.send(codeAndError.first, codeAndError.second);
 }
 
-std::pair<Pistache::Http::Code, std::string> ConcreteConfigsApi::handleOperationException(const std::exception& ex) const noexcept
+std::pair<Pistache::Http::Code, std::string> ConfigInstancesApi::handleOperationException(const std::exception& ex) const noexcept
 {
     return std::make_pair(Pistache::Http::Code::Internal_Server_Error, ex.what());
 }
 
-void ConcreteConfigsApi::get_latest_concrete_config_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response) {
+void ConfigInstancesApi::get_latest_config_instance_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response) {
     try {
 
     // Getting the path params
-    auto clientId = request.param(":clientId").as<std::string>();
+    auto deviceId = request.param(":deviceId").as<std::string>();
     
     // Getting the query params
     auto configSchemaDigestQuery = request.query().get("config_schema_digest");
@@ -95,7 +95,7 @@ void ConcreteConfigsApi::get_latest_concrete_config_handler(const Pistache::Rest
     }
     
     try {
-        this->get_latest_concrete_config(clientId, configSchemaDigest, configSlug, response);
+        this->get_latest_config_instance(deviceId, configSchemaDigest, configSlug, response);
     } catch (Pistache::Http::HttpError &e) {
         response.send(static_cast<Pistache::Http::Code>(e.code()), e.what());
         return;
@@ -109,24 +109,24 @@ void ConcreteConfigsApi::get_latest_concrete_config_handler(const Pistache::Rest
     }
 
 }
-void ConcreteConfigsApi::refresh_latest_concrete_config_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response) {
+void ConfigInstancesApi::refresh_latest_config_instance_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response) {
     try {
 
 
     // Getting the body param
     
-    RefreshLatestConcreteConfigRequest refreshLatestConcreteConfigRequest;
+    RefreshLatestConfigInstanceRequest refreshLatestConfigInstanceRequest;
     
     try {
-        nlohmann::json::parse(request.body()).get_to(refreshLatestConcreteConfigRequest);
-        refreshLatestConcreteConfigRequest.validate();
+        nlohmann::json::parse(request.body()).get_to(refreshLatestConfigInstanceRequest);
+        refreshLatestConfigInstanceRequest.validate();
     } catch (std::exception &e) {
         this->handleParsingException(e, response);
         return;
     }
 
     try {
-        this->refresh_latest_concrete_config(refreshLatestConcreteConfigRequest, response);
+        this->refresh_latest_config_instance(refreshLatestConfigInstanceRequest, response);
     } catch (Pistache::Http::HttpError &e) {
         response.send(static_cast<Pistache::Http::Code>(e.code()), e.what());
         return;
@@ -141,7 +141,7 @@ void ConcreteConfigsApi::refresh_latest_concrete_config_handler(const Pistache::
 
 }
 
-void ConcreteConfigsApi::concrete_configs_api_default_handler(const Pistache::Rest::Request &, Pistache::Http::ResponseWriter response) {
+void ConfigInstancesApi::config_instances_api_default_handler(const Pistache::Rest::Request &, Pistache::Http::ResponseWriter response) {
     response.send(Pistache::Http::Code::Not_Found, "The requested method does not exist");
 }
 

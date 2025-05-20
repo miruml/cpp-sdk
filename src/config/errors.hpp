@@ -87,9 +87,9 @@ class InvalidConfigSchemaFileTypeError : public std::runtime_error {
 #define THROW_INVALID_CONFIG_SCHEMA_FILE_TYPE(schema_file, expected_file_types) \
   throw InvalidConfigSchemaFileTypeError(schema_file, expected_file_types, ERROR_TRACE)
 
-class EmptyConcreteConfig : public std::runtime_error {
+class EmptyConfigInstance : public std::runtime_error {
  public:
-  explicit EmptyConcreteConfig(
+  explicit EmptyConfigInstance(
     const std::string& config_slug,
     const miru::details::errors::ErrorTrace& trace
   )
@@ -99,12 +99,12 @@ class EmptyConcreteConfig : public std::runtime_error {
     const std::string& config_slug,
     const miru::details::errors::ErrorTrace& trace
   ) {
-    return "The concrete config loaded for config slug '" + config_slug + "' is empty" +
+    return "The config instance loaded for config slug '" + config_slug + "' is empty" +
            miru::details::errors::format_source_location(trace);
   }
 };
 
-#define THROW_EMPTY_CONCRETE_CONFIG(config_slug) \
-  throw EmptyConcreteConfig(config_slug, ERROR_TRACE)
+#define THROW_EMPTY_CONFIG_INSTANCE(config_slug) \
+  throw EmptyConfigInstance(config_slug, ERROR_TRACE)
 
 }  // namespace miru::config

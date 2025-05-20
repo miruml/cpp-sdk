@@ -4,9 +4,9 @@
 #include <cstring>
 
 // internal
-#include <http/models/BaseConcreteConfig.h>
+#include <http/models/BaseConfigInstance.h>
 #include <http/models/HashSchemaSerializedRequest.h>
-#include <http/models/RefreshLatestConcreteConfigRequest.h>
+#include <http/models/RefreshLatestConfigInstanceRequest.h>
 
 #include <http/socket_client.hpp>
 #include <http/socket_session.hpp>
@@ -49,28 +49,28 @@ std::string UnixSocketClient::hash_schema(
   return handle_json_response(res.first, res.second)["digest"].get<std::string>();
 }
 
-openapi::BaseConcreteConfig UnixSocketClient::get_latest_concrete_config(
+openapi::BaseConfigInstance UnixSocketClient::get_latest_config_instance(
   const std::string& config_schema_digest,
   const std::string& config_slug
 ) const {
-  std::string path = base_path() + "/concrete_configs/latest?config_schema_digest=" +
+  std::string path = base_path() + "/config_instances/latest?config_schema_digest=" +
                      config_schema_digest + "&config_slug=" + config_slug;
   auto req = build_get_request(host(), path);
   std::chrono::milliseconds timeout = std::chrono::seconds(10);
   auto res = execute(req, timeout);
-  return openapi::BaseConcreteConfig::from_json(
+  return openapi::BaseConfigInstance::from_json(
     handle_json_response(res.first, res.second)
   );
 }
 
-openapi::BaseConcreteConfig UnixSocketClient::refresh_latest_concrete_config(
-  const openapi::RefreshLatestConcreteConfigRequest& request
+openapi::BaseConfigInstance UnixSocketClient::refresh_latest_config_instance(
+  const openapi::RefreshLatestConfigInstanceRequest& request
 ) const {
-  std::string path = base_path() + "/concrete_configs/refresh_latest";
+  std::string path = base_path() + "/config_instances/refresh_latest";
   auto req = build_post_request(host(), path, request.to_json().dump());
   std::chrono::milliseconds timeout = std::chrono::seconds(10);
   auto res = execute(req, timeout);
-  return openapi::BaseConcreteConfig::from_json(
+  return openapi::BaseConfigInstance::from_json(
     handle_json_response(res.first, res.second)
   );
 }

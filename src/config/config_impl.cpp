@@ -46,7 +46,7 @@ std::string read_schema_config_slug(const miru::filesys::File& schema_file) {
 // ================================= FROM FILE ===================================== //
 ConfigImpl ConfigImpl::from_file(
   const std::filesystem::path& schema_file_path,
-  const std::filesystem::path& concrete_config_file_path
+  const std::filesystem::path& config_instance_file_path
 ) {
   ConfigBuilder builder;
   builder.with_source(miru::config::ConfigSource::FileSystem);
@@ -57,10 +57,10 @@ ConfigImpl ConfigImpl::from_file(
   std::string config_slug = read_schema_config_slug(schema_file);
   builder.with_config_slug(config_slug);
 
-  // read the config file
-  miru::filesys::File concrete_config_file(concrete_config_file_path);
-  builder.with_concrete_config_file(concrete_config_file);
-  builder.with_data(miru::params::parse_file(config_slug, concrete_config_file));
+  // read the config instance file
+  miru::filesys::File config_instance_file(config_instance_file_path);
+  builder.with_config_instance_file(config_instance_file);
+  builder.with_data(miru::params::parse_file(config_slug, config_instance_file));
 
   // build the config
   ConfigImpl config = builder.build();
@@ -97,26 +97,26 @@ std::string hash_schema(
   return client.hash_schema(config_schema);
 }
 
-nlohmann::json get_latest_concrete_config(
+nlohmann::json get_latest_config_instance(
   const miru::http::BackendClientI& client,
   const std::string& config_schema_digest,
   const std::string& config_slug
 ) {
-  openapi::BaseConcreteConfig config;
+  openapi::BaseConfigInstance config;
   try {
-    // try to refresh the latest concrete config with the server
-    openapi::RefreshLatestConcreteConfigRequest refresh_request{
+    // try to refresh the latest config instance with the server
+    openapi::RefreshLatestConfigInstanceRequest refresh_request{
       config_schema_digest, config_slug
     };
-    config = client.refresh_latest_concrete_config(refresh_request);
+    config = client.refresh_latest_config_instance(refresh_request);
   } catch (const std::exception& refresh_error) {
     // load from the local cache if the refresh fails
-    config = client.get_latest_concrete_config(config_schema_digest, config_slug);
+    config = client.get_latest_config_instance(config_schema_digest, config_slug);
   }
-  if (!config.concrete_config.has_value()) {
-    THROW_EMPTY_CONCRETE_CONFIG(config_slug);
+  if (!config.config_instance.has_value()) {
+    THROW_EMPTY_CONFIG_INSTANCE(config_slug);
   }
-  return config.concrete_config.value();
+  return config.config_instance.value();
 }
 
 ConfigImpl from_agent_impl(
@@ -138,9 +138,9 @@ ConfigImpl from_agent_impl(
   builder.with_schema_digest(config_schema_digest);
 
   // load the config from the agent
-  nlohmann::json concrete_config_data =
-    get_latest_concrete_config(client, config_schema_digest, config_slug);
-  builder.with_data(miru::params::parse_json_node(config_slug, concrete_config_data));
+  nlohmann::json config_instance_data =
+    get_latest_config_instance(client, config_schema_digest, config_slug);
+  builder.with_data(miru::params::parse_json_node(config_slug, config_instance_data));
 
   // build the config
   ConfigImpl config = builder.build();

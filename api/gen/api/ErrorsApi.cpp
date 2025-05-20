@@ -19,7 +19,7 @@ namespace org::openapitools::server::api
 using namespace org::openapitools::server::helpers;
 using namespace org::openapitools::server::model;
 
-const std::string ErrorsApi::base = "/internal/v1";
+const std::string ErrorsApi::base = "/agent/v1";
 
 ErrorsApi::ErrorsApi(const std::shared_ptr<Pistache::Rest::Router>& rtr)
     : ApiBase(rtr)

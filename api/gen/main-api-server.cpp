@@ -22,7 +22,7 @@
 
 #include "ApiBase.h"
 
-#include "ConcreteConfigsApiImpl.h"
+#include "ConfigInstancesApiImpl.h"
 #include "ConfigSchemasApiImpl.h"
 #include "ErrorsApiImpl.h"
 
@@ -82,7 +82,7 @@ int main() {
 
     auto apiImpls = std::vector<std::shared_ptr<ApiBase>>();
     
-    apiImpls.push_back(std::make_shared<ConcreteConfigsApiImpl>(router));
+    apiImpls.push_back(std::make_shared<ConfigInstancesApiImpl>(router));
     apiImpls.push_back(std::make_shared<ConfigSchemasApiImpl>(router));
     apiImpls.push_back(std::make_shared<ErrorsApiImpl>(router));
 

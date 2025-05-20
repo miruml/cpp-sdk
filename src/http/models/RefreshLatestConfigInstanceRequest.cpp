@@ -11,27 +11,27 @@
 */
 
 
-#include "RefreshLatestConcreteConfigRequest.h"
+#include "RefreshLatestConfigInstanceRequest.h"
 #include "Helpers.h"
 
 namespace org::openapitools::server::model
 {
 
-nlohmann::json RefreshLatestConcreteConfigRequest::to_json() const
+nlohmann::json RefreshLatestConfigInstanceRequest::to_json() const
 {
     nlohmann::json j;
     ::org::openapitools::server::model::to_json(j, *this);
     return j;
 }
 
-RefreshLatestConcreteConfigRequest RefreshLatestConcreteConfigRequest::from_json(const nlohmann::json& j)
+RefreshLatestConfigInstanceRequest RefreshLatestConfigInstanceRequest::from_json(const nlohmann::json& j)
 {
-    RefreshLatestConcreteConfigRequest o{};
+    RefreshLatestConfigInstanceRequest o{};
     ::org::openapitools::server::model::from_json(j, o);
     return o;
 }
 
-void RefreshLatestConcreteConfigRequest::validate() const
+void RefreshLatestConfigInstanceRequest::validate() const
 {
     std::stringstream msg;
     if (!validate(msg))
@@ -40,33 +40,33 @@ void RefreshLatestConcreteConfigRequest::validate() const
     }
 }
 
-bool RefreshLatestConcreteConfigRequest::validate(std::stringstream& msg) const
+bool RefreshLatestConfigInstanceRequest::validate(std::stringstream& msg) const
 {
     return validate(msg, "");
 }
 
-bool RefreshLatestConcreteConfigRequest::validate(std::stringstream& msg, const std::string& pathPrefix) const
+bool RefreshLatestConfigInstanceRequest::validate(std::stringstream& msg, const std::string& pathPrefix) const
 {
     bool success = true;
-    const std::string _pathPrefix = pathPrefix.empty() ? "RefreshLatestConcreteConfigRequest" : pathPrefix;
+    const std::string _pathPrefix = pathPrefix.empty() ? "RefreshLatestConfigInstanceRequest" : pathPrefix;
 
             
     return success;
 }
 
-bool RefreshLatestConcreteConfigRequest::operator==(const RefreshLatestConcreteConfigRequest& other) const
+bool RefreshLatestConfigInstanceRequest::operator==(const RefreshLatestConfigInstanceRequest& other) const
 {
     return
     
     config_schema_digest == other.config_schema_digest && config_slug == other.config_slug;
 }
 
-bool RefreshLatestConcreteConfigRequest::operator!=(const RefreshLatestConcreteConfigRequest& other) const
+bool RefreshLatestConfigInstanceRequest::operator!=(const RefreshLatestConfigInstanceRequest& other) const
 {
     return !(*this == other);
 }
 
-void to_json(nlohmann::json& j, const RefreshLatestConcreteConfigRequest& o)
+void to_json(nlohmann::json& j, const RefreshLatestConfigInstanceRequest& o)
 {
     j = nlohmann::json::object();
     j["config_schema_digest"] = o.config_schema_digest;
@@ -74,7 +74,7 @@ void to_json(nlohmann::json& j, const RefreshLatestConcreteConfigRequest& o)
     
 }
 
-void from_json(const nlohmann::json& j, RefreshLatestConcreteConfigRequest& o)
+void from_json(const nlohmann::json& j, RefreshLatestConfigInstanceRequest& o)
 {
     j.at("config_schema_digest").get_to(o.config_schema_digest);
     j.at("config_slug").get_to(o.config_slug);

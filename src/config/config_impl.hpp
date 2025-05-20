@@ -21,7 +21,7 @@ class ConfigImpl {
   // configuration and schema file from the file system.
   static ConfigImpl from_file(
     const std::filesystem::path& schema_file_path,
-    const std::filesystem::path& concrete_config_file_path
+    const std::filesystem::path& config_instance_file_path
   );
 
   static ConfigImpl from_agent(

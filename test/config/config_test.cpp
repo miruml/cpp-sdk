@@ -1,5 +1,5 @@
 // internal
-#include <http/models/RefreshLatestConcreteConfigRequest.h>
+#include <http/models/RefreshLatestConfigInstanceRequest.h>
 
 #include <config/config_impl.hpp>
 #include <miru/query/query.hpp>
@@ -85,8 +85,8 @@ TEST(Config, FromAgentRefreshSuccess) {
   test::http::MockBackendClient mock_client;
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
-  mock_client.refresh_latest_concrete_config_func = []() {
-    nlohmann::json concrete_config = {
+  mock_client.refresh_latest_config_instance_func = []() {
+    nlohmann::json config_instance = {
       {"speed", 89},
       {"features", {{"spin", true}, {"jump", false}, {"backflip", false}}},
       {"accelerometer",
@@ -94,13 +94,13 @@ TEST(Config, FromAgentRefreshSuccess) {
         {"offsets", {{"x", 0}, {"y", 0}, {"z", 0}}},
         {"scaling_factor", {{"x", 1}, {"y", 1}, {"z", 1}}}}}
     };
-    return openapi::BaseConcreteConfig{
-      "concrete_config",
-      "cncr_cfg_123",
+    return openapi::BaseConfigInstance{
+      "config_instance",
+      "cfg_inst_123",
       "2021-01-01T00:00:00Z",
       "cli_123",
       "cfg_sch_123",
-      concrete_config,
+      config_instance,
     };
   };
 
@@ -130,15 +130,15 @@ TEST(Config, FromAgentRefreshFailureGetSuccess) {
   test::http::MockBackendClient mock_client;
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
-  // refresh latest concrete config will fail
-  mock_client.refresh_latest_concrete_config_func =
-    []() -> openapi::BaseConcreteConfig {
-    throw std::runtime_error("refresh latest concrete config failed");
+  // refresh latest config instance will fail
+  mock_client.refresh_latest_config_instance_func =
+    []() -> openapi::BaseConfigInstance {
+    throw std::runtime_error("refresh latest config instance failed");
   };
 
-  // read the latest concrete config will succeed
-  mock_client.get_latest_concrete_config_func = []() {
-    nlohmann::json concrete_config = {
+  // read the latest config instance will succeed
+  mock_client.get_latest_config_instance_func = []() {
+    nlohmann::json config_instance = {
       {"speed", 74},
       {"features", {{"spin", true}, {"jump", false}, {"backflip", false}}},
       {"accelerometer",
@@ -146,13 +146,13 @@ TEST(Config, FromAgentRefreshFailureGetSuccess) {
         {"offsets", {{"x", 0}, {"y", 0}, {"z", 0}}},
         {"scaling_factor", {{"x", 1}, {"y", 1}, {"z", 1}}}}}
     };
-    return openapi::BaseConcreteConfig{
-      "concrete_config",
-      "cncr_cfg_123",
+    return openapi::BaseConfigInstance{
+      "config_instance",
+      "cfg_inst_123",
       "2021-01-01T00:00:00Z",
       "cli_123",
       "cfg_sch_123",
-      concrete_config,
+      config_instance,
     };
   };
 
@@ -182,15 +182,15 @@ TEST(Config, FromAgentDefaultFile) {
   test::http::MockBackendClient mock_client;
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
-  // refresh latest concrete config will fail
-  mock_client.refresh_latest_concrete_config_func =
-    []() -> openapi::BaseConcreteConfig {
-    throw std::runtime_error("refresh latest concrete config failed");
+  // refresh latest config instance will fail
+  mock_client.refresh_latest_config_instance_func =
+    []() -> openapi::BaseConfigInstance {
+    throw std::runtime_error("refresh latest config instance failed");
   };
 
-  // read the latest concrete config will also fail (for whatever reason)
-  mock_client.get_latest_concrete_config_func = []() -> openapi::BaseConcreteConfig {
-    throw std::runtime_error("get latest concrete config failed");
+  // read the latest config instance will also fail (for whatever reason)
+  mock_client.get_latest_config_instance_func = []() -> openapi::BaseConfigInstance {
+    throw std::runtime_error("get latest config instance failed");
   };
 
   // set the schema file and default config file

@@ -19,7 +19,7 @@ namespace org::openapitools::server::api
 using namespace org::openapitools::server::helpers;
 using namespace org::openapitools::server::model;
 
-const std::string ConfigSchemasApi::base = "/internal/v1";
+const std::string ConfigSchemasApi::base = "/agent/v1";
 
 ConfigSchemasApi::ConfigSchemasApi(const std::shared_ptr<Pistache::Rest::Router>& rtr)
     : ApiBase(rtr)

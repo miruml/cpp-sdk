@@ -1,9 +1,9 @@
 // internal
 #include "test/http/mock.hpp"
 
-#include <http/models/BaseConcreteConfig.h>
+#include <http/models/BaseConfigInstance.h>
 #include <http/models/HashSchemaSerializedRequest.h>
-#include <http/models/RefreshLatestConcreteConfigRequest.h>
+#include <http/models/RefreshLatestConfigInstanceRequest.h>
 
 #include <http/socket_session.hpp>
 
@@ -19,17 +19,17 @@ std::string MockBackendClient::hash_schema(
   return hash_schema_func();
 }
 
-openapi::BaseConcreteConfig MockBackendClient::get_latest_concrete_config(
+openapi::BaseConfigInstance MockBackendClient::get_latest_config_instance(
   const std::string& config_schema_digest,
   const std::string& config_slug
 ) const {
-  return get_latest_concrete_config_func();
+  return get_latest_config_instance_func();
 }
 
-openapi::BaseConcreteConfig MockBackendClient::refresh_latest_concrete_config(
-  const openapi::RefreshLatestConcreteConfigRequest& request
+openapi::BaseConfigInstance MockBackendClient::refresh_latest_config_instance(
+  const openapi::RefreshLatestConfigInstanceRequest& request
 ) const {
-  return refresh_latest_concrete_config_func();
+  return refresh_latest_config_instance_func();
 }
 
 }  // namespace test::http

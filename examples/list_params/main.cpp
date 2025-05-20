@@ -24,18 +24,18 @@ int main() {
     // this from the root of the repository for these file paths to be properly defined.
     // In general we recommend using absolute paths.
     std::string yaml_config_schema_path = "./examples/config-schema.yaml";
-    std::string yaml_concrete_config_path = "./examples/concrete-config.yaml";
+    std::string yaml_config_instance_path = "./examples/config-instance.yaml";
     std::string json_config_schema_path = "./examples/config-schema.json";
-    std::string json_concrete_config_path = "./examples/concrete-config.json";
+    std::string json_config_instance_path = "./examples/config-instance.json";
 
     // retrieve the configs from the file system
     miru::config::Config config_from_yaml = miru::config::Config::from_file(
         yaml_config_schema_path,
-        yaml_concrete_config_path
+        yaml_config_instance_path
     );
     miru::config::Config config_from_json = miru::config::Config::from_file(
         json_config_schema_path,
-        json_concrete_config_path
+        json_config_instance_path
     );
 
     // list all the parameters in the config
@@ -43,11 +43,11 @@ int main() {
     // but json gives 'integer', 'number', 'boolean', etc. because of the json parser
     print_params(
         miru::query::list_params(config_from_yaml),
-        "YAML Concrete Config File"
+        "YAML Config Instance File"
     );
     print_params(
         miru::query::list_params(config_from_json),
-        "JSON Concrete Config File"
+        "JSON Config Instance File"
     );
 }
 

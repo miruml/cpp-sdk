@@ -24,12 +24,12 @@ int main() {
     // this from the root of the repository for these file paths to be properly defined.
     // In general we recommend using absolute paths.
     std::string config_schema_path = "./examples/config-schema.yaml";
-    std::string concrete_config_path = "./examples/concrete-config.yaml";
+    std::string config_instance_path = "./examples/config-instance.yaml";
 
     // retrieve the configs from the file system
     miru::config::Config config = miru::config::Config::from_file(
         config_schema_path,
-        concrete_config_path
+        config_instance_path
     );
 
     // define the filter

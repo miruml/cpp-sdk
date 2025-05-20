@@ -10,7 +10,7 @@
 * Do not edit the class manually.
 */
 
-#include "ConcreteConfigsApiImpl.h"
+#include "ConfigInstancesApiImpl.h"
 
 namespace org {
 namespace openapitools {
@@ -19,15 +19,15 @@ namespace api {
 
 using namespace org::openapitools::server::model;
 
-ConcreteConfigsApiImpl::ConcreteConfigsApiImpl(const std::shared_ptr<Pistache::Rest::Router>& rtr)
-    : ConcreteConfigsApi(rtr)
+ConfigInstancesApiImpl::ConfigInstancesApiImpl(const std::shared_ptr<Pistache::Rest::Router>& rtr)
+    : ConfigInstancesApi(rtr)
 {
 }
 
-void ConcreteConfigsApiImpl::get_latest_concrete_config(const std::string &clientId, const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configSlug, Pistache::Http::ResponseWriter &response) {
+void ConfigInstancesApiImpl::get_latest_config_instance(const std::string &deviceId, const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configSlug, Pistache::Http::ResponseWriter &response) {
     response.send(Pistache::Http::Code::Ok, "Do some magic\n");
 }
-void ConcreteConfigsApiImpl::refresh_latest_concrete_config(const RefreshLatestConcreteConfigRequest &refreshLatestConcreteConfigRequest, Pistache::Http::ResponseWriter &response) {
+void ConfigInstancesApiImpl::refresh_latest_config_instance(const RefreshLatestConfigInstanceRequest &refreshLatestConfigInstanceRequest, Pistache::Http::ResponseWriter &response) {
     response.send(Pistache::Http::Code::Ok, "Do some magic\n");
 }
 

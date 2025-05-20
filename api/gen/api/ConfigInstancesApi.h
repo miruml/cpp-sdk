@@ -10,13 +10,13 @@
 * Do not edit the class manually.
 */
 /*
- * ConcreteConfigsApi.h
+ * ConfigInstancesApi.h
  *
  * 
  */
 
-#ifndef ConcreteConfigsApi_H_
-#define ConcreteConfigsApi_H_
+#ifndef ConfigInstancesApi_H_
+#define ConfigInstancesApi_H_
 
 
 #include "ApiBase.h"
@@ -28,17 +28,17 @@
 #include <optional>
 #include <utility>
 
-#include "BaseConcreteConfig.h"
-#include "RefreshLatestConcreteConfigRequest.h"
+#include "BaseConfigInstance.h"
+#include "RefreshLatestConfigInstanceRequest.h"
 #include <string>
 
 namespace org::openapitools::server::api
 {
 
-class  ConcreteConfigsApi : public ApiBase {
+class  ConfigInstancesApi : public ApiBase {
 public:
-    explicit ConcreteConfigsApi(const std::shared_ptr<Pistache::Rest::Router>& rtr);
-    ~ConcreteConfigsApi() override = default;
+    explicit ConfigInstancesApi(const std::shared_ptr<Pistache::Rest::Router>& rtr);
+    ~ConfigInstancesApi() override = default;
     void init() override;
 
     static const std::string base;
@@ -46,9 +46,9 @@ public:
 private:
     void setupRoutes();
 
-    void get_latest_concrete_config_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response);
-    void refresh_latest_concrete_config_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response);
-    void concrete_configs_api_default_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response);
+    void get_latest_config_instance_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response);
+    void refresh_latest_config_instance_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response);
+    void config_instances_api_default_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response);
 
     /// <summary>
     /// Helper function to handle unexpected Exceptions during Parameter parsing and validation.
@@ -79,27 +79,27 @@ private:
     virtual std::pair<Pistache::Http::Code, std::string> handleOperationException(const std::exception& ex) const noexcept;
 
     /// <summary>
-    /// Get the latest concrete config
+    /// Get the latest config instance
     /// </summary>
     /// <remarks>
     /// 
     /// </remarks>
-    /// <param name="clientId">The unique identifier of the client</param>
+    /// <param name="deviceId">The unique identifier of the device</param>
     /// <param name="configSchemaDigest">The digest of the config schema</param>
     /// <param name="configSlug">The slug of the config</param>
-    virtual void get_latest_concrete_config(const std::string &clientId, const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configSlug, Pistache::Http::ResponseWriter &response) = 0;
+    virtual void get_latest_config_instance(const std::string &deviceId, const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configSlug, Pistache::Http::ResponseWriter &response) = 0;
     /// <summary>
-    /// Render the latest concrete config for a client
+    /// Render the latest config instance for a device
     /// </summary>
     /// <remarks>
     /// 
     /// </remarks>
-    /// <param name="refreshLatestConcreteConfigRequest"> (optional)</param>
-    virtual void refresh_latest_concrete_config(const org::openapitools::server::model::RefreshLatestConcreteConfigRequest &refreshLatestConcreteConfigRequest, Pistache::Http::ResponseWriter &response) = 0;
+    /// <param name="refreshLatestConfigInstanceRequest"> (optional)</param>
+    virtual void refresh_latest_config_instance(const org::openapitools::server::model::RefreshLatestConfigInstanceRequest &refreshLatestConfigInstanceRequest, Pistache::Http::ResponseWriter &response) = 0;
 
 };
 
 } // namespace org::openapitools::server::api
 
-#endif /* ConcreteConfigsApi_H_ */
+#endif /* ConfigInstancesApi_H_ */
 

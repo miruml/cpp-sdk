@@ -20,7 +20,7 @@ class ConfigBuilder {
   ConfigBuilder& with_source(miru::config::ConfigSource source);
   ConfigBuilder& with_data(const miru::params::Parameter& data);
   ConfigBuilder& with_schema_digest(const std::string& schema_digest);
-  ConfigBuilder& with_concrete_config_file(const miru::filesys::File& concrete_config_file);
+  ConfigBuilder& with_config_instance_file(const miru::filesys::File& config_instance_file);
   ConfigImpl build();
 
  private:
@@ -34,7 +34,7 @@ class ConfigBuilder {
   std::optional<std::string> schema_digest_;
 
   // only needed if sourcing from the file system
-  std::optional<miru::filesys::File> concrete_config_file_;
+  std::optional<miru::filesys::File> config_instance_file_;
 };
 
 }  // namespace miru::config

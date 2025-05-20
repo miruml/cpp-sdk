@@ -1,17 +1,13 @@
 #!/bin/bash
 set -e
 
-openapi_dir=../../../../openapi
-openapi_configs_dir=$openapi_dir/configs
-cpp_sdk_dir=../../
-git_info_file=$cpp_sdk_dir/scripts/openapi/git-info.txt
+openapi_dir=../../../openapi
+cpp_sdk_dir=../
+git_info_file=$cpp_sdk_dir/api/git-info.txt
 gen_dir=./gen
 
 # Check for any changes (staged, unstaged, or untracked)
-cd $openapi_configs_dir
-pwd
-
-make bundle-all
+cd $openapi_dir
 
 echo ""
 echo "Checking for any changes (staged, unstaged, or untracked)"
@@ -39,7 +35,7 @@ cd -
 make gen
 
 gen_models_dir=$gen_dir/model
-target_models_dir=$cpp_sdk_dir/miru/http/details/models
+target_models_dir=$cpp_sdk_dir/src/http/models
 
 # replace the target model directories with the generated ones
 rm -rf "${target_models_dir:?}"/*
