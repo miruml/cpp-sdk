@@ -1,5 +1,5 @@
 // internal
-#include <config/config_impl.hpp>
+#include <config/instance_impl.hpp>
 #include <config/errors.hpp>
 #include <test/test_utils/testdata.hpp>
 
@@ -9,21 +9,21 @@
 namespace test::config {
 
 // ============================== READ CONFIG SLUG ================================= //
-TEST(Config, ConfigSlugFoundJson) {
+TEST(ConfigInstance, ConfigSlugFoundJson) {
   miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.json")
   );
   EXPECT_EQ(miru::config::read_schema_config_slug(schema_file), "motion-control");
 }
 
-TEST(Config, ConfigSlugFoundYaml) {
+TEST(ConfigInstance, ConfigSlugFoundYaml) {
   miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.yaml")
   );
   EXPECT_EQ(miru::config::read_schema_config_slug(schema_file), "motion-control");
 }
 
-TEST(Config, EmptyConfigSlugJson) {
+TEST(ConfigInstance, EmptyConfigSlugJson) {
   miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("empty-config-slug.json")
   );
@@ -32,7 +32,7 @@ TEST(Config, EmptyConfigSlugJson) {
   );
 }
 
-TEST(Config, EmptyConfigSlugYaml) {
+TEST(ConfigInstance, EmptyConfigSlugYaml) {
   miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("empty-config-slug.yaml")
   );
@@ -41,7 +41,7 @@ TEST(Config, EmptyConfigSlugYaml) {
   );
 }
 
-TEST(Config, ConfigSlugNotFoundJson) {
+TEST(ConfigInstance, ConfigSlugNotFoundJson) {
   miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("missing-config-slug.json")
   );
@@ -50,7 +50,7 @@ TEST(Config, ConfigSlugNotFoundJson) {
   );
 }
 
-TEST(Config, ConfigSlugNotFoundYaml) {
+TEST(ConfigInstance, ConfigSlugNotFoundYaml) {
   miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("missing-config-slug.yaml")
   );

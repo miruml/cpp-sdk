@@ -12,15 +12,15 @@ namespace miru::query {
 using Parameter = miru::params::Parameter;
 
 // Config class
-class ROS2 {
+class ROS2NodeI {
  public:
-  ROS2(const miru::params::Parameter& root) : root_(root) {}
+  ROS2NodeI(const miru::params::Parameter& root) : root_(root) {}
 
-  ROS2(const miru::config::Config& config) : root_(config.root_parameter()) {}
+  ROS2NodeI(const miru::config::ConfigInstance& config_instance) : root_(config_instance.root_parameter()) {}
 
   // ============================== ROS2 INTERFACES ============================== //
 
-  // The following ROS2 interfaces are pulled from the rclcpp NodeParametersInterface.
+  // The following ros2 interfaces are pulled from the rclcpp NodeParametersInterface.
 
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/node.hpp#L598
 

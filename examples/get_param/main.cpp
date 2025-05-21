@@ -2,21 +2,21 @@
 #include <iostream>
 
 // miru
-#include <miru/config/config.hpp>
+#include <miru/config/instance.hpp>
 #include <miru/params/type.hpp>
 #include <miru/query/query.hpp>
 
 // EXECUTE FROM THE ROOT OF THE REPOSITORY (./build/examples/get_param/get_param)
 
 int main() {
-    // this is relative to the directory of resulting executable. so we'll need to run
+    // this is relative to the directory of resulting executable so we'll need to run
     // this from the root of the repository for these file paths to be properly defined.
     // In general we recommend using absolute paths.
     std::string config_schema_path = "./examples/config-schema.yaml";
     std::string config_instance_path = "./examples/config-instance.yaml";
 
     // retrieve a config instance from a file
-    miru::config::Config config = miru::config::Config::from_file(
+    miru::config::ConfigInstance config_instance = miru::config::ConfigInstance::from_file(
         config_schema_path,
         config_instance_path
     );
@@ -31,7 +31,7 @@ int main() {
 
     // METHOD 1: get a parameter and throw an exception if it doesn't exist
     miru::params::Parameter param = miru::query::get_param(
-        config,
+        config_instance,
         filters
     );
     std::cout << "Method 1 Result: " << param.as_int() << std::endl;
@@ -41,7 +41,7 @@ int main() {
     // to be stored in the result
     miru::params::Parameter result = miru::params::Parameter(param_name, 33);
     bool success = miru::query::try_get_param(
-        config,
+        config_instance,
         filters,
         result
     );
@@ -56,7 +56,7 @@ int main() {
     // be stored in the result
     int64_t result_value = 33;
     success = miru::query::try_get_param(
-        config,
+        config_instance,
         filters,
         result_value
     );
@@ -70,7 +70,7 @@ int main() {
     // METHOD 4: provide a default value to return if the parameter cannot be retrieved
     int64_t default_value = 27;
     result_value = miru::query::get_param_or(
-        config,
+        config_instance,
         filters,
         default_value
     );
@@ -83,7 +83,7 @@ int main() {
     // the default value and the function will return false.
     default_value = 46;
     success = miru::query::try_get_param_or(
-        config,
+        config_instance,
         filters,
         result_value,
         default_value

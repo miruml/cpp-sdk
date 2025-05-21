@@ -2,7 +2,7 @@
 #include <iostream>
 
 // miru
-#include <miru/config/config.hpp>
+#include <miru/config/instance.hpp>
 #include <miru/params/type.hpp>
 #include <miru/query/query.hpp>
 
@@ -156,14 +156,14 @@ void print_get_map_value_variants(const miru::params::Parameter& param) {
 }
 
 int main() {
-    // this is relative to the directory of resulting executable. so we'll need to run
+    // this is relative to the directory of resulting executable so we'll need to run
     // this from the root of the repository for these file paths to be properly defined.
     // In general we recommend using absolute paths.
     std::string config_schema_path = "./examples/config-schema.yaml";
     std::string config_instance_path = "./examples/config-instance.yaml";
 
     // retrieve a config instance from a file
-    miru::config::Config config = miru::config::Config::from_file(
+    miru::config::ConfigInstance config_instance = miru::config::ConfigInstance::from_file(
         config_schema_path,
         config_instance_path
     );
@@ -172,70 +172,70 @@ int main() {
 
     // boolean parameter
     miru::params::Parameter param = miru::query::get_param(
-        config,
+        config_instance,
         config_slug + "." + "a_boolean"
     );
     print_get_bool_value_variants(param);
 
     // integer parameter
     param = miru::query::get_param(
-        config,
+        config_instance,
         config_slug + "." + "an_integer"
     );
     print_get_int_value_variants(param);
 
     // double parameter
     param = miru::query::get_param(
-        config,
+        config_instance,
         config_slug + "." + "a_double"
     );
     print_get_double_value_variants(param);
 
     // string parameter
     param = miru::query::get_param(
-        config,
+        config_instance,
         config_slug + "." + "a_string"
     );
     print_get_string_value_variants(param);
 
     // null parameter
     param = miru::query::get_param(
-        config,
+        config_instance,
         config_slug + "." + "a_null_value"
     );
     print_get_null_value_variants(param);
 
     // boolean array parameter
     param = miru::query::get_param(
-        config,
+        config_instance,
         config_slug + "." + "a_boolean_array"
     );
     print_get_boolean_array_value_variants(param);
 
     // integer array parameter
     param = miru::query::get_param(
-        config,
+        config_instance,
         config_slug + "." + "an_integer_array"
     );
     print_get_int_array_value_variants(param);
     
     // double array parameter
     param = miru::query::get_param(
-        config,
+        config_instance,
         config_slug + "." + "a_double_array"
     );
     print_get_double_array_value_variants(param);
 
     // string array parameter
     param = miru::query::get_param(
-        config,
+        config_instance     ,
         config_slug + "." + "a_string_array"
     );
     print_get_string_array_value_variants(param);
 
     // nested array parameter
     param = miru::query::get_param(
-        config,
+        config_instance,
         config_slug + "." + "a_nested_array"
     );
     print_get_nested_array_value_variants(param);
@@ -246,7 +246,7 @@ int main() {
         .with_leaves_only(false)
         .build();
     param = miru::query::get_param(
-        config,
+        config_instance,
         filters
     );
     print_get_map_array_value_variants(param);
@@ -257,7 +257,7 @@ int main() {
         .with_leaves_only(false)
         .build();
     param = miru::query::get_param(
-        config,
+        config_instance,
         filters
     );
     print_get_map_value_variants(param);

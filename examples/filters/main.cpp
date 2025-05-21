@@ -2,7 +2,7 @@
 #include <iostream>
 
 // miru
-#include <miru/config/config.hpp>
+#include <miru/config/instance.hpp>
 #include <miru/params/type.hpp>
 #include <miru/query/query.hpp>
 
@@ -20,14 +20,14 @@ void print_params(const std::vector<miru::params::Parameter>& params, const std:
 }
 
 int main() {
-    // this is relative to the directory of resulting executable. so we'll need to run
+    // this is relative to the directory of resulting executable so we'll need to run
     // this from the root of the repository for these file paths to be properly defined.
     // In general we recommend using absolute paths.
     std::string config_schema_path = "./examples/config-schema.yaml";
     std::string config_instance_path = "./examples/config-instance.yaml";
 
     // retrieve the configs from the file system
-    miru::config::Config config = miru::config::Config::from_file(
+    miru::config::ConfigInstance config_instance = miru::config::ConfigInstance::from_file(
         config_schema_path,
         config_instance_path
     );
@@ -42,11 +42,11 @@ int main() {
         .build();
         
     // check if the parameter exists
-    bool has_param = miru::query::has_param(config, filter);
+    bool has_param = miru::query::has_param(config_instance, filter);
     std::cout << std::boolalpha << "Has param? (should be true): " << has_param << "\n" << std::endl;
 
     // retrieve the parameters which match the filter
-    auto params = miru::query::get_params(config, filter);
+    auto params = miru::query::get_params(config_instance, filter);
     print_params(params, "Parameters which match the filter");
 }
 

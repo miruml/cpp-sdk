@@ -1,7 +1,7 @@
 #pragma once
 
 // internal
-#include <miru/config/config.hpp>
+#include <miru/config/instance.hpp>
 #include <miru/params/iterator.hpp>
 #include <miru/params/parameter.hpp>
 #include <miru/query/details/errors.hpp>

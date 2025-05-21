@@ -13,9 +13,9 @@ miru::filesys::Dir config_testdata_dir() {
   return miru::filesys::Dir(testdata_dir_.path() / "config");
 }
 
-miru::filesys::Dir config_data_testdata_dir() {
+miru::filesys::Dir config_instances_testdata_dir() {
   miru::filesys::Dir testdata_dir_ = testdata_dir();
-  return miru::filesys::Dir(testdata_dir_.path() / "config" / "configs");
+  return miru::filesys::Dir(testdata_dir_.path() / "config" / "instances");
 }
 
 miru::filesys::Dir config_schemas_testdata_dir() {

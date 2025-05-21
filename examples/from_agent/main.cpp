@@ -2,7 +2,7 @@
 #include <iostream>
 
 // miru
-#include <miru/config/config.hpp>
+#include <miru/config/instance.hpp>
 #include <miru/query/query.hpp>
 
 
@@ -20,18 +20,18 @@ void print_params(const std::vector<miru::params::Parameter>& params, const std:
 }
 
 int main() {
-    // this is relative to the directory of resulting executable. so we'll need to run
+    // this is relative to the directory of resulting executable so we'll need to run
     // this from the root of the repository for these file paths to be properly defined.
     // In general we recommend using absolute paths.
     std::string schema_path = "./examples/config-schema.yaml";
 
-    miru::config::Config config = miru::config::Config::from_agent(
+    miru::config::ConfigInstance config_instance = miru::config::ConfigInstance::from_agent(
         schema_path
     );
 
     // list all the parameters in the config
     print_params(
-        miru::query::list_params(config),
+        miru::query::list_params(config_instance),
         "Parameters from Agent"
     );
 }

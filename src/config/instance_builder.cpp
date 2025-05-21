@@ -1,10 +1,10 @@
 // internal
-#include <config/builder.hpp>
-#include <config/config_impl.hpp>
+#include <config/instance_builder.hpp>
+#include <config/instance_impl.hpp>
 
 namespace miru::config {
 
-ConfigBuilder& ConfigBuilder::with_schema_file(const miru::filesys::File& schema_file) {
+ConfigInstanceBuilder& ConfigInstanceBuilder::with_schema_file(const miru::filesys::File& schema_file) {
   if (schema_file_.has_value()) {
     throw std::runtime_error("Schema file already set");
   }
@@ -12,7 +12,7 @@ ConfigBuilder& ConfigBuilder::with_schema_file(const miru::filesys::File& schema
   return *this;
 }
 
-ConfigBuilder& ConfigBuilder::with_config_slug(const std::string& config_slug) {
+ConfigInstanceBuilder& ConfigInstanceBuilder::with_config_slug(const std::string& config_slug) {
   if (config_slug_.has_value()) {
     throw std::runtime_error("Config slug already set");
   }
@@ -20,7 +20,7 @@ ConfigBuilder& ConfigBuilder::with_config_slug(const std::string& config_slug) {
   return *this;
 }
 
-ConfigBuilder& ConfigBuilder::with_source(miru::config::ConfigSource source) {
+ConfigInstanceBuilder& ConfigInstanceBuilder::with_source(miru::config::ConfigInstanceSource source) {
   if (source_.has_value()) {
     throw std::runtime_error("Source already set");
   }
@@ -28,7 +28,7 @@ ConfigBuilder& ConfigBuilder::with_source(miru::config::ConfigSource source) {
   return *this;
 }
 
-ConfigBuilder& ConfigBuilder::with_data(const miru::params::Parameter& data) {
+ConfigInstanceBuilder& ConfigInstanceBuilder::with_data(const miru::params::Parameter& data) {
   if (data_.has_value()) {
     throw std::runtime_error("Data already set");
   }
@@ -36,7 +36,7 @@ ConfigBuilder& ConfigBuilder::with_data(const miru::params::Parameter& data) {
   return *this;
 }
 
-ConfigBuilder& ConfigBuilder::with_schema_digest(const std::string& schema_digest) {
+ConfigInstanceBuilder& ConfigInstanceBuilder::with_schema_digest(const std::string& schema_digest) {
   if (schema_digest_.has_value()) {
     throw std::runtime_error("Schema digest already set");
   }
@@ -44,7 +44,7 @@ ConfigBuilder& ConfigBuilder::with_schema_digest(const std::string& schema_diges
   return *this;
 }
 
-ConfigBuilder& ConfigBuilder::with_config_instance_file(const miru::filesys::File& config_instance_file) {
+ConfigInstanceBuilder& ConfigInstanceBuilder::with_config_instance_file(const miru::filesys::File& config_instance_file) {
   if (config_instance_file_.has_value()) {
     throw std::runtime_error("Config instance file already set");
   }
@@ -52,7 +52,7 @@ ConfigBuilder& ConfigBuilder::with_config_instance_file(const miru::filesys::Fil
   return *this;
 }
 
-ConfigImpl ConfigBuilder::build() {
+ConfigInstanceImpl ConfigInstanceBuilder::build() {
   if (!schema_file_.has_value()) {
     throw std::runtime_error("Schema file not set");
   }
@@ -65,18 +65,18 @@ ConfigImpl ConfigBuilder::build() {
   if (!data_.has_value()) {
     throw std::runtime_error("Data not set");
   }
-  if (source_ == miru::config::ConfigSource::Agent && !schema_digest_.has_value()) {
+  if (source_ == miru::config::ConfigInstanceSource::Agent && !schema_digest_.has_value()) {
     throw std::runtime_error(
-      "Schema digest not set (must be set when retrieving the config from the agent)"
+      "Schema digest not set (must be set when retrieving the config instance from the agent)"
     );
   }
-  if (source_ == miru::config::ConfigSource::FileSystem && !config_instance_file_.has_value()) {
+  if (source_ == miru::config::ConfigInstanceSource::FileSystem && !config_instance_file_.has_value()) {
     throw std::runtime_error(
-      "Config instance file not set (must be set when retrieving the config from the file "
+      "Config instance file not set (must be set when retrieving the config instance from the file "
       "system)"
     );
   }
-  return ConfigImpl(
+  return ConfigInstanceImpl(
     *schema_file_, *config_slug_, *source_, *data_, schema_digest_, *config_instance_file_
   );
 }

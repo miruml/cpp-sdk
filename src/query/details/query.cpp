@@ -2,7 +2,7 @@
 #include <vector>
 
 // internal
-#include <config/config_impl.hpp>
+#include <config/instance_impl.hpp>
 #include <miru/params/iterator.hpp>
 #include <miru/params/parameter.hpp>
 #include <miru/query/query.hpp>
@@ -70,8 +70,8 @@ find_all(const MapArray& map_array, const SearchParamFilters& filters) {
 }
 
 std::vector<const Parameter*>
-find_all(const miru::config::Config& config, const SearchParamFilters& filters) {
-  return find_all(config.root_parameter(), filters);
+find_all(const miru::config::ConfigInstance& config_instance, const SearchParamFilters& filters) {
+  return find_all(config_instance.root_parameter(), filters);
 }
 
 }  // namespace miru::query::details

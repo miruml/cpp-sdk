@@ -2,7 +2,7 @@
 #include <iostream>
 
 // miru
-#include <miru/config/config.hpp>
+#include <miru/config/instance.hpp>
 #include <miru/params/type.hpp>
 #include <miru/query/query.hpp>
 
@@ -20,7 +20,7 @@ void print_params(const std::vector<miru::params::Parameter>& params, const std:
 }
 
 int main() {
-    // this is relative to the directory of resulting executable. so we'll need to run
+    // this is relative to the directory of resulting executable so we'll need to run
     // this from the root of the repository for these file paths to be properly defined.
     // In general we recommend using absolute paths.
     std::string yaml_config_schema_path = "./examples/config-schema.yaml";
@@ -29,24 +29,24 @@ int main() {
     std::string json_config_instance_path = "./examples/config-instance.json";
 
     // retrieve the configs from the file system
-    miru::config::Config config_from_yaml = miru::config::Config::from_file(
+    miru::config::ConfigInstance config_instance_from_yaml = miru::config::ConfigInstance::from_file(
         yaml_config_schema_path,
         yaml_config_instance_path
     );
-    miru::config::Config config_from_json = miru::config::Config::from_file(
+    miru::config::ConfigInstance config_instance_from_json = miru::config::ConfigInstance::from_file(
         json_config_schema_path,
         json_config_instance_path
     );
 
-    // list all the parameters in the config
+    // list all the parameters in the config instance
     // notice how yaml gives 'scalar' parameter types because of the yaml parser
     // but json gives 'integer', 'number', 'boolean', etc. because of the json parser
     print_params(
-        miru::query::list_params(config_from_yaml),
+        miru::query::list_params(config_instance_from_yaml),
         "YAML Config Instance File"
     );
     print_params(
-        miru::query::list_params(config_from_json),
+        miru::query::list_params(config_instance_from_json),
         "JSON Config Instance File"
     );
 }

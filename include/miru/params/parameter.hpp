@@ -20,7 +20,7 @@ class Parameter {
  public:
   // ============================== ROS2 INTERFACES ================================ //
 
-  // Although we'll conform to the ROS2 interfaces for constructors, we'll not be
+  // Although we'll conform to the ros2 interfaces for constructors, we'll not be
   // exposing these to users initially
 
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L55
@@ -49,7 +49,7 @@ class Parameter {
 
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L73
   // explicit Parameter(const rclcpp::node_interfaces::ParameterInfo &
-  // parameter_info); is not supported since it uses ROS2 specific interface which has
+  // parameter_info); is not supported since it uses ros2 specific interface which has
   // no miru equivalent
 
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L76

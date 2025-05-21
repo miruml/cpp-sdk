@@ -2,7 +2,7 @@
 #include <iostream>
 
 // miru
-#include <miru/config/config.hpp>
+#include <miru/config/instance.hpp>
 #include <miru/params/type.hpp>
 #include <miru/query/query.hpp>
 
@@ -20,20 +20,20 @@ void print_params(const std::vector<miru::params::Parameter>& params, const std:
 }
 
 int main() {
-    // this is relative to the directory of resulting executable. so we'll need to run
+    // this is relative to the directory of resulting executable so we'll need to run
     // this from the root of the repository for these file paths to be properly defined.
     // In general we recommend using absolute paths.
     std::string config_schema_path = "./examples/config-schema.yaml";
     std::string config_instance_path = "./examples/config-instance.yaml";
 
     // retrieve a config instance from a file
-    miru::config::Config config = miru::config::Config::from_file(
+    miru::config::ConfigInstance config_instance = miru::config::ConfigInstance::from_file(
         config_schema_path,
         config_instance_path
     );
 
     print_params(
-        miru::query::list_params(config),
+        miru::query::list_params(config_instance),
         "Printing Parameters From File"
     );
 }

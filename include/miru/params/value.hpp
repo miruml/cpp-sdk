@@ -19,11 +19,11 @@ class ParameterValue {
  public:
   // ============================== ROS2 INTERFACES ============================== //
 
-  // Although we'll conform to the ROS2 interfaces for constructors, we'll not be
+  // Although we'll conform to the ros2 interfaces for constructors, we'll not be
   // exposing these to users initially
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L75
 
-  // This constructor is not supported since it uses a ROS2 specific interface of
+  // This constructor is not supported since it uses a ros2 specific interface of
   // which miru has no equivalent
   // /// Construct a parameter value from a message.
   // explicit ParameterValue(const rcl_interfaces::msg::ParameterValue & value);
@@ -64,7 +64,7 @@ class ParameterValue {
 
   // we are not going to support type information in the public interface right now
   // since yaml does not support strongly typed information ("4" vs 4) and we have no
-  // quick way of doing so ourself. ROS2 rolled their own parser to grab type
+  // quick way of doing so ourself. ros2 rolled their own parser to grab type
   // information. We will be storing a SCALAR type and I don't want to expose this
   // to users since it will likely confuse them when an integer is parsed as a scalar
   // and not an integer when using yaml.
@@ -86,7 +86,7 @@ class ParameterValue {
   /// Not equal operator.
   bool operator!=(const ParameterValue &rhs) const;
 
-  // ROS2 "GET" methods using the ParameterType enum
+  // ros2 "GET" methods using the ParameterType enum
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L146
 
   template <ParameterType type>
@@ -234,7 +234,7 @@ class ParameterValue {
     }
   }
 
-  // ROS2 "GET" methods using primitive types
+  // ros2 "GET" methods using primitive types
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter_value.hpp#L252
 
   template <typename type>

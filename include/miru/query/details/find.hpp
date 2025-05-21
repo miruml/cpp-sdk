@@ -1,7 +1,7 @@
 #pragma once
 
 // internal
-#include <miru/config/config.hpp>
+#include <miru/config/instance.hpp>
 #include <miru/params/parameter.hpp>
 #include <miru/query/details/errors.hpp>
 #include <miru/query/filter.hpp>
@@ -24,7 +24,7 @@ struct is_parameter_root : std::disjunction<
                              std::is_same<T, Map>,
                              std::is_same<T, NestedArray>,
                              std::is_same<T, MapArray>,
-                             std::is_same<T, miru::config::Config>> {};
+                             std::is_same<T, miru::config::ConfigInstance>> {};
 
 // Helper variable template for cleaner syntax
 template <typename T>
@@ -55,7 +55,7 @@ find_all(const NestedArray& nested_array, const SearchParamFilters& filters);
 ParameterPtrs find_all(const MapArray& map_array, const SearchParamFilters& filters);
 
 ParameterPtrs
-find_all(const miru::config::Config& config, const SearchParamFilters& filters);
+find_all(const miru::config::ConfigInstance& config_instance, const SearchParamFilters& filters);
 
 template <typename rootT>
 typename std::enable_if<is_parameter_root<rootT>::value, ParameterPtr>::type find_one(
