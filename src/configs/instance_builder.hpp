@@ -5,9 +5,9 @@
 #include <string>
 
 // internal
-#include <config/instance_impl.hpp>
+#include <configs/instance_impl.hpp>
 #include <filesys/file.hpp>
-#include <miru/config/instance.hpp>
+#include <miru/configs/instance.hpp>
 #include <miru/params/parameter.hpp>
 
 namespace miru::config {

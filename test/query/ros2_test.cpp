@@ -2,7 +2,7 @@
 #include <execinfo.h>
 
 // internal
-#include <config/instance_impl.hpp>
+#include <configs/instance_impl.hpp>
 #include <miru/query/details/errors.hpp>
 #include <miru/query/ros2.hpp>
 #include <test/query/query_test.hpp>

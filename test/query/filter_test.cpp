@@ -2,7 +2,7 @@
 #include <execinfo.h>
 
 // internal
-#include <config/instance_impl.hpp>
+#include <configs/instance_impl.hpp>
 #include <miru/query/query.hpp>
 #include <params/parse.hpp>
 #include <test/test_utils/testdata.hpp>

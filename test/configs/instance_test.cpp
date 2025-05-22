@@ -1,7 +1,7 @@
 // internal
 #include <http/models/RefreshLatestConfigInstanceRequest.h>
 
-#include <config/instance_impl.hpp>
+#include <configs/instance_impl.hpp>
 #include <miru/query/query.hpp>
 #include <miru/query/ros2.hpp>
 #include <test/http/mock.hpp>

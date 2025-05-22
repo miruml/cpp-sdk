@@ -2,7 +2,7 @@
 #include <execinfo.h>
 
 // internal
-#include <config/instance_impl.hpp>
+#include <configs/instance_impl.hpp>
 #include <miru/params/details/errors.hpp>
 #include <miru/params/type.hpp>
 #include <miru/query/details/errors.hpp>

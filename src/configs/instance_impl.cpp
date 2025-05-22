@@ -5,10 +5,10 @@
 #include <http/models/HashSchemaSerializedRequest.h>
 #include <http/models/HashSerializedConfigSchemaFormat.h>
 
-#include <config/instance_builder.hpp>
-#include <config/errors.hpp>
+#include <configs/instance_builder.hpp>
+#include <configs/errors.hpp>
 #include <http/socket_client.hpp>
-#include <miru/config/instance.hpp>
+#include <miru/configs/instance.hpp>
 #include <params/parse.hpp>
 
 namespace miru::config {

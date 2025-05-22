@@ -1,6 +1,6 @@
 // internal
-#include <config/instance_impl.hpp>
-#include <config/errors.hpp>
+#include <configs/instance_impl.hpp>
+#include <configs/errors.hpp>
 #include <test/test_utils/testdata.hpp>
 
 // external

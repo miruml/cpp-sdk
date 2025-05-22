@@ -7,7 +7,7 @@
 // internal
 #include <filesys/file.hpp>
 #include <http/client.hpp>
-#include <miru/config/instance.hpp>
+#include <miru/configs/instance.hpp>
 #include <miru/params/parameter.hpp>
 
 namespace miru::config {

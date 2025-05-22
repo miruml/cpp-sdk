@@ -1,6 +1,6 @@
 // internal
-#include <config/instance_builder.hpp>
-#include <config/instance_impl.hpp>
+#include <configs/instance_builder.hpp>
+#include <configs/instance_impl.hpp>
 
 namespace miru::config {
 

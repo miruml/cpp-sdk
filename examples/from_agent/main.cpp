@@ -2,7 +2,7 @@
 #include <iostream>
 
 // miru
-#include <miru/config/instance.hpp>
+#include <miru/configs/instance.hpp>
 #include <miru/query/query.hpp>
 
 

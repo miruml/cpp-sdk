@@ -2,7 +2,7 @@
 #include <vector>
 
 // internal
-#include <config/instance_impl.hpp>
+#include <configs/instance_impl.hpp>
 #include <miru/params/iterator.hpp>
 #include <miru/params/parameter.hpp>
 #include <miru/query/query.hpp>
