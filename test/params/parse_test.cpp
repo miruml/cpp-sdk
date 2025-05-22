@@ -121,15 +121,15 @@ TEST_F(ParseJsonNode, ValidNull) {
 TEST_F(ParseJsonNode, ValidNestedArray) {
   nlohmann::json json = json_file.read_json();
   nlohmann::json nested_array_json = json["nested_array"];
-  auto param = miru::params::parse_json_node("config-slug", nested_array_json);
+  auto param = miru::params::parse_json_node("config-type-slug", nested_array_json);
 
   EXPECT_EQ(param.get_type(), miru::params::ParameterType::PARAMETER_NESTED_ARRAY);
   EXPECT_EQ(
     param.as_nested_array(),
     miru::params::NestedArray(
-      {miru::params::Parameter("config-slug.0", std::vector<int64_t>({1, 2, 3})),
-       miru::params::Parameter("config-slug.1", std::vector<int64_t>({4, 5, 6})),
-       miru::params::Parameter("config-slug.2", std::vector<int64_t>({7, 8, 9}))}
+      {miru::params::Parameter("config-type-slug.0", std::vector<int64_t>({1, 2, 3})),
+       miru::params::Parameter("config-type-slug.1", std::vector<int64_t>({4, 5, 6})),
+       miru::params::Parameter("config-type-slug.2", std::vector<int64_t>({7, 8, 9}))}
     )
   );
 }
@@ -137,7 +137,7 @@ TEST_F(ParseJsonNode, ValidNestedArray) {
 TEST_F(ParseJsonNode, ValidDeepNestedArray) {
   nlohmann::json json = json_file.read_json();
   nlohmann::json deep_nested_array_json = json["deep_nested_array"];
-  auto param = miru::params::parse_json_node("config-slug", deep_nested_array_json);
+  auto param = miru::params::parse_json_node("config-type-slug", deep_nested_array_json);
 
   EXPECT_EQ(param.get_type(), miru::params::ParameterType::PARAMETER_NESTED_ARRAY);
   EXPECT_EQ(
@@ -146,48 +146,48 @@ TEST_F(ParseJsonNode, ValidDeepNestedArray) {
       {miru::params::NestedArray(
          {miru::params::NestedArray(
             {miru::params::Parameter(
-               "config-slug.0.0.0", std::vector<int64_t>({1, 2, 3})
+               "config-type-slug.0.0.0", std::vector<int64_t>({1, 2, 3})
              ),
              miru::params::Parameter(
-               "config-slug.0.0.1", std::vector<int64_t>({4, 5, 6})
+               "config-type-slug.0.0.1", std::vector<int64_t>({4, 5, 6})
              ),
              miru::params::Parameter(
-               "config-slug.0.0.2", std::vector<int64_t>({7, 8, 9})
+               "config-type-slug.0.0.2", std::vector<int64_t>({7, 8, 9})
              )}
           ),
           miru::params::NestedArray(
             {miru::params::Parameter(
-               "config-slug.0.1.0", std::vector<int64_t>({1, 2, 3})
+               "config-type-slug.0.1.0", std::vector<int64_t>({1, 2, 3})
              ),
              miru::params::Parameter(
-               "config-slug.0.1.1", std::vector<int64_t>({4, 5, 6})
+               "config-type-slug.0.1.1", std::vector<int64_t>({4, 5, 6})
              ),
              miru::params::Parameter(
-               "config-slug.0.1.2", std::vector<int64_t>({7, 8, 9})
+               "config-type-slug.0.1.2", std::vector<int64_t>({7, 8, 9})
              )}
           )}
        ),
        miru::params::NestedArray(
          {miru::params::NestedArray(
             {miru::params::Parameter(
-               "config-slug.1.0.0", std::vector<int64_t>({1, 2, 3})
+               "config-type-slug.1.0.0", std::vector<int64_t>({1, 2, 3})
              ),
              miru::params::Parameter(
-               "config-slug.1.0.1", std::vector<int64_t>({4, 5, 6})
+               "config-type-slug.1.0.1", std::vector<int64_t>({4, 5, 6})
              ),
              miru::params::Parameter(
-               "config-slug.1.0.2", std::vector<int64_t>({7, 8, 9})
+               "config-type-slug.1.0.2", std::vector<int64_t>({7, 8, 9})
              )}
           ),
           miru::params::NestedArray(
             {miru::params::Parameter(
-               "config-slug.1.1.0", std::vector<int64_t>({1, 2, 3})
+               "config-type-slug.1.1.0", std::vector<int64_t>({1, 2, 3})
              ),
              miru::params::Parameter(
-               "config-slug.1.1.1", std::vector<int64_t>({4, 5, 6})
+               "config-type-slug.1.1.1", std::vector<int64_t>({4, 5, 6})
              ),
              miru::params::Parameter(
-               "config-slug.1.1.2", std::vector<int64_t>({7, 8, 9})
+               "config-type-slug.1.1.2", std::vector<int64_t>({7, 8, 9})
              )}
           )}
        )}
@@ -205,22 +205,22 @@ TEST_F(ParseJsonNode, ValidMap) {
 TEST_F(ParseJsonNode, ValidMapArray) {
   nlohmann::json json = json_file.read_json();
   nlohmann::json map_array_json = json["map_array"];
-  auto param = miru::params::parse_json_node("config-slug", map_array_json);
+  auto param = miru::params::parse_json_node("config-type-slug", map_array_json);
 
   EXPECT_EQ(
     param.as_map_array(),
     miru::params::MapArray(
       {miru::params::Map(
-         {miru::params::Parameter("config-slug.0.key1", "value1"),
-          miru::params::Parameter("config-slug.0.key2", "value2")}
+         {miru::params::Parameter("config-type-slug.0.key1", "value1"),
+          miru::params::Parameter("config-type-slug.0.key2", "value2")}
        ),
        miru::params::Map(
-         {miru::params::Parameter("config-slug.1.key3", "value3"),
-          miru::params::Parameter("config-slug.1.key4", "value4")}
+         {miru::params::Parameter("config-type-slug.1.key3", "value3"),
+          miru::params::Parameter("config-type-slug.1.key4", "value4")}
        ),
        miru::params::Map(
-         {miru::params::Parameter("config-slug.2.key5", "value5"),
-          miru::params::Parameter("config-slug.2.key6", "value6")}
+         {miru::params::Parameter("config-type-slug.2.key5", "value5"),
+          miru::params::Parameter("config-type-slug.2.key6", "value6")}
        )}
     )
   );
@@ -325,20 +325,20 @@ TEST_F(ParseYamlNode, ValidNull) {
 TEST_F(ParseYamlNode, ValidNestedArray) {
   YAML::Node yaml = yaml_file.read_yaml();
   YAML::Node nested_array_yaml = yaml["nested_array"];
-  auto param = miru::params::parse_yaml_node("config-slug", nested_array_yaml);
+  auto param = miru::params::parse_yaml_node("config-type-slug", nested_array_yaml);
 
   EXPECT_EQ(param.get_type(), miru::params::ParameterType::PARAMETER_NESTED_ARRAY);
   EXPECT_EQ(
     param.as_nested_array(),
     miru::params::NestedArray(
       {miru::params::Parameter(
-         "config-slug.0", std::vector<Scalar>({Scalar("1"), Scalar("2"), Scalar("3")})
+         "config-type-slug.0", std::vector<Scalar>({Scalar("1"), Scalar("2"), Scalar("3")})
        ),
        miru::params::Parameter(
-         "config-slug.1", std::vector<Scalar>({Scalar("4"), Scalar("5"), Scalar("6")})
+         "config-type-slug.1", std::vector<Scalar>({Scalar("4"), Scalar("5"), Scalar("6")})
        ),
        miru::params::Parameter(
-         "config-slug.2", std::vector<Scalar>({Scalar("7"), Scalar("8"), Scalar("9")})
+         "config-type-slug.2", std::vector<Scalar>({Scalar("7"), Scalar("8"), Scalar("9")})
        )}
     )
   );
@@ -347,7 +347,7 @@ TEST_F(ParseYamlNode, ValidNestedArray) {
 TEST_F(ParseYamlNode, ValidDeepNestedArray) {
   YAML::Node yaml = yaml_file.read_yaml();
   YAML::Node deep_nested_array_yaml = yaml["deep_nested_array"];
-  auto param = miru::params::parse_yaml_node("config-slug", deep_nested_array_yaml);
+  auto param = miru::params::parse_yaml_node("config-type-slug", deep_nested_array_yaml);
 
   EXPECT_EQ(param.get_type(), miru::params::ParameterType::PARAMETER_NESTED_ARRAY);
   EXPECT_EQ(
@@ -356,29 +356,29 @@ TEST_F(ParseYamlNode, ValidDeepNestedArray) {
       {miru::params::NestedArray(
          {miru::params::NestedArray(
             {miru::params::Parameter(
-               "config-slug.0.0.0",
+               "config-type-slug.0.0.0",
                std::vector<Scalar>({Scalar("1"), Scalar("2"), Scalar("3")})
              ),
              miru::params::Parameter(
-               "config-slug.0.0.1",
+               "config-type-slug.0.0.1",
                std::vector<Scalar>({Scalar("4"), Scalar("5"), Scalar("6")})
              ),
              miru::params::Parameter(
-               "config-slug.0.0.2",
+               "config-type-slug.0.0.2",
                std::vector<Scalar>({Scalar("7"), Scalar("8"), Scalar("9")})
              )}
           ),
           miru::params::NestedArray(
             {miru::params::Parameter(
-               "config-slug.0.1.0",
+               "config-type-slug.0.1.0",
                std::vector<Scalar>({Scalar("1"), Scalar("2"), Scalar("3")})
              ),
              miru::params::Parameter(
-               "config-slug.0.1.1",
+               "config-type-slug.0.1.1",
                std::vector<Scalar>({Scalar("4"), Scalar("5"), Scalar("6")})
              ),
              miru::params::Parameter(
-               "config-slug.0.1.2",
+               "config-type-slug.0.1.2",
                std::vector<Scalar>({Scalar("7"), Scalar("8"), Scalar("9")})
              )}
           )}
@@ -386,29 +386,29 @@ TEST_F(ParseYamlNode, ValidDeepNestedArray) {
        miru::params::NestedArray(
          {miru::params::NestedArray(
             {miru::params::Parameter(
-               "config-slug.1.0.0",
+               "config-type-slug.1.0.0",
                std::vector<Scalar>({Scalar("1"), Scalar("2"), Scalar("3")})
              ),
              miru::params::Parameter(
-               "config-slug.1.0.1",
+               "config-type-slug.1.0.1",
                std::vector<Scalar>({Scalar("4"), Scalar("5"), Scalar("6")})
              ),
              miru::params::Parameter(
-               "config-slug.1.0.2",
+               "config-type-slug.1.0.2",
                std::vector<Scalar>({Scalar("7"), Scalar("8"), Scalar("9")})
              )}
           ),
           miru::params::NestedArray(
             {miru::params::Parameter(
-               "config-slug.1.1.0",
+               "config-type-slug.1.1.0",
                std::vector<Scalar>({Scalar("1"), Scalar("2"), Scalar("3")})
              ),
              miru::params::Parameter(
-               "config-slug.1.1.1",
+               "config-type-slug.1.1.1",
                std::vector<Scalar>({Scalar("4"), Scalar("5"), Scalar("6")})
              ),
              miru::params::Parameter(
-               "config-slug.1.1.2",
+               "config-type-slug.1.1.2",
                std::vector<Scalar>({Scalar("7"), Scalar("8"), Scalar("9")})
              )}
           )}
@@ -427,22 +427,22 @@ TEST_F(ParseYamlNode, ValidMap) {
 TEST_F(ParseYamlNode, ValidMapArray) {
   YAML::Node yaml = yaml_file.read_yaml();
   YAML::Node map_array_yaml = yaml["map_array"];
-  auto param = miru::params::parse_yaml_node("config-slug", map_array_yaml);
+  auto param = miru::params::parse_yaml_node("config-type-slug", map_array_yaml);
 
   EXPECT_EQ(
     param.as_map_array(),
     miru::params::MapArray(
       {miru::params::Map(
-         {miru::params::Parameter("config-slug.0.key1", Scalar("value1")),
-          miru::params::Parameter("config-slug.0.key2", Scalar("value2"))}
+         {miru::params::Parameter("config-type-slug.0.key1", Scalar("value1")),
+          miru::params::Parameter("config-type-slug.0.key2", Scalar("value2"))}
        ),
        miru::params::Map(
-         {miru::params::Parameter("config-slug.1.key3", Scalar("value3")),
-          miru::params::Parameter("config-slug.1.key4", Scalar("value4"))}
+         {miru::params::Parameter("config-type-slug.1.key3", Scalar("value3")),
+          miru::params::Parameter("config-type-slug.1.key4", Scalar("value4"))}
        ),
        miru::params::Map(
-         {miru::params::Parameter("config-slug.2.key5", Scalar("value5")),
-          miru::params::Parameter("config-slug.2.key6", Scalar("value6"))}
+         {miru::params::Parameter("config-type-slug.2.key5", Scalar("value5")),
+          miru::params::Parameter("config-type-slug.2.key6", Scalar("value6"))}
        )}
     )
   );

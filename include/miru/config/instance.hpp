@@ -10,7 +10,7 @@
 
 namespace miru::config {
 
-// used to determine where to source the config from
+// used to determine where to source the config instance from
 enum class ConfigInstanceSource {
   Agent,
   FileSystem,

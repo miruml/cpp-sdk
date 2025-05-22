@@ -24,8 +24,8 @@ int main() {
     );
     miru::query::ROS2NodeI ros2_config_instance = miru::query::ROS2NodeI(config_instance);
 
-    std::string config_slug = "example-config-slug";
-    std::string param_name = config_slug + "." + "an_integer";
+    std::string config_type_slug = "example-config-type-slug";
+    std::string param_name = config_type_slug + "." + "an_integer";
 
     // METHOD 1: get a parameter and throw an exception if it doesn't exist
     miru::params::Parameter param = ros2_config_instance.get_parameter(param_name);

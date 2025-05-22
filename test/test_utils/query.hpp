@@ -54,15 +54,15 @@ struct Query {
 
 struct QueryTestSet {
   std::string description;
-  std::string config_slug;
+  std::string config_type_slug;
   miru::params::Parameter data;
   std::vector<Query> queries;
 
   static QueryTestSet from_json(const nlohmann::json& json) {
     QueryTestSet test;
     test.description = json.at("description").get<std::string>();
-    test.config_slug = json.at("config-slug").get<std::string>();
-    test.data = miru::params::parse_json_node(test.config_slug, json.at("data"));
+    test.config_type_slug = json.at("config-type-slug").get<std::string>();
+    test.data = miru::params::parse_json_node(test.config_type_slug, json.at("data"));
 
     std::vector<Query> queries;
     for (const auto& query_json : json.at("queries")) {

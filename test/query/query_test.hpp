@@ -14,7 +14,7 @@ using SearchParamFiltersBuilder = miru::query::SearchParamFiltersBuilder;
 
 struct SingleQueryTest {
   std::string description;
-  std::string config_slug;
+  std::string config_type_slug;
   miru::params::Parameter data;
   test::test_utils::Filter filter;
   std::vector<test::test_utils::Result> results;
@@ -32,7 +32,7 @@ class QueryTest : public ::testing::Test {
       for (const auto& query : test_set.queries) {
         tests.push_back(
           {test_set.description + "." + std::to_string(i),
-           test_set.config_slug,
+           test_set.config_type_slug,
            test_set.data,
            query.filter,
            query.results}

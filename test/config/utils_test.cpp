@@ -9,53 +9,53 @@
 namespace test::config {
 
 // ============================== READ CONFIG SLUG ================================= //
-TEST(ConfigInstance, ConfigSlugFoundJson) {
+TEST(ConfigInstance, ConfigTypeSlugFoundJson) {
   miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.json")
   );
-  EXPECT_EQ(miru::config::read_schema_config_slug(schema_file), "motion-control");
+  EXPECT_EQ(miru::config::read_schema_config_type_slug(schema_file), "motion-control");
 }
 
-TEST(ConfigInstance, ConfigSlugFoundYaml) {
+TEST(ConfigInstance, ConfigTypeSlugFoundYaml) {
   miru::filesys::File schema_file(
     miru::test_utils::config_schemas_testdata_dir().file("motion-control.yaml")
   );
-  EXPECT_EQ(miru::config::read_schema_config_slug(schema_file), "motion-control");
+  EXPECT_EQ(miru::config::read_schema_config_type_slug(schema_file), "motion-control");
 }
 
-TEST(ConfigInstance, EmptyConfigSlugJson) {
+TEST(ConfigInstance, EmptyConfigTypeSlugJson) {
   miru::filesys::File schema_file(
-    miru::test_utils::config_schemas_testdata_dir().file("empty-config-slug.json")
+    miru::test_utils::config_schemas_testdata_dir().file("empty-config-type-slug.json")
   );
   EXPECT_THROW(
-    miru::config::read_schema_config_slug(schema_file), miru::config::EmptyConfigSlug
-  );
-}
-
-TEST(ConfigInstance, EmptyConfigSlugYaml) {
-  miru::filesys::File schema_file(
-    miru::test_utils::config_schemas_testdata_dir().file("empty-config-slug.yaml")
-  );
-  EXPECT_THROW(
-    miru::config::read_schema_config_slug(schema_file), miru::config::EmptyConfigSlug
+    miru::config::read_schema_config_type_slug(schema_file), miru::config::EmptyConfigTypeSlug
   );
 }
 
-TEST(ConfigInstance, ConfigSlugNotFoundJson) {
+TEST(ConfigInstance, EmptyConfigTypeSlugYaml) {
   miru::filesys::File schema_file(
-    miru::test_utils::config_schemas_testdata_dir().file("missing-config-slug.json")
+    miru::test_utils::config_schemas_testdata_dir().file("empty-config-type-slug.yaml")
   );
   EXPECT_THROW(
-    miru::config::read_schema_config_slug(schema_file), miru::config::ConfigSlugNotFound
+    miru::config::read_schema_config_type_slug(schema_file), miru::config::EmptyConfigTypeSlug
   );
 }
 
-TEST(ConfigInstance, ConfigSlugNotFoundYaml) {
+TEST(ConfigInstance, ConfigTypeSlugNotFoundJson) {
   miru::filesys::File schema_file(
-    miru::test_utils::config_schemas_testdata_dir().file("missing-config-slug.yaml")
+    miru::test_utils::config_schemas_testdata_dir().file("missing-config-type-slug.json")
   );
   EXPECT_THROW(
-    miru::config::read_schema_config_slug(schema_file), miru::config::ConfigSlugNotFound
+    miru::config::read_schema_config_type_slug(schema_file), miru::config::ConfigTypeSlugNotFound
+  );
+}
+
+TEST(ConfigInstance, ConfigTypeSlugNotFoundYaml) {
+  miru::filesys::File schema_file(
+    miru::test_utils::config_schemas_testdata_dir().file("missing-config-type-slug.yaml")
+  );
+  EXPECT_THROW(
+    miru::config::read_schema_config_type_slug(schema_file), miru::config::ConfigTypeSlugNotFound
   );
 }
 

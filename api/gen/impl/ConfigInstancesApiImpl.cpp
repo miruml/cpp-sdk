@@ -24,7 +24,7 @@ ConfigInstancesApiImpl::ConfigInstancesApiImpl(const std::shared_ptr<Pistache::R
 {
 }
 
-void ConfigInstancesApiImpl::get_latest_config_instance(const std::string &deviceId, const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configSlug, Pistache::Http::ResponseWriter &response) {
+void ConfigInstancesApiImpl::get_latest_config_instance(const std::string &deviceId, const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configTypeSlug, Pistache::Http::ResponseWriter &response) {
     response.send(Pistache::Http::Code::Ok, "Do some magic\n");
 }
 void ConfigInstancesApiImpl::refresh_latest_config_instance(const RefreshLatestConfigInstanceRequest &refreshLatestConfigInstanceRequest, Pistache::Http::ResponseWriter &response) {

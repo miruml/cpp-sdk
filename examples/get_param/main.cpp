@@ -21,8 +21,8 @@ int main() {
         config_instance_path
     );
 
-    std::string config_slug = "example-config-slug";
-    std::string param_name = config_slug + "." + "an_integer";
+    std::string config_type_slug = "example-config-type-slug";
+    std::string param_name = config_type_slug + "." + "an_integer";
     miru::query::SearchParamFilters filters = miru::query::SearchParamFiltersBuilder()
         .with_param_name(param_name)
         .with_leaves_only(false)

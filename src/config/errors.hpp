@@ -22,9 +22,9 @@ class FromAgentOptionsError : public std::runtime_error {
 #define THROW_FROM_AGENT_OPTIONS_ERROR(message) \
   throw FromAgentOptionsError(message, ERROR_TRACE)
 
-class ConfigSlugNotFound : public std::runtime_error {
+class ConfigTypeSlugNotFound : public std::runtime_error {
  public:
-  explicit ConfigSlugNotFound(
+  explicit ConfigTypeSlugNotFound(
     const miru::filesys::File& schema_file,
     const miru::details::errors::ErrorTrace& trace
   )
@@ -34,18 +34,18 @@ class ConfigSlugNotFound : public std::runtime_error {
     const miru::filesys::File& schema_file,
     const miru::details::errors::ErrorTrace& trace
   ) {
-    return "Unable to find config slug in schema file '" +
+    return "Unable to find config type slug in schema file '" +
            schema_file.abs_path().string() + "'" +
            miru::details::errors::format_source_location(trace);
   }
 };
 
-#define THROW_CONFIG_SLUG_NOT_FOUND(schema_file) \
-  throw ConfigSlugNotFound(schema_file, ERROR_TRACE)
+#define THROW_CONFIG_TYPE_SLUG_NOT_FOUND(schema_file) \
+  throw ConfigTypeSlugNotFound(schema_file, ERROR_TRACE)
 
-class EmptyConfigSlug : public std::runtime_error {
+class EmptyConfigTypeSlug : public std::runtime_error {
  public:
-  explicit EmptyConfigSlug(
+  explicit EmptyConfigTypeSlug(
     const miru::filesys::File& schema_file,
     const miru::details::errors::ErrorTrace& trace
   )
@@ -55,14 +55,14 @@ class EmptyConfigSlug : public std::runtime_error {
     const miru::filesys::File& schema_file,
     const miru::details::errors::ErrorTrace& trace
   ) {
-    return "Config slug is in schema file '" + schema_file.abs_path().string() +
+    return "Config type slug is in schema file '" + schema_file.abs_path().string() +
            "' cannot be empty ('')" +
            miru::details::errors::format_source_location(trace);
   }
 };
 
-#define THROW_EMPTY_CONFIG_SLUG(schema_file) \
-  throw EmptyConfigSlug(schema_file, ERROR_TRACE)
+#define THROW_EMPTY_CONFIG_TYPE_SLUG(schema_file) \
+  throw EmptyConfigTypeSlug(schema_file, ERROR_TRACE)
 
 class InvalidConfigSchemaFileTypeError : public std::runtime_error {
  public:
@@ -90,21 +90,21 @@ class InvalidConfigSchemaFileTypeError : public std::runtime_error {
 class EmptyConfigInstance : public std::runtime_error {
  public:
   explicit EmptyConfigInstance(
-    const std::string& config_slug,
+    const std::string& config_type_slug,
     const miru::details::errors::ErrorTrace& trace
   )
-    : std::runtime_error(format_message(config_slug, trace)) {}
+    : std::runtime_error(format_message(config_type_slug, trace)) {}
 
   static std::string format_message(
-    const std::string& config_slug,
+    const std::string& config_type_slug,
     const miru::details::errors::ErrorTrace& trace
   ) {
-    return "The config instance loaded for config slug '" + config_slug + "' is empty" +
+    return "The config instance loaded for config type slug '" + config_type_slug + "' is empty" +
            miru::details::errors::format_source_location(trace);
   }
 };
 
-#define THROW_EMPTY_CONFIG_INSTANCE(config_slug) \
-  throw EmptyConfigInstance(config_slug, ERROR_TRACE)
+#define THROW_EMPTY_CONFIG_INSTANCE(config_type_slug) \
+  throw EmptyConfigInstance(config_type_slug, ERROR_TRACE)
 
 }  // namespace miru::config

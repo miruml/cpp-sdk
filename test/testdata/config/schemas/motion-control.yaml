@@ -1,4 +1,4 @@
-$miru_config_slug: motion-control
+$miru_config_type_slug: motion-control
 type: object
 properties:
   speed:

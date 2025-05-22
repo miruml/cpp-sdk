@@ -58,7 +58,7 @@ bool RefreshLatestConfigInstanceRequest::operator==(const RefreshLatestConfigIns
 {
     return
     
-    config_schema_digest == other.config_schema_digest && config_slug == other.config_slug;
+    config_schema_digest == other.config_schema_digest && config_type_slug == other.config_type_slug;
 }
 
 bool RefreshLatestConfigInstanceRequest::operator!=(const RefreshLatestConfigInstanceRequest& other) const
@@ -70,14 +70,14 @@ void to_json(nlohmann::json& j, const RefreshLatestConfigInstanceRequest& o)
 {
     j = nlohmann::json::object();
     j["config_schema_digest"] = o.config_schema_digest;
-    j["config_slug"] = o.config_slug;
+    j["config_type_slug"] = o.config_type_slug;
     
 }
 
 void from_json(const nlohmann::json& j, RefreshLatestConfigInstanceRequest& o)
 {
     j.at("config_schema_digest").get_to(o.config_schema_digest);
-    j.at("config_slug").get_to(o.config_slug);
+    j.at("config_type_slug").get_to(o.config_type_slug);
     
 }
 

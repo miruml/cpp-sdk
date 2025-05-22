@@ -12,7 +12,7 @@
 
 namespace miru::config {
 
-const std::string MIRU_CONFIG_SLUG_FIELD = "$miru_config_slug";
+const std::string MIRU_CONFIG_TYPE_SLUG_FIELD = "$miru_config_type_slug";
 
 // Config class
 class ConfigInstanceImpl {
@@ -43,14 +43,14 @@ class ConfigInstanceImpl {
  private:
   ConfigInstanceImpl(
     const miru::filesys::File& schema_file,
-    const std::string& config_slug,
+    const std::string& config_type_slug,
     miru::config::ConfigInstanceSource source,
     const miru::params::Parameter& parameters,
     const std::optional<std::string>& schema_digest,
     const std::optional<miru::filesys::File>& instance_file 
   )
     : schema_file_(schema_file),
-      config_slug_(config_slug),
+      config_type_slug_(config_type_slug),
       source_(source),
       parameters_(parameters),
       schema_digest_(schema_digest),
@@ -58,7 +58,7 @@ class ConfigInstanceImpl {
 
   // required
   miru::filesys::File schema_file_;
-  std::string config_slug_;
+  std::string config_type_slug_;
   miru::config::ConfigInstanceSource source_;
   miru::params::Parameter parameters_;
 
@@ -72,6 +72,6 @@ class ConfigInstanceImpl {
   friend class ConfigInstanceBuilder;
 };
 
-std::string read_schema_config_slug(const miru::filesys::File& schema_file);
+std::string read_schema_config_type_slug(const miru::filesys::File& schema_file);
 
 }  // namespace miru::config

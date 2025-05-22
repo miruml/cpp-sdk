@@ -74,7 +74,7 @@ class Parameter {
 
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L97
 
-  /// Get the full name of the parameter from the root of the config tree
+  /// Get the full name of the parameter from the root of the config instance tree
   const std::string &get_name() const;
 
   // https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/include/rclcpp/parameter.hpp#L101

@@ -15,32 +15,32 @@ namespace miru::config {
 
 namespace openapi = org::openapitools::server::model;
 
-std::string read_schema_config_slug(const miru::filesys::File& schema_file) {
-  std::string config_slug;
+std::string read_schema_config_type_slug(const miru::filesys::File& schema_file) {
+  std::string config_type_slug;
   switch (schema_file.file_type()) {
     case miru::filesys::FileType::JSON: {
       nlohmann::json json_schema_content = schema_file.read_json();
-      if (!json_schema_content.contains(MIRU_CONFIG_SLUG_FIELD)) {
-        THROW_CONFIG_SLUG_NOT_FOUND(schema_file);
+      if (!json_schema_content.contains(MIRU_CONFIG_TYPE_SLUG_FIELD)) {
+        THROW_CONFIG_TYPE_SLUG_NOT_FOUND(schema_file);
       }
-      config_slug = json_schema_content[MIRU_CONFIG_SLUG_FIELD];
+      config_type_slug = json_schema_content[MIRU_CONFIG_TYPE_SLUG_FIELD];
       break;
     }
     case miru::filesys::FileType::YAML: {
       YAML::Node yaml_schema_content = schema_file.read_yaml();
-      if (!yaml_schema_content[MIRU_CONFIG_SLUG_FIELD]) {
-        THROW_CONFIG_SLUG_NOT_FOUND(schema_file);
+      if (!yaml_schema_content[MIRU_CONFIG_TYPE_SLUG_FIELD]) {
+        THROW_CONFIG_TYPE_SLUG_NOT_FOUND(schema_file);
       }
-      config_slug = yaml_schema_content[MIRU_CONFIG_SLUG_FIELD].as<std::string>();
+      config_type_slug = yaml_schema_content[MIRU_CONFIG_TYPE_SLUG_FIELD].as<std::string>();
       break;
     }
     default:
       throw std::runtime_error("Unsupported schema file type");
   }
-  if (config_slug.empty()) {
-    THROW_EMPTY_CONFIG_SLUG(schema_file);
+  if (config_type_slug.empty()) {
+    THROW_EMPTY_CONFIG_TYPE_SLUG(schema_file);
   }
-  return config_slug;
+  return config_type_slug;
 }
 
 // ================================= FROM FILE ===================================== //
@@ -51,16 +51,16 @@ ConfigInstanceImpl ConfigInstanceImpl::from_file(
   ConfigInstanceBuilder builder;
   builder.with_source(miru::config::ConfigInstanceSource::FileSystem);
 
-  // read the config slug from the schema file
+  // read the config type slug from the schema file
   miru::filesys::File schema_file(schema_file_path);
   builder.with_schema_file(schema_file);
-  std::string config_slug = read_schema_config_slug(schema_file);
-  builder.with_config_slug(config_slug);
+  std::string config_type_slug = read_schema_config_type_slug(schema_file);
+  builder.with_config_type_slug(config_type_slug);
 
   // read the config instance file
   miru::filesys::File config_instance_file(instance_file_path);
   builder.with_config_instance_file(config_instance_file);
-  builder.with_data(miru::params::parse_file(config_slug, config_instance_file));
+  builder.with_data(miru::params::parse_file(config_type_slug, config_instance_file));
 
   // build the config instance
   ConfigInstanceImpl config_instance = builder.build();
@@ -100,21 +100,21 @@ std::string hash_schema(
 nlohmann::json get_latest_config_instance(
   const miru::http::BackendClientI& client,
   const std::string& config_schema_digest,
-  const std::string& config_slug
+  const std::string& config_type_slug
 ) {
   openapi::BaseConfigInstance config_instance;
   try {
     // try to refresh the latest config instance with the server
     openapi::RefreshLatestConfigInstanceRequest refresh_request{
-      config_schema_digest, config_slug
+      config_schema_digest, config_type_slug
     };
     config_instance = client.refresh_latest_config_instance(refresh_request);
   } catch (const std::exception& refresh_error) {
     // load from the local cache if the refresh fails
-    config_instance = client.get_latest_config_instance(config_schema_digest, config_slug);
+    config_instance = client.get_latest_config_instance(config_schema_digest, config_type_slug);
   }
   if (!config_instance.config_instance.has_value()) {
-    THROW_EMPTY_CONFIG_INSTANCE(config_slug);
+    THROW_EMPTY_CONFIG_INSTANCE(config_type_slug);
   }
   return config_instance.config_instance.value();
 }
@@ -127,11 +127,11 @@ ConfigInstanceImpl from_agent_impl(
   ConfigInstanceBuilder builder;
   builder.with_source(miru::config::ConfigInstanceSource::Agent);
 
-  // read the config slug
+  // read the config type slug
   miru::filesys::File schema_file(schema_file_path);
   builder.with_schema_file(schema_file);
-  std::string config_slug = read_schema_config_slug(schema_file);
-  builder.with_config_slug(config_slug);
+  std::string config_type_slug = read_schema_config_type_slug(schema_file);
+  builder.with_config_type_slug(config_type_slug);
 
   // hash the schema contents to retrieve the schema digest
   std::string config_schema_digest = hash_schema(client, schema_file);
@@ -139,8 +139,8 @@ ConfigInstanceImpl from_agent_impl(
 
   // load the config instance from the agent
   nlohmann::json config_instance_data =
-    get_latest_config_instance(client, config_schema_digest, config_slug);
-  builder.with_data(miru::params::parse_json_node(config_slug, config_instance_data));
+    get_latest_config_instance(client, config_schema_digest, config_type_slug);
+  builder.with_data(miru::params::parse_json_node(config_type_slug, config_instance_data));
 
   // build the config instance
   ConfigInstanceImpl config_instance = builder.build();

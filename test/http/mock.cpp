@@ -21,7 +21,7 @@ std::string MockBackendClient::hash_schema(
 
 openapi::BaseConfigInstance MockBackendClient::get_latest_config_instance(
   const std::string& config_schema_digest,
-  const std::string& config_slug
+  const std::string& config_type_slug
 ) const {
   return get_latest_config_instance_func();
 }

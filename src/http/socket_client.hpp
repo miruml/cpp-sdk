@@ -34,7 +34,7 @@ class UnixSocketClient : public BackendClientI {
   ) const;
   openapi::BaseConfigInstance get_latest_config_instance(
     const std::string& config_schema_digest,
-    const std::string& config_slug
+    const std::string& config_type_slug
   ) const;
   openapi::BaseConfigInstance refresh_latest_config_instance(
     const openapi::RefreshLatestConfigInstanceRequest& request

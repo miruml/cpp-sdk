@@ -85,17 +85,17 @@ void ConfigInstancesApi::get_latest_config_instance_handler(const Pistache::Rest
             configSchemaDigest = valueQuery_instance;
         }
     }
-    auto configSlugQuery = request.query().get("config_slug");
-    std::optional<std::string> configSlug;
-    if(configSlugQuery.has_value()){
+    auto configTypeSlugQuery = request.query().get("config_type_slug");
+    std::optional<std::string> configTypeSlug;
+    if(configTypeSlugQuery.has_value()){
         std::string valueQuery_instance;
-        if(fromStringValue(configSlugQuery.value(), valueQuery_instance)){
-            configSlug = valueQuery_instance;
+        if(fromStringValue(configTypeSlugQuery.value(), valueQuery_instance)){
+            configTypeSlug = valueQuery_instance;
         }
     }
     
     try {
-        this->get_latest_config_instance(deviceId, configSchemaDigest, configSlug, response);
+        this->get_latest_config_instance(deviceId, configSchemaDigest, configTypeSlug, response);
     } catch (Pistache::Http::HttpError &e) {
         response.send(static_cast<Pistache::Http::Code>(e.code()), e.what());
         return;

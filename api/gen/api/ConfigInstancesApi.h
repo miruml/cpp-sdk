@@ -86,8 +86,8 @@ private:
     /// </remarks>
     /// <param name="deviceId">The unique identifier of the device</param>
     /// <param name="configSchemaDigest">The digest of the config schema</param>
-    /// <param name="configSlug">The slug of the config</param>
-    virtual void get_latest_config_instance(const std::string &deviceId, const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configSlug, Pistache::Http::ResponseWriter &response) = 0;
+    /// <param name="configTypeSlug">The slug of the config type</param>
+    virtual void get_latest_config_instance(const std::string &deviceId, const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configTypeSlug, Pistache::Http::ResponseWriter &response) = 0;
     /// <summary>
     /// Render the latest config instance for a device
     /// </summary>

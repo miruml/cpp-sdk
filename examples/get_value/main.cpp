@@ -168,81 +168,81 @@ int main() {
         config_instance_path
     );
 
-    std::string config_slug = "example-config-slug";
+    std::string config_type_slug = "example-config-type-slug";
 
     // boolean parameter
     miru::params::Parameter param = miru::query::get_param(
         config_instance,
-        config_slug + "." + "a_boolean"
+        config_type_slug + "." + "a_boolean"
     );
     print_get_bool_value_variants(param);
 
     // integer parameter
     param = miru::query::get_param(
         config_instance,
-        config_slug + "." + "an_integer"
+        config_type_slug + "." + "an_integer"
     );
     print_get_int_value_variants(param);
 
     // double parameter
     param = miru::query::get_param(
         config_instance,
-        config_slug + "." + "a_double"
+        config_type_slug + "." + "a_double"
     );
     print_get_double_value_variants(param);
 
     // string parameter
     param = miru::query::get_param(
         config_instance,
-        config_slug + "." + "a_string"
+        config_type_slug + "." + "a_string"
     );
     print_get_string_value_variants(param);
 
     // null parameter
     param = miru::query::get_param(
         config_instance,
-        config_slug + "." + "a_null_value"
+        config_type_slug + "." + "a_null_value"
     );
     print_get_null_value_variants(param);
 
     // boolean array parameter
     param = miru::query::get_param(
         config_instance,
-        config_slug + "." + "a_boolean_array"
+        config_type_slug + "." + "a_boolean_array"
     );
     print_get_boolean_array_value_variants(param);
 
     // integer array parameter
     param = miru::query::get_param(
         config_instance,
-        config_slug + "." + "an_integer_array"
+        config_type_slug + "." + "an_integer_array"
     );
     print_get_int_array_value_variants(param);
     
     // double array parameter
     param = miru::query::get_param(
         config_instance,
-        config_slug + "." + "a_double_array"
+        config_type_slug + "." + "a_double_array"
     );
     print_get_double_array_value_variants(param);
 
     // string array parameter
     param = miru::query::get_param(
         config_instance     ,
-        config_slug + "." + "a_string_array"
+        config_type_slug + "." + "a_string_array"
     );
     print_get_string_array_value_variants(param);
 
     // nested array parameter
     param = miru::query::get_param(
         config_instance,
-        config_slug + "." + "a_nested_array"
+        config_type_slug + "." + "a_nested_array"
     );
     print_get_nested_array_value_variants(param);
 
     // map array parameter
     miru::query::SearchParamFilters filters = miru::query::SearchParamFiltersBuilder()
-        .with_param_name(config_slug + "." + "a_map_array")
+        .with_param_name(config_type_slug + "." + "a_map_array")
         .with_leaves_only(false)
         .build();
     param = miru::query::get_param(
@@ -253,7 +253,7 @@ int main() {
 
     // map parameter
     filters = miru::query::SearchParamFiltersBuilder()
-        .with_param_name(config_slug)
+        .with_param_name(config_type_slug)
         .with_leaves_only(false)
         .build();
     param = miru::query::get_param(

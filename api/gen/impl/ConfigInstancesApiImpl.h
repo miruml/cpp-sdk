@@ -43,7 +43,7 @@ public:
     explicit ConfigInstancesApiImpl(const std::shared_ptr<Pistache::Rest::Router>& rtr);
     ~ConfigInstancesApiImpl() override = default;
 
-    void get_latest_config_instance(const std::string &deviceId, const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configSlug, Pistache::Http::ResponseWriter &response);
+    void get_latest_config_instance(const std::string &deviceId, const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configTypeSlug, Pistache::Http::ResponseWriter &response);
     void refresh_latest_config_instance(const RefreshLatestConfigInstanceRequest &refreshLatestConfigInstanceRequest, Pistache::Http::ResponseWriter &response);
 
 };

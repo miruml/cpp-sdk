@@ -33,11 +33,11 @@ int main() {
     );
 
     // define the filter
-    std::string config_slug = "example-config-slug";
+    std::string config_type_slug = "example-config-type-slug";
     auto filter = miru::query::SearchParamFiltersBuilder()
         .with_param_names({
-            config_slug + "." + "a_boolean",
-            config_slug + "." + "a_double",
+            config_type_slug + "." + "a_boolean",
+            config_type_slug + "." + "a_double",
         })
         .build();
         

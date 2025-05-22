@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$miru_config_slug": "example-config-slug",
+  "$miru_config_type_slug": "example-config-type-slug",
   "type": "object",
   "properties": {
     "a_boolean": {

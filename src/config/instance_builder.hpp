@@ -16,7 +16,7 @@ class ConfigInstanceBuilder {
  public:
   ConfigInstanceBuilder() {}
   ConfigInstanceBuilder& with_schema_file(const miru::filesys::File& schema_file);
-  ConfigInstanceBuilder& with_config_slug(const std::string& config_slug);
+  ConfigInstanceBuilder& with_config_type_slug(const std::string& config_type_slug);
   ConfigInstanceBuilder& with_source(miru::config::ConfigInstanceSource source);
   ConfigInstanceBuilder& with_data(const miru::params::Parameter& data);
   ConfigInstanceBuilder& with_schema_digest(const std::string& schema_digest);
@@ -26,7 +26,7 @@ class ConfigInstanceBuilder {
  private:
   // required
   std::optional<miru::filesys::File> schema_file_;
-  std::optional<std::string> config_slug_;
+  std::optional<std::string> config_type_slug_;
   std::optional<miru::config::ConfigInstanceSource> source_;
   std::optional<miru::params::Parameter> data_;
 

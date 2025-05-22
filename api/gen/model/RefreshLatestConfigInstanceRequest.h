@@ -31,7 +31,7 @@ struct  RefreshLatestConfigInstanceRequest
     
 
     std::string config_schema_digest;
-    std::string config_slug;
+    std::string config_type_slug;
     
 
     bool operator==(const RefreshLatestConfigInstanceRequest& other) const;

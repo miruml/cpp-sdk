@@ -1,7 +1,7 @@
 [
     {
         "description": "simple",
-        "config-slug": "simple",
+        "config-type-slug": "simple",
         "data": {
             "boolean": true,
             "integer": 42,
@@ -81,7 +81,7 @@
 
     {
         "description": "nested",
-        "config-slug": "nested",
+        "config-type-slug": "nested",
         "data": {
             "boolean": true,
             "integer": 42,

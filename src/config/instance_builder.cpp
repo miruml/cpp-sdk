@@ -12,11 +12,11 @@ ConfigInstanceBuilder& ConfigInstanceBuilder::with_schema_file(const miru::files
   return *this;
 }
 
-ConfigInstanceBuilder& ConfigInstanceBuilder::with_config_slug(const std::string& config_slug) {
-  if (config_slug_.has_value()) {
-    throw std::runtime_error("Config slug already set");
+ConfigInstanceBuilder& ConfigInstanceBuilder::with_config_type_slug(const std::string& config_type_slug) {
+  if (config_type_slug_.has_value()) {
+    throw std::runtime_error("Config type slug already set");
   }
-  config_slug_ = config_slug;
+  config_type_slug_ = config_type_slug;
   return *this;
 }
 
@@ -56,8 +56,8 @@ ConfigInstanceImpl ConfigInstanceBuilder::build() {
   if (!schema_file_.has_value()) {
     throw std::runtime_error("Schema file not set");
   }
-  if (!config_slug_.has_value()) {
-    throw std::runtime_error("Config slug not set");
+  if (!config_type_slug_.has_value()) {
+    throw std::runtime_error("Config type slug not set");
   }
   if (!source_.has_value()) {
     throw std::runtime_error("Source not set");
@@ -77,7 +77,7 @@ ConfigInstanceImpl ConfigInstanceBuilder::build() {
     );
   }
   return ConfigInstanceImpl(
-    *schema_file_, *config_slug_, *source_, *data_, schema_digest_, *config_instance_file_
+    *schema_file_, *config_type_slug_, *source_, *data_, schema_digest_, *config_instance_file_
   );
 }
 
