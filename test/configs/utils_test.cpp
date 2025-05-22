@@ -1,6 +1,6 @@
 // internal
-#include <configs/instance_impl.hpp>
 #include <configs/errors.hpp>
+#include <configs/instance_impl.hpp>
 #include <test/test_utils/testdata.hpp>
 
 // external
@@ -28,7 +28,8 @@ TEST(ConfigInstance, EmptyConfigTypeSlugJson) {
     miru::test_utils::config_schemas_testdata_dir().file("empty-config-type-slug.json")
   );
   EXPECT_THROW(
-    miru::config::read_schema_config_type_slug(schema_file), miru::config::EmptyConfigTypeSlug
+    miru::config::read_schema_config_type_slug(schema_file),
+    miru::config::EmptyConfigTypeSlug
   );
 }
 
@@ -37,25 +38,28 @@ TEST(ConfigInstance, EmptyConfigTypeSlugYaml) {
     miru::test_utils::config_schemas_testdata_dir().file("empty-config-type-slug.yaml")
   );
   EXPECT_THROW(
-    miru::config::read_schema_config_type_slug(schema_file), miru::config::EmptyConfigTypeSlug
+    miru::config::read_schema_config_type_slug(schema_file),
+    miru::config::EmptyConfigTypeSlug
   );
 }
 
 TEST(ConfigInstance, ConfigTypeSlugNotFoundJson) {
-  miru::filesys::File schema_file(
-    miru::test_utils::config_schemas_testdata_dir().file("missing-config-type-slug.json")
-  );
+  miru::filesys::File schema_file(miru::test_utils::config_schemas_testdata_dir().file(
+    "missing-config-type-slug.json"
+  ));
   EXPECT_THROW(
-    miru::config::read_schema_config_type_slug(schema_file), miru::config::ConfigTypeSlugNotFound
+    miru::config::read_schema_config_type_slug(schema_file),
+    miru::config::ConfigTypeSlugNotFound
   );
 }
 
 TEST(ConfigInstance, ConfigTypeSlugNotFoundYaml) {
-  miru::filesys::File schema_file(
-    miru::test_utils::config_schemas_testdata_dir().file("missing-config-type-slug.yaml")
-  );
+  miru::filesys::File schema_file(miru::test_utils::config_schemas_testdata_dir().file(
+    "missing-config-type-slug.yaml"
+  ));
   EXPECT_THROW(
-    miru::config::read_schema_config_type_slug(schema_file), miru::config::ConfigTypeSlugNotFound
+    miru::config::read_schema_config_type_slug(schema_file),
+    miru::config::ConfigTypeSlugNotFound
   );
 }
 

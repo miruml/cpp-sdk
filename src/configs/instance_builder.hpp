@@ -20,7 +20,9 @@ class ConfigInstanceBuilder {
   ConfigInstanceBuilder& with_source(miru::config::ConfigInstanceSource source);
   ConfigInstanceBuilder& with_data(const miru::params::Parameter& data);
   ConfigInstanceBuilder& with_schema_digest(const std::string& schema_digest);
-  ConfigInstanceBuilder& with_config_instance_file(const miru::filesys::File& config_instance_file);
+  ConfigInstanceBuilder& with_config_instance_file(
+    const miru::filesys::File& config_instance_file
+  );
   ConfigInstanceImpl build();
 
  private:

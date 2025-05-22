@@ -16,7 +16,8 @@ class ROS2NodeI {
  public:
   ROS2NodeI(const miru::params::Parameter& root) : root_(root) {}
 
-  ROS2NodeI(const miru::config::ConfigInstance& config_instance) : root_(config_instance.root_parameter()) {}
+  ROS2NodeI(const miru::config::ConfigInstance& config_instance)
+    : root_(config_instance.root_parameter()) {}
 
   // ============================== ROS2 INTERFACES ============================== //
 

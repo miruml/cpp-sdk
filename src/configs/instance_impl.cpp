@@ -5,8 +5,8 @@
 #include <http/models/HashSchemaSerializedRequest.h>
 #include <http/models/HashSerializedConfigSchemaFormat.h>
 
-#include <configs/instance_builder.hpp>
 #include <configs/errors.hpp>
+#include <configs/instance_builder.hpp>
 #include <http/socket_client.hpp>
 #include <miru/configs/instance.hpp>
 #include <params/parse.hpp>
@@ -31,7 +31,8 @@ std::string read_schema_config_type_slug(const miru::filesys::File& schema_file)
       if (!yaml_schema_content[MIRU_CONFIG_TYPE_SLUG_FIELD]) {
         THROW_CONFIG_TYPE_SLUG_NOT_FOUND(schema_file);
       }
-      config_type_slug = yaml_schema_content[MIRU_CONFIG_TYPE_SLUG_FIELD].as<std::string>();
+      config_type_slug =
+        yaml_schema_content[MIRU_CONFIG_TYPE_SLUG_FIELD].as<std::string>();
       break;
     }
     default:
@@ -111,7 +112,8 @@ nlohmann::json get_latest_config_instance(
     config_instance = client.refresh_latest_config_instance(refresh_request);
   } catch (const std::exception& refresh_error) {
     // load from the local cache if the refresh fails
-    config_instance = client.get_latest_config_instance(config_schema_digest, config_type_slug);
+    config_instance =
+      client.get_latest_config_instance(config_schema_digest, config_type_slug);
   }
   if (!config_instance.config_instance.has_value()) {
     THROW_EMPTY_CONFIG_INSTANCE(config_type_slug);
@@ -140,7 +142,9 @@ ConfigInstanceImpl from_agent_impl(
   // load the config instance from the agent
   nlohmann::json config_instance_data =
     get_latest_config_instance(client, config_schema_digest, config_type_slug);
-  builder.with_data(miru::params::parse_json_node(config_type_slug, config_instance_data));
+  builder.with_data(
+    miru::params::parse_json_node(config_type_slug, config_instance_data)
+  );
 
   // build the config instance
   ConfigInstanceImpl config_instance = builder.build();
@@ -170,7 +174,8 @@ ConfigInstanceImpl ConfigInstanceImpl::from_agent(
     }
   }
 
-  // loading from the agent failed, try loading the default config instance from the file system
+  // loading from the agent failed, try loading the default config instance from the
+  // file system
   if (options.default_instance_file_path.has_value()) {
     try {
       return from_file(schema_file_path, options.default_instance_file_path.value());

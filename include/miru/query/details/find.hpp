@@ -54,8 +54,10 @@ find_all(const NestedArray& nested_array, const SearchParamFilters& filters);
 
 ParameterPtrs find_all(const MapArray& map_array, const SearchParamFilters& filters);
 
-ParameterPtrs
-find_all(const miru::config::ConfigInstance& config_instance, const SearchParamFilters& filters);
+ParameterPtrs find_all(
+  const miru::config::ConfigInstance& config_instance,
+  const SearchParamFilters& filters
+);
 
 template <typename rootT>
 typename std::enable_if<is_parameter_root<rootT>::value, ParameterPtr>::type find_one(

@@ -99,8 +99,8 @@ class EmptyConfigInstance : public std::runtime_error {
     const std::string& config_type_slug,
     const miru::details::errors::ErrorTrace& trace
   ) {
-    return "The config instance loaded for config type slug '" + config_type_slug + "' is empty" +
-           miru::details::errors::format_source_location(trace);
+    return "The config instance loaded for config type slug '" + config_type_slug +
+           "' is empty" + miru::details::errors::format_source_location(trace);
   }
 };
 

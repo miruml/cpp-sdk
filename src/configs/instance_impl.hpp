@@ -17,7 +17,7 @@ const std::string MIRU_CONFIG_TYPE_SLUG_FIELD = "$miru_config_type_slug";
 // Config class
 class ConfigInstanceImpl {
  public:
-  // Initialize the config instance from a file system source. The config instance and 
+  // Initialize the config instance from a file system source. The config instance and
   // its schema will be read from the file system.
   static ConfigInstanceImpl from_file(
     const std::filesystem::path& schema_file_path,
@@ -47,7 +47,7 @@ class ConfigInstanceImpl {
     miru::config::ConfigInstanceSource source,
     const miru::params::Parameter& parameters,
     const std::optional<std::string>& schema_digest,
-    const std::optional<miru::filesys::File>& instance_file 
+    const std::optional<miru::filesys::File>& instance_file
   )
     : schema_file_(schema_file),
       config_type_slug_(config_type_slug),

@@ -40,7 +40,8 @@ TEST(ROS2GetParamTests, DoesntExist) {
   miru::params::Parameter parameter;
   miru::query::ROS2NodeI ROS2NodeI(parameter);
   EXPECT_THROW(
-    ROS2NodeI.get_parameter("doesnt_exist"), miru::query::details::ParameterNotFoundError
+    ROS2NodeI.get_parameter("doesnt_exist"),
+    miru::query::details::ParameterNotFoundError
   );
 }
 
@@ -150,7 +151,9 @@ TEST(ROS2TryGetParamWithDefaultValueTests, DoesntExist) {
   double default_value = 100.0;
   miru::query::ROS2NodeI ROS2NodeI(parameter);
 
-  EXPECT_EQ(ROS2NodeI.get_parameter_or("doesnt_exist", result_value, default_value), false);
+  EXPECT_EQ(
+    ROS2NodeI.get_parameter_or("doesnt_exist", result_value, default_value), false
+  );
   EXPECT_EQ(default_value, 100.0);
   EXPECT_EQ(result_value, 100.0);
 }

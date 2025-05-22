@@ -36,7 +36,7 @@ class ConfigInstance {
   ConfigInstance(std::unique_ptr<ConfigInstanceImpl> impl);
   ~ConfigInstance();
 
-  // Initialize the config instance from a file system source. The config instance and 
+  // Initialize the config instance from a file system source. The config instance and
   // its file will be read from the file system.
   static ConfigInstance from_file(
     const std::filesystem::path& schema_file_path,

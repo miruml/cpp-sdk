@@ -69,8 +69,10 @@ find_all(const MapArray& map_array, const SearchParamFilters& filters) {
   return find_all(ParametersView(map_array.begin(), map_array.end()), filters);
 }
 
-std::vector<const Parameter*>
-find_all(const miru::config::ConfigInstance& config_instance, const SearchParamFilters& filters) {
+std::vector<const Parameter*> find_all(
+  const miru::config::ConfigInstance& config_instance,
+  const SearchParamFilters& filters
+) {
   return find_all(config_instance.root_parameter(), filters);
 }
 
