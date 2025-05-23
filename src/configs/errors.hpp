@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 // internal
+#include <configs/instance_impl.hpp>
 #include <filesys/file.hpp>
 #include <miru/details/errors.hpp>
 #include <utils.hpp>
@@ -35,7 +36,9 @@ class ConfigTypeSlugNotFound : public std::runtime_error {
     const miru::details::errors::ErrorTrace& trace
   ) {
     return "Unable to find config type slug in schema file '" +
-           schema_file.abs_path().string() + "'" +
+           schema_file.abs_path().string() + "' (expected the field '" +
+           miru::config::MIRU_CONFIG_TYPE_SLUG_FIELD + "') " +
+           "at the root of the schema file" +
            miru::details::errors::format_source_location(trace);
   }
 };
