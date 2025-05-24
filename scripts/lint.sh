@@ -1,7 +1,8 @@
 #!/bin/sh
+set -e
 
-# to the source directory
-cd ../
+this_repo_root_dir=$(git rev-parse --show-toplevel)
+cd "$this_repo_root_dir"
 
 lint() {
     dir=$1
