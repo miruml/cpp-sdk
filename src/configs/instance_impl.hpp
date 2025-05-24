@@ -14,6 +14,8 @@ namespace miru::config {
 
 const std::string MIRU_CONFIG_TYPE_SLUG_FIELD = "$miru_config_type_slug";
 
+std::ostream& operator<<(std::ostream& os, const ConfigInstanceSource& source);
+
 // Config class
 class ConfigInstanceImpl {
  public:

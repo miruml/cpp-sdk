@@ -4,6 +4,18 @@
 
 namespace miru::config {
 
+std::ostream& operator<<(std::ostream& os, const ConfigInstanceSource& source) {
+  switch (source) {
+    case ConfigInstanceSource::Agent:
+      os << "Agent";
+      break;
+    case ConfigInstanceSource::FileSystem:
+      os << "FileSystem";
+      break;
+  }
+  return os;
+}
+
 ConfigInstance::~ConfigInstance() = default;
 
 ConfigInstance::ConfigInstance(std::unique_ptr<ConfigInstanceImpl> impl)

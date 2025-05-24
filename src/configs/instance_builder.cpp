@@ -92,13 +92,14 @@ ConfigInstanceImpl ConfigInstanceBuilder::build() {
       "system)"
     );
   }
+
   return ConfigInstanceImpl(
-    *schema_file_,
-    *config_type_slug_,
-    *source_,
-    *data_,
+    schema_file_.value(),
+    config_type_slug_.value(),
+    source_.value(),
+    data_.value(),
     schema_digest_,
-    *config_instance_file_
+    config_instance_file_
   );
 }
 

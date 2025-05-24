@@ -84,7 +84,49 @@ TEST(ConfigInstance, FromFileSystemYamlRos2) {
 }
 
 // =================================== FROM AGENT ================================== //
-TEST(ConfigInstance, FromAgentRefreshSuccess) {
+TEST(ConfigInstance, FromAgentRefreshSuccessWithoutDefaultInstanceFile) {
+  // set the response from the mock client
+  test::http::MockBackendClient mock_client;
+  mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
+
+  mock_client.refresh_latest_config_instance_func = []() {
+    nlohmann::json config_instance = {
+      {"speed", 89},
+      {"features", {{"spin", true}, {"jump", false}, {"backflip", false}}},
+      {"accelerometer",
+       {{"id", "123"},
+        {"offsets", {{"x", 0}, {"y", 0}, {"z", 0}}},
+        {"scaling_factor", {{"x", 1}, {"y", 1}, {"z", 1}}}}}
+    };
+    return openapi::BaseConfigInstance{
+      "config_instance",
+      "cfg_inst_123",
+      "2021-01-01T00:00:00Z",
+      "cli_123",
+      "cfg_sch_123",
+      config_instance,
+    };
+  };
+
+  // set the schema file and default config instance file
+  miru::filesys::File schema_file(
+    miru::test_utils::config_schemas_testdata_dir().file("motion-control.yaml")
+  );
+  miru::config::ConfigInstanceImpl config_impl =
+    miru::config::ConfigInstanceImpl::from_agent(
+      mock_client, schema_file.abs_path().string()
+    );
+  miru::config::ConfigInstance config_instance = miru::config::ConfigInstance(
+    std::make_unique<miru::config::ConfigInstanceImpl>(config_impl)
+  );
+
+  EXPECT_EQ(config_instance.get_source(), miru::config::ConfigInstanceSource::Agent);
+  auto speed = miru::query::get_param(config_instance, "motion-control.speed");
+
+  EXPECT_EQ(speed.as<int>(), 89);
+}
+
+TEST(ConfigInstance, FromAgentRefreshSuccessWithDefaultInstanceFile) {
   // set the response from the mock client
   test::http::MockBackendClient mock_client;
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
