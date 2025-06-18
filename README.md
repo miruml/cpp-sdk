@@ -66,7 +66,8 @@ set(MIRU_BUILD_EXAMPLES ON)
 FetchContent_Declare(
     miru
     GIT_REPOSITORY https://github.com/miruml/cpp-sdk.git  # Replace with actual repo URL
-    GIT_TAG v0.1.0 # replace with desired tag/branch/commit
+    GIT_TAG main # replace with desired tag/branch/commit
+    GIT_SUBMODULES "" # disable submodule cloning since the openapi repository inside the cpp-sdk repository is private
 )
 
 FetchContent_MakeAvailable(miru)
