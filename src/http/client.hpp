@@ -3,7 +3,6 @@
 // internal
 #include <http/models/BaseConfigInstance.h>
 #include <http/models/HashSchemaSerializedRequest.h>
-#include <http/models/RefreshLatestConfigInstanceRequest.h>
 
 #include <http/socket_session.hpp>
 

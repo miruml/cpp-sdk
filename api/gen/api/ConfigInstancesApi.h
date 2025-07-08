@@ -29,7 +29,6 @@
 #include <utility>
 
 #include "BaseConfigInstance.h"
-#include "RefreshLatestConfigInstanceRequest.h"
 #include <string>
 
 namespace org::openapitools::server::api
@@ -47,7 +46,6 @@ private:
     void setupRoutes();
 
     void get_latest_config_instance_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response);
-    void refresh_latest_config_instance_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response);
     void config_instances_api_default_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response);
 
     /// <summary>
@@ -84,18 +82,9 @@ private:
     /// <remarks>
     /// 
     /// </remarks>
-    /// <param name="deviceId">The unique identifier of the device</param>
     /// <param name="configSchemaDigest">The digest of the config schema</param>
     /// <param name="configTypeSlug">The slug of the config type</param>
-    virtual void get_latest_config_instance(const std::string &deviceId, const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configTypeSlug, Pistache::Http::ResponseWriter &response) = 0;
-    /// <summary>
-    /// Render the latest config instance for a device
-    /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// <param name="refreshLatestConfigInstanceRequest"> (optional)</param>
-    virtual void refresh_latest_config_instance(const org::openapitools::server::model::RefreshLatestConfigInstanceRequest &refreshLatestConfigInstanceRequest, Pistache::Http::ResponseWriter &response) = 0;
+    virtual void get_latest_config_instance(const std::optional<std::string> &configSchemaDigest, const std::optional<std::string> &configTypeSlug, Pistache::Http::ResponseWriter &response) = 0;
 
 };
 

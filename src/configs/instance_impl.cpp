@@ -107,10 +107,10 @@ nlohmann::json get_deployed_config_instance(
   config_instance = client.get_deployed_config_instance(
     config_schema_digest, config_type_slug
   );
-  if (!config_instance.config_instance.has_value()) {
+  if (!config_instance.instance.has_value()) {
     THROW_EMPTY_CONFIG_INSTANCE(config_type_slug);
   }
-  return config_instance.config_instance.value();
+  return config_instance.instance.value();
 }
 
 ConfigInstanceImpl from_agent_impl(

@@ -33,8 +33,7 @@ void ConfigInstancesApi::init() {
 void ConfigInstancesApi::setupRoutes() {
     using namespace Pistache::Rest;
 
-    Routes::Get(*router, base + "/config_instances/latest", Routes::bind(&ConfigInstancesApi::get_latest_config_instance_handler, this));
-    Routes::Post(*router, base + "/config_instances/refresh_latest", Routes::bind(&ConfigInstancesApi::refresh_latest_config_instance_handler, this));
+    Routes::Get(*router, base + "/config_instances/deployed", Routes::bind(&ConfigInstancesApi::get_latest_config_instance_handler, this));
 
     // Default handler, called when a route is not found
     router->addCustomHandler(Routes::bind(&ConfigInstancesApi::config_instances_api_default_handler, this));
@@ -73,9 +72,7 @@ std::pair<Pistache::Http::Code, std::string> ConfigInstancesApi::handleOperation
 void ConfigInstancesApi::get_latest_config_instance_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response) {
     try {
 
-    // Getting the path params
-    auto deviceId = request.param(":deviceId").as<std::string>();
-    
+
     // Getting the query params
     auto configSchemaDigestQuery = request.query().get("config_schema_digest");
     std::optional<std::string> configSchemaDigest;
@@ -95,38 +92,7 @@ void ConfigInstancesApi::get_latest_config_instance_handler(const Pistache::Rest
     }
     
     try {
-        this->get_latest_config_instance(deviceId, configSchemaDigest, configTypeSlug, response);
-    } catch (Pistache::Http::HttpError &e) {
-        response.send(static_cast<Pistache::Http::Code>(e.code()), e.what());
-        return;
-    } catch (std::exception &e) {
-        this->handleOperationException(e, response);
-        return;
-    }
-
-    } catch (std::exception &e) {
-        response.send(Pistache::Http::Code::Internal_Server_Error, e.what());
-    }
-
-}
-void ConfigInstancesApi::refresh_latest_config_instance_handler(const Pistache::Rest::Request &request, Pistache::Http::ResponseWriter response) {
-    try {
-
-
-    // Getting the body param
-    
-    RefreshLatestConfigInstanceRequest refreshLatestConfigInstanceRequest;
-    
-    try {
-        nlohmann::json::parse(request.body()).get_to(refreshLatestConfigInstanceRequest);
-        refreshLatestConfigInstanceRequest.validate();
-    } catch (std::exception &e) {
-        this->handleParsingException(e, response);
-        return;
-    }
-
-    try {
-        this->refresh_latest_config_instance(refreshLatestConfigInstanceRequest, response);
+        this->get_latest_config_instance(configSchemaDigest, configTypeSlug, response);
     } catch (Pistache::Http::HttpError &e) {
         response.send(static_cast<Pistache::Http::Code>(e.code()), e.what());
         return;

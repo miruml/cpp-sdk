@@ -1,6 +1,4 @@
 // internal
-#include <http/models/RefreshLatestConfigInstanceRequest.h>
-
 #include <configs/errors.hpp>
 #include <configs/instance_impl.hpp>
 #include <miru/query/query.hpp>
@@ -91,7 +89,7 @@ TEST(ConfigInstance, FromAgentSuccess_NoDefaultInstanceFile) {
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
   mock_client.get_deployed_config_instance_func = []() {
-    nlohmann::json config_instance = {
+    nlohmann::json instance = {
       {"speed", 89},
       {"features", {{"spin", true}, {"jump", false}, {"backflip", false}}},
       {"accelerometer",
@@ -102,10 +100,19 @@ TEST(ConfigInstance, FromAgentSuccess_NoDefaultInstanceFile) {
     return openapi::BaseConfigInstance{
       "config_instance",
       "cfg_inst_123",
+      openapi::ConfigInstanceTargetStatus::eConfigInstanceTargetStatus::CONFIG_INSTANCE_TARGET_STATUS_DEPLOYED,
+      openapi::ConfigInstanceStatus::eConfigInstanceStatus::CONFIG_INSTANCE_STATUS_DEPLOYED,
+      openapi::ConfigInstanceActivityStatus::eConfigInstanceActivityStatus::CONFIG_INSTANCE_ACTIVITY_STATUS_REMOVED,
+      openapi::ConfigInstanceErrorStatus::eConfigInstanceErrorStatus::CONFIG_INSTANCE_ERROR_STATUS_NONE,
+      "relative_filepath",
+      "patch_id",
+      "created_by_id",
       "2021-01-01T00:00:00Z",
-      "cli_123",
+      "updated_by_id",
+      "2021-01-01T00:00:00Z",
+      "device_id",
       "cfg_sch_123",
-      config_instance,
+      instance,
     };
   };
 
@@ -133,7 +140,7 @@ TEST(ConfigInstance, FromAgentSuccess_DefaultInstanceFile) {
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
   mock_client.get_deployed_config_instance_func = []() {
-    nlohmann::json config_instance = {
+    nlohmann::json instance = {
       {"speed", 89},
       {"features", {{"spin", true}, {"jump", false}, {"backflip", false}}},
       {"accelerometer",
@@ -144,10 +151,19 @@ TEST(ConfigInstance, FromAgentSuccess_DefaultInstanceFile) {
     return openapi::BaseConfigInstance{
       "config_instance",
       "cfg_inst_123",
+      openapi::ConfigInstanceTargetStatus::eConfigInstanceTargetStatus::CONFIG_INSTANCE_TARGET_STATUS_DEPLOYED,
+      openapi::ConfigInstanceStatus::eConfigInstanceStatus::CONFIG_INSTANCE_STATUS_DEPLOYED,
+      openapi::ConfigInstanceActivityStatus::eConfigInstanceActivityStatus::CONFIG_INSTANCE_ACTIVITY_STATUS_REMOVED,
+      openapi::ConfigInstanceErrorStatus::eConfigInstanceErrorStatus::CONFIG_INSTANCE_ERROR_STATUS_NONE,
+      "relative_filepath",
+      "patch_id",
+      "created_by_id",
       "2021-01-01T00:00:00Z",
-      "cli_123",
+      "updated_by_id",
+      "2021-01-01T00:00:00Z",
+      "device_id",
       "cfg_sch_123",
-      config_instance,
+      instance,
     };
   };
 

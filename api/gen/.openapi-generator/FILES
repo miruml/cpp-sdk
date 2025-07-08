@@ -17,6 +17,14 @@ impl/ErrorsApiImpl.h
 main-api-server.cpp
 model/BaseConfigInstance.cpp
 model/BaseConfigInstance.h
+model/ConfigInstanceActivityStatus.cpp
+model/ConfigInstanceActivityStatus.h
+model/ConfigInstanceErrorStatus.cpp
+model/ConfigInstanceErrorStatus.h
+model/ConfigInstanceStatus.cpp
+model/ConfigInstanceStatus.h
+model/ConfigInstanceTargetStatus.cpp
+model/ConfigInstanceTargetStatus.h
 model/Error.cpp
 model/Error.h
 model/ErrorResponse.cpp
@@ -27,7 +35,5 @@ model/HashSerializedConfigSchemaFormat.cpp
 model/HashSerializedConfigSchemaFormat.h
 model/Helpers.cpp
 model/Helpers.h
-model/RefreshLatestConfigInstanceRequest.cpp
-model/RefreshLatestConfigInstanceRequest.h
 model/SchemaDigestResponse.cpp
 model/SchemaDigestResponse.h
