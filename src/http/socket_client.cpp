@@ -49,25 +49,13 @@ std::string UnixSocketClient::hash_schema(
   return handle_json_response(res.first, res.second)["digest"].get<std::string>();
 }
 
-openapi::BaseConfigInstance UnixSocketClient::get_latest_config_instance(
+openapi::BaseConfigInstance UnixSocketClient::get_deployed_config_instance(
   const std::string& config_schema_digest,
   const std::string& config_type_slug
 ) const {
-  std::string path = base_path() + "/config_instances/latest?config_schema_digest=" +
+  std::string path = base_path() + "/config_instances/deployed?config_schema_digest=" +
                      config_schema_digest + "&config_type_slug=" + config_type_slug;
   auto req = build_get_request(host(), path);
-  std::chrono::milliseconds timeout = std::chrono::seconds(10);
-  auto res = execute(req, timeout);
-  return openapi::BaseConfigInstance::from_json(
-    handle_json_response(res.first, res.second)
-  );
-}
-
-openapi::BaseConfigInstance UnixSocketClient::refresh_latest_config_instance(
-  const openapi::RefreshLatestConfigInstanceRequest& request
-) const {
-  std::string path = base_path() + "/config_instances/refresh_latest";
-  auto req = build_post_request(host(), path, request.to_json().dump());
   std::chrono::milliseconds timeout = std::chrono::seconds(10);
   auto res = execute(req, timeout);
   return openapi::BaseConfigInstance::from_json(

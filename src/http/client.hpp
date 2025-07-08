@@ -11,20 +11,17 @@ namespace miru::http {
 
 namespace openapi = org::openapitools::server::model;
 
-class BackendClientI {
+class AgentClientI {
  public:
-  virtual ~BackendClientI() = default;
+  virtual ~AgentClientI() = default;
 
   // route specific functions
   virtual std::string hash_schema(
     const openapi::HashSchemaSerializedRequest& config_schema
   ) const = 0;
-  virtual openapi::BaseConfigInstance get_latest_config_instance(
+  virtual openapi::BaseConfigInstance get_deployed_config_instance(
     const std::string& config_schema_digest,
     const std::string& config_type_slug
-  ) const = 0;
-  virtual openapi::BaseConfigInstance refresh_latest_config_instance(
-    const openapi::RefreshLatestConfigInstanceRequest& request
   ) const = 0;
 };
 

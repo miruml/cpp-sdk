@@ -27,7 +27,7 @@ class ConfigInstanceImpl {
   );
 
   static ConfigInstanceImpl from_agent(
-    const miru::http::BackendClientI& client,
+    const miru::http::AgentClientI& client,
     const std::filesystem::path& schema_file_path,
     const miru::config::FromAgentOptions& options = miru::config::FromAgentOptions()
   );

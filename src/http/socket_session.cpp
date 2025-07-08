@@ -67,7 +67,7 @@ void SocketSession::on_read(beast::error_code ec, std::size_t bytes_transferred)
   if (ec) THROW_READ_ERROR(ec.what(), details());
 
   // Gracefully close the socket
-  stream_.socket().shutdown(tcp::socket::shutdown_both, ec);
+  ec = stream_.socket().shutdown(tcp::socket::shutdown_both, ec);
 
   // not_connected happens sometimes so don't bother reporting it.
   if (ec && ec != beast::errc::not_connected)

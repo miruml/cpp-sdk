@@ -110,4 +110,30 @@ class EmptyConfigInstance : public std::runtime_error {
 #define THROW_EMPTY_CONFIG_INSTANCE(config_type_slug) \
   throw EmptyConfigInstance(config_type_slug, ERROR_TRACE)
 
+class GetDeployedConfigInstanceError : public std::runtime_error {
+ public:
+  explicit GetDeployedConfigInstanceError(
+    const std::string& from_agent_error,
+    const std::filesystem::path& default_file_path,
+    const std::string& from_default_file_error,
+    const miru::details::errors::ErrorTrace& trace
+  )
+    : std::runtime_error(format_message(from_agent_error, default_file_path, from_default_file_error, trace)) {}
+
+  static std::string format_message(
+    const std::string& from_agent_error,
+    const std::filesystem::path& default_file_path,
+    const std::string& from_default_file_error,
+    const miru::details::errors::ErrorTrace& trace
+  ) {
+    return "Failed to get deployed config instance from agent: " + from_agent_error +
+           ". Additionally, failed to get config instance default from file '" +
+           default_file_path.string() + "': " + from_default_file_error +
+           miru::details::errors::format_source_location(trace);
+  }
+};
+
+#define THROW_GET_DEPLOYED_CONFIG_INSTANCE_ERROR(from_agent_error, default_file, from_default_file_error) \
+  throw GetDeployedConfigInstanceError(from_agent_error, default_file, from_default_file_error, ERROR_TRACE)
+
 }  // namespace miru::config

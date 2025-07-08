@@ -16,21 +16,17 @@ namespace test::http {
 
 namespace openapi = org::openapitools::server::model;
 
-class MockBackendClient : public miru::http::BackendClientI {
+class MockAgentClient : public miru::http::AgentClientI {
  public:
   std::function<std::string()> hash_schema_func;
-  std::function<openapi::BaseConfigInstance()> get_latest_config_instance_func;
-  std::function<openapi::BaseConfigInstance()> refresh_latest_config_instance_func;
+  std::function<openapi::BaseConfigInstance()> get_deployed_config_instance_func;
 
   // route specific functions
   std::string hash_schema(const openapi::HashSchemaSerializedRequest& config_schema
   ) const;
-  openapi::BaseConfigInstance get_latest_config_instance(
+  openapi::BaseConfigInstance get_deployed_config_instance(
     const std::string& config_schema_digest,
     const std::string& config_type_slug
-  ) const;
-  openapi::BaseConfigInstance refresh_latest_config_instance(
-    const openapi::RefreshLatestConfigInstanceRequest& request
   ) const;
 };
 

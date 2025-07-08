@@ -69,7 +69,7 @@ ConfigInstanceImpl ConfigInstanceImpl::from_file(
 }
 
 std::string hash_schema(
-  const miru::http::BackendClientI& client,
+  const miru::http::AgentClientI& client,
   const miru::filesys::File& schema_file
 ) {
   // determine the schema file type
@@ -98,23 +98,15 @@ std::string hash_schema(
   return client.hash_schema(config_schema);
 }
 
-nlohmann::json get_latest_config_instance(
-  const miru::http::BackendClientI& client,
+nlohmann::json get_deployed_config_instance(
+  const miru::http::AgentClientI& client,
   const std::string& config_schema_digest,
   const std::string& config_type_slug
 ) {
   openapi::BaseConfigInstance config_instance;
-  try {
-    // try to refresh the latest config instance with the server
-    openapi::RefreshLatestConfigInstanceRequest refresh_request{
-      config_schema_digest, config_type_slug
-    };
-    config_instance = client.refresh_latest_config_instance(refresh_request);
-  } catch (const std::exception& refresh_error) {
-    // load from the local cache if the refresh fails
-    config_instance =
-      client.get_latest_config_instance(config_schema_digest, config_type_slug);
-  }
+  config_instance = client.get_deployed_config_instance(
+    config_schema_digest, config_type_slug
+  );
   if (!config_instance.config_instance.has_value()) {
     THROW_EMPTY_CONFIG_INSTANCE(config_type_slug);
   }
@@ -122,7 +114,7 @@ nlohmann::json get_latest_config_instance(
 }
 
 ConfigInstanceImpl from_agent_impl(
-  const miru::http::BackendClientI& client,
+  const miru::http::AgentClientI& client,
   const std::filesystem::path& schema_file_path,
   const miru::config::FromAgentOptions& options
 ) {
@@ -141,7 +133,7 @@ ConfigInstanceImpl from_agent_impl(
 
   // load the config instance from the agent
   nlohmann::json config_instance_data =
-    get_latest_config_instance(client, config_schema_digest, config_type_slug);
+    get_deployed_config_instance(client, config_schema_digest, config_type_slug);
   builder.with_data(
     miru::params::parse_json_node(config_type_slug, config_instance_data)
   );
@@ -152,7 +144,7 @@ ConfigInstanceImpl from_agent_impl(
 }
 
 ConfigInstanceImpl ConfigInstanceImpl::from_agent(
-  const miru::http::BackendClientI& client,
+  const miru::http::AgentClientI& client,
   const std::filesystem::path& schema_file_path,
   const miru::config::FromAgentOptions& options
 ) {
@@ -162,11 +154,13 @@ ConfigInstanceImpl ConfigInstanceImpl::from_agent(
 
   // attempt to load the config instance from the agent for the number of retries
   std::exception_ptr last_from_agent_error;
+  std::string last_from_agent_error_msg;
   for (uint32_t attempt = 1; attempt <= options.num_retries; attempt++) {
     try {
       return from_agent_impl(client, schema_file_path, options);
     } catch (const std::exception& from_agent_error) {
       last_from_agent_error = std::current_exception();
+      last_from_agent_error_msg = from_agent_error.what();
     }
     // sleep between retries
     if (attempt < options.num_retries) {
@@ -179,8 +173,12 @@ ConfigInstanceImpl ConfigInstanceImpl::from_agent(
   if (options.default_instance_file_path.has_value()) {
     try {
       return from_file(schema_file_path, options.default_instance_file_path.value());
-    } catch (const std::exception& from_default_config_error) {
-      // do nothing
+    } catch (const std::exception& from_default_file_error) {
+      THROW_GET_DEPLOYED_CONFIG_INSTANCE_ERROR(
+        last_from_agent_error_msg,
+        options.default_instance_file_path.value(),
+        from_default_file_error.what()
+      );
     }
   }
 

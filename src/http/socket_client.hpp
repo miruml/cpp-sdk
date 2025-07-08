@@ -12,7 +12,7 @@ namespace miru::http {
 namespace openapi = org::openapitools::server::model;
 namespace http = boost::beast::http;
 
-class UnixSocketClient : public BackendClientI {
+class UnixSocketClient : public AgentClientI {
  public:
   UnixSocketClient(const std::string& socket_path = "/run/miru/miru.sock")
     : socket_path_(socket_path), base_path_("/v1"), host_("localhost"), port_("80") {}
@@ -32,12 +32,9 @@ class UnixSocketClient : public BackendClientI {
   // route specific functions
   std::string hash_schema(const openapi::HashSchemaSerializedRequest& config_schema
   ) const;
-  openapi::BaseConfigInstance get_latest_config_instance(
+  openapi::BaseConfigInstance get_deployed_config_instance(
     const std::string& config_schema_digest,
     const std::string& config_type_slug
-  ) const;
-  openapi::BaseConfigInstance refresh_latest_config_instance(
-    const openapi::RefreshLatestConfigInstanceRequest& request
   ) const;
 
  private:
