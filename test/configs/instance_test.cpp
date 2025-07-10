@@ -1,4 +1,5 @@
 // internal
+#include <http/models/ConfigInstance.h>
 #include <configs/errors.hpp>
 #include <configs/instance_impl.hpp>
 #include <miru/query/query.hpp>
@@ -89,7 +90,7 @@ TEST(ConfigInstance, FromAgentSuccess_NoDefaultInstanceFile) {
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
   mock_client.get_deployed_config_instance_func = []() {
-    nlohmann::json instance = {
+    nlohmann::json content = {
       {"speed", 89},
       {"features", {{"spin", true}, {"jump", false}, {"backflip", false}}},
       {"accelerometer",
@@ -97,7 +98,7 @@ TEST(ConfigInstance, FromAgentSuccess_NoDefaultInstanceFile) {
         {"offsets", {{"x", 0}, {"y", 0}, {"z", 0}}},
         {"scaling_factor", {{"x", 1}, {"y", 1}, {"z", 1}}}}}
     };
-    return openapi::BaseConfigInstance{
+    return openapi::ConfigInstance{
       "config_instance",
       "cfg_inst_123",
       openapi::ConfigInstanceTargetStatus::eConfigInstanceTargetStatus::CONFIG_INSTANCE_TARGET_STATUS_DEPLOYED,
@@ -105,14 +106,11 @@ TEST(ConfigInstance, FromAgentSuccess_NoDefaultInstanceFile) {
       openapi::ConfigInstanceActivityStatus::eConfigInstanceActivityStatus::CONFIG_INSTANCE_ACTIVITY_STATUS_REMOVED,
       openapi::ConfigInstanceErrorStatus::eConfigInstanceErrorStatus::CONFIG_INSTANCE_ERROR_STATUS_NONE,
       "relative_filepath",
-      "patch_id",
-      "created_by_id",
       "2021-01-01T00:00:00Z",
-      "updated_by_id",
       "2021-01-01T00:00:00Z",
-      "device_id",
       "cfg_sch_123",
-      instance,
+      "cfg_type_123",
+      content,
     };
   };
 
@@ -148,7 +146,7 @@ TEST(ConfigInstance, FromAgentSuccess_DefaultInstanceFile) {
         {"offsets", {{"x", 0}, {"y", 0}, {"z", 0}}},
         {"scaling_factor", {{"x", 1}, {"y", 1}, {"z", 1}}}}}
     };
-    return openapi::BaseConfigInstance{
+    return openapi::ConfigInstance{
       "config_instance",
       "cfg_inst_123",
       openapi::ConfigInstanceTargetStatus::eConfigInstanceTargetStatus::CONFIG_INSTANCE_TARGET_STATUS_DEPLOYED,
@@ -156,13 +154,10 @@ TEST(ConfigInstance, FromAgentSuccess_DefaultInstanceFile) {
       openapi::ConfigInstanceActivityStatus::eConfigInstanceActivityStatus::CONFIG_INSTANCE_ACTIVITY_STATUS_REMOVED,
       openapi::ConfigInstanceErrorStatus::eConfigInstanceErrorStatus::CONFIG_INSTANCE_ERROR_STATUS_NONE,
       "relative_filepath",
-      "patch_id",
-      "created_by_id",
       "2021-01-01T00:00:00Z",
-      "updated_by_id",
       "2021-01-01T00:00:00Z",
-      "device_id",
       "cfg_sch_123",
+      "cfg_type_123",
       instance,
     };
   };
@@ -196,7 +191,7 @@ TEST(ConfigInstance, FromAgentFailure_DefaultFileSuccess) {
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
   // read the deployed config instance will fail (for whatever reason)
-  mock_client.get_deployed_config_instance_func = []() -> openapi::BaseConfigInstance {
+  mock_client.get_deployed_config_instance_func = []() -> openapi::ConfigInstance {
     throw std::runtime_error("get deployed config instance failed");
   };
 
@@ -231,7 +226,7 @@ TEST(ConfigInstance, FromAgentFailure_DefaultFileFailure) {
   mock_client.hash_schema_func = []() { return "sha256:a1b2c3d4e5f6g7h8i9j0k1l2"; };
 
   // read the deployed config instance will fail (for whatever reason)
-  mock_client.get_deployed_config_instance_func = []() -> openapi::BaseConfigInstance {
+  mock_client.get_deployed_config_instance_func = []() -> openapi::ConfigInstance {
     throw std::runtime_error("get deployed config instance failed");
   };
 

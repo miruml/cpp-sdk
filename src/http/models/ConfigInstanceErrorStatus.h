@@ -12,7 +12,7 @@
 /*
  * ConfigInstanceErrorStatus.h
  *
- * 
+ * Last known error of the config instance
  */
 
 #ifndef ConfigInstanceErrorStatus_H_

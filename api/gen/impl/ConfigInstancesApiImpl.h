@@ -29,7 +29,7 @@
 #include <ConfigInstancesApi.h>
 
 
-#include "BaseConfigInstance.h"
+#include "ConfigInstance.h"
 #include <string>
 
 namespace org::openapitools::server::api

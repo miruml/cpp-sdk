@@ -10,38 +10,47 @@
 * Do not edit the class manually.
 */
 /*
- * ConfigInstanceTargetStatus.h
+ * ConfigInstance.h
  *
- * Desired state of the config instance
+ * 
  */
 
-#ifndef ConfigInstanceTargetStatus_H_
-#define ConfigInstanceTargetStatus_H_
+#ifndef ConfigInstance_H_
+#define ConfigInstance_H_
 
 
+#include "ConfigInstanceStatus.h"
+#include <nlohmann/json.hpp>
+#include "ConfigInstanceTargetStatus.h"
+#include "ConfigInstanceErrorStatus.h"
+#include "ConfigInstanceActivityStatus.h"
+#include <string>
 #include <nlohmann/json.hpp>
 #include <optional>
 
 namespace org::openapitools::server::model
 {
 
-struct  ConfigInstanceTargetStatus
+struct  ConfigInstance
 {
     
-    enum eConfigInstanceTargetStatus {
-        // To have a valid default value.
-        // Avoiding name clashes with user defined
-        // enum values
-        INVALID_VALUE_OPENAPI_GENERATED = 0,
-        CONFIG_INSTANCE_TARGET_STATUS_CREATED, 
-        CONFIG_INSTANCE_TARGET_STATUS_DEPLOYED, 
-        CONFIG_INSTANCE_TARGET_STATUS_REMOVED
-    };
 
-    ConfigInstanceTargetStatus::eConfigInstanceTargetStatus value = ConfigInstanceTargetStatus::eConfigInstanceTargetStatus::INVALID_VALUE_OPENAPI_GENERATED;
+    std::string object;
+    std::string id;
+    org::openapitools::server::model::ConfigInstanceTargetStatus target_status;
+    org::openapitools::server::model::ConfigInstanceStatus status;
+    org::openapitools::server::model::ConfigInstanceActivityStatus activity_status;
+    org::openapitools::server::model::ConfigInstanceErrorStatus error_status;
+    std::optional<std::string> relative_filepath;
+    std::string created_at;
+    std::string updated_at;
+    std::string config_schema_id;
+    std::string config_type_id;
+    nlohmann::json content;
+    
 
-    bool operator==(const ConfigInstanceTargetStatus& other) const;
-    bool operator!=(const ConfigInstanceTargetStatus& other) const;
+    bool operator==(const ConfigInstance& other) const;
+    bool operator!=(const ConfigInstance& other) const;
 
     /// <summary>
     /// Validate the current data in the model. Throws a ValidationException on failure.
@@ -61,14 +70,14 @@ struct  ConfigInstanceTargetStatus
     bool validate(std::stringstream& msg, const std::string& pathPrefix) const;
 
     nlohmann::json to_json() const;
-    static ConfigInstanceTargetStatus from_json(const nlohmann::json& j);
+    static ConfigInstance from_json(const nlohmann::json& j);
 };
 
- void to_json(nlohmann::json& j, const ConfigInstanceTargetStatus& o);
- void from_json(const nlohmann::json& j, ConfigInstanceTargetStatus& o);
+ void to_json(nlohmann::json& j, const ConfigInstance& o);
+ void from_json(const nlohmann::json& j, ConfigInstance& o);
 
 
 } // namespace org::openapitools::server::model
 
 
-#endif /* ConfigInstanceTargetStatus_H_ */
+#endif /* ConfigInstance_H_ */

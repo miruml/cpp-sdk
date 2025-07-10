@@ -12,7 +12,7 @@
 /*
  * ConfigInstanceStatus.h
  *
- * 
+ * The merging of the &#39;activity_status&#39; and &#39;error_status&#39; where &#39;error_status&#39; takes precedence over &#39;activity_status&#39; if errors are present
  */
 
 #ifndef ConfigInstanceStatus_H_

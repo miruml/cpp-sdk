@@ -11,27 +11,27 @@
 */
 
 
-#include "BaseConfigInstance.h"
+#include "ConfigInstance.h"
 #include "Helpers.h"
 
 namespace org::openapitools::server::model
 {
 
-nlohmann::json BaseConfigInstance::to_json() const
+nlohmann::json ConfigInstance::to_json() const
 {
     nlohmann::json j;
     ::org::openapitools::server::model::to_json(j, *this);
     return j;
 }
 
-BaseConfigInstance BaseConfigInstance::from_json(const nlohmann::json& j)
+ConfigInstance ConfigInstance::from_json(const nlohmann::json& j)
 {
-    BaseConfigInstance o{};
+    ConfigInstance o{};
     ::org::openapitools::server::model::from_json(j, o);
     return o;
 }
 
-void BaseConfigInstance::validate() const
+void ConfigInstance::validate() const
 {
     std::stringstream msg;
     if (!validate(msg))
@@ -40,33 +40,33 @@ void BaseConfigInstance::validate() const
     }
 }
 
-bool BaseConfigInstance::validate(std::stringstream& msg) const
+bool ConfigInstance::validate(std::stringstream& msg) const
 {
     return validate(msg, "");
 }
 
-bool BaseConfigInstance::validate(std::stringstream& msg, const std::string& pathPrefix) const
+bool ConfigInstance::validate(std::stringstream& msg, const std::string& pathPrefix) const
 {
     bool success = true;
-    const std::string _pathPrefix = pathPrefix.empty() ? "BaseConfigInstance" : pathPrefix;
+    const std::string _pathPrefix = pathPrefix.empty() ? "ConfigInstance" : pathPrefix;
 
-                                                
+                                                    
     return success;
 }
 
-bool BaseConfigInstance::operator==(const BaseConfigInstance& other) const
+bool ConfigInstance::operator==(const ConfigInstance& other) const
 {
     return
     
-    object == other.object && id == other.id && target_status == other.target_status && status == other.status && activity_status == other.activity_status && error_status == other.error_status && relative_filepath == other.relative_filepath && created_at == other.created_at && updated_at == other.updated_at && config_schema_id == other.config_schema_id && config_type_id == other.config_type_id;
+    object == other.object && id == other.id && target_status == other.target_status && status == other.status && activity_status == other.activity_status && error_status == other.error_status && relative_filepath == other.relative_filepath && created_at == other.created_at && updated_at == other.updated_at && config_schema_id == other.config_schema_id && config_type_id == other.config_type_id && content == other.content;
 }
 
-bool BaseConfigInstance::operator!=(const BaseConfigInstance& other) const
+bool ConfigInstance::operator!=(const ConfigInstance& other) const
 {
     return !(*this == other);
 }
 
-void to_json(nlohmann::json& j, const BaseConfigInstance& o)
+void to_json(nlohmann::json& j, const ConfigInstance& o)
 {
     j = nlohmann::json::object();
     j["object"] = o.object;
@@ -84,10 +84,11 @@ void to_json(nlohmann::json& j, const BaseConfigInstance& o)
     j["updated_at"] = o.updated_at;
     j["config_schema_id"] = o.config_schema_id;
     j["config_type_id"] = o.config_type_id;
+    j["content"] = o.content;
     
 }
 
-void from_json(const nlohmann::json& j, BaseConfigInstance& o)
+void from_json(const nlohmann::json& j, ConfigInstance& o)
 {
     j.at("object").get_to(o.object);
     j.at("id").get_to(o.id);
@@ -106,6 +107,7 @@ void from_json(const nlohmann::json& j, BaseConfigInstance& o)
     j.at("updated_at").get_to(o.updated_at);
     j.at("config_schema_id").get_to(o.config_schema_id);
     j.at("config_type_id").get_to(o.config_type_id);
+    j.at("content").get_to(o.content);
     
 }
 

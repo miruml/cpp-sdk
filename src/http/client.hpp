@@ -1,7 +1,7 @@
 #pragma once
 
 // internal
-#include <http/models/BaseConfigInstance.h>
+#include <http/models/ConfigInstance.h>
 #include <http/models/HashSchemaSerializedRequest.h>
 
 #include <http/socket_session.hpp>
@@ -18,7 +18,7 @@ class AgentClientI {
   virtual std::string hash_schema(
     const openapi::HashSchemaSerializedRequest& config_schema
   ) const = 0;
-  virtual openapi::BaseConfigInstance get_deployed_config_instance(
+  virtual openapi::ConfigInstance get_deployed_config_instance(
     const std::string& config_schema_digest,
     const std::string& config_type_slug
   ) const = 0;

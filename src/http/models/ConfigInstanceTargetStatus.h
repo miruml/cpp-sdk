@@ -12,7 +12,7 @@
 /*
  * ConfigInstanceTargetStatus.h
  *
- * 
+ * Desired state of the config instance
  */
 
 #ifndef ConfigInstanceTargetStatus_H_

@@ -17,6 +17,8 @@ impl/ErrorsApiImpl.h
 main-api-server.cpp
 model/BaseConfigInstance.cpp
 model/BaseConfigInstance.h
+model/ConfigInstance.cpp
+model/ConfigInstance.h
 model/ConfigInstanceActivityStatus.cpp
 model/ConfigInstanceActivityStatus.h
 model/ConfigInstanceErrorStatus.cpp

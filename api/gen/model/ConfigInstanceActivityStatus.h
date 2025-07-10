@@ -12,7 +12,7 @@
 /*
  * ConfigInstanceActivityStatus.h
  *
- * 
+ * Last known activity of the config instance
  */
 
 #ifndef ConfigInstanceActivityStatus_H_

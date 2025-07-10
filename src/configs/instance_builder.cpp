@@ -4,13 +4,13 @@
 
 namespace miru::config {
 
-ConfigInstanceBuilder& ConfigInstanceBuilder::with_schema_file(
-  const miru::filesys::File& schema_file
+ConfigInstanceBuilder& ConfigInstanceBuilder::with_config_schema_file(
+  const miru::filesys::File& config_schema_file
 ) {
-  if (schema_file_.has_value()) {
-    throw std::runtime_error("Schema file already set");
+  if (config_schema_file_.has_value()) {
+    throw std::runtime_error("Config schema file already set");
   }
-  schema_file_ = schema_file;
+  config_schema_file_ = config_schema_file;
   return *this;
 }
 
@@ -44,13 +44,13 @@ ConfigInstanceBuilder& ConfigInstanceBuilder::with_data(
   return *this;
 }
 
-ConfigInstanceBuilder& ConfigInstanceBuilder::with_schema_digest(
-  const std::string& schema_digest
+ConfigInstanceBuilder& ConfigInstanceBuilder::with_config_schema_digest(
+  const std::string& config_schema_digest
 ) {
-  if (schema_digest_.has_value()) {
-    throw std::runtime_error("Schema digest already set");
+  if (config_schema_digest_.has_value()) {
+    throw std::runtime_error("Config schema digest already set");
   }
-  schema_digest_ = schema_digest;
+  config_schema_digest_ = config_schema_digest;
   return *this;
 }
 
@@ -65,8 +65,8 @@ ConfigInstanceBuilder& ConfigInstanceBuilder::with_config_instance_file(
 }
 
 ConfigInstanceImpl ConfigInstanceBuilder::build() {
-  if (!schema_file_.has_value()) {
-    throw std::runtime_error("Schema file not set");
+  if (!config_schema_file_.has_value()) {
+    throw std::runtime_error("Config schema file not set");
   }
   if (!config_type_slug_.has_value()) {
     throw std::runtime_error("Config type slug not set");
@@ -78,9 +78,9 @@ ConfigInstanceImpl ConfigInstanceBuilder::build() {
     throw std::runtime_error("Data not set");
   }
   if (source_ == miru::config::ConfigInstanceSource::Agent &&
-      !schema_digest_.has_value()) {
+      !config_schema_digest_.has_value()) {
     throw std::runtime_error(
-      "Schema digest not set (must be set when retrieving the config instance from the "
+      "Config schema digest not set (must be set when retrieving the config instance from the "
       "agent)"
     );
   }
@@ -94,11 +94,11 @@ ConfigInstanceImpl ConfigInstanceBuilder::build() {
   }
 
   return ConfigInstanceImpl(
-    schema_file_.value(),
+    config_schema_file_.value(),
     config_type_slug_.value(),
     source_.value(),
     data_.value(),
-    schema_digest_,
+    config_schema_digest_,
     config_instance_file_
   );
 }
