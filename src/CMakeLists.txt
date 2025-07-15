@@ -16,4 +16,5 @@ target_link_libraries(miru PRIVATE
     yaml-cpp::yaml-cpp
     Boost::asio
     Boost::beast
+    Threads::Threads
 )
