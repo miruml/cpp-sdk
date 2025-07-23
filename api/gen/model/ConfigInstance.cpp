@@ -50,7 +50,7 @@ bool ConfigInstance::validate(std::stringstream& msg, const std::string& pathPre
     bool success = true;
     const std::string _pathPrefix = pathPrefix.empty() ? "ConfigInstance" : pathPrefix;
 
-                                                    
+                                                        
     return success;
 }
 
@@ -58,7 +58,7 @@ bool ConfigInstance::operator==(const ConfigInstance& other) const
 {
     return
     
-    object == other.object && id == other.id && target_status == other.target_status && status == other.status && activity_status == other.activity_status && error_status == other.error_status && relative_filepath == other.relative_filepath && created_at == other.created_at && updated_at == other.updated_at && config_schema_id == other.config_schema_id && config_type_id == other.config_type_id && content == other.content;
+    object == other.object && id == other.id && target_status == other.target_status && status == other.status && activity_status == other.activity_status && error_status == other.error_status && relative_filepath == other.relative_filepath && created_at == other.created_at && updated_at == other.updated_at && device_id == other.device_id && config_schema_id == other.config_schema_id && config_type_id == other.config_type_id && content == other.content;
 }
 
 bool ConfigInstance::operator!=(const ConfigInstance& other) const
@@ -75,13 +75,10 @@ void to_json(nlohmann::json& j, const ConfigInstance& o)
     j["status"] = o.status;
     j["activity_status"] = o.activity_status;
     j["error_status"] = o.error_status;
-    if (o.relative_filepath.has_value()) {
-        j["relative_filepath"] = o.relative_filepath.value();
-    } else {
-        j["relative_filepath"] = nullptr;
-    }
+    j["relative_filepath"] = o.relative_filepath;
     j["created_at"] = o.created_at;
     j["updated_at"] = o.updated_at;
+    j["device_id"] = o.device_id;
     j["config_schema_id"] = o.config_schema_id;
     j["config_type_id"] = o.config_type_id;
     j["content"] = o.content;
@@ -96,15 +93,10 @@ void from_json(const nlohmann::json& j, ConfigInstance& o)
     j.at("status").get_to(o.status);
     j.at("activity_status").get_to(o.activity_status);
     j.at("error_status").get_to(o.error_status);
-    if (j.find("relative_filepath") != j.end()) {
-        if (j.at("relative_filepath").is_null()) {
-            o.relative_filepath = std::nullopt;
-        } else {
-            o.relative_filepath = j.at("relative_filepath").get<std::string>();
-        }
-    }
+    j.at("relative_filepath").get_to(o.relative_filepath);
     j.at("created_at").get_to(o.created_at);
     j.at("updated_at").get_to(o.updated_at);
+    j.at("device_id").get_to(o.device_id);
     j.at("config_schema_id").get_to(o.config_schema_id);
     j.at("config_type_id").get_to(o.config_type_id);
     j.at("content").get_to(o.content);

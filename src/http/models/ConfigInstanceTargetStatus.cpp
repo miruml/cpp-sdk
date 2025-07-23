@@ -84,6 +84,9 @@ void to_json(nlohmann::json& j, const ConfigInstanceTargetStatus& o)
     case ConfigInstanceTargetStatus::eConfigInstanceTargetStatus::CONFIG_INSTANCE_TARGET_STATUS_CREATED:
         j = "created";
         break;
+    case ConfigInstanceTargetStatus::eConfigInstanceTargetStatus::CONFIG_INSTANCE_TARGET_STATUS_VALIDATED:
+        j = "validated";
+        break;
     case ConfigInstanceTargetStatus::eConfigInstanceTargetStatus::CONFIG_INSTANCE_TARGET_STATUS_DEPLOYED:
         j = "deployed";
         break;
@@ -99,6 +102,9 @@ void from_json(const nlohmann::json& j, ConfigInstanceTargetStatus& o)
     auto s = j.get<std::string>();
     if(s == "created") {
         o.value = ConfigInstanceTargetStatus::eConfigInstanceTargetStatus::CONFIG_INSTANCE_TARGET_STATUS_CREATED;
+    } 
+    else if(s == "validated") {
+        o.value = ConfigInstanceTargetStatus::eConfigInstanceTargetStatus::CONFIG_INSTANCE_TARGET_STATUS_VALIDATED;
     } 
     else if(s == "deployed") {
         o.value = ConfigInstanceTargetStatus::eConfigInstanceTargetStatus::CONFIG_INSTANCE_TARGET_STATUS_DEPLOYED;

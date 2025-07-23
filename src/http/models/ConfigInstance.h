@@ -41,9 +41,10 @@ struct  ConfigInstance
     org::openapitools::server::model::ConfigInstanceStatus status;
     org::openapitools::server::model::ConfigInstanceActivityStatus activity_status;
     org::openapitools::server::model::ConfigInstanceErrorStatus error_status;
-    std::optional<std::string> relative_filepath;
+    std::string relative_filepath;
     std::string created_at;
     std::string updated_at;
+    std::string device_id;
     std::string config_schema_id;
     std::string config_type_id;
     nlohmann::json content;

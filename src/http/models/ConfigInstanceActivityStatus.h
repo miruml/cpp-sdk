@@ -12,7 +12,7 @@
 /*
  * ConfigInstanceActivityStatus.h
  *
- * Last known activity of the config instance
+ * Last known activity state of the config instance
  */
 
 #ifndef ConfigInstanceActivityStatus_H_
@@ -34,6 +34,8 @@ struct  ConfigInstanceActivityStatus
         // enum values
         INVALID_VALUE_OPENAPI_GENERATED = 0,
         CONFIG_INSTANCE_ACTIVITY_STATUS_CREATED, 
+        CONFIG_INSTANCE_ACTIVITY_STATUS_VALIDATING, 
+        CONFIG_INSTANCE_ACTIVITY_STATUS_VALIDATED, 
         CONFIG_INSTANCE_ACTIVITY_STATUS_QUEUED, 
         CONFIG_INSTANCE_ACTIVITY_STATUS_DEPLOYED, 
         CONFIG_INSTANCE_ACTIVITY_STATUS_REMOVED
