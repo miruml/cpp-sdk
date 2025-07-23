@@ -84,6 +84,12 @@ void to_json(nlohmann::json& j, const ConfigInstanceActivityStatus& o)
     case ConfigInstanceActivityStatus::eConfigInstanceActivityStatus::CONFIG_INSTANCE_ACTIVITY_STATUS_CREATED:
         j = "created";
         break;
+    case ConfigInstanceActivityStatus::eConfigInstanceActivityStatus::CONFIG_INSTANCE_ACTIVITY_STATUS_VALIDATING:
+        j = "validating";
+        break;
+    case ConfigInstanceActivityStatus::eConfigInstanceActivityStatus::CONFIG_INSTANCE_ACTIVITY_STATUS_VALIDATED:
+        j = "validated";
+        break;
     case ConfigInstanceActivityStatus::eConfigInstanceActivityStatus::CONFIG_INSTANCE_ACTIVITY_STATUS_QUEUED:
         j = "queued";
         break;
@@ -102,6 +108,12 @@ void from_json(const nlohmann::json& j, ConfigInstanceActivityStatus& o)
     auto s = j.get<std::string>();
     if(s == "created") {
         o.value = ConfigInstanceActivityStatus::eConfigInstanceActivityStatus::CONFIG_INSTANCE_ACTIVITY_STATUS_CREATED;
+    } 
+    else if(s == "validating") {
+        o.value = ConfigInstanceActivityStatus::eConfigInstanceActivityStatus::CONFIG_INSTANCE_ACTIVITY_STATUS_VALIDATING;
+    } 
+    else if(s == "validated") {
+        o.value = ConfigInstanceActivityStatus::eConfigInstanceActivityStatus::CONFIG_INSTANCE_ACTIVITY_STATUS_VALIDATED;
     } 
     else if(s == "queued") {
         o.value = ConfigInstanceActivityStatus::eConfigInstanceActivityStatus::CONFIG_INSTANCE_ACTIVITY_STATUS_QUEUED;

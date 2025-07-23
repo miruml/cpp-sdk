@@ -12,7 +12,7 @@
 /*
  * ConfigInstanceTargetStatus.h
  *
- * 
+ * Desired state of the config instance
  */
 
 #ifndef ConfigInstanceTargetStatus_H_
@@ -34,6 +34,7 @@ struct  ConfigInstanceTargetStatus
         // enum values
         INVALID_VALUE_OPENAPI_GENERATED = 0,
         CONFIG_INSTANCE_TARGET_STATUS_CREATED, 
+        CONFIG_INSTANCE_TARGET_STATUS_VALIDATED, 
         CONFIG_INSTANCE_TARGET_STATUS_DEPLOYED, 
         CONFIG_INSTANCE_TARGET_STATUS_REMOVED
     };

@@ -20,7 +20,6 @@
 
 
 #include "ConfigInstanceStatus.h"
-#include <nlohmann/json.hpp>
 #include "ConfigInstanceTargetStatus.h"
 #include "ConfigInstanceErrorStatus.h"
 #include "ConfigInstanceActivityStatus.h"
@@ -41,15 +40,12 @@ struct  BaseConfigInstance
     org::openapitools::server::model::ConfigInstanceStatus status;
     org::openapitools::server::model::ConfigInstanceActivityStatus activity_status;
     org::openapitools::server::model::ConfigInstanceErrorStatus error_status;
-    std::optional<std::string> relative_filepath;
-    std::optional<std::string> patch_id;
-    std::optional<std::string> created_by_id;
+    std::string relative_filepath;
     std::string created_at;
-    std::optional<std::string> updated_by_id;
     std::string updated_at;
     std::string device_id;
     std::string config_schema_id;
-    std::optional<nlohmann::json> instance;
+    std::string config_type_id;
     
 
     bool operator==(const BaseConfigInstance& other) const;

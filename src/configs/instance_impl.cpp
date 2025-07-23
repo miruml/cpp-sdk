@@ -54,7 +54,7 @@ ConfigInstanceImpl ConfigInstanceImpl::from_file(
 
   // read the config type slug from the schema file
   miru::filesys::File schema_file(schema_file_path);
-  builder.with_schema_file(schema_file);
+  builder.with_config_schema_file(schema_file);
   std::string config_type_slug = read_schema_config_type_slug(schema_file);
   builder.with_config_type_slug(config_type_slug);
 
@@ -103,14 +103,11 @@ nlohmann::json get_deployed_config_instance(
   const std::string& config_schema_digest,
   const std::string& config_type_slug
 ) {
-  openapi::BaseConfigInstance config_instance;
+  openapi::ConfigInstance config_instance;
   config_instance = client.get_deployed_config_instance(
     config_schema_digest, config_type_slug
   );
-  if (!config_instance.instance.has_value()) {
-    THROW_EMPTY_CONFIG_INSTANCE(config_type_slug);
-  }
-  return config_instance.instance.value();
+  return config_instance.content;
 }
 
 ConfigInstanceImpl from_agent_impl(
@@ -123,13 +120,13 @@ ConfigInstanceImpl from_agent_impl(
 
   // read the config type slug
   miru::filesys::File schema_file(schema_file_path);
-  builder.with_schema_file(schema_file);
+  builder.with_config_schema_file(schema_file);
   std::string config_type_slug = read_schema_config_type_slug(schema_file);
   builder.with_config_type_slug(config_type_slug);
 
   // hash the schema contents to retrieve the schema digest
   std::string config_schema_digest = hash_schema(client, schema_file);
-  builder.with_schema_digest(config_schema_digest);
+  builder.with_config_schema_digest(config_schema_digest);
 
   // load the config instance from the agent
   nlohmann::json config_instance_data =

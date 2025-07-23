@@ -50,7 +50,7 @@ bool BaseConfigInstance::validate(std::stringstream& msg, const std::string& pat
     bool success = true;
     const std::string _pathPrefix = pathPrefix.empty() ? "BaseConfigInstance" : pathPrefix;
 
-                                                                
+                                                    
     return success;
 }
 
@@ -58,7 +58,7 @@ bool BaseConfigInstance::operator==(const BaseConfigInstance& other) const
 {
     return
     
-    object == other.object && id == other.id && target_status == other.target_status && status == other.status && activity_status == other.activity_status && error_status == other.error_status && relative_filepath == other.relative_filepath && patch_id == other.patch_id && created_by_id == other.created_by_id && created_at == other.created_at && updated_by_id == other.updated_by_id && updated_at == other.updated_at && device_id == other.device_id && config_schema_id == other.config_schema_id && instance == other.instance;
+    object == other.object && id == other.id && target_status == other.target_status && status == other.status && activity_status == other.activity_status && error_status == other.error_status && relative_filepath == other.relative_filepath && created_at == other.created_at && updated_at == other.updated_at && device_id == other.device_id && config_schema_id == other.config_schema_id && config_type_id == other.config_type_id;
 }
 
 bool BaseConfigInstance::operator!=(const BaseConfigInstance& other) const
@@ -75,35 +75,12 @@ void to_json(nlohmann::json& j, const BaseConfigInstance& o)
     j["status"] = o.status;
     j["activity_status"] = o.activity_status;
     j["error_status"] = o.error_status;
-    if (o.relative_filepath.has_value()) {
-        j["relative_filepath"] = o.relative_filepath.value();
-    } else {
-        j["relative_filepath"] = nullptr;
-    }
-    if (o.patch_id.has_value()) {
-        j["patch_id"] = o.patch_id.value();
-    } else {
-        j["patch_id"] = nullptr;
-    }
-    if (o.created_by_id.has_value()) {
-        j["created_by_id"] = o.created_by_id.value();
-    } else {
-        j["created_by_id"] = nullptr;
-    }
+    j["relative_filepath"] = o.relative_filepath;
     j["created_at"] = o.created_at;
-    if (o.updated_by_id.has_value()) {
-        j["updated_by_id"] = o.updated_by_id.value();
-    } else {
-        j["updated_by_id"] = nullptr;
-    }
     j["updated_at"] = o.updated_at;
     j["device_id"] = o.device_id;
     j["config_schema_id"] = o.config_schema_id;
-    if (o.instance.has_value()) {
-        j["instance"] = o.instance.value();
-    } else {
-        j["instance"] = nullptr;
-    }
+    j["config_type_id"] = o.config_type_id;
     
 }
 
@@ -115,45 +92,12 @@ void from_json(const nlohmann::json& j, BaseConfigInstance& o)
     j.at("status").get_to(o.status);
     j.at("activity_status").get_to(o.activity_status);
     j.at("error_status").get_to(o.error_status);
-    if (j.find("relative_filepath") != j.end()) {
-        if (j.at("relative_filepath").is_null()) {
-            o.relative_filepath = std::nullopt;
-        } else {
-            o.relative_filepath = j.at("relative_filepath").get<std::string>();
-        }
-    }
-    if (j.find("patch_id") != j.end()) {
-        if (j.at("patch_id").is_null()) {
-            o.patch_id = std::nullopt;
-        } else {
-            o.patch_id = j.at("patch_id").get<std::string>();
-        }
-    }
-    if (j.find("created_by_id") != j.end()) {
-        if (j.at("created_by_id").is_null()) {
-            o.created_by_id = std::nullopt;
-        } else {
-            o.created_by_id = j.at("created_by_id").get<std::string>();
-        }
-    }
+    j.at("relative_filepath").get_to(o.relative_filepath);
     j.at("created_at").get_to(o.created_at);
-    if (j.find("updated_by_id") != j.end()) {
-        if (j.at("updated_by_id").is_null()) {
-            o.updated_by_id = std::nullopt;
-        } else {
-            o.updated_by_id = j.at("updated_by_id").get<std::string>();
-        }
-    }
     j.at("updated_at").get_to(o.updated_at);
     j.at("device_id").get_to(o.device_id);
     j.at("config_schema_id").get_to(o.config_schema_id);
-    if (j.find("instance") != j.end()) {
-        if (j.at("instance").is_null()) {
-            o.instance = std::nullopt;
-        } else {
-            o.instance = j.at("instance").get<nlohmann::json>();
-        }
-    }
+    j.at("config_type_id").get_to(o.config_type_id);
     
 }
 

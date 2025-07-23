@@ -10,16 +10,17 @@
 * Do not edit the class manually.
 */
 /*
- * BaseConfigInstance.h
+ * ConfigInstance.h
  *
  * 
  */
 
-#ifndef BaseConfigInstance_H_
-#define BaseConfigInstance_H_
+#ifndef ConfigInstance_H_
+#define ConfigInstance_H_
 
 
 #include "ConfigInstanceStatus.h"
+#include <nlohmann/json.hpp>
 #include "ConfigInstanceTargetStatus.h"
 #include "ConfigInstanceErrorStatus.h"
 #include "ConfigInstanceActivityStatus.h"
@@ -30,7 +31,7 @@
 namespace org::openapitools::server::model
 {
 
-struct  BaseConfigInstance
+struct  ConfigInstance
 {
     
 
@@ -46,10 +47,11 @@ struct  BaseConfigInstance
     std::string device_id;
     std::string config_schema_id;
     std::string config_type_id;
+    nlohmann::json content;
     
 
-    bool operator==(const BaseConfigInstance& other) const;
-    bool operator!=(const BaseConfigInstance& other) const;
+    bool operator==(const ConfigInstance& other) const;
+    bool operator!=(const ConfigInstance& other) const;
 
     /// <summary>
     /// Validate the current data in the model. Throws a ValidationException on failure.
@@ -69,14 +71,14 @@ struct  BaseConfigInstance
     bool validate(std::stringstream& msg, const std::string& pathPrefix) const;
 
     nlohmann::json to_json() const;
-    static BaseConfigInstance from_json(const nlohmann::json& j);
+    static ConfigInstance from_json(const nlohmann::json& j);
 };
 
- void to_json(nlohmann::json& j, const BaseConfigInstance& o);
- void from_json(const nlohmann::json& j, BaseConfigInstance& o);
+ void to_json(nlohmann::json& j, const ConfigInstance& o);
+ void from_json(const nlohmann::json& j, ConfigInstance& o);
 
 
 } // namespace org::openapitools::server::model
 
 
-#endif /* BaseConfigInstance_H_ */
+#endif /* ConfigInstance_H_ */

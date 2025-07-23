@@ -12,7 +12,7 @@
 /*
  * ConfigInstanceStatus.h
  *
- * 
+ * The merging of the &#39;activity_status&#39; and &#39;error_status&#39; where &#39;error_status&#39; takes precedence over &#39;activity_status&#39; if errors are present
  */
 
 #ifndef ConfigInstanceStatus_H_
@@ -34,6 +34,8 @@ struct  ConfigInstanceStatus
         // enum values
         INVALID_VALUE_OPENAPI_GENERATED = 0,
         CONFIG_INSTANCE_STATUS_CREATED, 
+        CONFIG_INSTANCE_STATUS_VALIDATING, 
+        CONFIG_INSTANCE_STATUS_VALIDATED, 
         CONFIG_INSTANCE_STATUS_QUEUED, 
         CONFIG_INSTANCE_STATUS_DEPLOYED, 
         CONFIG_INSTANCE_STATUS_REMOVED, 

@@ -4,7 +4,7 @@
 #include <cstring>
 
 // internal
-#include <http/models/BaseConfigInstance.h>
+#include <http/models/ConfigInstance.h>
 #include <http/models/HashSchemaSerializedRequest.h>
 
 #include <http/socket_client.hpp>
@@ -48,7 +48,7 @@ std::string UnixSocketClient::hash_schema(
   return handle_json_response(res.first, res.second)["digest"].get<std::string>();
 }
 
-openapi::BaseConfigInstance UnixSocketClient::get_deployed_config_instance(
+openapi::ConfigInstance UnixSocketClient::get_deployed_config_instance(
   const std::string& config_schema_digest,
   const std::string& config_type_slug
 ) const {
@@ -57,7 +57,7 @@ openapi::BaseConfigInstance UnixSocketClient::get_deployed_config_instance(
   auto req = build_get_request(host(), path);
   std::chrono::milliseconds timeout = std::chrono::seconds(10);
   auto res = execute(req, timeout);
-  return openapi::BaseConfigInstance::from_json(
+  return openapi::ConfigInstance::from_json(
     handle_json_response(res.first, res.second)
   );
 }

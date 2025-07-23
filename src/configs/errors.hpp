@@ -90,26 +90,6 @@ class InvalidConfigSchemaFileTypeError : public std::runtime_error {
 #define THROW_INVALID_CONFIG_SCHEMA_FILE_TYPE(schema_file, expected_file_types) \
   throw InvalidConfigSchemaFileTypeError(schema_file, expected_file_types, ERROR_TRACE)
 
-class EmptyConfigInstance : public std::runtime_error {
- public:
-  explicit EmptyConfigInstance(
-    const std::string& config_type_slug,
-    const miru::details::errors::ErrorTrace& trace
-  )
-    : std::runtime_error(format_message(config_type_slug, trace)) {}
-
-  static std::string format_message(
-    const std::string& config_type_slug,
-    const miru::details::errors::ErrorTrace& trace
-  ) {
-    return "The config instance loaded for config type slug '" + config_type_slug +
-           "' is empty" + miru::details::errors::format_source_location(trace);
-  }
-};
-
-#define THROW_EMPTY_CONFIG_INSTANCE(config_type_slug) \
-  throw EmptyConfigInstance(config_type_slug, ERROR_TRACE)
-
 class GetDeployedConfigInstanceError : public std::runtime_error {
  public:
   explicit GetDeployedConfigInstanceError(

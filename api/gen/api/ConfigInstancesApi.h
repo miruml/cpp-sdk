@@ -28,7 +28,7 @@
 #include <optional>
 #include <utility>
 
-#include "BaseConfigInstance.h"
+#include "ConfigInstance.h"
 #include <string>
 
 namespace org::openapitools::server::api
